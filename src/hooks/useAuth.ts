@@ -106,7 +106,15 @@ function clearUserData() {
 const getGuestId = (): string => {
   let guestId = localStorage.getItem(GUEST_ID_KEY);
   if (!guestId) {
-    guestId = `guest-${crypto.randomUUID()}`;
+    // crypto.randomUUID() requires secure context (HTTPS/localhost).
+    // Fall back to crypto.getRandomValues for HTTP dev servers on LAN.
+    const uuid = typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map((b, i) => ((i === 6 ? (b & 0x0f) | 0x40 : i === 8 ? (b & 0x3f) | 0x80 : b).toString(16).padStart(2, '0')))
+          .join('')
+          .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+    guestId = `guest-${uuid}`;
     localStorage.setItem(GUEST_ID_KEY, guestId);
   }
   return guestId;
