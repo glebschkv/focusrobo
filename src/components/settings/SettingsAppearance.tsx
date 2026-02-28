@@ -17,10 +17,10 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
   return (
     <div className="space-y-4">
       {/* Theme Selection */}
-      <div className="retro-game-card p-4">
+      <div className="bg-white rounded-2xl border border-stone-200 p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Sun className="w-4 h-4 text-yellow-400" />
-          <span className="text-sm font-bold retro-pixel-text text-white">COLOR SCHEME</span>
+          <Sun className="w-4 h-4 text-amber-400" />
+          <span className="text-sm font-semibold text-stone-900">Color Scheme</span>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {themeOptions.map((option) => {
@@ -31,26 +31,26 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
                 key={option.value}
                 onClick={() => onUpdate({ theme: option.value as 'light' | 'dark' | 'system' })}
                 className={cn(
-                  "relative p-3 rounded-lg flex flex-col items-center gap-2 transition-all active:scale-95",
+                  "relative p-3 rounded-xl flex flex-col items-center gap-2 transition-all active:scale-95 border",
                   isSelected
-                    ? "bg-purple-500/20 border-2 border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
-                    : "bg-purple-900/30 border-2 border-purple-600/30"
+                    ? "bg-sky-50 border-sky-300"
+                    : "bg-stone-50 border-stone-200"
                 )}
               >
                 {isSelected && (
-                  <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center border border-green-300">
+                  <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-sky-500 flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" />
                   </div>
                 )}
                 <div className={cn(
-                  "w-10 h-10 rounded-lg flex items-center justify-center",
-                  isSelected ? "retro-level-badge" : "retro-stat-pill"
+                  "w-10 h-10 rounded-xl flex items-center justify-center border",
+                  isSelected ? "bg-sky-100 border-sky-200 text-sky-600" : "bg-white border-stone-200 text-stone-400"
                 )}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="text-center">
-                  <div className="text-xs font-bold text-white">{option.label}</div>
-                  <div className="text-[11px] text-purple-300/70">{option.description}</div>
+                  <div className="text-xs font-semibold text-stone-900">{option.label}</div>
+                  <div className="text-[11px] text-stone-400">{option.description}</div>
                 </div>
               </button>
             );

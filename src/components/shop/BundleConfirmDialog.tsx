@@ -106,77 +106,51 @@ export const BundleConfirmDialog = ({
 
   return (
     <Dialog open={open && !!bundle} onOpenChange={onOpenChange}>
-      <DialogContent className="retro-modal max-w-[300px] p-0 overflow-hidden border-0">
+      <DialogContent className="max-w-[300px] p-0 overflow-hidden border border-stone-200 rounded-2xl bg-white shadow-lg">
         <VisuallyHidden>
           <DialogTitle>{bundle.name}</DialogTitle>
         </VisuallyHidden>
         <>
           {/* Header */}
-          <div className="retro-modal-header p-4 text-center relative">
-            <div className="retro-scanlines opacity-20" />
-
+          <div className="p-4 text-center border-b border-stone-100 bg-stone-50">
             {/* Bot sprite preview or bundle icon */}
-            <div className="h-24 mb-2 flex items-center justify-center relative z-[1]">
+            <div className="h-24 mb-2 flex items-center justify-center">
               {pet?.imageConfig ? (
-                <div className="relative">
-                  <div
-                    className="absolute inset-0 rounded-full blur-xl scale-[2]"
-                    style={{ background: 'hsl(280 80% 60% / 0.25)' }}
-                  />
-                  <SpritePreview
-                    animal={pet}
-                    scale={Math.min(2.5, 80 / Math.max(pet.imageConfig?.size || 64, pet.imageConfig?.size || 64))}
-                  />
-                </div>
+                <SpritePreview
+                  animal={pet}
+                  scale={Math.min(2.5, 80 / Math.max(pet.imageConfig?.size || 64, pet.imageConfig?.size || 64))}
+                />
               ) : (
-                <div className="relative animate-bounce" style={{ animationDuration: '2s' }}>
-                  <div
-                    className="absolute inset-0 rounded-full blur-xl scale-[2.5]"
-                    style={{ background: 'hsl(35 100% 50% / 0.2)' }}
-                  />
+                <div className="animate-bounce" style={{ animationDuration: '2s' }}>
                   <PixelIcon name={bundle.icon} size={64} />
                 </div>
               )}
             </div>
 
             {/* Bundle name */}
-            <h2
-              className="text-lg font-black uppercase tracking-tight text-white relative z-[1]"
-              style={{ textShadow: '0 0 10px hsl(260 80% 70% / 0.5), 0 2px 0 rgba(0,0,0,0.3)' }}
-            >
+            <h2 className="text-lg font-bold text-stone-900">
               {bundle.name}
             </h2>
 
-            {/* Savings badge — neon green */}
+            {/* Savings badge */}
             {'savings' in bundle && bundle.savings && (
-              <div className="mt-2 inline-flex items-center gap-1.5 relative z-[1]">
-                <span
-                  className="px-3 py-1 text-white text-[10px] font-black rounded uppercase tracking-wider border"
-                  style={{
-                    background: 'linear-gradient(180deg, hsl(120 70% 45%), hsl(120 75% 35%))',
-                    borderColor: 'hsl(120 60% 55%)',
-                    boxShadow: '0 0 10px hsl(120 100% 40% / 0.5)',
-                    textShadow: '0 1px 0 rgba(0,0,0,0.3)',
-                  }}
-                >
+              <div className="mt-2 inline-flex items-center gap-1.5">
+                <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full uppercase tracking-wider bg-emerald-500">
                   Save {bundle.savings}
                 </span>
               </div>
             )}
 
-            {/* Rarity stars with glow */}
+            {/* Rarity stars */}
             {'rarity' in bundle && bundle.rarity && (
-              <div className="flex justify-center mt-2 gap-1 relative z-[1]">
+              <div className="flex justify-center mt-2 gap-1">
                 {[...Array(bundle.rarity === 'common' ? 1 : bundle.rarity === 'rare' ? 2 : bundle.rarity === 'epic' ? 3 : 4)].map((_, i) => (
                   <Star
                     key={i}
                     className={cn(
-                      "w-4 h-4",
-                      bundle.rarity === 'legendary'
-                        ? "text-amber-400 fill-amber-400 animate-pulse"
-                        : "text-amber-400 fill-amber-400"
+                      "w-4 h-4 text-amber-400 fill-amber-400",
+                      bundle.rarity === 'legendary' && "animate-pulse"
                     )}
-                    style={{ filter: 'drop-shadow(0 0 4px hsl(35 100% 50% / 0.6))' }}
                   />
                 ))}
               </div>
@@ -185,39 +159,33 @@ export const BundleConfirmDialog = ({
 
           {/* Contents section */}
           <div className="p-4 space-y-3">
-            <p className="text-[11px] text-center leading-relaxed text-purple-300/60">
+            <p className="text-[11px] text-center leading-relaxed text-stone-400">
               {bundle.description}
             </p>
 
             {/* Contents list */}
             <div className="space-y-1.5">
-              <div className="text-[9px] font-black uppercase tracking-[0.2em] text-center text-purple-400/50">
+              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-center text-stone-300">
                 Includes
               </div>
               <div className="space-y-1.5">
                 {contentItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className={cn("retro-reward-item", item.variant)}
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-stone-50 border border-stone-100"
                   >
-                    <div
-                      className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
-                      style={{
-                        background: 'hsl(260 30% 18%)',
-                        border: '2px solid hsl(260 35% 30%)',
-                      }}
-                    >
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-white border border-stone-200">
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className={cn(
-                        "text-sm font-bold",
-                        item.highlight ? "text-amber-300" : "text-purple-100/90"
+                        "text-sm font-semibold",
+                        item.highlight ? "text-amber-500" : "text-stone-900"
                       )}>
                         {item.label}
                       </div>
                       {item.sublabel && (
-                        <div className="text-[10px] leading-tight text-purple-300/50">
+                        <div className="text-[10px] leading-tight text-stone-400">
                           {item.sublabel}
                         </div>
                       )}
@@ -231,19 +199,12 @@ export const BundleConfirmDialog = ({
             <button
               onClick={onPurchase}
               disabled={isPurchasing}
-              className="w-full py-3 rounded-lg border-[3px] font-black uppercase tracking-wider text-sm transition-all flex items-center justify-center gap-2 text-white active:translate-y-1"
-              style={isPurchasing ? {
-                background: 'hsl(260 20% 20%)',
-                borderColor: 'hsl(260 20% 30%)',
-                color: 'hsl(260 15% 40%)',
-                boxShadow: '0 4px 0 hsl(260 30% 12%)',
-                cursor: 'not-allowed',
-              } : {
-                background: 'linear-gradient(180deg, hsl(45 85% 58%) 0%, hsl(40 80% 48%) 50%, hsl(38 75% 42%) 100%)',
-                borderColor: 'hsl(38 70% 50%)',
-                boxShadow: '0 5px 0 hsl(35 70% 28%), inset 0 2px 0 hsl(50 90% 72% / 0.5)',
-                textShadow: '0 2px 0 rgba(0,0,0,0.3)',
-              }}
+              className={cn(
+                "w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
+                isPurchasing
+                  ? "bg-stone-100 text-stone-400 cursor-not-allowed"
+                  : "bg-sky-500 text-white hover:bg-sky-600"
+              )}
             >
               {isPurchasing ? (
                 <>
@@ -263,14 +224,9 @@ export const BundleConfirmDialog = ({
               onClick={() => onOpenChange(false)}
               disabled={isPurchasing}
               className={cn(
-                "w-full py-2.5 rounded-lg flex items-center justify-center text-xs font-bold uppercase tracking-wide transition-all",
+                "w-full py-2.5 rounded-xl flex items-center justify-center text-xs font-medium text-stone-400 border border-stone-200 transition-all",
                 isPurchasing && "opacity-50 cursor-not-allowed"
               )}
-              style={{
-                background: 'hsl(260 25% 20%)',
-                border: '2px solid hsl(260 30% 35%)',
-                color: 'hsl(260 20% 65%)',
-              }}
             >
               Cancel
             </button>

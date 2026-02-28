@@ -74,43 +74,19 @@ export const FocusShieldNudge = () => {
           className="w-full max-w-sm"
         >
           <div
-            className="flex items-center gap-3 px-3.5 py-3 rounded-2xl"
-            style={{
-              background: 'hsl(220 30% 20% / 0.35)',
-              backdropFilter: 'blur(20px) saturate(150%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-              border: '1.5px solid hsl(0 0% 100% / 0.12)',
-              boxShadow:
-                '0 4px 16px hsl(0 0% 0% / 0.12), inset 0 1px 0 hsl(0 0% 100% / 0.06)',
-            }}
+            className="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-white border border-stone-200 shadow-sm"
           >
             {/* Shield icon */}
-            <div
-              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{
-                background: 'rgba(160,120,255,0.18)',
-                border: '1px solid rgba(160,120,255,0.22)',
-                boxShadow: '0 0 12px rgba(160,120,255,0.08)',
-              }}
-            >
-              <Shield
-                className="w-[18px] h-[18px]"
-                style={{ color: 'rgba(200,180,255,0.85)' }}
-              />
+            <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-sky-50 border border-sky-200">
+              <Shield className="w-[18px] h-[18px] text-sky-500" />
             </div>
 
             {/* Text */}
             <div className="flex-1 min-w-0">
-              <p
-                className="text-[13px] font-semibold leading-tight"
-                style={{ color: 'rgba(255,255,255,0.88)' }}
-              >
+              <p className="text-[13px] font-semibold leading-tight text-stone-900">
                 Focus Shield
               </p>
-              <p
-                className="text-[11px] leading-tight mt-0.5"
-                style={{ color: 'rgba(200,210,240,0.45)' }}
-              >
+              <p className="text-[11px] leading-tight mt-0.5 text-stone-400">
                 Block distracting apps
               </p>
             </div>
@@ -119,16 +95,8 @@ export const FocusShieldNudge = () => {
             <button
               onClick={handleAction}
               disabled={isLoading}
-              className="flex-shrink-0 flex items-center gap-0.5 px-3.5 min-h-[36px] rounded-lg text-[12px] font-bold transition-all active:scale-95"
-              style={{
-                background:
-                  'linear-gradient(180deg, hsl(260 55% 58%) 0%, hsl(265 50% 45%) 100%)',
-                border: '1.5px solid rgba(255,255,255,0.12)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 6px rgba(120,60,220,0.2)',
-                color: 'white',
-                opacity: isLoading ? 0.6 : 1,
-              }}
+              className="flex-shrink-0 flex items-center gap-0.5 px-3.5 min-h-[36px] rounded-lg text-[12px] font-bold transition-all active:scale-95 bg-sky-500 text-white"
+              style={{ opacity: isLoading ? 0.6 : 1 }}
             >
               {actionLabel}
               <ChevronRight className="w-3 h-3" />
@@ -137,8 +105,7 @@ export const FocusShieldNudge = () => {
             {/* Dismiss */}
             <button
               onClick={dismiss}
-              className="flex-shrink-0 w-9 h-9 -mr-1 flex items-center justify-center rounded-full transition-all active:scale-90"
-              style={{ color: 'rgba(255,255,255,0.3)' }}
+              className="flex-shrink-0 w-9 h-9 -mr-1 flex items-center justify-center rounded-full transition-all active:scale-90 text-stone-300"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />

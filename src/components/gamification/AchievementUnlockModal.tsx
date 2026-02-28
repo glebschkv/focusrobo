@@ -116,11 +116,12 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         <VisuallyHidden>
           <DialogTitle>Achievement Unlocked</DialogTitle>
         </VisuallyHidden>
-        {/* Animated scanlines overlay */}
-        <div className="absolute inset-0 pointer-events-none z-10 opacity-20">
-          <div className="absolute inset-0" style={{
-            background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)'
-          }} />
+        {/* Subtle grain overlay */}
+        <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.03]">
+          <svg width="100%" height="100%">
+            <filter id="achieveGrain"><feTurbulence baseFrequency="0.8" numOctaves="4" type="fractalNoise" /></filter>
+            <rect width="100%" height="100%" filter="url(#achieveGrain)" />
+          </svg>
         </div>
 
         {/* Sparkle effects */}

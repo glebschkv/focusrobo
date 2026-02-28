@@ -43,19 +43,14 @@ export const FocusLockScreen = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"
+          className="fixed inset-0 z-[100] bg-[#FAFAF9]"
         >
-          {/* Background pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 20px,
-                rgba(255,255,255,0.03) 20px,
-                rgba(255,255,255,0.03) 40px
-              )`
-            }} />
+          {/* Background texture */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <svg width="100%" height="100%">
+              <filter id="lockGrain"><feTurbulence baseFrequency="0.9" numOctaves="4" type="fractalNoise" /></filter>
+              <rect width="100%" height="100%" filter="url(#lockGrain)" />
+            </svg>
           </div>
 
           <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-safe pb-safe">
@@ -67,8 +62,8 @@ export const FocusLockScreen = ({
               className="mb-8"
             >
               <div className="relative">
-                <div className="absolute inset-0 blur-xl bg-blue-500/30 rounded-full" />
-                <div className="relative w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl">
+                <div className="absolute inset-0 blur-xl bg-sky-200/40 rounded-full" />
+                <div className="relative w-24 h-24 bg-sky-500 rounded-full flex items-center justify-center shadow-lg">
                   <Shield className="w-12 h-12 text-white" />
                 </div>
               </div>
@@ -79,7 +74,7 @@ export const FocusLockScreen = ({
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.3 }}
-              className="text-2xl font-bold text-white text-center mb-2"
+              className="text-2xl font-bold text-stone-900 text-center mb-2"
             >
               Focus Mode Active
             </motion.h1>
@@ -88,7 +83,7 @@ export const FocusLockScreen = ({
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.4 }}
-              className="text-white/60 text-center mb-8 max-w-xs"
+              className="text-stone-400 text-center mb-8 max-w-xs"
             >
               Stay focused! You're in a focus session.
             </motion.p>
@@ -98,12 +93,12 @@ export const FocusLockScreen = ({
               initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.5 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 text-center"
+              className="bg-white border border-stone-200 rounded-2xl p-6 mb-6 text-center shadow-sm"
             >
-              <div className="text-5xl font-mono font-bold text-white mb-2">
+              <div className="text-5xl font-mono font-light text-stone-900 mb-2">
                 {formatTime(timeRemaining)}
               </div>
-              <div className="text-white/50 text-sm">remaining</div>
+              <div className="text-stone-400 text-sm">remaining</div>
             </motion.div>
 
             {/* Current Task */}
@@ -112,13 +107,13 @@ export const FocusLockScreen = ({
                 initial={prefersReducedMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.6 }}
-                className="bg-white/5 rounded-xl px-4 py-3 mb-8 max-w-xs w-full"
+                className="bg-white border border-stone-200 rounded-xl px-4 py-3 mb-8 max-w-xs w-full"
               >
                 <div className="flex items-center gap-2 justify-center">
                   {categoryInfo && (
                     <PixelIcon name={categoryInfo.icon} size={22} />
                   )}
-                  <span className="text-white/80 text-sm">
+                  <span className="text-stone-600 text-sm">
                     {taskLabel || categoryInfo?.label || "Focusing"}
                   </span>
                 </div>
@@ -134,7 +129,7 @@ export const FocusLockScreen = ({
             >
               <Button
                 onClick={onReturnToApp}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white py-6 text-lg font-semibold"
+                className="w-full bg-sky-500 hover:bg-sky-600 text-white py-6 text-lg font-semibold"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Return to Focus
@@ -143,7 +138,7 @@ export const FocusLockScreen = ({
               {!showAbandonConfirm ? (
                 <button
                   onClick={() => setShowAbandonConfirm(true)}
-                  className="w-full py-3 text-white/40 hover:text-white/60 text-sm transition-colors"
+                  className="w-full py-3 text-stone-400 hover:text-stone-500 text-sm transition-colors"
                 >
                   I need to leave
                 </button>
@@ -151,13 +146,13 @@ export const FocusLockScreen = ({
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4"
+                  className="bg-red-50 border border-red-200 rounded-xl p-4"
                 >
-                  <div className="flex items-center gap-2 text-red-400 mb-3">
+                  <div className="flex items-center gap-2 text-red-500 mb-3">
                     <AlertTriangle className="w-4 h-4" />
                     <span className="text-sm font-medium">Abandon Session?</span>
                   </div>
-                  <p className="text-white/50 text-xs mb-3">
+                  <p className="text-stone-400 text-xs mb-3">
                     Your progress won't count towards your goals.
                   </p>
                   <div className="flex gap-2">
@@ -165,14 +160,14 @@ export const FocusLockScreen = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowAbandonConfirm(false)}
-                      className="flex-1 text-white/60 hover:text-white"
+                      className="flex-1 text-stone-500 hover:text-stone-700"
                     >
                       Cancel
                     </Button>
                     <Button
                       size="sm"
                       onClick={handleAbandon}
-                      className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-400"
+                      className="flex-1 bg-red-100 hover:bg-red-200 text-red-500"
                     >
                       Abandon
                     </Button>
@@ -186,7 +181,7 @@ export const FocusLockScreen = ({
               initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={prefersReducedMotion ? { duration: 0 } : { delay: 1 }}
-              className="absolute bottom-safe left-0 right-0 text-center text-white/30 text-xs px-8 pb-4"
+              className="absolute bottom-safe left-0 right-0 text-center text-stone-300 text-xs px-8 pb-4"
             >
               "The secret of getting ahead is getting started."
             </motion.p>

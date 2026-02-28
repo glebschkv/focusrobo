@@ -77,15 +77,14 @@ export const TaskIntentionModal = memo(({
         </VisuallyHidden>
 
         {/* Header */}
-        <div className="retro-modal-header p-4 pb-3 text-center relative">
-          <div className="retro-scanlines opacity-20" />
-          <div className="relative z-10 flex items-center justify-center gap-2.5">
+        <div className="p-4 pb-3 text-center border-b border-stone-100">
+          <div className="flex items-center justify-center gap-2.5">
             <PixelIcon name="target" size={22} />
-            <h2 className="text-base font-bold tracking-wide uppercase text-white">
+            <h2 className="text-base font-semibold tracking-wide text-stone-900">
               What are you focusing on?
             </h2>
           </div>
-          <p className="relative z-10 text-[11px] text-purple-300/70 mt-1.5">
+          <p className="text-[11px] text-stone-400 mt-1.5">
             Set an intention to stay accountable
           </p>
         </div>
@@ -93,7 +92,7 @@ export const TaskIntentionModal = memo(({
         <div className="p-4 pt-3 space-y-4">
           {/* Category Selection */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold tracking-widest uppercase text-slate-400">
+            <label className="text-[10px] font-medium tracking-widest uppercase text-stone-400">
               Category
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -105,26 +104,17 @@ export const TaskIntentionModal = memo(({
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
                     className={cn(
-                      "relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg border-2 transition-all duration-150",
-                      "active:translate-y-[2px] active:shadow-none touch-manipulation",
+                      "relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border transition-all duration-150",
+                      "active:scale-95 touch-manipulation",
                       isSelected
-                        ? cn(
-                            glow.border,
-                            glow.shadow,
-                            glow.bg,
-                            "shadow-[0_4px_0_hsl(260_30%_12%)]"
-                          )
-                        : cn(
-                            "border-slate-600/60 bg-slate-800/60",
-                            "shadow-[0_3px_0_hsl(260_20%_10%)]",
-                            "hover:border-slate-500"
-                          )
+                        ? cn(glow.border, glow.bg)
+                        : "border-stone-200 bg-white hover:border-stone-300"
                     )}
                   >
                     <PixelIcon name={cat.icon} size={28} />
                     <span className={cn(
-                      "text-[11px] font-bold tracking-wide",
-                      isSelected ? "text-white" : "text-slate-400"
+                      "text-[11px] font-medium tracking-wide",
+                      isSelected ? "text-stone-900" : "text-stone-400"
                     )}>
                       {cat.label}
                     </span>
@@ -136,18 +126,18 @@ export const TaskIntentionModal = memo(({
 
           {/* Optional Task Label */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold tracking-widest uppercase text-slate-400">
-              Task <span className="text-slate-600 normal-case tracking-normal">(optional)</span>
+            <label className="text-[10px] font-medium tracking-widest uppercase text-stone-400">
+              Task <span className="text-stone-300 normal-case tracking-normal">(optional)</span>
             </label>
             <input
               value={taskLabel}
               onChange={(e) => setTaskLabel(e.target.value)}
               placeholder="e.g., Finish report, Chapter 5..."
               className={cn(
-                "w-full px-3 py-2.5 rounded-lg text-sm text-white",
-                "bg-slate-800/80 border-2 border-slate-600/60",
-                "placeholder:text-slate-600",
-                "focus:outline-none focus:border-purple-500/60 focus:shadow-[0_0_10px_rgba(168,85,247,0.2)]",
+                "w-full px-3 py-2.5 rounded-xl text-sm text-stone-900",
+                "bg-stone-50 border border-stone-200",
+                "placeholder:text-stone-300",
+                "focus:outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-200",
                 "transition-all duration-150"
               )}
               maxLength={50}
@@ -160,9 +150,9 @@ export const TaskIntentionModal = memo(({
           </div>
 
           {/* Session Info Pill */}
-          <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-slate-700/80 bg-slate-800/40">
+          <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-stone-200 bg-stone-50">
             <PixelIcon name="sparkles" size={16} />
-            <span className="text-xs font-semibold text-slate-400 tracking-wide">
+            <span className="text-xs font-medium text-stone-400 tracking-wide">
               {selectedPreset.name} &middot; {selectedPreset.duration} min
             </span>
           </div>
@@ -172,10 +162,10 @@ export const TaskIntentionModal = memo(({
             <button
               onClick={handleCancel}
               className={cn(
-                "flex-1 py-2.5 rounded-lg font-bold text-sm tracking-wide",
-                "border-2 border-slate-600/50 text-slate-500",
-                "hover:border-slate-500 hover:text-slate-300",
-                "active:translate-y-[1px]",
+                "flex-1 py-2.5 rounded-xl font-medium text-sm",
+                "border border-stone-200 text-stone-400",
+                "hover:border-stone-300 hover:text-stone-500",
+                "active:scale-95",
                 "transition-all duration-150 touch-manipulation"
               )}
             >
@@ -184,9 +174,9 @@ export const TaskIntentionModal = memo(({
             <button
               onClick={handleStart}
               className={cn(
-                "flex-1 py-2.5 rounded-lg font-bold text-sm tracking-wider uppercase",
-                "retro-arcade-btn retro-arcade-btn-green",
-                "select-none"
+                "flex-1 py-2.5 rounded-xl font-semibold text-sm text-white",
+                "bg-sky-500 hover:bg-sky-600 active:scale-95",
+                "transition-all duration-150 touch-manipulation select-none"
               )}
             >
               Start Focus

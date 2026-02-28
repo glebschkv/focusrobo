@@ -43,8 +43,8 @@ export const BackgroundGrid = memo(({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 px-1">
-        <Image className="w-4 h-4 text-[hsl(35,70%,55%)]" />
-        <span className="text-xs font-bold text-[hsl(260,10%,50%)] uppercase tracking-wide">
+        <Image className="w-4 h-4 text-stone-400" />
+        <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">
           Shop Backgrounds
         </span>
       </div>
@@ -91,16 +91,16 @@ const BackgroundCard = memo(({
     <button
       onClick={onClick}
       className={cn(
-        "relative rounded-lg overflow-hidden transition-all border active:scale-[0.97]",
+        "relative rounded-xl overflow-hidden transition-all border active:scale-[0.97]",
         isEquipped
-          ? "border-[hsl(280,50%,55%)] ring-1 ring-[hsl(280,50%,55%)]"
+          ? "border-sky-300 ring-1 ring-sky-300"
           : owned
-          ? "border-[hsl(180,40%,40%)]"
-          : "border-[hsl(260,25%,25%)]"
+          ? "border-emerald-300"
+          : "border-stone-200"
       )}
     >
       {/* Background Preview */}
-      <div className="relative h-20 overflow-hidden bg-[hsl(260,15%,12%)]">
+      <div className="relative h-20 overflow-hidden bg-stone-50">
         {bg.previewImage ? (
           <img
             src={bg.previewImage}
@@ -117,8 +117,8 @@ const BackgroundCard = memo(({
 
         {/* Status overlay */}
         {isEquipped && (
-          <div className="absolute inset-0 bg-[hsl(280,50%,40%)]/30 flex items-center justify-center">
-            <div className="bg-[hsl(280,50%,45%)] rounded-full px-2 py-0.5 flex items-center gap-1">
+          <div className="absolute inset-0 bg-sky-500/20 flex items-center justify-center">
+            <div className="bg-sky-500 rounded-full px-2 py-0.5 flex items-center gap-1">
               <Palette className="w-3 h-3 text-white" />
               <span className="text-[10px] font-bold text-white">EQUIPPED</span>
             </div>
@@ -126,14 +126,14 @@ const BackgroundCard = memo(({
         )}
         {owned && !isEquipped && (
           <div className="absolute top-1 right-1">
-            <div className="bg-[hsl(180,50%,40%)] rounded-full p-0.5">
+            <div className="bg-emerald-500 rounded-full p-0.5">
               <Check className="w-3 h-3 text-white" />
             </div>
           </div>
         )}
         {!owned && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <div className="bg-gradient-to-r from-[hsl(35,70%,45%)] to-[hsl(25,65%,40%)] text-white px-2 py-0.5 rounded-full flex items-center gap-1 border border-[hsl(35,60%,55%)]">
+          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+            <div className="bg-sky-500 text-white px-2 py-0.5 rounded-full flex items-center gap-1">
               <ShoppingBag className="w-3 h-3" />
               <span className="text-[9px] font-bold">SHOP</span>
             </div>
@@ -143,27 +143,23 @@ const BackgroundCard = memo(({
         {/* Rarity dot */}
         <div className={cn(
           "absolute top-1 left-1 h-2 w-2 rounded-full",
-          bg.rarity === 'legendary' ? "bg-amber-400 shadow-[0_0_4px_hsl(45,90%,55%)]" :
-          bg.rarity === 'epic' ? "bg-purple-400 shadow-[0_0_4px_hsl(280,70%,60%)]" :
-          bg.rarity === 'rare' ? "bg-blue-400 shadow-[0_0_4px_hsl(210,70%,55%)]" : "bg-gray-500"
+          bg.rarity === 'legendary' ? "bg-amber-400" :
+          bg.rarity === 'epic' ? "bg-purple-400" :
+          bg.rarity === 'rare' ? "bg-blue-400" : "bg-stone-400"
         )} />
       </div>
 
       {/* Info */}
-      <div className={cn(
-        "p-2 text-left",
-        isEquipped ? "bg-[hsl(280,20%,15%)]" :
-        owned ? "bg-[hsl(260,20%,15%)]" : "bg-[hsl(260,20%,14%)]"
-      )}>
-        <span className="text-[11px] font-bold block leading-tight truncate text-[hsl(45,20%,80%)]">
+      <div className="p-2 text-left bg-white">
+        <span className="text-[11px] font-semibold block leading-tight truncate text-stone-900">
           {bg.name}
         </span>
         {owned ? (
-          <span className="text-[9px] text-[hsl(280,50%,65%)] font-medium">
+          <span className="text-[9px] text-stone-400 font-medium">
             {isEquipped ? "Tap to unequip" : "Tap to equip"}
           </span>
         ) : (
-          <div className="flex items-center gap-0.5 text-[9px] text-[hsl(35,70%,55%)]">
+          <div className="flex items-center gap-0.5 text-[9px] text-amber-500">
             <PixelIcon name="coin" size={10} />
             <span className="font-bold">{bg.coinPrice?.toLocaleString()}</span>
           </div>

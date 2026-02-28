@@ -121,63 +121,42 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
 				},
 				'float': {
 					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
-				},
-				'island-glow': {
-					'0%, 100%': { boxShadow: 'var(--shadow-island)' },
-					'50%': { boxShadow: 'var(--shadow-glow)' }
+					'50%': { transform: 'translateY(-6px)' }
 				},
 				'pulse-slow': {
 					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.8' }
+					'50%': { opacity: '0.85' }
 				},
 				'bounce-subtle': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-2px)' }
 				},
-				'pixel-walk': {
-					'0%': { transform: 'translateX(0px)' },
-					'25%': { transform: 'translateX(0px) translateY(-1px)' },
-					'50%': { transform: 'translateX(0px)' },
-					'75%': { transform: 'translateX(0px) translateY(-1px)' },
-					'100%': { transform: 'translateX(0px)' }
+				'atelier-settle': {
+					'0%': { transform: 'scale(1.02)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				},
-				'drift-clouds': {
-					'0%': { transform: 'translateX(-100px)' },
-					'100%': { transform: 'translateX(100vw)' }
-				},
-				'parallax-slow': {
-					'0%': { transform: 'translateX(-50px)' },
-					'100%': { transform: 'translateX(calc(100vw + 50px))' }
+				'atelier-fade-up': {
+					'0%': { transform: 'translateY(8px)', opacity: '0' },
+					'100%': { transform: 'translateY(0)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float': 'float 3s ease-in-out infinite',
-				'island-glow': 'island-glow 4s ease-in-out infinite',
-				'pulse-slow': 'pulse-slow 2s ease-in-out infinite',
+				'float': 'float 4s ease-in-out infinite',
+				'pulse-slow': 'pulse-slow 2.5s ease-in-out infinite',
 				'bounce-subtle': 'bounce-subtle 0.3s ease-in-out',
-				'pixel-walk': 'pixel-walk 0.6s ease-in-out infinite',
-				'drift-clouds': 'drift-clouds 20s linear infinite',
-				'parallax-slow': 'parallax-slow 30s linear infinite'
+				'atelier-settle': 'atelier-settle 0.4s ease-out',
+				'atelier-fade-up': 'atelier-fade-up 0.3s ease-out'
 			}
 		}
 	},

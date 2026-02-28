@@ -1,60 +1,68 @@
 import { memo } from 'react';
 
 /**
- * HangarBackground — Pure CSS dark industrial background
- * No image assets needed. Uses gradients, scanlines, and glow effects.
+ * HangarBackground — Atelier white surrealist canvas.
+ * Warm white with subtle grain texture and drifting particles.
  */
 export const HangarBackground = memo(() => {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Base gradient */}
+      {/* Base warm white canvas */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(180deg, #0a0a1a 0%, #0d1117 40%, #111827 70%, #0a0a1a 100%)',
+          background: 'linear-gradient(180deg, #FAFAF9 0%, #F5F5F4 50%, #FAFAF9 100%)',
         }}
       />
 
-      {/* Subtle grid lines */}
+      {/* Subtle paper grain texture */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.025]"
         style={{
-          backgroundImage:
-            'linear-gradient(rgba(6,182,212,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.5) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: '128px 128px',
         }}
       />
 
-      {/* Scanline overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          background:
-            'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px)',
-        }}
-      />
+      {/* Floating atmospheric particles — glacial speed */}
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: `${2 + (i % 3)}px`,
+            height: `${2 + (i % 3)}px`,
+            background: `hsla(24, 10%, 10%, ${0.03 + (i % 3) * 0.015})`,
+            left: `${15 + i * 14}%`,
+            top: `${20 + i * 12}%`,
+            animation: `atelier-drift ${28 + i * 6}s linear infinite`,
+            animationDelay: `${-i * 5}s`,
+          }}
+        />
+      ))}
 
-      {/* Central radial glow */}
+      {/* Soft center radial light — gallery spotlight */}
       <div
         className="absolute pointer-events-none"
         style={{
-          width: '400px',
-          height: '400px',
-          top: '35%',
+          width: '500px',
+          height: '500px',
+          top: '30%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           background:
-            'radial-gradient(circle, rgba(6,182,212,0.12) 0%, rgba(6,182,212,0.04) 40%, transparent 70%)',
+            'radial-gradient(circle, hsla(40, 20%, 98%, 0.9) 0%, hsla(40, 15%, 96%, 0.3) 40%, transparent 70%)',
         }}
       />
 
-      {/* Top ambient light */}
-      <div
-        className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background: 'linear-gradient(180deg, rgba(6,182,212,0.06) 0%, transparent 100%)',
-        }}
-      />
+      <style>{`
+        @keyframes atelier-drift {
+          0% { transform: translate(0, 0); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translate(60px, -100px); opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 });

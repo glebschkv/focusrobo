@@ -121,11 +121,11 @@ export const SessionNotesModal = ({
                     "flex-1 py-2 rounded-xl flex flex-col items-center gap-1 transition-all",
                     rating === option.value
                       ? "bg-gradient-to-b from-amber-300 to-amber-400 ring-2 ring-amber-500"
-                      : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      : "bg-stone-100 hover:bg-stone-200"
                   )}
                 >
                   <PixelIcon name={option.icon} size={28} />
-                  <span className="text-[9px] font-semibold text-gray-600 dark:text-gray-300">
+                  <span className="text-[9px] font-semibold text-stone-500">
                     {option.label}
                   </span>
                 </button>
@@ -143,7 +143,7 @@ export const SessionNotesModal = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="What did you accomplish? Any thoughts?"
-              className="w-full h-20 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full h-20 p-3 rounded-xl bg-stone-50 border border-stone-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200"
             />
           </div>
 
@@ -155,7 +155,7 @@ export const SessionNotesModal = ({
                 <button
                   key={note}
                   onClick={() => addQuickNote(note)}
-                  className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="px-2 py-1 rounded-md bg-stone-100 text-xs font-medium hover:bg-stone-200 transition-colors"
                 >
                   {note}
                 </button>
@@ -167,7 +167,7 @@ export const SessionNotesModal = ({
           <div className="flex gap-2 pt-2">
             <button
               onClick={handleSkip}
-              className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex-1 py-3 rounded-xl bg-stone-100 text-sm font-semibold hover:bg-stone-200 transition-colors"
             >
               Skip
             </button>
