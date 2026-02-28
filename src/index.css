@@ -17,7 +17,7 @@ input, textarea, [contenteditable="true"] {
   user-select: text;
 }
 
-/* iOS-Style BotBlock - Cupertino Design System */
+/* Atelier — White Surrealist Design System */
 
 @layer base {
   :root {
@@ -26,116 +26,114 @@ input, textarea, [contenteditable="true"] {
     --safe-area-inset-right: env(safe-area-inset-right);
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
     --safe-area-inset-left: env(safe-area-inset-left);
-    
-    /* Retro Pixel Art System Colors */
-    --background: 135 20% 95%;   /* Soft cream background */
-    --foreground: 220 25% 15%;   /* Dark navy text */
-    --card: 140 25% 88%;        /* Light mint green cards */
-    --card-foreground: 220 25% 15%;
-    --popover: 135 20% 95%;
-    --popover-foreground: 220 25% 15%;
-    --primary: 260 60% 55%;     /* Purple pixel primary */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 180 35% 70%;   /* Teal secondary */
-    --secondary-foreground: 220 25% 15%;
-    --muted: 45 25% 80%;        /* Light beige muted */
-    --muted-foreground: 220 15% 45%;
-    --accent: 25 75% 60%;       /* Orange-red accent */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 350 70% 50%; /* Pixel red */
-    --destructive-foreground: 0 0% 100%;
-    --success: 120 50% 45%;     /* Forest green */
-    --success-foreground: 0 0% 100%;
-    --warning: 40 80% 55%;      /* Pixel yellow */
-    --warning-foreground: 220 25% 15%;
-    --border: 45 15% 75%;       /* Subtle tan border */
-    --input: 45 15% 75%;
-    --ring: 260 60% 55%;
 
-    /* Retro Pixel Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(260 60% 55%), hsl(280 50% 65%));
-    --gradient-sky: linear-gradient(180deg, hsl(200 60% 85%), hsl(220 40% 92%));
-    --gradient-platform: linear-gradient(180deg, hsl(120 35% 60%), hsl(110 40% 45%));
-    --gradient-glass: linear-gradient(135deg, hsla(135 20% 95% / 0.9), hsla(45 25% 80% / 0.6));
-    --gradient-accent: linear-gradient(135deg, hsl(25 75% 60%), hsl(35 70% 65%));
-    
-    /* iOS Shadows - Mobile optimized */
-    --shadow-xs: 0 1px 2px hsla(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px hsla(0 0% 0% / 0.1), 0 1px 2px hsla(0 0% 0% / 0.06);
-    --shadow-md: 0 4px 6px hsla(0 0% 0% / 0.07), 0 2px 4px hsla(0 0% 0% / 0.06);
-    --shadow-lg: 0 10px 15px hsla(0 0% 0% / 0.1), 0 4px 6px hsla(0 0% 0% / 0.05);
-    --shadow-xl: 0 20px 25px hsla(0 0% 0% / 0.1), 0 10px 10px hsla(0 0% 0% / 0.04);
-    --shadow-floating-soft: 0 4px 12px -2px hsla(0 0% 0% / 0.08), 0 2px 4px -1px hsla(0 0% 0% / 0.02);
-    --shadow-tab-bar: 0 -2px 20px -4px hsla(0 0% 0% / 0.1);
-    --shadow-inner: inset 0 1px 2px hsla(0 0% 0% / 0.1);
-    
-    /* iOS Transitions - Performance optimized */
+    /* Atelier White Surrealist Palette */
+    --background: 40 20% 98%;     /* Warm white canvas #FAFAF9 */
+    --foreground: 24 10% 10%;     /* Near-black text #1C1917 */
+    --card: 0 0% 100%;            /* Pure white cards */
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 199 89% 48%;       /* Sky-500 accent #0EA5E9 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 6% 83%;       /* Stone-300 */
+    --secondary-foreground: 24 10% 10%;
+    --muted: 40 6% 90%;           /* Warm stone muted */
+    --muted-foreground: 24 6% 46%;  /* Stone-500 #78716C */
+    --accent: 199 89% 48%;        /* Sky-500 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;     /* Red-500 */
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;       /* Green-500 */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;        /* Amber-500 */
+    --warning-foreground: 24 10% 10%;
+    --border: 24 6% 90%;          /* Stone-200 #E7E5E4 — thin 1px lines */
+    --input: 24 6% 90%;
+    --ring: 199 89% 48%;
+
+    /* Atelier Gradients — minimal, warm */
+    --gradient-hero: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 96%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 95%) 100%);
+    --gradient-platform: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 10% 94%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0 0% 100% / 0.85), hsla(0 0% 100% / 0.65));
+    --gradient-accent: linear-gradient(135deg, hsl(199 89% 48%), hsl(199 89% 42%));
+
+    /* Atelier Shadows — soft, airy, slightly surreal */
+    --shadow-xs: 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-sm: 0 1px 3px hsla(24 10% 10% / 0.06), 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-md: 0 4px 12px hsla(24 10% 10% / 0.06), 0 2px 4px hsla(24 10% 10% / 0.03);
+    --shadow-lg: 0 12px 24px hsla(24 10% 10% / 0.08), 0 4px 8px hsla(24 10% 10% / 0.04);
+    --shadow-xl: 0 24px 48px hsla(24 10% 10% / 0.08), 0 8px 16px hsla(24 10% 10% / 0.04);
+    --shadow-floating-soft: 0 8px 32px hsla(24 10% 10% / 0.06), 0 2px 8px hsla(24 10% 10% / 0.02);
+    --shadow-tab-bar: 0 -1px 0 hsla(24 10% 10% / 0.06), 0 -8px 32px hsla(24 10% 10% / 0.04);
+    --shadow-inner: inset 0 1px 2px hsla(24 10% 10% / 0.04);
+    /* Surreal shadow — offset in unexpected direction */
+    --shadow-surreal: 4px 8px 24px hsla(24 10% 10% / 0.08), -2px -2px 12px hsla(199 89% 48% / 0.03);
+
+    /* iOS Transitions */
     --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --transition-ios: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
-    --radius: 0.75rem; /* 12px - iOS standard corner radius */
+    --radius: 1rem; /* 16px — slightly rounder for the gallery feel */
+
+    /* Rarity Colors */
+    --rarity-common: 24 6% 64%;       /* Stone-400 #A8A29E */
+    --rarity-rare: 217 91% 60%;       /* Blue-500 #3B82F6 */
+    --rarity-epic: 258 90% 66%;       /* Violet-500 #8B5CF6 */
+    --rarity-legendary: 38 92% 50%;   /* Amber-500 #F59E0B */
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* No separate dark theme — Atelier is always light.
+     We keep the class for compatibility but map to the same values. */
   .dark {
-    /* Retro Pixel Art Dark Colors */
-    --background: 220 25% 8%;    /* Deep dark navy */
-    --foreground: 45 25% 85%;    /* Warm light beige */
-    --card: 220 20% 12%;        /* Darker navy cards */
-    --card-foreground: 45 25% 85%;
-    --popover: 220 25% 8%;
-    --popover-foreground: 45 25% 85%;
-    --primary: 280 50% 65%;     /* Lighter purple for dark mode */
-    --primary-foreground: 220 25% 8%;
-    --secondary: 180 25% 30%;   /* Darker teal */
-    --secondary-foreground: 45 25% 85%;
-    --muted: 220 15% 20%;       /* Dark muted */
-    --muted-foreground: 45 15% 60%;
-    --accent: 25 60% 55%;       /* Slightly muted orange */
-    --accent-foreground: 220 25% 8%;
-    --destructive: 350 60% 55%; /* Softer red */
-    --destructive-foreground: 45 25% 85%;
-    --success: 120 40% 50%;     /* Darker green */
-    --success-foreground: 220 25% 8%;
-    --warning: 40 70% 60%;      /* Softer yellow */
-    --warning-foreground: 220 25% 8%;
-    --border: 220 15% 25%;      /* Dark border */
-    --input: 220 15% 25%;
-    --ring: 280 50% 65%;
-
-    /* Retro Pixel Dark Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(280 50% 65%), hsl(300 40% 55%));
-    --gradient-sky: linear-gradient(180deg, hsl(220 25% 8%), hsl(220 20% 15%));
-    --gradient-platform: linear-gradient(180deg, hsl(120 25% 25%), hsl(110 30% 20%));
-    --gradient-glass: linear-gradient(135deg, hsla(220 25% 8% / 0.9), hsla(220 15% 20% / 0.6));
-    --gradient-accent: linear-gradient(135deg, hsl(25 60% 55%), hsl(35 55% 50%));
-    
-    /* iOS Dark Shadows - Mobile optimized */
-    --shadow-xs: 0 1px 2px hsla(0 0% 0% / 0.15);
-    --shadow-sm: 0 1px 3px hsla(0 0% 0% / 0.2), 0 1px 2px hsla(0 0% 0% / 0.16);
-    --shadow-md: 0 4px 6px hsla(0 0% 0% / 0.17), 0 2px 4px hsla(0 0% 0% / 0.16);
-    --shadow-lg: 0 10px 15px hsla(0 0% 0% / 0.2), 0 4px 6px hsla(0 0% 0% / 0.15);
-    --shadow-xl: 0 20px 25px hsla(0 0% 0% / 0.2), 0 10px 10px hsla(0 0% 0% / 0.14);
-    --shadow-floating-soft: 0 4px 12px -2px hsla(0 0% 0% / 0.15), 0 2px 4px -1px hsla(0 0% 0% / 0.05);
-    --shadow-tab-bar: 0 -2px 20px -4px hsla(0 0% 0% / 0.2);
-    --shadow-inner: inset 0 1px 2px hsla(0 0% 0% / 0.2);
+    --background: 40 20% 98%;
+    --foreground: 24 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 6% 83%;
+    --secondary-foreground: 24 10% 10%;
+    --muted: 40 6% 90%;
+    --muted-foreground: 24 6% 46%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 24 10% 10%;
+    --border: 24 6% 90%;
+    --input: 24 6% 90%;
+    --ring: 199 89% 48%;
+    --gradient-hero: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 96%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 95%) 100%);
+    --gradient-platform: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 10% 94%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0 0% 100% / 0.85), hsla(0 0% 100% / 0.65));
+    --gradient-accent: linear-gradient(135deg, hsl(199 89% 48%), hsl(199 89% 42%));
+    --shadow-xs: 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-sm: 0 1px 3px hsla(24 10% 10% / 0.06), 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-md: 0 4px 12px hsla(24 10% 10% / 0.06), 0 2px 4px hsla(24 10% 10% / 0.03);
+    --shadow-lg: 0 12px 24px hsla(24 10% 10% / 0.08), 0 4px 8px hsla(24 10% 10% / 0.04);
+    --shadow-xl: 0 24px 48px hsla(24 10% 10% / 0.08), 0 8px 16px hsla(24 10% 10% / 0.04);
+    --shadow-floating-soft: 0 8px 32px hsla(24 10% 10% / 0.06), 0 2px 8px hsla(24 10% 10% / 0.02);
+    --shadow-tab-bar: 0 -1px 0 hsla(24 10% 10% / 0.06), 0 -8px 32px hsla(24 10% 10% / 0.04);
+    --shadow-inner: inset 0 1px 2px hsla(24 10% 10% / 0.04);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -382,19 +380,11 @@ input, textarea, [contenteditable="true"] {
 
   /* Retro level badge */
   .retro-level-badge {
-    background: linear-gradient(180deg,
-      hsl(40 90% 60%) 0%,
-      hsl(35 85% 50%) 50%,
-      hsl(40 90% 60%) 100%
-    );
-    border: 2px solid hsl(30 70% 40%);
-    border-radius: 4px;
-    box-shadow:
-      0 2px 0 hsl(30 70% 30%),
-      inset 0 1px 0 hsl(45 100% 70% / 0.5);
-    color: hsl(30 50% 15%);
-    font-weight: 700;
-    text-shadow: 0 1px 0 hsl(45 100% 70% / 0.3);
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
   }
 
   /* Streak fire glow */
@@ -869,68 +859,53 @@ input, textarea, [contenteditable="true"] {
     top: 0;
     left: 0;
     right: 0;
-    /* Add safe area inset + 8px extra padding for the content */
-    padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 0;
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 0;
     pointer-events: auto;
     z-index: 40;
   }
 
-  /* Game-style unified bar */
+  /* Atelier — Clean top bar */
   .game-top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 6px 10px;
-    background: linear-gradient(
-      180deg,
-      hsl(35 45% 92%) 0%,
-      hsl(32 40% 87%) 100%
-    );
-    border: 2px solid hsl(30 35% 65%);
-    border-radius: 12px;
-    box-shadow:
-      inset 0 1px 0 hsl(40 50% 96%),
-      inset 0 -2px 0 hsl(30 30% 75%),
-      0 3px 8px hsl(30 40% 20% / 0.15);
+    padding: 8px 12px;
+    background: hsla(0 0% 100% / 0.75);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(var(--border));
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
   }
 
-  /* Left section grouping */
   .top-bar-left {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
-  /* Right section grouping */
   .top-bar-right {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
-  /* Level Badge Button */
+  /* Level Badge — Atelier style */
   .level-badge-btn {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    padding: 4px 8px;
-    background: linear-gradient(
-      180deg,
-      hsl(45 85% 65%) 0%,
-      hsl(40 80% 50%) 100%
-    );
-    border: 2px solid hsl(35 70% 40%);
-    border-radius: 8px;
+    gap: 3px;
+    padding: 5px 10px;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, opacity 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    box-shadow:
-      inset 0 1px 0 hsl(50 90% 75%),
-      inset 0 -1px 0 hsl(35 60% 40%),
-      0 2px 4px hsl(30 50% 20% / 0.2);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
   }
 
   .level-badge-btn:active {
@@ -940,60 +915,57 @@ input, textarea, [contenteditable="true"] {
   .level-badge-inner {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
   }
 
   .level-star {
-    font-size: 12px;
-    color: hsl(45 100% 30%);
-    text-shadow: 0 1px 0 hsl(50 100% 80%);
+    font-size: 11px;
+    color: white;
+    opacity: 0.8;
   }
 
   .level-number {
     font-size: 14px;
-    font-weight: 800;
-    color: hsl(30 60% 18%);
-    text-shadow: 0 1px 0 hsl(50 100% 80%);
+    font-weight: 700;
+    color: white;
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
 
   .level-progress-track {
     width: 100%;
-    height: 4px;
-    background: hsl(35 50% 35%);
+    height: 3px;
+    background: hsl(0 0% 100% / 0.25);
     border-radius: 2px;
     overflow: hidden;
   }
 
   .level-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, hsl(280 70% 60%), hsl(320 70% 60%));
+    background: white;
     border-radius: 2px;
     transition: width 0.4s ease;
   }
 
-  /* Biome button */
-  .biome-btn {
+  /* Zone button — Atelier */
+  .biome-btn,
+  .zone-btn {
     display: flex;
     align-items: center;
-    gap: 2px;
-    padding: 6px 8px;
-    background: linear-gradient(
-      180deg,
-      hsl(35 35% 88%) 0%,
-      hsl(32 30% 80%) 100%
-    );
-    border: 2px solid hsl(30 25% 60%);
-    border-radius: 8px;
+    gap: 3px;
+    padding: 7px 10px;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.15s ease;
-    box-shadow:
-      inset 0 1px 0 hsl(40 40% 94%),
-      inset 0 -1px 0 hsl(30 25% 70%);
+    transition: transform 0.15s ease, background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .biome-btn:active {
+  .biome-btn:active,
+  .zone-btn:active {
     transform: scale(0.95);
+    background: hsl(var(--muted));
   }
 
   .biome-emoji {
@@ -1001,29 +973,24 @@ input, textarea, [contenteditable="true"] {
     line-height: 1;
   }
 
-  .biome-chevron {
-    color: hsl(30 30% 45%);
+  .biome-chevron,
+  .zone-chevron {
+    color: hsl(var(--muted-foreground));
   }
 
-  /* Stats Popover - Game themed */
+  /* Stats Popover — Atelier clean */
   .stats-popover {
     width: 220px;
     padding: 0;
-    background: linear-gradient(
-      180deg,
-      hsl(35 45% 94%) 0%,
-      hsl(32 40% 89%) 100%
-    );
-    border: 2px solid hsl(30 35% 65%);
-    border-radius: 12px;
-    box-shadow:
-      inset 0 1px 0 hsl(40 50% 97%),
-      0 6px 20px hsl(30 40% 20% / 0.2);
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
   }
 
   .stats-popover-content {
-    padding: 14px;
+    padding: 16px;
   }
 
   .stats-header {
@@ -1032,21 +999,23 @@ input, textarea, [contenteditable="true"] {
     gap: 6px;
     margin-bottom: 12px;
     padding-bottom: 10px;
-    border-bottom: 2px solid hsl(30 30% 80%);
-    font-size: 14px;
-    font-weight: 700;
-    color: hsl(30 50% 25%);
+    border-bottom: 1px solid hsl(var(--border));
+    font-size: 13px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
   }
 
   .stats-header-star {
-    font-size: 14px;
-    color: hsl(45 90% 45%);
+    font-size: 13px;
+    color: hsl(var(--primary));
   }
 
   .stats-grid {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 14px;
   }
 
@@ -1054,29 +1023,27 @@ input, textarea, [contenteditable="true"] {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 6px 10px;
-    background: linear-gradient(180deg, hsl(35 35% 88%) 0%, hsl(32 30% 84%) 100%);
-    border: 1.5px solid hsl(30 30% 75%);
-    border-radius: 8px;
-    box-shadow:
-      inset 0 1px 0 hsl(40 40% 95%),
-      0 1px 0 hsl(30 25% 70% / 0.3);
+    padding: 8px 10px;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
   }
 
   .stat-label {
     font-size: 12px;
-    font-weight: 600;
-    color: hsl(30 30% 35%);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
     display: flex;
     align-items: center;
   }
 
   .stat-val {
     font-size: 13px;
-    font-weight: 800;
-    color: hsl(30 50% 22%);
+    font-weight: 600;
+    color: hsl(var(--foreground));
     display: flex;
     align-items: center;
+    font-variant-numeric: tabular-nums;
   }
 
   .xp-progress-container {
@@ -1086,45 +1053,38 @@ input, textarea, [contenteditable="true"] {
   }
 
   .xp-progress-bar {
-    height: 10px;
-    background: hsl(30 25% 75%);
-    border: 2px solid hsl(30 30% 65%);
-    border-radius: 5px;
+    height: 6px;
+    background: hsl(var(--border));
+    border: none;
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: inset 0 2px 3px hsl(30 20% 60% / 0.4);
   }
 
   .xp-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, hsl(280 70% 55%), hsl(320 70% 55%));
+    background: hsl(var(--primary));
     border-radius: 3px;
     transition: width 0.4s ease;
-    box-shadow: 0 0 6px hsl(300 80% 50% / 0.4);
   }
 
   .xp-progress-label {
     font-size: 11px;
-    color: hsl(30 30% 45%);
+    color: hsl(var(--muted-foreground));
     text-align: center;
-    font-weight: 700;
+    font-weight: 500;
   }
 
-  /* Unified Stat Chips */
+  /* Atelier Stat Chips — thin, clean */
   .stat-chip {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 5px 10px;
-    background: linear-gradient(
-      180deg,
-      hsl(35 35% 88%) 0%,
-      hsl(32 30% 82%) 100%
-    );
-    border: 2px solid hsl(30 25% 65%);
-    border-radius: 8px;
-    box-shadow:
-      inset 0 1px 0 hsl(40 40% 94%),
-      inset 0 -1px 0 hsl(30 25% 72%);
+    gap: 5px;
+    padding: 6px 10px;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    transition: transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .chip-icon {
@@ -1134,31 +1094,23 @@ input, textarea, [contenteditable="true"] {
 
   .chip-value {
     font-size: 14px;
-    font-weight: 700;
-    color: hsl(30 50% 22%);
+    font-weight: 600;
+    color: hsl(var(--foreground));
     font-variant-numeric: tabular-nums;
   }
 
-  /* Coin chip specific */
+  /* Coin chip */
   .coin-chip {
-    background: linear-gradient(
-      180deg,
-      hsl(45 70% 82%) 0%,
-      hsl(42 65% 72%) 100%
-    );
-    border-color: hsl(40 55% 55%);
-    box-shadow:
-      inset 0 1px 0 hsl(48 80% 88%),
-      inset 0 -1px 0 hsl(38 50% 62%);
+    background: hsl(48 96% 95%);
+    border-color: hsl(45 70% 80%);
   }
 
   .coin-icon {
-    color: hsl(40 80% 40%);
-    font-weight: bold;
+    color: hsl(38 92% 50%);
   }
 
   .coin-chip .chip-value {
-    color: hsl(35 70% 20%);
+    color: hsl(32 80% 30%);
   }
 
   .coin-chip:active {
@@ -1169,44 +1121,30 @@ input, textarea, [contenteditable="true"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: linear-gradient(180deg, hsl(145 55% 50%) 0%, hsl(145 50% 40%) 100%);
-    border: 1.5px solid hsl(145 45% 35%);
+    background: hsl(var(--primary));
+    border: none;
     color: white;
     font-size: 10px;
-    font-weight: 900;
+    font-weight: 700;
     line-height: 1;
-    box-shadow: 0 1px 0 hsl(145 40% 28%);
-    margin-left: 1px;
+    margin-left: 2px;
   }
 
-  /* Streak chip specific */
+  /* Streak chip */
   .streak-chip {
-    background: linear-gradient(
-      180deg,
-      hsl(35 35% 88%) 0%,
-      hsl(32 30% 82%) 100%
-    );
+    background: hsl(var(--background));
   }
 
   .streak-chip.active {
-    background: linear-gradient(
-      180deg,
-      hsl(25 80% 88%) 0%,
-      hsl(20 70% 78%) 100%
-    );
-    border-color: hsl(20 60% 55%);
-    box-shadow:
-      inset 0 1px 0 hsl(28 90% 92%),
-      inset 0 -1px 0 hsl(18 55% 65%);
+    background: hsl(24 95% 96%);
+    border-color: hsl(24 80% 80%);
   }
 
   .streak-icon {
     font-size: 13px;
-    filter: grayscale(0.4);
-    opacity: 0.7;
   }
 
   .streak-chip.active .streak-icon {
@@ -1229,81 +1167,73 @@ input, textarea, [contenteditable="true"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     padding: 0;
-    background: linear-gradient(
-      180deg,
-      hsl(35 35% 88%) 0%,
-      hsl(32 30% 80%) 100%
-    );
-    border: 2px solid hsl(30 25% 60%);
-    border-radius: 8px;
+    background: transparent;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.15s ease;
-    color: hsl(30 30% 40%);
-    box-shadow:
-      inset 0 1px 0 hsl(40 40% 94%),
-      inset 0 -1px 0 hsl(30 25% 70%);
+    transition: transform 0.15s ease, background 0.15s ease;
+    color: hsl(var(--muted-foreground));
+    -webkit-tap-highlight-color: transparent;
   }
 
   .settings-btn:active {
     transform: scale(0.92);
+    background: hsl(var(--muted));
   }
 
   .settings-btn:hover {
-    color: hsl(30 40% 30%);
+    color: hsl(var(--foreground));
   }
 
-  /* Biome Menu - Game themed */
-  .biome-menu {
-    min-width: 140px;
+  /* Zone Menu — Atelier */
+  .biome-menu,
+  .zone-menu {
+    min-width: 160px;
     padding: 6px;
-    background: linear-gradient(
-      180deg,
-      hsl(35 45% 94%) 0%,
-      hsl(32 40% 89%) 100%
-    );
-    border: 2px solid hsl(30 35% 65%);
-    border-radius: 10px;
-    box-shadow:
-      inset 0 1px 0 hsl(40 50% 97%),
-      0 6px 20px hsl(30 40% 20% / 0.2);
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
   }
 
-  .biome-menu-item {
+  .biome-menu-item,
+  .zone-menu-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 10px;
-    border-radius: 6px;
+    padding: 9px 12px;
+    border-radius: 10px;
     font-size: 13px;
-    font-weight: 600;
-    color: hsl(30 40% 35%);
+    font-weight: 500;
+    color: hsl(var(--foreground));
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
-  .biome-menu-item:hover {
-    background: hsl(35 40% 85%);
-    color: hsl(30 50% 25%);
+  .biome-menu-item:hover,
+  .zone-menu-item:hover {
+    background: hsl(var(--background));
   }
 
-  .biome-menu-item.selected {
-    background: hsl(45 60% 80%);
-    color: hsl(35 70% 22%);
+  .biome-menu-item.selected,
+  .zone-menu-item.selected {
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
   }
 
-  .biome-check {
+  .biome-check,
+  .zone-check {
     margin-left: auto;
     font-size: 11px;
-    color: hsl(120 50% 35%);
-    font-weight: bold;
+    color: hsl(var(--primary));
+    font-weight: 600;
   }
 
-  /* ---- BOTTOM DOCK NAVIGATION ---- */
+  /* ---- ATELIER BOTTOM TAB BAR ---- */
 
-  /* Floating dock container */
   .dock-container {
     position: fixed;
     bottom: 0;
@@ -1311,8 +1241,8 @@ input, textarea, [contenteditable="true"] {
     right: 0;
     display: flex;
     justify-content: center;
-    padding: 0 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 0 20px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
     z-index: 50;
     pointer-events: none;
   }
@@ -1321,34 +1251,28 @@ input, textarea, [contenteditable="true"] {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 4px;
-    padding: 8px 12px;
-    background: hsl(var(--card) / 0.55);
+    gap: 2px;
+    padding: 6px 16px;
+    background: hsla(0 0% 100% / 0.8);
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border: 1px solid hsl(var(--border) / 0.25);
-    border-radius: 24px;
-    box-shadow:
-      0 8px 40px hsl(0 0% 0% / 0.12),
-      0 2px 8px hsl(0 0% 0% / 0.06),
-      inset 0 1px 0 hsl(0 0% 100% / 0.08);
+    border: 1px solid hsl(var(--border));
+    border-radius: 20px;
+    box-shadow: var(--shadow-floating-soft);
     pointer-events: auto;
-    max-width: 400px;
+    max-width: 380px;
     width: 100%;
   }
 
-  /* Dark dock variant for dark-background tabs (collection, challenges) */
+  /* All tabs now use the same white glass bar — no dark variant needed */
   .dock-bar.dark-context {
-    background: hsl(252 35% 14% / 0.75);
-    border-color: hsl(255 30% 25% / 0.4);
-    box-shadow:
-      0 8px 40px hsl(0 0% 0% / 0.3),
-      0 2px 8px hsl(0 0% 0% / 0.15),
-      inset 0 1px 0 hsl(255 30% 30% / 0.15);
+    background: hsla(0 0% 100% / 0.8);
+    border-color: hsl(var(--border));
+    box-shadow: var(--shadow-floating-soft);
   }
 
   .dock-bar.dark-context .dock-item-icon {
-    color: hsl(255 20% 55%);
+    color: hsl(var(--muted-foreground));
   }
 
   .dock-bar.dark-context .dock-item.active .dock-item-icon {
@@ -1356,7 +1280,7 @@ input, textarea, [contenteditable="true"] {
   }
 
   .dock-bar.dark-context .dock-item-label {
-    color: hsl(255 15% 50%);
+    color: hsl(var(--muted-foreground));
   }
 
   .dock-bar.dark-context .dock-item.active .dock-item-label {
@@ -1367,22 +1291,21 @@ input, textarea, [contenteditable="true"] {
     background: hsl(var(--primary));
   }
 
-  /* Keep center button icon white in dark context */
   .dock-bar.dark-context .dock-center-btn .dock-item-icon {
     color: white;
   }
 
-  /* Individual dock item */
+  /* Atelier dock item — thin, clean */
   .dock-item {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 56px;
-    height: 52px;
-    border-radius: 16px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 52px;
+    height: 48px;
+    border-radius: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
@@ -1392,33 +1315,34 @@ input, textarea, [contenteditable="true"] {
   }
 
   .dock-item.active {
-    background: hsl(var(--primary) / 0.12);
+    background: transparent;
   }
 
-  /* Dock item icon */
+  /* Dock item icon — thin stroke */
   .dock-item-icon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     color: hsl(var(--muted-foreground));
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dock-item.active .dock-item-icon {
     color: hsl(var(--primary));
-    transform: scale(1.1);
+    transform: none;
   }
 
   .dock-item:not(.active):hover .dock-item-icon {
-    color: hsl(var(--foreground) / 0.8);
+    color: hsl(var(--foreground));
   }
 
   /* Dock item label */
   .dock-item-label {
     font-size: 10px;
     font-weight: 500;
-    color: hsl(var(--muted-foreground) / 0.8);
+    color: hsl(var(--muted-foreground));
     margin-top: 2px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.01em;
   }
 
   .dock-item.active .dock-item-label {
@@ -1426,10 +1350,10 @@ input, textarea, [contenteditable="true"] {
     font-weight: 600;
   }
 
-  /* Active indicator dot */
+  /* Active dot — small, clean */
   .dock-active-dot {
     position: absolute;
-    bottom: 4px;
+    bottom: 2px;
     left: 50%;
     transform: translateX(-50%);
     width: 4px;
@@ -1437,63 +1361,52 @@ input, textarea, [contenteditable="true"] {
     background: hsl(var(--primary));
     border-radius: 50%;
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dock-item.active .dock-active-dot {
     opacity: 1;
   }
 
-  /* Center action button (Focus) */
+  /* Center focus button — Atelier accent circle */
   .dock-center-btn {
     position: relative;
-    width: 64px;
-    height: 64px;
-    margin: -16px 4px;
-    background: linear-gradient(145deg,
-      hsl(var(--primary)) 0%,
-      hsl(260 65% 50%) 100%
-    );
+    width: 52px;
+    height: 52px;
+    margin: -10px 4px;
+    background: hsl(var(--primary));
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow:
-      0 4px 16px hsl(var(--primary) / 0.25),
-      0 2px 6px hsl(var(--primary) / 0.2),
-      inset 0 2px 4px hsl(0 0% 100% / 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
 
   .dock-center-btn:hover {
     transform: scale(1.05);
-    box-shadow:
-      0 6px 20px hsl(var(--primary) / 0.3),
-      0 2px 8px hsl(var(--primary) / 0.25),
-      inset 0 2px 4px hsl(0 0% 100% / 0.15);
+    box-shadow: 0 6px 20px hsl(var(--primary) / 0.35);
   }
 
   .dock-center-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.93);
   }
 
   .dock-center-btn.active {
-    background: linear-gradient(145deg,
-      hsl(260 70% 55%) 0%,
-      hsl(280 65% 60%) 100%
-    );
+    background: hsl(199 89% 42%);
+    box-shadow: 0 4px 20px hsl(var(--primary) / 0.35);
   }
 
   .dock-center-btn .dock-item-icon {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     color: white;
   }
 
   .dock-center-btn.active .dock-item-icon {
-    transform: scale(1);
+    transform: none;
     color: white;
   }
 
@@ -4185,105 +4098,87 @@ input, textarea, [contenteditable="true"] {
   /* ---- COLLECTION PAGE (Game Inventory UI) ---- */
 
   /* Dark game-style page background for collection */
+  /* Atelier Collection Background — warm white */
   .collection-page-bg {
-    background: linear-gradient(180deg,
-      hsl(252 40% 16%) 0%,
-      hsl(248 35% 13%) 40%,
-      hsl(245 30% 11%) 100%
-    );
-    /* Force dark-theme semantic colors — collection page is always dark */
-    color: hsl(45 25% 85%);
-    --foreground: 45 25% 85%;
-    --muted-foreground: 45 15% 60%;
-    --card-foreground: 45 25% 85%;
-    --border: 220 15% 25%;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 
-  /* Collection header panel */
+  /* Collection header */
   .collection-header {
-    background: linear-gradient(180deg,
-      hsl(256 35% 20%) 0%,
-      hsl(252 35% 16%) 100%
-    );
-    border-bottom: 1px solid hsl(255 35% 28%);
+    background: white;
+    border-bottom: 1px solid hsl(var(--border));
   }
 
-  /* Collection tab button (PETS / WORLDS) */
+  /* Collection tab */
   .collection-tab {
     position: relative;
     padding: 12px 0;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 13px;
-    letter-spacing: 1px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: hsl(255 20% 52%);
+    color: hsl(var(--muted-foreground));
     transition: color 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
   .collection-tab.active {
-    color: hsl(180 80% 72%);
+    color: hsl(var(--primary));
   }
 
-  /* Animated underline for active tab */
   .collection-tab.active::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 15%;
-    right: 15%;
+    left: 20%;
+    right: 20%;
     height: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      hsl(180 100% 60%) 50%,
-      transparent 100%
-    );
-    box-shadow: 0 0 8px hsl(180 100% 60% / 0.6);
+    background: hsl(var(--primary));
+    border-radius: 1px;
   }
 
-  /* Collection tab stat counter */
   .collection-tab-count {
     font-size: 11px;
-    font-weight: 600;
-    opacity: 0.7;
+    font-weight: 500;
+    opacity: 0.6;
     margin-top: 1px;
   }
 
   .collection-tab.active .collection-tab-count {
     opacity: 1;
-    color: hsl(180 60% 65%);
+    color: hsl(var(--primary));
   }
 
-  /* Search toggle button */
+  /* Search toggle */
   .collection-search-toggle {
     width: 38px;
     height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    background: hsl(256 35% 22%);
-    border: 1.5px solid hsl(255 35% 32%);
-    color: hsl(255 20% 58%);
+    border-radius: 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
   .collection-search-toggle:active,
   .collection-search-toggle.active {
-    background: hsl(255 38% 28%);
-    border-color: hsl(180 50% 45%);
-    color: hsl(180 80% 72%);
-    box-shadow: 0 0 8px hsl(180 100% 50% / 0.2);
+    background: hsl(var(--primary) / 0.08);
+    border-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
   }
 
-  /* Search input for collection */
+  /* Search input */
   .collection-search-input {
-    background: hsl(252 30% 14%);
-    border: 1.5px solid hsl(255 35% 28%);
-    border-radius: 8px;
-    color: hsl(45 25% 88%);
-    font-size: 16px; /* 16px prevents iOS auto-zoom on focus */
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    color: hsl(var(--foreground));
+    font-size: 16px;
     padding: 10px 12px 10px 36px;
     width: 100%;
     outline: none;
@@ -4292,12 +4187,12 @@ input, textarea, [contenteditable="true"] {
   }
 
   .collection-search-input::placeholder {
-    color: hsl(255 18% 42%);
+    color: hsl(var(--muted-foreground));
   }
 
   .collection-search-input:focus {
-    border-color: hsl(180 50% 45%);
-    box-shadow: 0 0 0 2px hsl(180 100% 50% / 0.1);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
   }
 
   /* Sort button */
@@ -4306,19 +4201,18 @@ input, textarea, [contenteditable="true"] {
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    border-radius: 8px;
-    background: hsl(256 35% 22%);
-    border: 1.5px solid hsl(255 35% 32%);
-    color: hsl(255 20% 68%);
+    border-radius: 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
   .collection-sort-btn:active {
-    background: hsl(255 38% 28%);
-    border-color: hsl(255 45% 45%);
+    background: hsl(var(--muted));
   }
 
   /* Sort dropdown */
@@ -4366,19 +4260,17 @@ input, textarea, [contenteditable="true"] {
 
   /* ---- INVENTORY PET CARD ---- */
 
+  /* Atelier Collection Cards — White gallery grid */
   .inventory-slot {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 10px;
-    padding: 10px 6px 8px;
-    background: linear-gradient(180deg,
-      hsl(256 38% 19%) 0%,
-      hsl(252 35% 15%) 100%
-    );
-    border: 1.5px solid hsl(255 35% 28%);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 14px;
+    padding: 12px 6px 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
   }
@@ -4387,88 +4279,74 @@ input, textarea, [contenteditable="true"] {
     transform: scale(0.97);
   }
 
-  /* Rarity top accent bar */
+  /* Rarity top accent line — thin colored bar */
   .inventory-slot::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 10%;
-    right: 10%;
+    left: 20%;
+    right: 20%;
     height: 2px;
     border-radius: 0 0 2px 2px;
   }
 
   .inventory-slot.rarity-common::before {
-    background: hsl(220 10% 45%);
+    background: hsl(var(--rarity-common));
   }
 
   .inventory-slot.rarity-rare::before {
-    background: linear-gradient(90deg, transparent, hsl(210 70% 55%), transparent);
-    box-shadow: 0 0 6px hsl(210 80% 55% / 0.5);
+    background: hsl(var(--rarity-rare));
   }
 
   .inventory-slot.rarity-epic::before {
-    background: linear-gradient(90deg, transparent, hsl(280 70% 60%), transparent);
-    box-shadow: 0 0 8px hsl(280 80% 60% / 0.6);
+    background: hsl(var(--rarity-epic));
   }
 
   .inventory-slot.rarity-legendary::before {
-    background: linear-gradient(90deg, transparent, hsl(45 90% 55%), transparent);
-    box-shadow: 0 0 10px hsl(45 100% 55% / 0.7);
+    background: hsl(var(--rarity-legendary));
+    box-shadow: 0 0 8px hsl(var(--rarity-legendary) / 0.4);
   }
 
-  /* Unlocked slot - subtle glow */
+  /* Unlocked slot */
   .inventory-slot.unlocked {
-    border-color: hsl(255 35% 32%);
-    box-shadow:
-      inset 0 1px 0 hsl(255 30% 27%),
-      0 2px 8px hsl(0 0% 0% / 0.25);
+    border-color: hsl(var(--border));
+    box-shadow: var(--shadow-sm);
   }
 
   .inventory-slot.unlocked:active {
-    box-shadow:
-      inset 0 1px 0 hsl(255 30% 27%),
-      0 1px 4px hsl(0 0% 0% / 0.25);
+    box-shadow: var(--shadow-xs);
   }
 
-  /* Locked slot - dimmed */
+  /* Locked slot — faded */
   .inventory-slot.locked {
-    background: linear-gradient(180deg,
-      hsl(255 25% 20%) 0%,
-      hsl(252 22% 16%) 100%
-    );
-    border-color: hsl(255 22% 26%);
+    background: hsl(var(--background));
+    border-color: hsl(var(--border));
+    opacity: 0.7;
   }
 
-  /* Shop pet slot */
+  /* Shop bot slot */
+  .inventory-slot.shop-bot,
   .inventory-slot.shop-pet {
-    border-color: hsl(35 60% 40%);
-    background: linear-gradient(180deg,
-      hsl(35 25% 16%) 0%,
-      hsl(30 20% 12%) 100%
-    );
+    border-color: hsl(38 60% 80%);
+    background: hsl(48 80% 98%);
   }
 
+  .inventory-slot.shop-bot::before,
   .inventory-slot.shop-pet::before {
-    background: linear-gradient(90deg, transparent, hsl(35 80% 55%), transparent);
-    box-shadow: 0 0 8px hsl(35 90% 55% / 0.5);
+    background: hsl(var(--rarity-legendary));
   }
 
   /* Study hours gated slot */
   .inventory-slot.study-gated {
-    border-color: hsl(220 50% 38%);
-    background: linear-gradient(180deg,
-      hsl(220 25% 16%) 0%,
-      hsl(225 20% 12%) 100%
-    );
+    border-color: hsl(217 60% 85%);
+    background: hsl(217 80% 98%);
   }
 
   .inventory-slot.study-gated::before {
-    background: linear-gradient(90deg, transparent, hsl(220 70% 55%), transparent);
-    box-shadow: 0 0 8px hsl(220 80% 55% / 0.5);
+    background: hsl(var(--rarity-rare));
   }
 
-  /* Pet card sprite area */
+  /* Sprite area */
   .inventory-sprite-area {
     height: 52px;
     display: flex;
@@ -4478,114 +4356,110 @@ input, textarea, [contenteditable="true"] {
     position: relative;
   }
 
-  /* Pet card name */
-  .inventory-pet-name {
+  /* Bot card name */
+  .inventory-pet-name,
+  .inventory-bot-name {
     font-size: 11px;
-    font-weight: 600;
-    color: hsl(45 22% 82%);
+    font-weight: 500;
+    color: hsl(var(--foreground));
     text-align: center;
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    letter-spacing: 0.01em;
   }
 
-  .inventory-slot.locked .inventory-pet-name {
-    color: hsl(255 15% 50%);
+  .inventory-slot.locked .inventory-pet-name,
+  .inventory-slot.locked .inventory-bot-name {
+    color: hsl(var(--muted-foreground));
   }
 
-  /* Rarity indicator dot */
+  /* Rarity indicator dot — Atelier */
   .rarity-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     margin: 0 auto 3px;
   }
 
   .rarity-dot.common {
-    background: hsl(220 10% 45%);
+    background: hsl(var(--rarity-common));
   }
 
   .rarity-dot.rare {
-    background: hsl(210 70% 55%);
-    box-shadow: 0 0 4px hsl(210 80% 55% / 0.5);
+    background: hsl(var(--rarity-rare));
   }
 
   .rarity-dot.epic {
-    background: hsl(280 70% 60%);
-    box-shadow: 0 0 4px hsl(280 80% 60% / 0.5);
+    background: hsl(var(--rarity-epic));
   }
 
   .rarity-dot.legendary {
-    background: hsl(45 90% 55%);
-    box-shadow: 0 0 6px hsl(45 100% 55% / 0.6);
-    animation: legendary-dot-pulse 2s ease-in-out infinite;
+    background: hsl(var(--rarity-legendary));
+    box-shadow: 0 0 6px hsl(var(--rarity-legendary) / 0.5);
+    animation: legendary-dot-pulse 2.5s ease-in-out infinite;
   }
 
   @keyframes legendary-dot-pulse {
-    0%, 100% { box-shadow: 0 0 4px hsl(45 100% 55% / 0.4); }
-    50% { box-shadow: 0 0 10px hsl(45 100% 55% / 0.8); }
+    0%, 100% { box-shadow: 0 0 4px hsl(var(--rarity-legendary) / 0.3); }
+    50% { box-shadow: 0 0 10px hsl(var(--rarity-legendary) / 0.6); }
   }
 
-  /* Badge styles for inventory cards */
+  /* Atelier inventory badges */
   .inventory-badge {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 6px;
+    right: 6px;
     display: flex;
     align-items: center;
     gap: 2px;
     padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
 
   .inventory-badge.shop-badge {
-    background: linear-gradient(135deg, hsl(35 70% 45%), hsl(25 65% 40%));
-    color: hsl(45 100% 90%);
-    border: 1px solid hsl(35 60% 55%);
-    box-shadow: 0 0 6px hsl(35 80% 50% / 0.3);
+    background: hsl(38 92% 50%);
+    color: white;
+    border: none;
   }
 
   .inventory-badge.study-badge {
-    background: linear-gradient(135deg, hsl(220 60% 45%), hsl(230 55% 40%));
-    color: hsl(210 100% 90%);
-    border: 1px solid hsl(220 50% 55%);
-    box-shadow: 0 0 6px hsl(220 70% 50% / 0.3);
+    background: hsl(var(--rarity-rare));
+    color: white;
+    border: none;
   }
 
   .inventory-badge.level-badge {
-    background: hsl(260 20% 22%);
-    color: hsl(260 15% 55%);
-    border: 1px solid hsl(260 20% 30%);
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: none;
   }
 
-  /* Favorite heart in inventory */
   .inventory-fav {
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 6px;
+    left: 6px;
   }
 
-  /* Home active indicator in inventory */
   .inventory-home {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 6px;
+    right: 6px;
   }
 
-  /* Lock overlay for locked cards */
   .inventory-lock-overlay {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: hsl(260 20% 8% / 0.3);
-    border-radius: 10px;
+    background: hsl(var(--background) / 0.5);
+    border-radius: 14px;
   }
 
   /* ============================================
@@ -4593,34 +4467,25 @@ input, textarea, [contenteditable="true"] {
      Floating action button on home screen
      ============================================ */
 
+  /* Atelier Quick Focus FAB */
   .quick-focus-fab {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2px;
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
-    background: linear-gradient(
-      135deg,
-      hsl(260 65% 58%) 0%,
-      hsl(280 55% 48%) 100%
-    );
-    border: 2.5px solid hsl(260 50% 40%);
-    box-shadow:
-      0 4px 0 hsl(260 50% 30%),
-      0 6px 20px hsl(260 60% 40% / 0.4),
-      inset 0 1px 0 hsl(260 70% 75% / 0.3);
+    background: hsl(var(--primary));
+    border: none;
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   .quick-focus-fab:active {
-    transform: scale(0.93) translateY(2px);
-    box-shadow:
-      0 2px 0 hsl(260 50% 30%),
-      0 3px 10px hsl(260 60% 40% / 0.3),
-      inset 0 1px 0 hsl(260 70% 75% / 0.3);
+    transform: scale(0.93);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
   }
 
   /* ============================================
@@ -4631,38 +4496,22 @@ input, textarea, [contenteditable="true"] {
 
   /* ---- Preset Grid Buttons ---- */
 
+  /* Atelier Timer Preset Buttons */
   .timer-preset-btn {
     position: relative;
     overflow: hidden;
-    border: 2.5px solid hsl(40 30% 72%);
-    background: linear-gradient(180deg,
-      hsl(40 35% 96%) 0%,
-      hsl(38 28% 90%) 100%
-    );
+    border: 1px solid hsl(var(--border));
+    background: white;
     border-radius: 12px;
     padding: 10px 4px;
     text-align: center;
-    box-shadow:
-      0 3px 0 hsl(40 25% 60%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: var(--shadow-xs);
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Scan-line texture overlay — retro CRT feel */
   .timer-preset-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsl(0 0% 0% / 0.02) 2px,
-      hsl(0 0% 0% / 0.02) 4px
-    );
-    pointer-events: none;
-    border-radius: inherit;
+    display: none;
   }
 
   .timer-preset-btn:active:not(:disabled) {
@@ -4719,65 +4568,52 @@ input, textarea, [contenteditable="true"] {
 
   /* ---- Timer Header Pill (mode indicator) ---- */
 
+  /* Atelier Timer Header Pill */
   .timer-header-pill {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: 14px;
-    background: hsl(220 30% 20% / 0.35);
-    backdrop-filter: blur(24px) saturate(150%);
-    -webkit-backdrop-filter: blur(24px) saturate(150%);
-    border: 1.5px solid hsl(0 0% 100% / 0.18);
-    box-shadow:
-      0 4px 16px hsl(0 0% 0% / 0.12),
-      inset 0 1px 0 hsl(0 0% 100% / 0.1);
-    transition: background 0.5s ease-out, border-color 0.5s ease-out;
+    background: hsla(0 0% 100% / 0.75);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-sm);
+    transition: background 0.3s ease-out;
   }
 
   .timer-header-icon {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(180deg,
-      hsl(260 60% 68%) 0%,
-      hsl(260 55% 52%) 100%
-    );
-    border: 2px solid transparent;
-    box-shadow:
-      0 2px 0 hsl(260 50% 32%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
-    transition: background 0.5s ease-out, box-shadow 0.5s ease-out;
+    background: hsl(var(--primary));
+    border: none;
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
+    transition: background 0.3s ease-out;
   }
 
   .timer-sound-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 11px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: hsl(0 0% 100% / 0.1);
-    border: 2px solid hsl(0 0% 100% / 0.15);
-    box-shadow:
-      0 2px 0 hsl(0 0% 0% / 0.1),
-      inset 0 1px 0 hsl(0 0% 100% / 0.08);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    transition: transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
   .timer-sound-btn:active {
-    transform: translateY(2px);
-    box-shadow:
-      0 0px 0 hsl(0 0% 0% / 0.1),
-      inset 0 1px 0 hsl(0 0% 100% / 0.08);
+    transform: scale(0.93);
   }
 
-  /* ---- Circular Timer Ring Container ---- */
-
+  /* Atelier Timer Ring — clean, thin stroke */
   .timer-ring-container {
     position: relative;
     display: flex;
@@ -4785,202 +4621,123 @@ input, textarea, [contenteditable="true"] {
     align-items: center;
     padding: 20px;
     border-radius: 50%;
-    background: hsl(220 30% 20% / 0.22);
+    background: hsla(0 0% 100% / 0.6);
     backdrop-filter: blur(20px) saturate(150%);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1.5px solid hsl(0 0% 100% / 0.15);
-    box-shadow:
-      0 8px 32px hsl(0 0% 0% / 0.1),
-      inset 0 1px 0 hsl(0 0% 100% / 0.08);
-    transition: background 0.5s ease-out, border-color 0.5s ease-out, box-shadow 0.5s ease-out;
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-md);
+    transition: background 0.3s ease-out;
   }
 
-  /* Status badge below time */
+  /* Status badge */
   .timer-status-badge {
     display: inline-flex;
     align-items: center;
     padding: 3px 10px;
     border-radius: 8px;
-    background: hsl(0 0% 0% / 0.25);
-    border: 1px solid hsl(0 0% 100% / 0.15);
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
     font-size: 11px;
-    font-weight: 600;
-    color: hsl(0 0% 100% / 0.85);
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
     letter-spacing: 0.02em;
     margin-top: 6px;
-    text-shadow: 0 1px 3px hsl(0 0% 0% / 0.4);
   }
 
   .timer-status-badge.active {
-    background: color-mix(in srgb, var(--status-glow, hsl(260 50% 60%)) 15%, transparent);
-    border-color: color-mix(in srgb, var(--status-glow, hsl(260 50% 60%)) 25%, transparent);
-    color: var(--status-glow, hsl(260 70% 82%));
-    filter: brightness(1.1);
+    background: hsl(var(--primary) / 0.1);
+    border-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
   }
 
-  /* ---- Timer Control Buttons ---- */
-
+  /* Atelier Timer Control Buttons */
   .timer-btn-start {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 14px 32px;
-    border-radius: 14px;
-    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 16px;
+    font-weight: 600;
     font-size: 16px;
     color: white;
-    background: linear-gradient(180deg,
-      hsl(145 50% 52%) 0%,
-      hsl(145 50% 42%) 100%
-    );
-    border: 2.5px solid hsl(145 45% 34%);
-    box-shadow:
-      0 4px 0 hsl(145 45% 28%),
-      0 6px 16px hsl(145 50% 35% / 0.3),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    background: hsl(var(--primary));
+    border: none;
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-    overflow: hidden;
   }
 
-  .timer-btn-start::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsl(0 0% 100% / 0.04) 2px,
-      hsl(0 0% 100% / 0.04) 4px
-    );
-    pointer-events: none;
-    border-radius: inherit;
-  }
+  .timer-btn-start::after { display: none; }
 
   .timer-btn-start:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 0px 0 hsl(145 45% 28%),
-      0 2px 8px hsl(145 50% 35% / 0.2),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
   }
 
-  /* Pause variant */
+  /* Pause */
   .timer-btn-pause {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 14px 32px;
-    border-radius: 14px;
-    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 16px;
+    font-weight: 600;
     font-size: 16px;
     color: white;
-    background: linear-gradient(180deg,
-      hsl(35 80% 56%) 0%,
-      hsl(30 75% 46%) 100%
-    );
-    border: 2.5px solid hsl(30 65% 36%);
-    box-shadow:
-      0 4px 0 hsl(30 65% 30%),
-      0 6px 16px hsl(35 70% 40% / 0.3),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    background: hsl(38 92% 50%);
+    border: none;
+    box-shadow: 0 4px 16px hsl(38 92% 50% / 0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-    overflow: hidden;
   }
 
-  .timer-btn-pause::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsl(0 0% 100% / 0.04) 2px,
-      hsl(0 0% 100% / 0.04) 4px
-    );
-    pointer-events: none;
-    border-radius: inherit;
-  }
+  .timer-btn-pause::after { display: none; }
 
   .timer-btn-pause:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 0px 0 hsl(30 65% 30%),
-      0 2px 8px hsl(35 70% 40% / 0.2),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px hsl(38 92% 50% / 0.25);
   }
 
-  /* Secondary buttons (Stop / Skip) */
+  /* Secondary timer buttons */
   .timer-btn-secondary {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(180deg,
-      hsl(40 30% 95%) 0%,
-      hsl(38 25% 88%) 100%
-    );
-    border: 2.5px solid hsl(40 25% 70%);
-    box-shadow:
-      0 3px 0 hsl(40 20% 58%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-xs);
+    transition: transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-    overflow: hidden;
   }
 
-  .timer-btn-secondary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsl(0 0% 0% / 0.02) 2px,
-      hsl(0 0% 0% / 0.02) 4px
-    );
-    pointer-events: none;
-    border-radius: inherit;
-  }
+  .timer-btn-secondary::after { display: none; }
 
   .timer-btn-secondary:active {
-    transform: translateY(3px);
-    box-shadow:
-      0 0px 0 hsl(40 20% 58%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    transform: scale(0.93);
   }
 
   .timer-btn-secondary .timer-icon-stop {
-    color: hsl(350 55% 50%);
+    color: hsl(0 84% 60%);
   }
 
   .timer-btn-secondary .timer-icon-skip {
-    color: hsl(35 60% 45%);
+    color: hsl(var(--muted-foreground));
   }
-
-  /* ---- Timer progress ring glow ---- */
 
   .timer-ring-glow {
-    filter: drop-shadow(0 0 6px hsl(260 60% 60% / 0.4));
+    filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.25));
   }
 
-  /* ---- "Choose Focus Mode" label ---- */
-
+  /* Focus mode label */
   .timer-grid-label {
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: hsl(0 0% 100% / 0.45);
+    letter-spacing: 0.1em;
+    color: hsl(var(--muted-foreground));
     text-align: center;
     margin-bottom: 10px;
   }

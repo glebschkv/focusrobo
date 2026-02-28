@@ -99,7 +99,7 @@ export const BotCard = memo(({
             />
           </div>
         ) : (isUnavailable) ? (
-          <Lock className="w-6 h-6 text-[hsl(260,10%,35%)]" />
+          <Lock className="w-6 h-6 text-stone-300" />
         ) : bot.imageConfig ? (
           <BotPreview
             robot={bot}

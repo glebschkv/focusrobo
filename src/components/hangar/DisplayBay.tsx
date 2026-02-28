@@ -9,19 +9,18 @@ interface DisplayBayProps {
 }
 
 /**
- * DisplayBay — Small robot showcase pod.
- * Shows a miniature robot in a dimly lit bay.
- * Tappable to swap active robot.
+ * DisplayBay — Atelier mini robot card.
+ * Small floating robot on white, tappable to swap.
  */
 export const DisplayBay = memo(({ robotImage, robotName, isActive = false, onClick }: DisplayBayProps) => {
   return (
     <button
       className={cn(
-        "relative w-[72px] h-20 rounded-lg border flex items-center justify-center transition-all duration-300",
+        "relative w-[68px] h-[76px] rounded-xl border flex items-center justify-center transition-all duration-200",
         "touch-manipulation select-none active:scale-95",
         isActive
-          ? "border-cyan-400/50 bg-cyan-950/30 shadow-[0_0_12px_rgba(6,182,212,0.2)]"
-          : "border-slate-700/40 bg-slate-900/30 hover:border-slate-600/50"
+          ? "border-sky-300 bg-sky-50 shadow-sm"
+          : "border-stone-200 bg-white hover:border-stone-300"
       )}
       onClick={onClick}
     >
@@ -29,19 +28,19 @@ export const DisplayBay = memo(({ robotImage, robotName, isActive = false, onCli
         <img
           src={robotImage}
           alt={robotName || 'Robot'}
-          className="w-12 h-12 object-contain pixelated"
+          className="w-11 h-11 object-contain"
           style={{ imageRendering: 'pixelated' }}
           draggable={false}
         />
       ) : (
-        <div className="w-12 h-12 rounded-md flex items-center justify-center text-xl bg-slate-800/40 border border-slate-700/20">
+        <div className="w-11 h-11 rounded-lg flex items-center justify-center text-lg bg-stone-50 border border-stone-200">
           🤖
         </div>
       )}
 
-      {/* Active indicator dot */}
+      {/* Active dot */}
       {isActive && (
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(6,182,212,0.8)]" />
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-sky-500" />
       )}
     </button>
   );

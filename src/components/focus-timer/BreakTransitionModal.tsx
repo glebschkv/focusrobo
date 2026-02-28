@@ -133,8 +133,8 @@ export const BreakTransitionModal = ({
                   className={cn(
                     "p-3 rounded-xl text-left transition-all",
                     selectedDuration === option.duration
-                      ? "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 ring-2 ring-amber-400"
-                      : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-amber-50 ring-2 ring-amber-400"
+                      : "bg-stone-50 hover:bg-stone-100"
                   )}
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -151,8 +151,8 @@ export const BreakTransitionModal = ({
           <div className={cn(
             "rounded-xl p-3",
             isPremium
-              ? "bg-purple-50 dark:bg-purple-900/20"
-              : "bg-gray-50 dark:bg-gray-800"
+              ? "bg-purple-50"
+              : "bg-stone-50"
           )}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export const BreakTransitionModal = ({
                     "w-12 h-7 rounded-full transition-all relative",
                     autoStartEnabled
                       ? "bg-purple-500"
-                      : "bg-gray-300 dark:bg-gray-600"
+                      : "bg-stone-300"
                   )}
                 >
                   <div
@@ -193,7 +193,7 @@ export const BreakTransitionModal = ({
 
             {/* Auto-start countdown */}
             {isPremium && autoStartEnabled && (
-              <div className="mt-3 flex items-center gap-2 text-purple-600 dark:text-purple-400">
+              <div className="mt-3 flex items-center gap-2 text-purple-600">
                 <Sparkles className="w-4 h-4 animate-pulse" />
                 <span className="text-sm font-medium">
                   Starting in {autoStartCountdown}s...
@@ -212,7 +212,7 @@ export const BreakTransitionModal = ({
           <div className="flex gap-2 pt-2">
             <button
               onClick={onSkipBreak}
-              className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="flex-1 py-3 rounded-xl bg-stone-100 text-sm font-semibold hover:bg-stone-200 transition-colors"
             >
               Skip Break
             </button>

@@ -140,7 +140,7 @@ export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompact
                 {/* Expand indicator when compact */}
                 {isCompact && (
                   <ChevronUp
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 text-white/80 animate-bounce"
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 text-sky-500 animate-bounce"
                     strokeWidth={2.5}
                   />
                 )}

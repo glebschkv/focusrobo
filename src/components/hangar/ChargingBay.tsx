@@ -9,99 +9,82 @@ interface ChargingBayProps {
 }
 
 /**
- * ChargingBay — Central display pod for the user's active robot.
- * Shows a large robot illustration with energy/glow effects.
- * When isCharging (timer running), the bay pulses faster.
+ * ChargingBay — Atelier surrealist floating robot display.
+ * Robot floats on white canvas with impossible shadow and soft aura.
  */
-export const ChargingBay = memo(({ robotImage, robotName, isCharging = false, glowColor = '#06b6d4' }: ChargingBayProps) => {
-  const glowStyle = useMemo(() => ({
-    boxShadow: isCharging
-      ? `0 0 40px ${glowColor}40, 0 0 80px ${glowColor}20, inset 0 0 30px ${glowColor}15`
-      : `0 0 20px ${glowColor}20, 0 0 40px ${glowColor}10, inset 0 0 15px ${glowColor}08`,
-  }), [isCharging, glowColor]);
+export const ChargingBay = memo(({ robotImage, robotName, isCharging = false, glowColor = '#0EA5E9' }: ChargingBayProps) => {
+  const rarityAura = useMemo(() => {
+    if (!glowColor) return {};
+    return {
+      background: `radial-gradient(circle, ${glowColor}08 0%, ${glowColor}03 50%, transparent 70%)`,
+    };
+  }, [glowColor]);
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* Outer bay frame */}
+      {/* Surreal aura — subtle rarity glow bleeding into white space */}
       <div
-        className={cn(
-          "relative w-56 h-64 rounded-2xl border-2 flex items-center justify-center transition-all duration-700",
-          isCharging ? "border-cyan-400/50" : "border-cyan-900/30"
-        )}
-        style={glowStyle}
-      >
-        {/* Corner accents */}
-        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400/60 rounded-tl-lg" />
-        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400/60 rounded-tr-lg" />
-        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400/60 rounded-bl-lg" />
-        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400/60 rounded-br-lg" />
+        className="absolute w-72 h-72 rounded-full pointer-events-none"
+        style={rarityAura}
+      />
 
-        {/* Energy particles (when charging) */}
-        {isCharging && (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 rounded-full bg-cyan-400/60"
-                style={{
-                  left: `${15 + Math.random() * 70}%`,
-                  bottom: '-4px',
-                  animation: `float-up ${2 + Math.random() * 2}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Robot image or placeholder */}
-        <div className="relative z-10 flex flex-col items-center gap-3">
+      {/* Main robot container — no frame, floating in white space */}
+      <div className="relative flex flex-col items-center gap-4">
+        <div className="relative">
           {robotImage ? (
             <img
               src={robotImage}
               alt={robotName || 'Robot'}
               className={cn(
-                "w-32 h-32 object-contain pixelated transition-all duration-500",
-                isCharging && "drop-shadow-[0_0_12px_rgba(6,182,212,0.6)]"
+                "w-44 h-44 object-contain transition-all duration-700",
+                isCharging && "scale-[1.03]"
               )}
-              style={{ imageRendering: 'pixelated' }}
+              style={{
+                imageRendering: 'pixelated',
+                animation: 'atelier-float 4s ease-in-out infinite',
+                filter: isCharging ? `drop-shadow(0 0 20px ${glowColor}30)` : 'none',
+              }}
               draggable={false}
             />
           ) : (
-            <div
-              className={cn(
-                "w-32 h-32 rounded-xl flex items-center justify-center text-4xl transition-all duration-500",
-                "bg-gradient-to-br from-cyan-900/40 to-slate-800/60 border border-cyan-800/30",
-                isCharging && "shadow-[0_0_20px_rgba(6,182,212,0.3)]"
-              )}
-            >
+            <div className="w-44 h-44 rounded-2xl flex items-center justify-center text-5xl bg-stone-100 border border-stone-200">
               🤖
             </div>
           )}
 
-          {robotName && (
-            <div className="text-sm font-bold text-cyan-300/90 tracking-wider uppercase font-mono">
-              {robotName}
-            </div>
-          )}
+          {/* Surreal shadow — detached, soft, slightly offset */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              bottom: '-16px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '55%',
+              height: '8px',
+              borderRadius: '50%',
+              background: 'hsla(24, 10%, 10%, 0.06)',
+              filter: 'blur(6px)',
+              animation: 'atelier-shadow-pulse 4s ease-in-out infinite',
+            }}
+          />
         </div>
 
-        {/* Base platform glow */}
-        <div
-          className={cn(
-            "absolute bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-1 rounded-full transition-all duration-700",
-            isCharging ? "bg-cyan-400/40" : "bg-cyan-900/20"
-          )}
-        />
+        {/* Robot name — thin, uppercase, tracked */}
+        {robotName && (
+          <div className="text-xs font-medium tracking-[0.15em] uppercase text-stone-400">
+            {robotName}
+          </div>
+        )}
       </div>
 
-      {/* Float-up keyframes */}
       <style>{`
-        @keyframes float-up {
-          0% { transform: translateY(0) scale(1); opacity: 0; }
-          10% { opacity: 0.8; }
-          90% { opacity: 0.2; }
-          100% { transform: translateY(-250px) scale(0.5); opacity: 0; }
+        @keyframes atelier-float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes atelier-shadow-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
       `}</style>
     </div>

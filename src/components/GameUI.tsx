@@ -45,21 +45,11 @@ export const GameUI = () => {
     preloadTabComponents();
   }, []);
 
-  // Update meta theme-color to match current tab's top background color
+  // Atelier — unified white theme color for all tabs
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) return;
-
-    const themeColors: Record<string, string> = {
-      home: '#0a0a1a',
-      timer: 'hsl(252, 40%, 16%)',
-      collection: 'hsl(252, 40%, 16%)',
-      settings: 'hsl(260, 30%, 12%)',
-      shop: 'hsl(45, 50%, 92%)',
-      challenges: 'hsl(280, 25%, 8%)',
-    };
-
-    meta.setAttribute('content', themeColors[currentTab] || '#0a0a1a');
+    meta.setAttribute('content', '#FAFAF9');
   }, [currentTab]);
 
   // Listen for programmatic tab switches (e.g. from collection "Buy from Shop" button)
@@ -104,18 +94,11 @@ export const GameUI = () => {
             onSettingsClick={() => setCurrentTab("settings")}
           />
 
-          {/* Full Screen Content */}
+          {/* Full Screen Content — unified Atelier white canvas */}
           {currentTab !== "home" && (
             <div
-              className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 ${
+              className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 bg-[#FAFAF9] ${
                 currentTab === "timer" ? "" : "pt-safe"
-              } ${
-                currentTab === "challenges" ? "bg-[hsl(280,25%,8%)]" :
-                currentTab === "shop" ? "bg-[hsl(45,50%,92%)]" :
-                currentTab === "collection" ? "collection-page-bg" :
-                currentTab === "timer" ? "" :
-                currentTab === "settings" ? "bg-[hsl(260,30%,12%)]" :
-                "bg-background"
               }`}
             >
               <TabContent
