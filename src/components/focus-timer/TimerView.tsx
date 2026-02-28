@@ -23,7 +23,6 @@ import { TimerDisplay } from "./TimerDisplay";
 import { TimerControls } from "./TimerControls";
 import { TimerPresetGrid } from "./TimerPresetGrid";
 import { BackgroundThemeSwitcher } from "./BackgroundThemeSwitcher";
-import { TimerPetSprite } from "./TimerPetSprite";
 import { FocusShieldNudge } from "./FocusShieldNudge";
 import { TimerState, TimerPreset } from "./constants";
 
@@ -67,9 +66,7 @@ export const TimerView = ({
 }: TimerViewProps) => {
   return (
     <div className="relative z-10 flex flex-col items-center justify-start px-4 pb-32">
-      {/* Pet sprite + Timer display — the hero section, always at top */}
-      <TimerPetSprite isRunning={timerState.isRunning} />
-
+      {/* Timer display — the hero section, always at top */}
       <TimerDisplay
         preset={selectedPreset}
         timeLeft={displayTime}
