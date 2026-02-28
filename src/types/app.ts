@@ -153,11 +153,12 @@ export type ModalType =
   | 'settings'
   | 'achievements'
   | 'levelUp'
-  | 'petDetail'
+  | 'botDetail'
   | 'purchase'
   | 'premium'
   | 'streak'
   | 'rewards'
+  | 'petDetail' // backward-compat alias for botDetail
   | null;
 
 /**
@@ -180,12 +181,22 @@ export interface NavigationState {
  * Collection store state
  */
 export interface CollectionState {
-  ownedPets: string[];
+  ownedBots: string[];
   ownedBackgrounds: string[];
-  activePetId: string | null;
+  activeBotId: string | null;
   activeBackgroundId: string | null;
-  addPet: (petId: string) => void;
+  addBot: (botId: string) => void;
   addBackground: (backgroundId: string) => void;
-  setActivePet: (petId: string) => void;
+  setActiveBot: (botId: string) => void;
   setActiveBackground: (backgroundId: string) => void;
+
+  // Backward-compat aliases
+  /** @deprecated Use ownedBots */
+  ownedPets: string[];
+  /** @deprecated Use activeBotId */
+  activePetId: string | null;
+  /** @deprecated Use addBot */
+  addPet: (botId: string) => void;
+  /** @deprecated Use setActiveBot */
+  setActivePet: (botId: string) => void;
 }

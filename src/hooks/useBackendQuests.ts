@@ -26,15 +26,15 @@ const DAILY_QUEST_TEMPLATES: QuestTemplate[] = [
     rewards: [{ type: 'xp' as const, amount: 100, description: "+100 XP" }]
   },
   {
-    title: "Pet Companion",
+    title: "Bot Companion",
     description: "Interact with 3 different pets",
-    objectives: [{ type: 'pet_interaction', target: 3, description: "Interact with 3 pets" }],
+    objectives: [{ type: 'bot_interaction', target: 3, description: "Interact with 3 pets" }],
     rewards: [{ type: 'xp' as const, amount: 75, description: "+75 XP" }]
   },
   {
     title: "Bond Builder",
-    description: "Increase bond level with any pet",
-    objectives: [{ type: 'bond_level', target: 1, description: "Level up a pet bond" }],
+    description: "Increase bond level with any bot",
+    objectives: [{ type: 'bond_level', target: 1, description: "Level up a bot bond" }],
     rewards: [{ type: 'xp' as const, amount: 150, description: "+150 XP" }]
   },
   {
@@ -53,7 +53,7 @@ const WEEKLY_QUEST_TEMPLATES: QuestTemplate[] = [
     rewards: [{ type: 'xp' as const, amount: 500, description: "+500 XP" }]
   },
   {
-    title: "Pet Collector",
+    title: "Bot Collector",
     description: "Unlock 2 new pets",
     objectives: [{ type: 'collection', target: 2, description: "Unlock 2 new pets" }],
     rewards: [{ type: 'xp' as const, amount: 300, description: "+300 XP" }]
@@ -71,7 +71,7 @@ const STORY_QUESTS = [
     id: 'story-1',
     title: "Welcome to Paradise",
     description: "Begin your journey by meeting your first companion",
-    objectives: [{ type: 'pet_interaction', target: 1, description: "Meet your first pet" }],
+    objectives: [{ type: 'bot_interaction', target: 1, description: "Activate your first bot" }],
     rewards: [{ type: 'pet_unlock', itemId: 'panda', description: "Unlock Panda companion" }],
     unlockLevel: 1,
     storylineChapter: 1

@@ -75,7 +75,7 @@ function clearUserData() {
     'pet_paradise_daily_login',
 
     // ── Hardcoded legacy keys (hooks that bypass STORAGE_KEYS) ──
-    'pet-bond-data',           // useBondSystem
+    'bot-bond-data',           // useBondSystem
     'quest-system-data',       // useQuestSystem
     'petIsland_boosterSystem', // useCoinBooster
 

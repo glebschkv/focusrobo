@@ -15,14 +15,15 @@ import type { Rarity } from './rewards';
  */
 export type ShopCategory =
   | 'featured'
-  | 'pets'
+  | 'bots'
   | 'customize'
   | 'powerups'
   | 'backgrounds'
   | 'utilities'
   | 'coins'
   | 'bundles'
-  | 'inventory';
+  | 'inventory'
+  | 'pets'; // backward-compat alias for bots
 
 // ============================================================================
 // Base Shop Item Types
@@ -97,14 +98,14 @@ export interface StarterBundle extends ShopItem {
 }
 
 /**
- * Bundle of pets or backgrounds purchasable with coins
+ * Bundle of bots or backgrounds purchasable with coins
  */
 export interface Bundle extends ShopItem {
   category: 'bundles';
-  /** IDs of items included (pet IDs or background IDs) */
+  /** IDs of items included (bot IDs or background IDs) */
   itemIds: string[];
   /** What kind of items this bundle contains */
-  bundleType: 'pets' | 'backgrounds';
+  bundleType: 'bots' | 'backgrounds';
   /** Preview images for the bundle carousel */
   previewImages?: string[];
   totalValue: number;
@@ -187,7 +188,7 @@ export interface ShopCategoryDef {
  */
 export interface OwnedItems {
   backgrounds: string[];
-  pets: string[];
+  bots: string[];
   boosters: ActiveBooster[];
   streakFreezes: number;
 }

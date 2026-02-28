@@ -12,7 +12,7 @@ import {
   ShopItem,
   Bundle,
 } from "@/data/ShopData";
-import { AnimalData } from "@/data/AnimalDatabase";
+import { RobotData } from "@/data/RobotDatabase";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 import { toast } from "sonner";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
@@ -31,11 +31,11 @@ const CATEGORY_ICONS: Record<string, typeof Star> = {
 
 export const Shop = () => {
   const [activeCategory, setActiveCategory] = useState<ShopCategory>("featured");
-  const [selectedItem, setSelectedItem] = useState<ShopItem | AnimalData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ShopItem | RobotData | null>(null);
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [unlockedAnimal, setUnlockedAnimal] = useState<AnimalData | null>(null);
+  const [unlockedBot, setUnlockedAnimal] = useState<RobotData | null>(null);
   const [showInventory, setShowInventory] = useState(false);
 
   const {
@@ -79,10 +79,10 @@ export const Shop = () => {
     setIsPurchasing(true);
     try {
       let result;
-      if ('biome' in selectedItem) {
+      if ('zone' in selectedItem) {
         result = await purchaseCharacter(selectedItem.id);
       } else if ('itemIds' in selectedItem) {
-        // Handle pet or background bundle purchase
+        // Handle bot or background bundle purchase
         result = await purchaseBundle(selectedItem.id);
       } else {
         result = await purchaseItem(selectedItem.id, activeCategory);
@@ -92,12 +92,12 @@ export const Shop = () => {
         playSoundEffect('purchase');
         setShowPurchaseConfirm(false);
         // Show unlock celebration for character purchases
-        if ('biome' in selectedItem) {
+        if ('zone' in selectedItem) {
           // Delay unlock modal so PurchaseConfirmDialog's close animation
           // finishes and its portal unmounts — opening two Radix Dialogs
           // simultaneously causes the second dialog's content to not render.
-          const animal = selectedItem as AnimalData;
-          setTimeout(() => setUnlockedAnimal(animal), 350);
+          const bot = selectedItem as RobotData;
+          setTimeout(() => setUnlockedBot(bot), 350);
         } else {
           toast.success(result.message);
         }
@@ -253,7 +253,7 @@ export const Shop = () => {
       <PurchaseConfirmDialog
         open={showPurchaseConfirm}
         onOpenChange={setShowPurchaseConfirm}
-        selectedItem={selectedItem as ShopItem | AnimalData | Bundle | null}
+        selectedItem={selectedItem as ShopItem | RobotData | Bundle | null}
         onPurchase={handlePurchase}
         canAfford={canAfford}
         coinBalance={coinBalance}
@@ -262,8 +262,8 @@ export const Shop = () => {
 
       {/* Character Unlock Celebration Modal */}
       <CharacterUnlockModal
-        animal={unlockedAnimal}
-        open={!!unlockedAnimal}
+        bot={unlockedBot}
+        open={!!unlockedBot}
         onClose={() => setUnlockedAnimal(null)}
       />
 

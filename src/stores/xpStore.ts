@@ -2,7 +2,7 @@
  * XP Store
  *
  * Manages the user's experience points, levels, and progression. Includes
- * unlocked animals and available biomes. Uses Zustand with persistence.
+ * unlocked robots and available zones. Uses Zustand with persistence.
  *
  * @module stores/xpStore
  *
@@ -11,7 +11,7 @@
  * import { useXPStore, useCurrentLevel } from '@/stores/xpStore';
  *
  * // In a component
- * const { addXP, currentLevel, unlockedAnimals } = useXPStore();
+ * const { addXP, currentLevel, unlockedRobots } = useXPStore();
  *
  * // Award XP for completing a session
  * addXP(100);
@@ -50,19 +50,19 @@ export interface XPState {
   currentLevel: number;
   xpToNextLevel: number;
   totalXPForCurrentLevel: number;
-  unlockedAnimals: string[];
-  currentBiome: string;
-  availableBiomes: string[];
+  unlockedRobots: string[];
+  currentZone: string;
+  availableZones: string[];
 }
 
 interface XPStore extends XPState {
   setXP: (xp: number) => void;
   addXP: (amount: number) => void;
   setLevel: (level: number) => void;
-  addAnimal: (animalName: string) => void;
-  addAnimals: (animalNames: string[]) => void;
-  switchBiome: (biomeName: string) => void;
-  addBiome: (biomeName: string) => void;
+  addRobot: (robotName: string) => void;
+  addRobots: (robotNames: string[]) => void;
+  switchZone: (zoneName: string) => void;
+  addZone: (zoneName: string) => void;
   updateState: (partial: Partial<XPState>) => void;
   resetXP: () => void;
 }
@@ -72,9 +72,9 @@ const initialState: XPState = {
   currentLevel: 0,
   xpToNextLevel: 15,
   totalXPForCurrentLevel: 0,
-  unlockedAnimals: [],
-  currentBiome: 'Snow',
-  availableBiomes: ['Snow'],
+  unlockedRobots: [],
+  currentZone: 'Assembly Line',
+  availableZones: ['Assembly Line'],
 };
 
 export const useXPStore = create<XPStore>()(
@@ -89,19 +89,19 @@ export const useXPStore = create<XPStore>()(
           const nextLevelXP = level >= MAX_LEVEL ? xpRequired : calculateLevelRequirement(level + 1);
           set({ currentLevel: level, totalXPForCurrentLevel: xpRequired, xpToNextLevel: nextLevelXP - get().currentXP });
         },
-        addAnimal: (name) => {
-          const { unlockedAnimals } = get();
-          if (!unlockedAnimals.includes(name)) set({ unlockedAnimals: [...unlockedAnimals, name] });
+        addRobot: (name) => {
+          const { unlockedRobots } = get();
+          if (!unlockedRobots.includes(name)) set({ unlockedRobots: [...unlockedRobots, name] });
         },
-        addAnimals: (names) => {
-          const { unlockedAnimals } = get();
-          const newAnimals = names.filter(n => !unlockedAnimals.includes(n));
-          if (newAnimals.length > 0) set({ unlockedAnimals: [...unlockedAnimals, ...newAnimals] });
+        addRobots: (names) => {
+          const { unlockedRobots } = get();
+          const newAnimals = names.filter(n => !unlockedRobots.includes(n));
+          if (newAnimals.length > 0) set({ unlockedRobots: [...unlockedRobots, ...newAnimals] });
         },
-        switchBiome: (name) => { if (get().availableBiomes.includes(name)) set({ currentBiome: name }); },
-        addBiome: (name) => {
-          const { availableBiomes } = get();
-          if (!availableBiomes.includes(name)) set({ availableBiomes: [...availableBiomes, name] });
+        switchZone: (name) => { if (get().availableZones.includes(name)) set({ currentZone: name }); },
+        addZone: (name) => {
+          const { availableZones } = get();
+          if (!availableZones.includes(name)) set({ availableZones: [...availableZones, name] });
         },
         updateState: (partial) => set((s) => ({ ...s, ...partial })),
         resetXP: () => set(initialState),
@@ -117,7 +117,7 @@ export const useXPStore = create<XPStore>()(
           if (!state) {
             // Try to recover from legacy storage key
             try {
-              const legacy = localStorage.getItem('petIsland_xpSystem');
+              const legacy = localStorage.getItem('botblock_xpSystem');
               if (legacy) {
                 let parsed = JSON.parse(legacy);
                 // Handle Zustand's wrapped format
@@ -129,7 +129,7 @@ export const useXPStore = create<XPStore>()(
                 if (validated.success) {
                   xpLogger.debug('Migrated XP data from legacy storage');
                   // Clean up legacy key after migration
-                  localStorage.removeItem('petIsland_xpSystem');
+                  localStorage.removeItem('botblock_xpSystem');
                   return validated.data;
                 }
               }
@@ -155,9 +155,14 @@ export const useXPStore = create<XPStore>()(
 // Selector hooks for efficient subscriptions
 export const useCurrentXP = () => useXPStore((s) => s.currentXP);
 export const useCurrentLevel = () => useXPStore((s) => s.currentLevel);
-export const useUnlockedAnimals = () => useXPStore((s) => s.unlockedAnimals);
-export const useCurrentBiome = () => useXPStore((s) => s.currentBiome);
-export const useAvailableBiomes = () => useXPStore((s) => s.availableBiomes);
+export const useUnlockedRobots = () => useXPStore((s) => s.unlockedRobots);
+export const useCurrentZone = () => useXPStore((s) => s.currentZone);
+export const useAvailableZones = () => useXPStore((s) => s.availableZones);
+
+// Backward compatibility aliases
+export const useUnlockedAnimals = useUnlockedRobots;
+export const useCurrentBiome = useCurrentZone;
+export const useAvailableBiomes = useAvailableZones;
 
 // Subscribe to XP changes for cross-component communication
 // This replaces the window.dispatchEvent pattern

@@ -3,73 +3,88 @@ import { persist } from 'zustand/middleware';
 import { collectionLogger } from '@/lib/logger';
 
 interface CollectionState {
-  // Active pets shown on home screen
-  activeHomePets: string[];
-  // Favorite pets
+  // Active bots shown on home screen
+  activeHomeBots: string[];
+  // Favorite bots
   favorites: string[];
 
   // Actions
-  toggleHomeActive: (petId: string) => void;
-  toggleFavorite: (petId: string) => void;
-  setActiveHomePets: (petIds: string[]) => void;
-  setFavorites: (petIds: string[]) => void;
+  toggleHomeActive: (botId: string) => void;
+  toggleFavorite: (botId: string) => void;
+  setActiveHomeBots: (botIds: string[]) => void;
+  setFavorites: (botIds: string[]) => void;
 
   // Selectors
-  isPetHomeActive: (petId: string) => boolean;
-  isPetFavorite: (petId: string) => boolean;
+  isBotHomeActive: (botId: string) => boolean;
+  isBotFavorite: (botId: string) => boolean;
+
+  // Backward-compat aliases
+  activeHomePets: string[];
+  setActiveHomePets: (botIds: string[]) => void;
+  isPetHomeActive: (botId: string) => boolean;
+  isPetFavorite: (botId: string) => boolean;
 }
 
 export const useCollectionStore = create<CollectionState>()(
   persist(
     (set, get) => ({
-      activeHomePets: ['hare'], // Default pet
+      activeHomeBots: ['bolt-bot'], // Default bot
       favorites: [],
 
-      toggleHomeActive: (petId) => {
-        const { activeHomePets } = get();
-        const newPets = activeHomePets.includes(petId)
-          ? activeHomePets.filter(id => id !== petId)
-          : [...activeHomePets, petId];
-        set({ activeHomePets: newPets });
-        collectionLogger.debug('Active home pets updated:', newPets);
+      toggleHomeActive: (botId) => {
+        const { activeHomeBots } = get();
+        const newBots = activeHomeBots.includes(botId)
+          ? activeHomeBots.filter(id => id !== botId)
+          : [...activeHomeBots, botId];
+        set({ activeHomeBots: newBots });
+        collectionLogger.debug('Active home bots updated:', newBots);
       },
 
-      toggleFavorite: (petId) => {
+      toggleFavorite: (botId) => {
         const { favorites } = get();
-        const newFavorites = favorites.includes(petId)
-          ? favorites.filter(id => id !== petId)
-          : [...favorites, petId];
+        const newFavorites = favorites.includes(botId)
+          ? favorites.filter(id => id !== botId)
+          : [...favorites, botId];
         set({ favorites: newFavorites });
         collectionLogger.debug('Favorites updated:', newFavorites);
       },
 
-      setActiveHomePets: (petIds) => {
-        set({ activeHomePets: petIds });
-        collectionLogger.debug('Active home pets set:', petIds);
+      setActiveHomeBots: (botIds) => {
+        set({ activeHomeBots: botIds });
+        collectionLogger.debug('Active home bots set:', botIds);
       },
 
-      setFavorites: (petIds) => {
-        set({ favorites: petIds });
-        collectionLogger.debug('Favorites set:', petIds);
+      setFavorites: (botIds) => {
+        set({ favorites: botIds });
+        collectionLogger.debug('Favorites set:', botIds);
       },
 
       // Selectors
-      isPetHomeActive: (petId) => get().activeHomePets.includes(petId),
-      isPetFavorite: (petId) => get().favorites.includes(petId),
+      isBotHomeActive: (botId) => get().activeHomeBots.includes(botId),
+      isBotFavorite: (botId) => get().favorites.includes(botId),
+
+      // Backward-compat aliases
+      get activeHomePets() { return get().activeHomeBots; },
+      setActiveHomePets: (botIds) => {
+        set({ activeHomeBots: botIds });
+        collectionLogger.debug('Active home bots set:', botIds);
+      },
+      isPetHomeActive: (botId) => get().activeHomeBots.includes(botId),
+      isPetFavorite: (botId) => get().favorites.includes(botId),
     }),
     {
-      name: 'petparadise-collection',
+      name: 'botblock-collection',
       // Migrate from old localStorage keys
       onRehydrateStorage: () => (state) => {
         if (state) {
           // Try to migrate from old storage keys if store is empty
-          if (state.activeHomePets.length === 1 && state.activeHomePets[0] === 'hare') {
+          if (state.activeHomeBots.length === 1 && state.activeHomeBots[0] === 'hare') {
             try {
-              const oldActivePets = localStorage.getItem('petparadise-active-home-pets');
-              if (oldActivePets) {
-                const parsed = JSON.parse(oldActivePets);
+              const oldActiveBots = localStorage.getItem('botblock-active-home-bots');
+              if (oldActiveBots) {
+                const parsed = JSON.parse(oldActiveBots);
                 if (Array.isArray(parsed) && parsed.length > 0) {
-                  state.activeHomePets = parsed;
+                  state.activeHomeBots = parsed;
                 }
               }
             } catch {
@@ -79,7 +94,7 @@ export const useCollectionStore = create<CollectionState>()(
 
           if (state.favorites.length === 0) {
             try {
-              const oldFavorites = localStorage.getItem('petparadise-favorites');
+              const oldFavorites = localStorage.getItem('botblock-favorites');
               if (oldFavorites) {
                 const parsed = JSON.parse(oldFavorites);
                 if (Array.isArray(parsed)) {
@@ -99,5 +114,8 @@ export const useCollectionStore = create<CollectionState>()(
 );
 
 // Selector hooks for optimized re-renders
-export const useActiveHomePets = () => useCollectionStore((state) => state.activeHomePets);
+export const useActiveHomeBots = () => useCollectionStore((state) => state.activeHomeBots);
 export const useFavorites = () => useCollectionStore((state) => state.favorites);
+
+// Backward-compat alias
+export const useActiveHomePets = useActiveHomeBots;

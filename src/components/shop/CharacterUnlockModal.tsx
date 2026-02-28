@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Sparkles, Star, PartyPopper } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AnimalData } from '@/data/AnimalDatabase';
+import { RobotData } from '@/data/RobotDatabase';
 import { SpritePreview } from './ShopPreviewComponents';
 
 interface CharacterUnlockModalProps {
-  animal: AnimalData | null;
+  bot: RobotData | null;
   open: boolean;
   onClose: () => void;
 }
@@ -59,14 +59,14 @@ const RARITY_STARS: Record<string, number> = {
 };
 
 export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
-  animal,
+  bot,
   open,
   onClose,
 }) => {
   const [phase, setPhase] = useState<'enter' | 'reveal' | 'idle'>('enter');
 
   useEffect(() => {
-    if (open && animal) {
+    if (open && bot) {
       setPhase('enter');
       const revealTimer = setTimeout(() => setPhase('reveal'), 100);
       const idleTimer = setTimeout(() => setPhase('idle'), 1100);
@@ -75,15 +75,15 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
         clearTimeout(idleTimer);
       };
     }
-  }, [open, animal]);
+  }, [open, bot]);
 
-  if (!animal) return null;
+  if (!bot) return null;
 
-  const style = RARITY_STYLES[animal.rarity];
-  const starCount = RARITY_STARS[animal.rarity] ?? 1;
+  const style = RARITY_STYLES[bot.rarity];
+  const starCount = RARITY_STARS[bot.rarity] ?? 1;
   const isAnimating = phase === 'reveal';
-  const spriteScale = animal.spriteConfig
-    ? Math.min(3, 100 / Math.max(animal.spriteConfig.frameWidth, animal.spriteConfig.frameHeight))
+  const spriteScale = bot.imageConfig
+    ? Math.min(3, 100 / Math.max(bot.imageConfig?.size || 64, bot.imageConfig?.size || 64))
     : 1;
 
   return (
@@ -95,7 +95,7 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
         )}
       >
         <VisuallyHidden>
-          <DialogTitle>New Pet Unlocked</DialogTitle>
+          <DialogTitle>New Bot Unlocked</DialogTitle>
         </VisuallyHidden>
 
         {/* Scanlines overlay */}
@@ -143,7 +143,7 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
           <div className="flex items-center justify-center gap-2 mb-4">
             <PartyPopper className="w-5 h-5 text-yellow-400" />
             <span className="text-sm font-bold retro-pixel-text retro-neon-yellow uppercase tracking-wider">
-              New Pet Unlocked!
+              New Bot Unlocked!
             </span>
             <PartyPopper className="w-5 h-5 text-yellow-400" />
           </div>
@@ -160,10 +160,10 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
               isAnimating && "animate-bounce"
             )}
           >
-            {animal.spriteConfig ? (
-              <SpritePreview animal={animal} scale={spriteScale} />
+            {bot.imageConfig ? (
+              <SpritePreview robot={bot} scale={spriteScale} />
             ) : (
-              <span className="text-5xl">{animal.emoji}</span>
+              <span className="text-5xl">{bot.icon}</span>
             )}
 
             {/* Shine sweep */}
@@ -190,12 +190,12 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
                 key={i}
                 className={cn(
                   "w-3 h-3 text-white fill-white",
-                  animal.rarity === 'legendary' && "animate-pulse"
+                  bot.rarity === 'legendary' && "animate-pulse"
                 )}
               />
             ))}
             <span className="text-xs font-bold uppercase text-white ml-0.5">
-              {animal.rarity}
+              {bot.rarity}
             </span>
           </div>
 
@@ -206,18 +206,18 @@ export const CharacterUnlockModal: React.FC<CharacterUnlockModalProps> = ({
               style.neon
             )}
           >
-            {animal.name}
+            {bot.name}
           </h2>
 
           {/* Description */}
           <p className="text-sm text-purple-300/80 mb-2 px-2 leading-relaxed">
-            {animal.description}
+            {bot.description}
           </p>
 
           {/* Abilities */}
-          {animal.abilities.length > 0 && (
+          {bot.abilities.length > 0 && (
             <div className="flex flex-wrap justify-center gap-1.5 mb-5">
-              {animal.abilities.map((ability) => (
+              {bot.abilities.map((ability) => (
                 <span
                   key={ability}
                   className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-white/10 text-purple-200/80 border border-white/10"

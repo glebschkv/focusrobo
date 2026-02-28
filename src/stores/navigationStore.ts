@@ -20,7 +20,7 @@ export type MainTab = 'home' | 'timer' | 'collection' | 'shop' | 'settings';
 // Modal types that can be opened from anywhere
 export type ModalType =
   | 'none'
-  | 'pet-detail'
+  | 'bot-detail'
   | 'background-detail'
   | 'achievement'
   | 'quest'

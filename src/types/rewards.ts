@@ -15,7 +15,7 @@
 export type RewardType =
   | 'xp'
   | 'coins'
-  | 'pet'
+  | 'bot'
   | 'background'
   | 'badge'
   | 'title'
@@ -78,7 +78,7 @@ export interface XPReward {
  * Reward unlocked when leveling up
  */
 export interface UnlockedReward {
-  type: 'animal' | 'biome';
+  type: 'robot' | 'zone';
   name: string;
   description: string;
   level: number;
@@ -179,7 +179,7 @@ export interface LevelUpResult {
  * Reward unlocked at a specific level
  */
 export interface LevelReward {
-  type: 'pet' | 'biome' | 'background' | 'badge' | 'feature';
+  type: 'bot' | 'zone' | 'background' | 'badge' | 'feature';
   id: string;
   name: string;
   description: string;
@@ -195,7 +195,7 @@ export interface LevelReward {
  * Battle pass tier reward
  */
 export interface BattlePassReward {
-  type: RewardType | 'pet' | 'background' | 'badge' | 'streak_freeze' | 'booster';
+  type: RewardType | 'bot' | 'background' | 'badge' | 'streak_freeze' | 'booster';
   amount?: number;
   itemId?: string;
   itemName: string;

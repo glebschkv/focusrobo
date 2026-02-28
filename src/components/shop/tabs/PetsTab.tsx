@@ -3,7 +3,7 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, PREMIUM_BACKGROUNDS, ShopCategory } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { getCoinExclusiveAnimals, AnimalData } from "@/data/AnimalDatabase";
+import { getCoinExclusiveRobots, RobotData } from "@/data/RobotDatabase";
 import { toast } from "sonner";
 import { SpritePreview, BackgroundPreview } from "../ShopPreviewComponents";
 import { RARITY_COLORS, RARITY_BG, RARITY_BORDER, RARITY_GLOW } from "../styles";
@@ -14,7 +14,7 @@ interface PetsTabProps {
   inventory: ShopInventory;
   isOwned: (itemId: string, category: ShopCategory) => boolean;
   equipBackground: (backgroundId: string | null) => void;
-  setSelectedItem: (item: ShopItem | AnimalData | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -27,7 +27,7 @@ export const PetsTab = ({
   setShowPurchaseConfirm,
   canAfford,
 }: PetsTabProps) => {
-  const characters = getCoinExclusiveAnimals();
+  const characters = getCoinExclusiveRobots();
   const setHomeBackground = useThemeStore((state) => state.setHomeBackground);
 
   // Only show backgrounds that have real preview images
@@ -107,7 +107,7 @@ export const PetsTab = ({
                   <div className="h-16 mb-2 flex items-center justify-center overflow-hidden">
                     {character.spriteConfig ? (
                       <SpritePreview
-                        animal={character}
+                        robot={character}
                         scale={Math.min(2, 64 / Math.max(character.spriteConfig.frameWidth, character.spriteConfig.frameHeight))}
                       />
                     ) : (

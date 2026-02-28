@@ -1,11 +1,11 @@
 /**
- * PetCollectionGrid Component
+ * BotCollectionGrid Component
  *
- * Main collection view with pets and worlds/backgrounds tabs.
+ * Main collection view with bots and zones/backgrounds tabs.
  * Refactored to use smaller, focused child components for maintainability.
  *
  * Components extracted:
- * - WorldGrid: Biome selection
+ * - ZoneGrid: Zone selection
  * - BackgroundGrid: Premium backgrounds
  * - BackgroundDetailModal: Background purchase/equip modal
  */
@@ -14,67 +14,66 @@ import { useState, useMemo, useCallback, memo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCollection } from "@/hooks/useCollection";
 import { useAppState } from "@/contexts/AppStateContext";
-import { AnimalData, BIOME_DATABASE } from "@/data/AnimalDatabase";
+import { RobotData, ZONE_DATABASE } from "@/data/RobotDatabase";
 import { PREMIUM_BACKGROUNDS, PremiumBackground } from "@/data/ShopData";
 import { toast } from "sonner";
-import { CollectionFilters, PetSortOption } from "./collection/CollectionFilters";
-import { PetCard } from "./collection/PetCard";
-import { PetDetailModal } from "./collection/PetDetailModal";
-import { WorldGrid } from "./collection/WorldGrid";
+import { CollectionFilters, BotSortOption } from "./collection/CollectionFilters";
+import { BotCard } from "./collection/BotCard";
+import { BotDetailModal } from "./collection/BotDetailModal";
+import { ZoneGrid } from "./collection/ZoneGrid";
 import { BackgroundGrid } from "./collection/BackgroundGrid";
 import { BackgroundDetailModal } from "./collection/BackgroundDetailModal";
 import { useShopStore, useThemeStore } from "@/stores";
 
-// Map biome names to background theme IDs
-const BIOME_TO_BACKGROUND: Record<string, string> = {
-  'Meadow': 'day',
-  'Sunset': 'sunset',
-  'Night': 'night',
-  'Forest': 'forest',
-  'Snow': 'snow',
-  'City': 'city',
-  'Deep Ocean': 'deepocean',
+// Map zone names to background theme IDs
+const ZONE_TO_BACKGROUND: Record<string, string> = {
+  'Workshop': 'day',
+  'Solar Fields': 'sunset',
+  'Stealth Lab': 'night',
+  'Biotech Zone': 'forest',
+  'Assembly Line': 'snow',
+  'Cyber District': 'city',
 };
 
-// Memoized pet grid component for better performance
-const PetGrid = memo(({
-  pets,
+// Memoized bot grid component for better performance
+const BotGrid = memo(({
+  bots,
   isAnimalUnlocked,
   isShopExclusive,
   isStudyHoursGated,
   isAnimalFavorite,
   isAnimalHomeActive,
-  onPetClick,
+  onBotClick,
 }: {
-  pets: AnimalData[];
+  bots: RobotData[];
   isAnimalUnlocked: (id: string) => boolean;
   isShopExclusive: (id: string) => boolean;
   isStudyHoursGated: (id: string) => boolean;
   isAnimalFavorite: (id: string) => boolean;
   isAnimalHomeActive: (id: string) => boolean;
-  onPetClick: (pet: AnimalData) => void;
+  onBotClick: (bot: RobotData) => void;
 }) => {
   return (
     <div className="grid grid-cols-3 gap-3">
-      {pets.map((pet) => (
-        <PetCard
-          key={pet.id}
-          pet={pet}
-          isLocked={!isAnimalUnlocked(pet.id)}
-          isShopPet={isShopExclusive(pet.id)}
-          isStudyHoursGated={isStudyHoursGated(pet.id)}
-          isFavorited={isAnimalFavorite(pet.id)}
-          isHomeActive={isAnimalHomeActive(pet.id)}
-          onClick={() => onPetClick(pet)}
+      {bots.map((bot) => (
+        <BotCard
+          key={bot.id}
+          bot={bot}
+          isLocked={!isAnimalUnlocked(bot.id)}
+          isShopBot={isShopExclusive(bot.id)}
+          isStudyHoursGated={isStudyHoursGated(bot.id)}
+          isFavorited={isAnimalFavorite(bot.id)}
+          isHomeActive={isAnimalHomeActive(bot.id)}
+          onClick={() => onBotClick(bot)}
         />
       ))}
     </div>
   );
 });
 
-PetGrid.displayName = 'PetGrid';
+BotGrid.displayName = 'BotGrid';
 
-export const PetCollectionGrid = memo(() => {
+export const BotCollectionGrid = memo(() => {
   const {
     currentLevel,
     currentBiome,
@@ -102,9 +101,9 @@ export const PetCollectionGrid = memo(() => {
 
   // Local UI state
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOption, setSortOption] = useState<PetSortOption>("owned");
-  const [selectedPet, setSelectedPet] = useState<AnimalData | null>(null);
-  const [activeTab, setActiveTab] = useState<"pets" | "worlds">("pets");
+  const [sortOption, setSortOption] = useState<BotSortOption>("owned");
+  const [selectedBot, setSelectedBot] = useState<RobotData | null>(null);
+  const [activeTab, setActiveTab] = useState<"bots" | "zones">("bots");
   const [selectedBackground, setSelectedBackground] = useState<PremiumBackground | null>(null);
 
   // Handle equipping a background
@@ -123,32 +122,32 @@ export const PetCollectionGrid = memo(() => {
     }
   }, [equippedBackground, setEquippedBackground, setHomeBackground]);
 
-  // Handle switching biomes
+  // Handle switching zones
   const handleSwitchBiome = useCallback((biomeName: string) => {
     switchBiome(biomeName);
 
-    // Clear any equipped premium background when switching biomes
+    // Clear any equipped premium background when switching zones
     if (equippedBackground) {
       setEquippedBackground(null);
     }
 
-    // Use the biome's background image if available
-    const biome = BIOME_DATABASE.find(b => b.name === biomeName);
-    const backgroundTheme = biome?.backgroundImage || BIOME_TO_BACKGROUND[biomeName] || 'day';
+    // Use the zone's background image if available
+    const zone = ZONE_DATABASE.find(b => b.name === biomeName);
+    const backgroundTheme = zone?.backgroundImage || ZONE_TO_BACKGROUND[biomeName] || 'day';
     setHomeBackground(backgroundTheme);
   }, [switchBiome, equippedBackground, setEquippedBackground, setHomeBackground]);
 
-  // Handle navigation to shop tab (switches to shop and opens the pets category)
+  // Handle navigation to shop tab (switches to shop and opens the bots category)
   const handleNavigateToShop = useCallback(() => {
     window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'shop' }));
-    window.dispatchEvent(new CustomEvent('navigateToShopCategory', { detail: 'pets' }));
+    window.dispatchEvent(new CustomEvent('navigateToShopCategory', { detail: 'bots' }));
   }, []);
 
-  // Memoize filtered and sorted pets
-  const filteredPets = useMemo(() => {
-    const pets = filterAnimals(searchQuery, "all", "all");
+  // Memoize filtered and sorted bots
+  const filteredBots = useMemo(() => {
+    const bots = filterAnimals(searchQuery, "all", "all");
 
-    if (sortOption === "default") return pets;
+    if (sortOption === "default") return bots;
 
     const RARITY_RANK: Record<string, number> = {
       legendary: 0,
@@ -157,7 +156,7 @@ export const PetCollectionGrid = memo(() => {
       common: 3,
     };
 
-    return [...pets].sort((a, b) => {
+    return [...bots].sort((a, b) => {
       switch (sortOption) {
         case "name":
           return a.name.localeCompare(b.name);
@@ -180,19 +179,19 @@ export const PetCollectionGrid = memo(() => {
   }, [searchQuery, sortOption, filterAnimals, isAnimalUnlocked, isAnimalFavorite]);
 
   // Memoize handler to avoid recreating on every render
-  const handlePetClick = useCallback((pet: AnimalData) => {
-    setSelectedPet(pet);
+  const handleBotClick = useCallback((bot: RobotData) => {
+    setSelectedBot(bot);
   }, []);
 
   // Memoize stats calculations
-  const petsStats = useMemo(() => ({
-    unlocked: stats.unlockedAnimals + stats.shopPetsOwned,
-    total: stats.totalAnimals + stats.shopPetsTotal,
+  const botsStats = useMemo(() => ({
+    unlocked: stats.unlockedRobots + stats.shopBotsOwned,
+    total: stats.totalBots + stats.shopBotsTotal,
   }), [stats]);
 
-  const worldsStats = useMemo(() => ({
-    unlocked: BIOME_DATABASE.filter(b => b.unlockLevel <= currentLevel).length + ownedBackgrounds.length,
-    total: BIOME_DATABASE.length + PREMIUM_BACKGROUNDS.length,
+  const zonesStats = useMemo(() => ({
+    unlocked: ZONE_DATABASE.filter(b => b.unlockLevel <= currentLevel).length + ownedBackgrounds.length,
+    total: ZONE_DATABASE.length + PREMIUM_BACKGROUNDS.length,
   }), [currentLevel, ownedBackgrounds.length]);
 
   // Handle background detail modal close
@@ -217,38 +216,38 @@ export const PetCollectionGrid = memo(() => {
         onSearchChange={setSearchQuery}
         sortOption={sortOption}
         onSortChange={setSortOption}
-        petsStats={petsStats}
-        worldsStats={worldsStats}
+        botsStats={botsStats}
+        zonesStats={zonesStats}
       />
 
       {/* Content - Scrollable area that stops at taskbar */}
       <ScrollArea className="flex-1 min-h-0">
-        {activeTab === "pets" && (
+        {activeTab === "bots" && (
           <div className="px-4 pt-2 pb-28">
-            {filteredPets.length === 0 ? (
+            {filteredBots.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <span className="text-3xl mb-3">🔍</span>
-                <p className="text-sm font-semibold text-white mb-1">No pets found</p>
+                <p className="text-sm font-semibold text-white mb-1">No bots found</p>
                 <p className="text-xs text-purple-300/70">Try a different search or sort option</p>
               </div>
             ) : (
-              <PetGrid
-                pets={filteredPets}
+              <BotGrid
+                bots={filteredBots}
                 isAnimalUnlocked={isAnimalUnlocked}
                 isShopExclusive={isShopExclusive}
                 isStudyHoursGated={isStudyHoursGated}
                 isAnimalFavorite={isAnimalFavorite}
                 isAnimalHomeActive={isAnimalHomeActive}
-                onPetClick={handlePetClick}
+                onBotClick={handleBotClick}
               />
             )}
           </div>
         )}
 
-        {activeTab === "worlds" && (
+        {activeTab === "zones" && (
           <div className="px-4 pt-2 pb-28 space-y-4">
-            {/* Biome Worlds Section */}
-            <WorldGrid
+            {/* Zone Selection Section */}
+            <ZoneGrid
               currentLevel={currentLevel}
               currentBiome={currentBiome}
               equippedBackground={equippedBackground}
@@ -277,21 +276,21 @@ export const PetCollectionGrid = memo(() => {
         onNavigateToShop={handleNavigateToShop}
       />
 
-      {/* Pet Detail Modal */}
-      <PetDetailModal
-        pet={selectedPet}
-        open={!!selectedPet}
-        onOpenChange={() => setSelectedPet(null)}
-        isUnlocked={selectedPet ? isAnimalUnlocked(selectedPet.id) : false}
-        isShopExclusive={selectedPet ? isShopExclusive(selectedPet.id) : false}
-        isStudyHoursGated={selectedPet ? isStudyHoursGated(selectedPet.id) : false}
+      {/* Bot Detail Modal */}
+      <BotDetailModal
+        bot={selectedBot}
+        open={!!selectedBot}
+        onOpenChange={() => setSelectedBot(null)}
+        isUnlocked={selectedBot ? isAnimalUnlocked(selectedBot.id) : false}
+        isShopExclusive={selectedBot ? isShopExclusive(selectedBot.id) : false}
+        isStudyHoursGated={selectedBot ? isStudyHoursGated(selectedBot.id) : false}
         totalStudyHours={totalStudyHours}
-        isFavorite={selectedPet ? isAnimalFavorite(selectedPet.id) : false}
-        isHomeActive={selectedPet ? isAnimalHomeActive(selectedPet.id) : false}
-        onToggleFavorite={() => selectedPet && toggleFavorite(selectedPet.id)}
-        onToggleHomeActive={() => selectedPet && toggleHomeActive(selectedPet.id)}
+        isFavorite={selectedBot ? isAnimalFavorite(selectedBot.id) : false}
+        isHomeActive={selectedBot ? isAnimalHomeActive(selectedBot.id) : false}
+        onToggleFavorite={() => selectedBot && toggleFavorite(selectedBot.id)}
+        onToggleHomeActive={() => selectedBot && toggleHomeActive(selectedBot.id)}
         onNavigateToShop={() => {
-          setSelectedPet(null);
+          setSelectedBot(null);
           handleNavigateToShop();
         }}
       />
@@ -299,6 +298,8 @@ export const PetCollectionGrid = memo(() => {
   );
 });
 
-PetCollectionGrid.displayName = 'PetCollectionGrid';
+BotCollectionGrid.displayName = 'BotCollectionGrid';
 
-export const AnimalCollection = PetCollectionGrid;
+/** @deprecated Use BotCollectionGrid instead */
+export const PetCollectionGrid = BotCollectionGrid;
+export const AnimalCollection = BotCollectionGrid;

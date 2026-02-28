@@ -50,7 +50,7 @@ export interface WidgetData {
     totalSessions: number;
   };
 
-  // Pet info for widget display
+  // Bot info for widget display
   petInfo: {
     activePetName: string | null;
     activePetEmoji: string | null;
@@ -80,7 +80,7 @@ const WidgetDataPlugin = registerPlugin<WidgetDataPluginInterface>('WidgetData')
 // Local storage key
 const WIDGET_DATA_KEY = 'widget_data';
 
-// Pet ID to emoji mapping for widget display
+// Bot ID to icon mapping for widget display
 const PET_EMOJI_MAP: Record<string, { name: string; emoji: string }> = {
   'dewdrop-frog': { name: 'Dewdrop Frog', emoji: '🐸' },
   'sprout-bunny': { name: 'Sprout Bunny', emoji: '🐰' },
@@ -330,7 +330,7 @@ class WidgetDataService {
   }
 
   /**
-   * Update pet info
+   * Update bot info
    */
   async updatePetInfo(petData: Partial<WidgetData['petInfo']>): Promise<void> {
     this.data.petInfo = { ...this.data.petInfo, ...petData };
@@ -342,7 +342,7 @@ class WidgetDataService {
       try {
         await WidgetDataPlugin.updatePetInfo({ petInfo: petData });
       } catch (error) {
-        widgetLogger.error('Failed to update pet info:', error);
+        widgetLogger.error('Failed to update bot info:', error);
       }
     }
   }
@@ -466,7 +466,7 @@ class WidgetDataService {
         });
       }
 
-      // Load pet info from collection and XP stores
+      // Load bot info from collection and XP stores
       const collectionData = localStorage.getItem('petparadise-collection');
       const xpSystemData = storage.get<{
         currentBiome?: string;

@@ -112,9 +112,9 @@ vi.mock('@/lib/errorReporting', () => ({
   initErrorReporting: vi.fn(),
 }));
 
-// Mock animal database
-vi.mock('@/data/AnimalDatabase', () => ({
-  getAnimalById: vi.fn((id: string) => {
+// Mock robot database
+vi.mock('@/data/RobotDatabase', () => ({
+  getRobotById: vi.fn((id: string) => {
     if (id === 'dog') {
       return {
         id: 'dog',
@@ -171,8 +171,8 @@ vi.mock('@/data/ShopData', () => ({
   PET_BUNDLES: [
     {
       id: 'bundle-pets',
-      name: 'Pet Bundle',
-      bundleType: 'pets',
+      name: 'Bot Bundle',
+      bundleType: 'bots',
       itemIds: ['dog', 'cat'],
       coinPrice: 200,
     },
@@ -187,8 +187,8 @@ vi.mock('@/data/ShopData', () => ({
     },
     {
       id: 'bundle-pets',
-      name: 'Pet Bundle',
-      bundleType: 'pets',
+      name: 'Bot Bundle',
+      bundleType: 'bots',
       itemIds: ['dog', 'cat'],
       coinPrice: 200,
     },
@@ -367,7 +367,7 @@ describe('useShop', () => {
       expect(result.current.inventory.ownedBackgrounds).toContain('bg-forest');
     });
 
-    it('should successfully purchase a pet bundle', async () => {
+    it('should successfully purchase a bot bundle', async () => {
       const { result } = renderHook(() => useShop());
 
       let purchaseResult: { success: boolean; message: string } | undefined;
@@ -376,7 +376,7 @@ describe('useShop', () => {
       });
 
       expect(purchaseResult?.success).toBe(true);
-      expect(purchaseResult?.message).toContain('Pet Bundle purchased!');
+      expect(purchaseResult?.message).toContain('Bot Bundle purchased!');
       expect(mockCoinSystem.spendCoins).toHaveBeenCalledWith(200, 'pet_unlock', 'bundle-pets');
       expect(result.current.inventory.ownedCharacters).toContain('dog');
       expect(result.current.inventory.ownedCharacters).toContain('cat');
@@ -586,7 +586,7 @@ describe('useShop', () => {
       expect(result.current.isBundleOwned('bundle-nature')).toBe(false);
     });
 
-    it('should correctly check if pet bundle is owned', () => {
+    it('should correctly check if bot bundle is owned', () => {
       setShopState({
         ownedCharacters: ['dog', 'cat'],
       });

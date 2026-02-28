@@ -186,7 +186,7 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
   </div>
 );
 
-// ─── Walking pet sprite ─────────────────────────────────────────────────────
+// ─── Walking bot sprite ─────────────────────────────────────────────────────
 
 const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Standard
@@ -345,7 +345,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       {/* Inject CSS keyframes once */}
       <OnboardingKeyframes />
 
-      {/* Immersive background — dark sky fading to snow biome feel */}
+      {/* Immersive background — dark sky fading to assembly line zone feel */}
       <div
         className="absolute inset-0"
         style={{

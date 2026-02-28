@@ -4,14 +4,14 @@ import { ChargingBay } from './ChargingBay';
 import { DisplayBay } from './DisplayBay';
 import { ChargeBar } from './ChargeBar';
 import { HangarStats } from './HangarStats';
-import { getAnimalById, AnimalData } from '@/data/AnimalDatabase';
-import { useActiveHomePets, useOwnedCharacters } from '@/stores';
+import { getRobotById, RobotData } from '@/data/RobotDatabase';
+import { useActiveHomeBots, useOwnedCharacters } from '@/stores';
 import { useCollectionStore } from '@/stores/collectionStore';
 import { useCurrentStreak } from '@/stores/streakStore';
 import { useIsFocusModeActive } from '@/stores/focusStore';
 
 interface MechHangarProps {
-  unlockedAnimals: string[];
+  unlockedRobots: string[];
   currentLevel: number;
 }
 
@@ -20,8 +20,8 @@ interface MechHangarProps {
  * Replaces RetroPixelPlatform. Shows robots in a dark industrial hangar
  * with a central charging bay, display bays, and stats.
  */
-export const MechHangar = memo(({ unlockedAnimals: _unlockedAnimals, currentLevel }: MechHangarProps) => {
-  const activeHomePets = useActiveHomePets();
+export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel }: MechHangarProps) => {
+  const activeHomeBots = useActiveHomePets();
   const shopOwnedCharacters = useOwnedCharacters();
   const toggleHomeActive = useCollectionStore((s) => s.toggleHomeActive);
   const streak = useCurrentStreak();
@@ -31,13 +31,13 @@ export const MechHangar = memo(({ unlockedAnimals: _unlockedAnimals, currentLeve
 
   // Get active bots data
   const activeBots = useMemo(() => {
-    return activeHomePets
-      .map(id => getAnimalById(id))
-      .filter((bot): bot is AnimalData =>
+    return activeHomeBots
+      .map(id => getRobotById(id))
+      .filter((bot): bot is RobotData =>
         bot !== undefined &&
         (bot.unlockLevel <= currentLevel || shopOwnedSet.has(bot.id))
       );
-  }, [activeHomePets, currentLevel, shopOwnedSet]);
+  }, [activeHomeBots, currentLevel, shopOwnedSet]);
 
   // Main bot = first active bot
   const mainBot = activeBots[0];
@@ -52,8 +52,8 @@ export const MechHangar = memo(({ unlockedAnimals: _unlockedAnimals, currentLeve
   }, [isFocusActive]);
 
   const handleSwapBot = (botId: string) => {
-    // Move tapped bot to front of activeHomePets
-    const current = [...activeHomePets];
+    // Move tapped bot to front of activeHomeBots
+    const current = [...activeHomeBots];
     const idx = current.indexOf(botId);
     if (idx > 0) {
       current.splice(idx, 1);
@@ -73,7 +73,7 @@ export const MechHangar = memo(({ unlockedAnimals: _unlockedAnimals, currentLeve
             {displayBots.map((bot) => (
               <DisplayBay
                 key={bot.id}
-                robotImage={bot.spriteConfig?.idleSprite}
+                robotImage={bot.imageConfig?.imagePath}
                 robotName={bot.name}
                 onClick={() => handleSwapBot(bot.id)}
               />
@@ -83,10 +83,10 @@ export const MechHangar = memo(({ unlockedAnimals: _unlockedAnimals, currentLeve
 
         {/* Central charging bay */}
         <ChargingBay
-          robotImage={mainBot?.spriteConfig?.idleSprite}
+          robotImage={mainBot?.imageConfig?.imagePath}
           robotName={mainBot?.name}
           isCharging={isFocusActive}
-          glowColor={mainBot?.spriteConfig ? '#06b6d4' : '#06b6d4'}
+          glowColor={mainBot?.imageConfig?.glowColor || '#06b6d4'}
         />
 
         {/* Charge progress bar */}

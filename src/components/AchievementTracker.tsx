@@ -72,7 +72,7 @@ export const AchievementTracker: React.FC<AchievementTrackerProps> = ({ children
     }
   }, [currentLevel, trackLevelUp]);
 
-  // Track pet collection changes - only when count changes
+  // Track bot collection changes - only when count changes
   useEffect(() => {
     const petCount = unlockedAnimalsData?.length || 0;
     if (petCount > 0 && petCount !== prevPetsRef.current) {

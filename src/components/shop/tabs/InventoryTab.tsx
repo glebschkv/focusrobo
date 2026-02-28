@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useStreakFreezeCount } from "@/stores/streakStore";
 import { useOwnedBackgrounds, useOwnedCharacters, useEquippedBackground } from "@/stores/shopStore";
 import { PREMIUM_BACKGROUNDS } from "@/data/ShopData";
-import { getCoinExclusiveAnimals } from "@/data/AnimalDatabase";
+import { getCoinExclusiveRobots } from "@/data/RobotDatabase";
 import { useCoinBooster } from "@/hooks/useCoinBooster";
 
 
@@ -33,10 +33,10 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
   const ownedBgData = PREMIUM_BACKGROUNDS.filter(bg => ownedBackgrounds.includes(bg.id));
 
   // Get owned exclusive pets (shop-purchased pets)
-  const allExclusivePets = getCoinExclusiveAnimals();
-  const ownedExclusivePets = allExclusivePets.filter(pet => ownedCharacters.includes(pet.id));
+  const allExclusiveBots = getCoinExclusiveRobots();
+  const ownedExclusiveBots = allExclusiveBots.filter(pet => ownedCharacters.includes(pet.id));
 
-  const hasAnyItems = streakFreezeCount > 0 || boosterActive || ownedBgData.length > 0 || ownedExclusivePets.length > 0;
+  const hasAnyItems = streakFreezeCount > 0 || boosterActive || ownedBgData.length > 0 || ownedExclusiveBots.length > 0;
 
   return (
     <div className="space-y-5">
@@ -188,16 +188,16 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
         <div className="shop-section-header">
           <span className="shop-section-title">
             Exclusive Pets
-            {ownedExclusivePets.length > 0 && (
+            {ownedExclusiveBots.length > 0 && (
               <span className="ml-1.5 text-[10px] font-bold text-amber-700/50">
-                ({ownedExclusivePets.length}/{allExclusivePets.length})
+                ({ownedExclusiveBots.length}/{allExclusiveBots.length})
               </span>
             )}
           </span>
         </div>
-        {ownedExclusivePets.length > 0 ? (
+        {ownedExclusiveBots.length > 0 ? (
           <div className="grid grid-cols-2 gap-2.5">
-            {ownedExclusivePets.map(pet => (
+            {ownedExclusiveBots.map(pet => (
               <div
                 key={pet.id}
                 className="retro-shop-card retro-shop-card-owned relative overflow-hidden"
@@ -212,7 +212,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                 )} />
                 <div className="relative pt-3 pb-2.5 px-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-2xl">{pet.emoji}</span>
+                    <span className="text-2xl">{pet.icon}</span>
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-black block truncate uppercase tracking-tight">{pet.name}</span>
                       <span className={cn(

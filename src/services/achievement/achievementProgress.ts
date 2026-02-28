@@ -46,44 +46,49 @@ export function checkAchievementProgress(
       }
       break;
 
-    case 'pet_unlock':
-      if (['first-friend', 'pet-collector-5', 'pet-collector', 'zoo-keeper',
+    case 'bot_unlock':
+    case 'pet_unlock': // backward-compat
+      if (['first-friend', 'bot-collector-5', 'bot-collector', 'mech-master',
            'menagerie-master', 'legendary-collector'].includes(achievement.id)) {
         newProgress = value;
         shouldUpdate = true;
       }
       break;
 
-    case 'rare_pets':
+    case 'rare_bots':
+    case 'rare_pets': // backward-compat
       if (achievement.id === 'rare-finder') {
         newProgress = value;
         shouldUpdate = true;
       }
       break;
 
-    case 'epic_pets':
+    case 'epic_bots':
+    case 'epic_pets': // backward-compat
       if (achievement.id === 'epic-hunter') {
         newProgress = value;
         shouldUpdate = true;
       }
       break;
 
-    case 'legendary_pets':
+    case 'legendary_bots':
+    case 'legendary_pets': // backward-compat
       if (achievement.id === 'legendary-hunter') {
         newProgress = value;
         shouldUpdate = true;
       }
       break;
 
-    case 'biome_unlock':
-      if (achievement.id === 'biome-explorer') {
+    case 'zone_unlock':
+    case 'biome_unlock': // backward-compat
+      if (achievement.id === 'zone-explorer') {
         newProgress = value;
         shouldUpdate = true;
       }
       break;
 
     case 'bond_level':
-      if (['first-bond', 'growing-bond', 'strong-bond', 'pet-whisperer'].includes(achievement.id)) {
+      if (['first-bond', 'growing-bond', 'strong-bond', 'bot-whisperer'].includes(achievement.id)) {
         newProgress = Math.max(newProgress, value);
         shouldUpdate = true;
       }

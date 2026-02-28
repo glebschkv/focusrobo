@@ -1,46 +1,48 @@
 import { memo, useMemo } from "react";
 import { Heart, Lock, Home, ShoppingBag, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AnimalData } from "@/data/AnimalDatabase";
-import { SpritePreview } from "./SpritePreview";
+import { RobotData } from "@/data/RobotDatabase";
+import { BotPreview } from "./BotPreview";
 import { ariaLabel } from "@/lib/accessibility";
 
-interface PetCardProps {
-  pet: AnimalData;
+interface BotCardProps {
+  bot: RobotData;
   isLocked: boolean;
-  isShopPet: boolean;
+  isShopBot: boolean;
   isStudyHoursGated: boolean;
   isFavorited: boolean;
   isHomeActive: boolean;
   onClick: () => void;
 }
 
-export const PetCard = memo(({
-  pet,
+export const BotCard = memo(({
+  bot,
   isLocked,
-  isShopPet,
+  isShopBot,
   isStudyHoursGated,
   isFavorited,
   isHomeActive,
   onClick,
-}: PetCardProps) => {
-  const showAsLocked = isLocked && !isShopPet && !isStudyHoursGated;
-  const showAsShopPet = isLocked && isShopPet;
+}: BotCardProps) => {
+  const showAsLocked = isLocked && !isShopBot && !isStudyHoursGated;
+  const showAsShopBot = isLocked && isShopBot;
   const showAsStudyHours = isLocked && isStudyHoursGated;
   const isUnavailable = showAsLocked || showAsStudyHours;
 
   const accessibleLabel = useMemo(() =>
-    ariaLabel.petCard(pet.name, isLocked, pet.unlockLevel),
-    [pet.name, isLocked, pet.unlockLevel]
+    ariaLabel.botCard?.(bot.name, isLocked, bot.unlockLevel) ??
+    ariaLabel.petCard?.(bot.name, isLocked, bot.unlockLevel) ??
+    `${bot.name}, ${isLocked ? 'locked' : 'unlocked'}`,
+    [bot.name, isLocked, bot.unlockLevel]
   );
 
   // Build inventory slot class names
   const slotClasses = cn(
     "inventory-slot",
-    `rarity-${pet.rarity}`,
+    `rarity-${bot.rarity}`,
     !isLocked && "unlocked",
     showAsLocked && "locked",
-    showAsShopPet && "shop-pet",
+    showAsShopBot && "shop-bot",
     showAsStudyHours && "study-gated",
   );
 
@@ -67,12 +69,12 @@ export const PetCard = memo(({
       {/* Level badge for locked (non-shop) */}
       {showAsLocked && (
         <div className="inventory-badge level-badge">
-          <span>Lv.{pet.unlockLevel}</span>
+          <span>Lv.{bot.unlockLevel}</span>
         </div>
       )}
 
       {/* Shop badge */}
-      {showAsShopPet && (
+      {showAsShopBot && (
         <div className="inventory-badge shop-badge">
           <ShoppingBag className="w-2.5 h-2.5" />
           <span>SHOP</span>
@@ -80,43 +82,46 @@ export const PetCard = memo(({
       )}
 
       {/* Study hours badge */}
-      {showAsStudyHours && pet.requiredStudyHours && (
+      {showAsStudyHours && bot.requiredStudyHours && (
         <div className="inventory-badge study-badge">
           <Clock className="w-2.5 h-2.5" />
-          <span>{pet.requiredStudyHours}h</span>
+          <span>{bot.requiredStudyHours}h</span>
         </div>
       )}
 
       {/* Sprite area */}
       <div className={cn("inventory-sprite-area")}>
-        {(isUnavailable) && pet.spriteConfig ? (
+        {(isUnavailable) && bot.imageConfig ? (
           <div style={{ filter: 'brightness(0.5) saturate(0)' }}>
-            <SpritePreview
-              animal={pet}
-              scale={Math.min(1.5, 48 / pet.spriteConfig.frameHeight)}
+            <BotPreview
+              robot={bot}
+              scale={1.5}
             />
           </div>
         ) : (isUnavailable) ? (
           <Lock className="w-6 h-6 text-[hsl(260,10%,35%)]" />
-        ) : pet.spriteConfig ? (
-          <SpritePreview
-            animal={pet}
-            scale={Math.min(1.5, 48 / pet.spriteConfig.frameHeight)}
+        ) : bot.imageConfig ? (
+          <BotPreview
+            robot={bot}
+            scale={1.5}
           />
         ) : (
-          <span className="text-3xl">{pet.emoji}</span>
+          <span className="text-3xl">{bot.icon}</span>
         )}
       </div>
 
       {/* Rarity dot */}
-      <div className={cn("rarity-dot", pet.rarity)} />
+      <div className={cn("rarity-dot", bot.rarity)} />
 
       {/* Name */}
-      <span className="inventory-pet-name">
-        {isUnavailable ? "???" : pet.name}
+      <span className="inventory-bot-name">
+        {isUnavailable ? "???" : bot.name}
       </span>
     </button>
   );
 });
 
-PetCard.displayName = 'PetCard';
+BotCard.displayName = 'BotCard';
+
+/** @deprecated Use BotCard instead */
+export const PetCard = BotCard;

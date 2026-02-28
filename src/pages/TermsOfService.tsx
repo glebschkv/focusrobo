@@ -44,7 +44,7 @@ const TermsOfServiceContent = () => {
             <h3 className="text-xl font-semibold text-blue-300">2. Description of Service</h3>
             <p className="text-white/80 leading-relaxed">
               BotBlock is a productivity application that helps users reduce phone usage through
-              gamification. The App includes features such as focus timers, virtual pet collection,
+              gamification. The App includes features such as focus timers, virtual bot collection,
               achievement systems, and device activity monitoring.
             </p>
           </section>

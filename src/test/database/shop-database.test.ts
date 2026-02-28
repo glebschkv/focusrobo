@@ -114,8 +114,8 @@ vi.mock('@/lib/errorReporting', () => ({
   initErrorReporting: vi.fn(),
 }));
 
-vi.mock('@/data/AnimalDatabase', () => ({
-  getAnimalById: vi.fn((id: string) => {
+vi.mock('@/data/RobotDatabase', () => ({
+  getRobotById: vi.fn((id: string) => {
     const animals: Record<string, object> = {
       dog: { id: 'dog', name: 'Dog', coinPrice: 100, isExclusive: true },
       cat: { id: 'cat', name: 'Cat', coinPrice: 150, isExclusive: true },
@@ -140,11 +140,11 @@ vi.mock('@/data/ShopData', () => ({
     { id: 'bundle-nature', name: 'Nature Bundle', bundleType: 'backgrounds', itemIds: ['bg-ocean', 'bg-forest'], coinPrice: 400 },
   ],
   PET_BUNDLES: [
-    { id: 'bundle-pets', name: 'Pet Bundle', bundleType: 'pets', itemIds: ['dog', 'cat'], coinPrice: 200 },
+    { id: 'bundle-pets', name: 'Bot Bundle', bundleType: 'bots', itemIds: ['dog', 'cat'], coinPrice: 200 },
   ],
   ALL_BUNDLES: [
     { id: 'bundle-nature', name: 'Nature Bundle', bundleType: 'backgrounds', itemIds: ['bg-ocean', 'bg-forest'], coinPrice: 400 },
-    { id: 'bundle-pets', name: 'Pet Bundle', bundleType: 'pets', itemIds: ['dog', 'cat'], coinPrice: 200 },
+    { id: 'bundle-pets', name: 'Bot Bundle', bundleType: 'bots', itemIds: ['dog', 'cat'], coinPrice: 200 },
   ],
   STARTER_BUNDLES: [
     { id: 'starter-basic', name: 'Starter Pack', contents: { coins: 500, boosterId: 'boost-2x', characterId: 'dog' } },
@@ -332,7 +332,7 @@ describe('Shop Database – Purchase Flows', () => {
       expect(result.current.inventory.ownedBackgrounds).toEqual([]);
     });
 
-    it('should purchase pet bundle and add all pets', async () => {
+    it('should purchase bot bundle and add all bots', async () => {
       const { result } = renderHook(() => useShop());
 
       let purchaseResult;
@@ -346,7 +346,7 @@ describe('Shop Database – Purchase Flows', () => {
       expect(result.current.inventory.ownedCharacters).toContain('cat');
     });
 
-    it('should reject pet bundle if all pets already owned', async () => {
+    it('should reject bot bundle if all bots already owned', async () => {
       setShopState({ ownedCharacters: ['dog', 'cat'] });
 
       const { result } = renderHook(() => useShop());

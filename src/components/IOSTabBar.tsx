@@ -17,7 +17,7 @@ interface TabBarProps {
 const tabs = [
   { id: "home", icon: Home, label: "Home" },
   { id: "timer", icon: Timer, label: "Focus", isCenter: true },
-  { id: "collection", icon: Grid3X3, label: "Pets" },
+  { id: "collection", icon: Grid3X3, label: "Bots" },
   { id: "challenges", icon: Trophy, label: "Challenges" },
   { id: "shop", icon: ShoppingBag, label: "Shop" },
   { id: "settings", icon: Settings, label: "Settings" },

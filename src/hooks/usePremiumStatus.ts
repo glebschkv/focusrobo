@@ -203,7 +203,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       'Everything in Premium+',
       'No recurring fees ever',
       'Exclusive Founder badge',
-      'Founder-only legendary pet',
+      'Founder-only legendary bot',
       '10 Focus presets',
       'Website blocking',
     ],

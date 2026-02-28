@@ -98,7 +98,7 @@ export interface AchievementSystemReturn {
  */
 export interface AchievementTrackingHook {
   trackFocusSession: (durationMinutes: number, sessionCount: number) => void;
-  trackPetUnlock: (petCount: number, rarity?: string) => void;
+  trackBotUnlock: (botCount: number, rarity?: string) => void;
   trackBondLevel: (level: number, maxBondCount: number) => void;
   trackLevelUp: (level: number) => void;
   trackCoinsEarned: (totalCoins: number) => void;
@@ -108,7 +108,7 @@ export interface AchievementTrackingHook {
   trackWheelSpin: (spinCount: number) => void;
   trackMegaBonus: (megaBonusCount: number) => void;
   trackShare: (shareCount: number) => void;
-  trackBiomeUnlock: (biomeCount: number) => void;
+  trackZoneUnlock: (zoneCount: number) => void;
   trackAchievementsUnlocked: (count: number) => void;
 }
 

@@ -69,7 +69,7 @@ describe('Progression Database – XP Store', () => {
       expect(state.currentLevel).toBe(0);
     });
 
-    it('should start in Snow biome', () => {
+    it('should start in Assembly Line zone', () => {
       const state = useXPStore.getState();
       expect(state.currentBiome).toBe('Snow');
       expect(state.availableBiomes).toContain('Snow');
@@ -154,8 +154,8 @@ describe('Progression Database – XP Store', () => {
     });
   });
 
-  describe('Animal Unlocks', () => {
-    it('should add a single animal', () => {
+  describe('Robot Unlocks', () => {
+    it('should add a single robot', () => {
       act(() => {
         useXPStore.getState().addAnimal('Fox');
       });
@@ -191,8 +191,8 @@ describe('Progression Database – XP Store', () => {
     });
   });
 
-  describe('Biome Management', () => {
-    it('should switch to available biome', () => {
+  describe('Zone Management', () => {
+    it('should switch to available zone', () => {
       act(() => {
         useXPStore.getState().addBiome('Forest');
         useXPStore.getState().switchBiome('Forest');
@@ -200,7 +200,7 @@ describe('Progression Database – XP Store', () => {
       expect(useXPStore.getState().currentBiome).toBe('Forest');
     });
 
-    it('should not switch to unavailable biome', () => {
+    it('should not switch to unavailable zone', () => {
       act(() => {
         useXPStore.getState().switchBiome('Volcano');
       });
@@ -273,7 +273,7 @@ describe('Progression Database – XP Store', () => {
       expect(result.current).toEqual(['Fox', 'Bear']);
     });
 
-    it('should return current biome via selector hook', () => {
+    it('should return current zone via selector hook', () => {
       const { result } = renderHook(() => useCurrentBiome());
       expect(result.current).toBe('Snow');
     });

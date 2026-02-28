@@ -122,7 +122,7 @@ describe('xpStore', () => {
       expect(unlockedAnimals).toEqual([]);
     });
 
-    it('should have Snow as default biome', () => {
+    it('should have Assembly Line as default zone', () => {
       const { currentBiome } = useXPStore.getState();
       expect(currentBiome).toBe('Snow');
     });
@@ -231,7 +231,7 @@ describe('xpStore', () => {
   });
 
   describe('addAnimal', () => {
-    it('should add a new animal', () => {
+    it('should add a new robot', () => {
       const { addAnimal } = useXPStore.getState();
 
       act(() => {
@@ -313,7 +313,7 @@ describe('xpStore', () => {
   });
 
   describe('switchBiome', () => {
-    it('should switch to available biome', () => {
+    it('should switch to available zone', () => {
       const { addBiome, switchBiome } = useXPStore.getState();
 
       act(() => {
@@ -324,7 +324,7 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentBiome).toBe('Forest');
     });
 
-    it('should not switch to unavailable biome', () => {
+    it('should not switch to unavailable zone', () => {
       const { switchBiome } = useXPStore.getState();
 
       act(() => {
@@ -334,7 +334,7 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentBiome).toBe('Snow');
     });
 
-    it('should allow switching back to original biome', () => {
+    it('should allow switching back to original zone', () => {
       const { addBiome, switchBiome } = useXPStore.getState();
 
       act(() => {
@@ -353,7 +353,7 @@ describe('xpStore', () => {
   });
 
   describe('addBiome', () => {
-    it('should add a new biome', () => {
+    it('should add a new zone', () => {
       const { addBiome } = useXPStore.getState();
 
       act(() => {
@@ -472,7 +472,7 @@ describe('xpStore', () => {
       expect(result.current).toContain('deer');
     });
 
-    it('useCurrentBiome should return current biome', () => {
+    it('useCurrentZone should return current zone', () => {
       const { result } = renderHook(() => useCurrentBiome());
       expect(result.current).toBe('Snow');
     });

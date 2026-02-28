@@ -2,9 +2,11 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, ArrowUpDown, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type PetSortOption = "default" | "name" | "rarity" | "owned" | "favorites";
+export type BotSortOption = "default" | "name" | "rarity" | "owned" | "favorites";
+/** @deprecated Use BotSortOption instead */
+export type PetSortOption = BotSortOption;
 
-const SORT_OPTIONS: { value: PetSortOption; label: string }[] = [
+const SORT_OPTIONS: { value: BotSortOption; label: string }[] = [
   { value: "default", label: "Default" },
   { value: "name", label: "Name" },
   { value: "rarity", label: "Rarity" },
@@ -13,17 +15,17 @@ const SORT_OPTIONS: { value: PetSortOption; label: string }[] = [
 ];
 
 interface CollectionFiltersProps {
-  activeTab: "pets" | "worlds";
-  onTabChange: (tab: "pets" | "worlds") => void;
+  activeTab: "bots" | "zones";
+  onTabChange: (tab: "bots" | "zones") => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  sortOption: PetSortOption;
-  onSortChange: (sort: PetSortOption) => void;
-  petsStats: {
+  sortOption: BotSortOption;
+  onSortChange: (sort: BotSortOption) => void;
+  botsStats: {
     unlocked: number;
     total: number;
   };
-  worldsStats: {
+  zonesStats: {
     unlocked: number;
     total: number;
   };
@@ -36,8 +38,8 @@ export const CollectionFilters = ({
   onSearchChange,
   sortOption,
   onSortChange,
-  petsStats,
-  worldsStats,
+  botsStats,
+  zonesStats,
 }: CollectionFiltersProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
@@ -81,21 +83,21 @@ export const CollectionFilters = ({
         {/* Tab Buttons */}
         <div className="flex flex-1 gap-0">
           <button
-            onClick={() => onTabChange("pets")}
-            className={cn("collection-tab flex-1 text-center", activeTab === "pets" && "active")}
+            onClick={() => onTabChange("bots")}
+            className={cn("collection-tab flex-1 text-center", activeTab === "bots" && "active")}
           >
-            <div>PETS</div>
+            <div>BOTS</div>
             <div className="collection-tab-count">
-              {petsStats.unlocked}/{petsStats.total}
+              {botsStats.unlocked}/{botsStats.total}
             </div>
           </button>
           <button
-            onClick={() => onTabChange("worlds")}
-            className={cn("collection-tab flex-1 text-center", activeTab === "worlds" && "active")}
+            onClick={() => onTabChange("zones")}
+            className={cn("collection-tab flex-1 text-center", activeTab === "zones" && "active")}
           >
-            <div>WORLDS</div>
+            <div>ZONES</div>
             <div className="collection-tab-count">
-              {worldsStats.unlocked}/{worldsStats.total}
+              {zonesStats.unlocked}/{zonesStats.total}
             </div>
           </button>
         </div>
@@ -103,14 +105,14 @@ export const CollectionFilters = ({
         {/* Action buttons - always rendered to prevent layout shift, hidden on worlds tab */}
         <div className={cn(
           "flex items-center gap-2 pb-2.5 pl-3 transition-opacity duration-150",
-          activeTab !== "pets" && "opacity-0 pointer-events-none"
+          activeTab !== "bots" && "opacity-0 pointer-events-none"
         )}>
           {/* Search toggle */}
           <button
             onClick={() => showSearch ? handleCloseSearch() : setShowSearch(true)}
             className={cn("collection-search-toggle", showSearch && "active")}
-            aria-label={showSearch ? "Close search" : "Search pets"}
-            tabIndex={activeTab !== "pets" ? -1 : undefined}
+            aria-label={showSearch ? "Close search" : "Search bots"}
+            tabIndex={activeTab !== "bots" ? -1 : undefined}
           >
             {showSearch ? <X className="w-4 h-4" /> : <Search className="w-4 h-4" />}
           </button>
@@ -120,14 +122,14 @@ export const CollectionFilters = ({
             <button
               onClick={() => setShowSortDropdown(!showSortDropdown)}
               className="collection-sort-btn"
-              aria-label="Sort pets"
-              tabIndex={activeTab !== "pets" ? -1 : undefined}
+              aria-label="Sort bots"
+              tabIndex={activeTab !== "bots" ? -1 : undefined}
             >
               <ArrowUpDown className="w-3.5 h-3.5" />
               <span>{activeSortLabel}</span>
             </button>
 
-            {showSortDropdown && activeTab === "pets" && (
+            {showSortDropdown && activeTab === "bots" && (
               <div className="collection-sort-dropdown">
                 {SORT_OPTIONS.map((opt) => (
                   <button
@@ -154,14 +156,14 @@ export const CollectionFilters = ({
       </div>
 
       {/* Expandable search bar */}
-      {activeTab === "pets" && showSearch && (
+      {activeTab === "bots" && showSearch && (
         <div className="pt-3 pb-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(260,15%,40%)]" />
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search pets..."
+              placeholder="Search bots..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="collection-search-input"
@@ -171,8 +173,8 @@ export const CollectionFilters = ({
       )}
 
       {/* Divider line */}
-      {!showSearch && activeTab === "pets" && <div className="h-3" />}
-      {activeTab === "worlds" && <div className="h-3" />}
+      {!showSearch && activeTab === "bots" && <div className="h-3" />}
+      {activeTab === "zones" && <div className="h-3" />}
     </div>
   );
 };

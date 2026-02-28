@@ -84,11 +84,11 @@ export interface SeasonThemeConfig {
 }
 
 // ============================================================================
-// Biome Theme Types
+// Zone Theme Types
 // ============================================================================
 
 /**
- * Available biome themes
+ * Available zone themes
  */
 export type BiomeTheme =
   | 'Meadow'
@@ -101,7 +101,7 @@ export type BiomeTheme =
   | 'Sky';
 
 /**
- * Biome visual configuration
+ * Zone visual configuration
  */
 export interface BiomeConfig {
   id: string;

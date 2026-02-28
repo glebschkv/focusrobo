@@ -102,7 +102,7 @@ describe('Storage Validation', () => {
       const invalidData = {
         currentXP: 100,
         currentLevel: 5,
-        unlockedAnimals: new Array(501).fill('animal'), // Max is 500
+        unlockedRobots: new Array(501).fill('robot'), // Max is 500
       };
       const result = xpSystemSchema.safeParse(invalidData);
       expect(result.success).toBe(false);

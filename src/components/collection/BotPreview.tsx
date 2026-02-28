@@ -1,29 +1,29 @@
 import { memo } from "react";
-import { AnimalData } from "@/data/AnimalDatabase";
+import { RobotData } from "@/data/RobotDatabase";
 
-interface SpritePreviewProps {
-  animal: AnimalData;
+interface BotPreviewProps {
+  robot: RobotData;
   scale?: number;
 }
 
 /**
- * SpritePreview Component
+ * BotPreview Component
  *
  * Renders a static robot illustration. Simplified from the old
  * animated sprite system — now just shows a single image.
  */
-export const SpritePreview = memo(({ animal, scale = 4 }: SpritePreviewProps) => {
-  const imagePath = animal.spriteConfig?.idleSprite || animal.spriteConfig?.spritePath;
+export const BotPreview = memo(({ robot, scale = 4 }: BotPreviewProps) => {
+  const imagePath = robot.imageConfig?.imagePath;
 
   if (!imagePath) return null;
 
-  const size = 64 * Math.min(scale, 3); // Cap at 192px
+  const size = robot.imageConfig?.size || 64 * Math.min(scale, 3); // Use configured size or cap at 192px
 
   return (
     <div className="mx-auto flex items-center justify-center">
       <img
         src={imagePath}
-        alt={animal.name}
+        alt={robot.name}
         className="object-contain"
         style={{
           width: `${size}px`,
@@ -36,4 +36,7 @@ export const SpritePreview = memo(({ animal, scale = 4 }: SpritePreviewProps) =>
   );
 });
 
-SpritePreview.displayName = 'SpritePreview';
+BotPreview.displayName = 'BotPreview';
+
+/** @deprecated Use BotPreview instead */
+export const SpritePreview = BotPreview;

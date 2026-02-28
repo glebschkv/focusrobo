@@ -30,7 +30,7 @@ describe('collectionStore', () => {
   });
 
   describe('Initial State', () => {
-    it('should initialize with default active home pet "hare"', () => {
+    it('should initialize with default active home bot "bolt-bot"', () => {
       const state = useCollectionStore.getState();
       expect(state.activeHomePets).toEqual(['hare']);
     });
@@ -52,7 +52,7 @@ describe('collectionStore', () => {
   });
 
   describe('toggleHomeActive', () => {
-    it('should add a pet to active home pets when not present', () => {
+    it('should add a bot to active home bots when not present', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
 
       act(() => {
@@ -64,7 +64,7 @@ describe('collectionStore', () => {
       expect(state.activeHomePets).toContain('hare');
     });
 
-    it('should remove a pet from active home pets when already present', () => {
+    it('should remove a bot from active home bots when already present', () => {
       const { toggleHomeActive, setActiveHomePets } = useCollectionStore.getState();
 
       act(() => {
@@ -78,7 +78,7 @@ describe('collectionStore', () => {
       expect(state.activeHomePets).toContain('dog');
     });
 
-    it('should handle toggling the default pet off', () => {
+    it('should handle toggling the default bot off', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
 
       act(() => {
@@ -106,7 +106,7 @@ describe('collectionStore', () => {
       expect(state.activeHomePets).toHaveLength(4); // hare + 3 new
     });
 
-    it('should handle rapid toggle on same pet', () => {
+    it('should handle rapid toggle on same bot', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
 
       act(() => {
@@ -122,7 +122,7 @@ describe('collectionStore', () => {
   });
 
   describe('toggleFavorite', () => {
-    it('should add a pet to favorites when not present', () => {
+    it('should add a bot to favorites when not present', () => {
       const { toggleFavorite } = useCollectionStore.getState();
 
       act(() => {
@@ -133,7 +133,7 @@ describe('collectionStore', () => {
       expect(state.favorites).toContain('golden-cat');
     });
 
-    it('should remove a pet from favorites when already present', () => {
+    it('should remove a bot from favorites when already present', () => {
       const { toggleFavorite, setFavorites } = useCollectionStore.getState();
 
       act(() => {
@@ -160,7 +160,7 @@ describe('collectionStore', () => {
 
     it('should support many favorites', () => {
       const { toggleFavorite } = useCollectionStore.getState();
-      const petIds = Array.from({ length: 20 }, (_, i) => `pet-${i}`);
+      const petIds = Array.from({ length: 20 }, (_, i) => `bot-${i}`);
 
       act(() => {
         petIds.forEach(id => toggleFavorite(id));
@@ -226,12 +226,12 @@ describe('collectionStore', () => {
       const { setFavorites } = useCollectionStore.getState();
 
       act(() => {
-        setFavorites(['pet-1', 'pet-2', 'pet-3']);
-        setFavorites(['pet-4']);
+        setFavorites(['bot-1', 'bot-2', 'bot-3']);
+        setFavorites(['bot-4']);
       });
 
       const state = useCollectionStore.getState();
-      expect(state.favorites).toEqual(['pet-4']);
+      expect(state.favorites).toEqual(['bot-4']);
     });
   });
 
@@ -256,7 +256,7 @@ describe('collectionStore', () => {
         expect(state.isPetHomeActive('unicorn')).toBe(false);
       });
 
-      it('should return true for default pet', () => {
+      it('should return true for default bot', () => {
         const state = useCollectionStore.getState();
         expect(state.isPetHomeActive('hare')).toBe(true);
       });
@@ -366,9 +366,9 @@ describe('collectionStore', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle special characters in pet IDs', () => {
+    it('should handle special characters in bot IDs', () => {
       const { toggleHomeActive, toggleFavorite } = useCollectionStore.getState();
-      const specialId = 'pet-with-special-chars-äöü-123';
+      const specialId = 'bot-with-special-chars-äöü-123';
 
       act(() => {
         toggleHomeActive(specialId);
@@ -380,7 +380,7 @@ describe('collectionStore', () => {
       expect(state.favorites).toContain(specialId);
     });
 
-    it('should handle very long pet IDs', () => {
+    it('should handle very long bot IDs', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
       const longId = 'a'.repeat(1000);
 
@@ -392,7 +392,7 @@ describe('collectionStore', () => {
       expect(state.activeHomePets).toContain(longId);
     });
 
-    it('should handle empty string pet ID', () => {
+    it('should handle empty string bot ID', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
 
       act(() => {
@@ -407,16 +407,16 @@ describe('collectionStore', () => {
       const { toggleHomeActive, toggleFavorite, setActiveHomePets } = useCollectionStore.getState();
 
       act(() => {
-        toggleHomeActive('pet-1');
-        setActiveHomePets(['pet-2', 'pet-3']);
-        toggleHomeActive('pet-4');
+        toggleHomeActive('bot-1');
+        setActiveHomePets(['bot-2', 'bot-3']);
+        toggleHomeActive('bot-4');
         toggleFavorite('fav-1');
         toggleFavorite('fav-2');
         toggleFavorite('fav-1'); // Remove
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['pet-2', 'pet-3', 'pet-4']);
+      expect(state.activeHomePets).toEqual(['bot-2', 'bot-3', 'bot-4']);
       expect(state.favorites).toEqual(['fav-2']);
     });
   });

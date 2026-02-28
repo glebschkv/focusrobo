@@ -1,7 +1,7 @@
 /**
  * BundlesTab Component
  *
- * Displays pet bundles and background bundles for purchase in the shop.
+ * Displays bot bundles and background bundles for purchase in the shop.
  * Extracted from Shop.tsx for better maintainability.
  */
 
@@ -16,13 +16,13 @@ import {
   BACKGROUND_BUNDLES,
 } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { AnimalData, getAnimalById } from "@/data/AnimalDatabase";
+import { RobotData, getRobotById } from "@/data/RobotDatabase";
 import { SpritePreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
 
 interface BundlesTabProps {
   inventory: ShopInventory;
   isBundleOwned: (bundleId: string) => boolean;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -36,7 +36,7 @@ export const BundlesTab = ({
 }: BundlesTabProps) => {
   return (
     <div className="space-y-4">
-      {/* Pet Bundles */}
+      {/* Bot Bundles */}
       <PetBundlesSection
         inventory={inventory}
         setSelectedItem={setSelectedItem}
@@ -61,7 +61,7 @@ export const BundlesTab = ({
 
 interface PetBundlesSectionProps {
   inventory: ShopInventory;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -75,7 +75,7 @@ const PetBundlesSection = ({
   return (
     <div>
       <div className="shop-section-header">
-        <span className="shop-section-title">Pet Bundles</span>
+        <span className="shop-section-title">Bot Bundles</span>
       </div>
       <div className="space-y-2">
         {PET_BUNDLES.map((bundle) => (
@@ -100,7 +100,7 @@ const PetBundlesSection = ({
 interface PetBundleCardProps {
   bundle: Bundle;
   inventory: ShopInventory;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -121,8 +121,8 @@ const PetBundleCard = ({
   // Get preview animals for the bundle
   const previewAnimals = bundle.itemIds
     .slice(0, 3)
-    .map(id => getAnimalById(id))
-    .filter(Boolean) as AnimalData[];
+    .map(id => getRobotById(id))
+    .filter(Boolean) as RobotData[];
 
   const handleClick = () => {
     if (!allOwned) {
@@ -146,7 +146,7 @@ const PetBundleCard = ({
         <div className="flex-shrink-0 w-20 h-16 rounded-lg bg-white/50 dark:bg-black/20 flex items-center justify-center overflow-hidden">
           {previewAnimals.length > 0 && previewAnimals[0]?.spriteConfig ? (
             <SpritePreview
-              animal={previewAnimals[0]}
+              robot={previewAnimals[0]}
               scale={Math.min(1.2, 56 / Math.max(
                 previewAnimals[0].spriteConfig.frameWidth,
                 previewAnimals[0].spriteConfig.frameHeight
@@ -178,7 +178,7 @@ const PetBundleCard = ({
             {bundle.description}
           </p>
 
-          {/* Pet count */}
+          {/* Bot count */}
           <div className="flex items-center gap-3 mt-1.5">
             <span className="text-[10px] text-muted-foreground">
               {bundle.itemIds.length} pets
@@ -217,7 +217,7 @@ const PetBundleCard = ({
 
 interface BackgroundBundlesSectionProps {
   isBundleOwned: (bundleId: string) => boolean;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -256,7 +256,7 @@ const BackgroundBundlesSection = ({
 interface BackgroundBundleCardProps {
   bundle: Bundle;
   isBundleOwned: (bundleId: string) => boolean;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }

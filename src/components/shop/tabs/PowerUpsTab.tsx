@@ -3,7 +3,7 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, getShopItemsByCategory, COIN_PACKS, CoinPack } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { AnimalData } from "@/data/AnimalDatabase";
+import { RobotData } from "@/data/RobotDatabase";
 import { toast } from "sonner";
 import type { ShopCategory } from "@/data/ShopData";
 import { useStoreKit } from "@/hooks/useStoreKit";
@@ -12,7 +12,7 @@ import { BundleConfirmDialog } from "../BundleConfirmDialog";
 interface PowerUpsTabProps {
   inventory: ShopInventory;
   isOwned: (itemId: string, category: ShopCategory) => boolean;
-  setSelectedItem: (item: ShopItem | AnimalData | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
   isBoosterActive: () => boolean;

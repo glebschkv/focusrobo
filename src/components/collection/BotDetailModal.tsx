@@ -2,8 +2,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Heart, Lock, Home, ShoppingBag, Clock } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
-import { AnimalData } from "@/data/AnimalDatabase";
-import { SpritePreview } from "./SpritePreview";
+import { RobotData } from "@/data/RobotDatabase";
+import { BotPreview } from "./BotPreview";
 
 const RARITY_CONFIG = {
   common: { label: "Common", color: "hsl(220, 10%, 55%)", glow: "none" },
@@ -12,8 +12,8 @@ const RARITY_CONFIG = {
   legendary: { label: "Legendary", color: "hsl(45, 90%, 55%)", glow: "0 0 10px hsl(45, 90%, 55%, 0.5)" },
 };
 
-interface PetDetailModalProps {
-  pet: AnimalData | null;
+interface BotDetailModalProps {
+  bot: RobotData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isUnlocked: boolean;
@@ -27,8 +27,8 @@ interface PetDetailModalProps {
   onNavigateToShop: () => void;
 }
 
-export const PetDetailModal = ({
-  pet,
+export const BotDetailModal = ({
+  bot,
   open,
   onOpenChange,
   isUnlocked,
@@ -40,10 +40,10 @@ export const PetDetailModal = ({
   onToggleFavorite,
   onToggleHomeActive,
   onNavigateToShop,
-}: PetDetailModalProps) => {
-  if (!pet) return null;
+}: BotDetailModalProps) => {
+  if (!bot) return null;
 
-  const rarityConf = RARITY_CONFIG[pet.rarity];
+  const rarityConf = RARITY_CONFIG[bot.rarity];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -62,26 +62,26 @@ export const PetDetailModal = ({
             background: 'linear-gradient(180deg, hsl(260, 20%, 20%) 0%, hsl(255, 22%, 14%) 100%)',
             borderBottom: '1px solid hsl(260, 25%, 22%)',
           }}>
-            {/* Show animated sprite for unlocked pets, silhouette for locked */}
-            {isUnlocked && pet.spriteConfig ? (
+            {/* Show animated sprite for unlocked bots, silhouette for locked */}
+            {isUnlocked && bot.spriteConfig ? (
               <div className="mb-3 flex items-center justify-center h-[180px] overflow-hidden">
-                <SpritePreview
-                  animal={pet}
-                  scale={Math.min(4, 180 / Math.max(pet.spriteConfig.frameWidth, pet.spriteConfig.frameHeight))}
+                <BotPreview
+                  robot={bot}
+                  scale={Math.min(4, 180 / Math.max(bot.spriteConfig.frameWidth, bot.spriteConfig.frameHeight))}
                 />
               </div>
-            ) : !isUnlocked && pet.spriteConfig ? (
+            ) : !isUnlocked && bot.spriteConfig ? (
               <div className="mb-3 flex items-center justify-center h-[180px] overflow-hidden relative">
                 <div style={{ filter: 'brightness(0.5) saturate(0)' }}>
-                  <SpritePreview
-                    animal={pet}
-                    scale={Math.min(4, 180 / Math.max(pet.spriteConfig.frameWidth, pet.spriteConfig.frameHeight))}
+                  <BotPreview
+                    robot={bot}
+                    scale={Math.min(4, 180 / Math.max(bot.spriteConfig.frameWidth, bot.spriteConfig.frameHeight))}
                   />
                 </div>
               </div>
             ) : (
               <div className="text-5xl mb-3">
-                {isUnlocked ? pet.emoji : "❓"}
+                {isUnlocked ? bot.emoji : "?"}
               </div>
             )}
 
@@ -102,13 +102,13 @@ export const PetDetailModal = ({
 
             <DialogHeader>
               <DialogTitle className="text-lg font-bold text-[hsl(45,20%,85%)]">
-                {isUnlocked ? pet.name : "???"}
+                {isUnlocked ? bot.name : "???"}
               </DialogTitle>
             </DialogHeader>
 
             <div className="flex items-center justify-center gap-2 mt-1">
               <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-[hsl(260,20%,18%)] text-[hsl(260,15%,55%)] border border-[hsl(260,20%,25%)]">
-                {pet.biome}
+                {bot.zone}
               </span>
             </div>
           </div>
@@ -117,7 +117,7 @@ export const PetDetailModal = ({
             {isUnlocked ? (
               <>
                 <p className="text-sm text-[hsl(260,10%,55%)] text-center">
-                  {pet.description}
+                  {bot.description}
                 </p>
 
                 {/* Show on Home toggle */}
@@ -157,17 +157,17 @@ export const PetDetailModal = ({
             ) : isShopExclusive ? (
               <div className="text-center py-4">
                 <p className="text-sm text-[hsl(260,10%,55%)] mb-3">
-                  {pet.description}
+                  {bot.description}
                 </p>
                 <div className="w-14 h-14 mx-auto mb-3 bg-[hsl(35,25%,18%)] rounded-full flex items-center justify-center border-2 border-[hsl(35,50%,40%)]">
                   <ShoppingBag className="w-7 h-7 text-[hsl(35,70%,55%)]" />
                 </div>
                 <p className="text-sm text-[hsl(260,10%,50%)] mb-2">
-                  This pet is available in the Shop
+                  This bot is available in the Shop
                 </p>
                 <div className="flex items-center justify-center gap-1 mb-3 text-[hsl(35,70%,55%)]">
                   <PixelIcon name="coin" size={16} />
-                  <span className="font-bold">{pet.coinPrice?.toLocaleString()}</span>
+                  <span className="font-bold">{bot.coinPrice?.toLocaleString()}</span>
                 </div>
                 <button
                   onClick={onNavigateToShop}
@@ -177,10 +177,10 @@ export const PetDetailModal = ({
                   Buy from Shop
                 </button>
               </div>
-            ) : isStudyHoursGated && pet.requiredStudyHours ? (
+            ) : isStudyHoursGated && bot.requiredStudyHours ? (
               <div className="text-center py-4">
                 <p className="text-sm text-[hsl(260,10%,55%)] mb-3">
-                  {pet.description}
+                  {bot.description}
                 </p>
                 <div className="w-14 h-14 mx-auto mb-3 bg-[hsl(220,25%,16%)] rounded-full flex items-center justify-center border-2 border-[hsl(220,40%,38%)]">
                   <Clock className="w-7 h-7 text-[hsl(220,60%,60%)]" />
@@ -190,18 +190,18 @@ export const PetDetailModal = ({
                 </p>
                 <div className="bg-[hsl(220,20%,16%)] border border-[hsl(220,30%,30%)] inline-block px-4 py-2 rounded-lg mb-3">
                   <span className="text-sm font-bold text-[hsl(220,60%,65%)]">
-                    {Math.floor(totalStudyHours)}h / {pet.requiredStudyHours}h studied
+                    {Math.floor(totalStudyHours)}h / {bot.requiredStudyHours}h studied
                   </span>
                 </div>
                 {/* Progress bar */}
                 <div className="w-full max-w-[200px] mx-auto bg-[hsl(260,15%,15%)] rounded-full h-2.5 overflow-hidden border border-[hsl(260,20%,22%)]">
                   <div
                     className="bg-gradient-to-r from-[hsl(220,60%,50%)] to-[hsl(260,50%,55%)] h-full rounded-full transition-all"
-                    style={{ width: `${Math.min(100, (totalStudyHours / pet.requiredStudyHours) * 100)}%` }}
+                    style={{ width: `${Math.min(100, (totalStudyHours / bot.requiredStudyHours) * 100)}%` }}
                   />
                 </div>
                 <p className="text-xs text-[hsl(260,10%,45%)] mt-2">
-                  {Math.max(0, Math.ceil(pet.requiredStudyHours - totalStudyHours))}h remaining
+                  {Math.max(0, Math.ceil(bot.requiredStudyHours - totalStudyHours))}h remaining
                 </p>
               </div>
             ) : (
@@ -210,10 +210,10 @@ export const PetDetailModal = ({
                   <Lock className="w-7 h-7 text-[hsl(260,10%,40%)]" />
                 </div>
                 <p className="text-sm text-[hsl(260,10%,50%)] mb-1">
-                  Keep leveling up to unlock this pet!
+                  Keep leveling up to unlock this bot!
                 </p>
                 <div className="inline-block px-4 py-2 text-sm font-bold rounded-md bg-[hsl(35,25%,18%)] text-[hsl(35,70%,60%)] border border-[hsl(35,40%,35%)]">
-                  Reach Level {pet.unlockLevel}
+                  Reach Level {bot.unlockLevel}
                 </div>
               </div>
             )}
@@ -223,3 +223,6 @@ export const PetDetailModal = ({
     </Dialog>
   );
 };
+
+/** @deprecated Use BotDetailModal instead */
+export const PetDetailModal = BotDetailModal;

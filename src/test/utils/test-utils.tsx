@@ -309,7 +309,7 @@ export const createFullAppState = (
     petparadise_xp: createXPState(options.level ?? 3, options.xp ?? 500),
     petparadise_streak: createStreakState({ currentStreak: options.streak ?? 5 }),
     petIsland_shopInventory: createShopInventoryState({
-      ownedCharacters: options.ownedCharacters ?? ['default-pet'],
+      ownedCharacters: options.ownedCharacters ?? ['bolt-bot'],
     }),
   };
 };

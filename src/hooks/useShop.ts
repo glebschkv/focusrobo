@@ -10,7 +10,7 @@ import {
   UTILITY_ITEMS,
   ALL_BUNDLES,
 } from '@/data/ShopData';
-import { getAnimalById, AnimalData } from '@/data/AnimalDatabase';
+import { getRobotById, RobotData } from '@/data/RobotDatabase';
 import { dispatchAchievementEvent, ACHIEVEMENT_EVENTS } from '@/hooks/useAchievementTracking';
 import { useShopStore } from '@/stores';
 import { syncPurchasedBundlesFromServer } from '@/stores/shopStore';
@@ -20,7 +20,7 @@ import { shopLogger } from '@/lib/logger';
 export interface PurchaseResult {
   success: boolean;
   message: string;
-  item?: ShopItem | AnimalData;
+  item?: ShopItem | RobotData;
 }
 
 /**
@@ -182,7 +182,7 @@ export const useShop = () => {
 
         // Grant character if included
         if (characterId) {
-          const animal = getAnimalById(characterId);
+          const animal = getRobotById(characterId);
           if (animal && !deps.ownedCharacters.includes(characterId)) {
             deps.addOwnedCharacter(characterId);
           }
@@ -265,7 +265,7 @@ export const useShop = () => {
     config.addOwned(itemId);
 
     const itemName = config.getItemName(item);
-    return { success: true, message: `${itemName} purchased!`, item: item as unknown as ShopItem | AnimalData };
+    return { success: true, message: `${itemName} purchased!`, item: item as unknown as ShopItem | RobotData };
   }, [coinSystem]);
 
   /**
@@ -273,7 +273,7 @@ export const useShop = () => {
    */
   const purchaseCharacter = useCallback(async (characterId: string): Promise<PurchaseResult> => {
     return genericPurchase(characterId, {
-      getItem: getAnimalById,
+      getItem: getRobotById,
       itemTypeName: 'Character',
       ownedItems: ownedCharacters,
       addOwned: addOwnedCharacter,
@@ -302,7 +302,7 @@ export const useShop = () => {
 
   // Unlock a character (without payment - used for bundles and rewards)
   const unlockCharacter = useCallback((characterId: string): boolean => {
-    const animal = getAnimalById(characterId);
+    const animal = getRobotById(characterId);
     if (!animal) {
       return false;
     }

@@ -70,7 +70,7 @@ const FEATURE_MAP: Record<string, { icon: React.ReactNode; label: string }> = {
   'No recurring fees ever': { icon: <InfinityIcon className="w-3.5 h-3.5" />, label: 'Pay Once' },
   'All future updates included': { icon: <RefreshCw className="w-3.5 h-3.5" />, label: 'All Updates' },
   'Exclusive Founder badge': { icon: <PixelIcon name="founder-badge" size={14} />, label: 'Founder Badge' },
-  'Founder-only legendary pet': { icon: <Sparkles className="w-3.5 h-3.5" />, label: 'Legendary Pet' },
+  'Founder-only legendary bot': { icon: <Sparkles className="w-3.5 h-3.5" />, label: 'Legendary Bot' },
   'Website blocking': { icon: <Globe className="w-3.5 h-3.5" />, label: 'Block Websites' },
 };
 

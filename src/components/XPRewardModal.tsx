@@ -173,21 +173,21 @@ export const XPRewardModal = ({
                     key={index}
                     className={cn(
                       "retro-reward-item",
-                      unlock.type === 'biome' ? '' : 'epic'
+                      unlock.type === 'zone' ? '' : 'epic'
                     )}
                   >
                     <div
                       className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: unlock.type === 'biome'
+                        background: unlock.type === 'zone'
                           ? 'linear-gradient(180deg, hsl(260 30% 22%), hsl(260 35% 16%))'
                           : 'linear-gradient(180deg, hsl(320 35% 25%), hsl(320 30% 18%))',
-                        border: unlock.type === 'biome'
+                        border: unlock.type === 'zone'
                           ? '2px solid hsl(260 35% 30%)'
                           : '2px solid hsl(320 40% 35%)',
                       }}
                     >
-                      {unlock.type === 'biome' ? (
+                      {unlock.type === 'zone' ? (
                         <span className="text-sm">🌍</span>
                       ) : (
                         <span className="text-sm">🐾</span>
@@ -199,15 +199,15 @@ export const XPRewardModal = ({
                         <span
                           className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded"
                           style={{
-                            background: unlock.type === 'biome'
+                            background: unlock.type === 'zone'
                               ? 'hsl(260 40% 30%)'
                               : 'hsl(320 40% 30%)',
-                            color: unlock.type === 'biome'
+                            color: unlock.type === 'zone'
                               ? 'hsl(260 60% 75%)'
                               : 'hsl(320 60% 75%)',
                           }}
                         >
-                          {unlock.type === 'biome' ? 'World' : 'Pet'}
+                          {unlock.type === 'zone' ? 'World' : 'Bot'}
                         </span>
                       </div>
                       <p className="text-[10px] text-purple-300/50">

@@ -3,14 +3,14 @@ import { Lock, Sparkles, Star, Loader2 } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, Bundle } from "@/data/ShopData";
-import { AnimalData } from "@/data/AnimalDatabase";
+import { RobotData } from "@/data/RobotDatabase";
 import { SpritePreview, BackgroundPreview, BundlePreviewCarousel, PetBundlePreviewCarousel } from "./ShopPreviewComponents";
 import { RARITY_COLORS } from "./styles";
 
 interface PurchaseConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedItem: ShopItem | AnimalData | Bundle | null;
+  selectedItem: ShopItem | RobotData | Bundle | null;
   onPurchase: () => void;
   canAfford: (price: number) => boolean;
   coinBalance: number;
@@ -49,12 +49,12 @@ export const PurchaseConfirmDialog = ({
             <div className="retro-scanlines opacity-30" />
             <div className="h-28 mb-2 flex items-center justify-center overflow-hidden">
               {'bundleType' in selectedItem && selectedItem.bundleType === 'pets' ? (
-                // Pet bundle preview carousel
+                // Bot bundle preview carousel
                 <PetBundlePreviewCarousel petIds={(selectedItem as Bundle).itemIds} />
               ) : 'spriteConfig' in selectedItem && selectedItem.spriteConfig ? (
                 <SpritePreview
-                  animal={selectedItem as AnimalData}
-                  scale={Math.min(2.5, 90 / Math.max((selectedItem as AnimalData).spriteConfig!.frameWidth, (selectedItem as AnimalData).spriteConfig!.frameHeight))}
+                  robot={selectedItem as RobotData}
+                  scale={Math.min(2.5, 90 / Math.max((selectedItem as RobotData).spriteConfig!.frameWidth, (selectedItem as RobotData).spriteConfig!.frameHeight))}
                 />
               ) : 'previewImages' in selectedItem && (selectedItem as Bundle).previewImages ? (
                 // Background bundle preview carousel

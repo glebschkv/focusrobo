@@ -163,9 +163,9 @@ vi.mock('@/hooks/useCoinBooster', () => ({
   useCoinBooster: vi.fn(() => mockCoinBooster),
 }));
 
-// Mock Animal Database
-vi.mock('@/data/AnimalDatabase', () => ({
-  getUnlockedAnimals: vi.fn(() => [
+// Mock Robot Database
+vi.mock('@/data/RobotDatabase', () => ({
+  getUnlockableRobots: vi.fn(() => [
     { name: 'panda' },
     { name: 'cat' },
     { name: 'dog' },
@@ -351,7 +351,7 @@ describe('useBackendAppState', () => {
         await result.current.awardXP(25);
       });
 
-      // Only the favorite pet should have interaction
+      // Only the favorite bot should have interaction
       expect(mockBondSystem.interactWithPet).toHaveBeenCalledWith('panda', 'focus_session');
     });
 
@@ -380,7 +380,7 @@ describe('useBackendAppState', () => {
   });
 
   describe('interactWithPet', () => {
-    it('should interact with pet and return result', async () => {
+    it('should interact with bot and return result', async () => {
       const { result } = renderHook(() => useBackendAppState());
 
       let interactionResult: unknown;
@@ -404,7 +404,7 @@ describe('useBackendAppState', () => {
       expect(mockBondSystem.interactWithPet).toHaveBeenCalledWith('cat', 'play');
     });
 
-    it('should update quest progress for pet interactions', async () => {
+    it('should update quest progress for bot interactions', async () => {
       const { result } = renderHook(() => useBackendAppState());
 
       await act(async () => {
@@ -515,8 +515,8 @@ describe('useBackendAppState', () => {
     });
   });
 
-  describe('Biome Data', () => {
-    it('should return current biome', () => {
+  describe('Zone Data', () => {
+    it('should return current zone', () => {
       const { result } = renderHook(() => useBackendAppState());
 
       expect(result.current.currentBiome).toBe('Snow');

@@ -13,11 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BIOME_DATABASE } from "@/data/AnimalDatabase";
+import { ZONE_DATABASE } from "@/data/RobotDatabase";
 import { useShopStore, useThemeStore } from "@/stores";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 
-const BIOME_CONFIG: Record<string, { bg: string; icon: string }> = {
+const ZONE_CONFIG: Record<string, { bg: string; icon: string }> = {
   'Meadow': { bg: 'day', icon: 'meadow' },
   'Sunset': { bg: 'sunset', icon: 'sunset' },
   'Night': { bg: 'night', icon: 'moon' },
@@ -42,9 +42,9 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
     unlockedAnimals,
     getLevelProgress,
     streakData,
-    availableBiomes,
-    currentBiome,
-    switchBiome,
+    availableZones,
+    currentZone,
+    switchZone,
   } = useAppState();
   const coinSystem = useCoinSystem();
 
@@ -53,8 +53,8 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
   const setEquippedBackground = useShopStore((state) => state.setEquippedBackground);
   const setHomeBackground = useThemeStore((state) => state.setHomeBackground);
 
-  const handleSwitchBiome = useCallback((biomeName: string) => {
-    switchBiome(biomeName);
+  const handleSwitchZone = useCallback((biomeName: string) => {
+    switchZone(biomeName);
 
     // Clear any equipped premium background when switching biomes
     if (equippedBackground) {
@@ -62,22 +62,22 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
     }
 
     // Use the biome's background image if available, otherwise fall back to theme ID
-    const biome = BIOME_DATABASE.find(b => b.name === biomeName);
-    const backgroundTheme = biome?.backgroundImage || BIOME_CONFIG[biomeName]?.bg || 'day';
+    const zone = ZONE_DATABASE.find(b => b.name === biomeName);
+    const backgroundTheme = zone?.backgroundImage || ZONE_CONFIG[biomeName]?.bg || 'day';
     setHomeBackground(backgroundTheme);
-  }, [switchBiome, equippedBackground, setEquippedBackground, setHomeBackground]);
+  }, [switchZone, equippedBackground, setEquippedBackground, setHomeBackground]);
 
   if (currentTab !== "home") return null;
 
   const progress = getLevelProgress();
   const hasActiveStreak = streakData.currentStreak >= 3;
-  const currentBiomeIcon = BIOME_CONFIG[currentBiome]?.icon || 'meadow';
+  const currentZoneIcon = ZONE_CONFIG[currentZone]?.icon || 'meadow';
 
   return (
     <div className="status-bar-container">
       {/* Game-style unified top bar */}
       <div className="game-top-bar">
-        {/* Left section: Level + Biome */}
+        {/* Left section: Level + Zone */}
         <div className="top-bar-left">
           {/* Level Badge with Stats Popover */}
           <Popover open={statsOpen} onOpenChange={setStatsOpen}>
@@ -149,27 +149,27 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
             </PopoverContent>
           </Popover>
 
-          {/* Biome Selector */}
+          {/* Zone Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="biome-btn">
-                <PixelIcon name={currentBiomeIcon} size={16} className="biome-icon" />
-                <ChevronDown className="w-3 h-3 biome-chevron" />
+              <button className="zone-btn">
+                <PixelIcon name={currentZoneIcon} size={16} className="zone-icon" />
+                <ChevronDown className="w-3 h-3 zone-chevron" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="biome-menu">
-              {availableBiomes.map((biome) => {
-                const config = BIOME_CONFIG[biome];
-                const isActive = biome === currentBiome;
+            <DropdownMenuContent align="start" className="zone-menu">
+              {availableZones.map((zoneName) => {
+                const config = ZONE_CONFIG[zoneName];
+                const isActive = zoneName === currentZone;
                 return (
                   <DropdownMenuItem
-                    key={biome}
-                    onClick={() => handleSwitchBiome(biome)}
-                    className={`biome-menu-item ${isActive ? 'selected' : ''}`}
+                    key={zoneName}
+                    onClick={() => handleSwitchZone(zoneName)}
+                    className={`zone-menu-item ${isActive ? 'selected' : ''}`}
                   >
                     <PixelIcon name={config?.icon || 'globe'} size={16} />
-                    <span>{biome}</span>
-                    {isActive && <span className="biome-check">✓</span>}
+                    <span>{zoneName}</span>
+                    {isActive && <span className="zone-check">✓</span>}
                   </DropdownMenuItem>
               );
             })}

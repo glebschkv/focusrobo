@@ -20,7 +20,7 @@ export const ARIA_LABELS = {
   // Tab Navigation
   HOME_TAB: 'Go to home screen',
   TIMER_TAB: 'Go to focus timer',
-  COLLECTION_TAB: 'View pet collection',
+  COLLECTION_TAB: 'View bot collection',
   SHOP_TAB: 'Open shop',
   SETTINGS_TAB: 'Open settings',
 
@@ -38,14 +38,14 @@ export const ARIA_LABELS = {
   COMPLETE_SESSION: 'Complete focus session',
   CANCEL_SESSION: 'Cancel focus session',
 
-  // Pet Interactions
-  PET_ANIMAL: 'Pet the animal',
-  FEED_ANIMAL: 'Feed the animal',
-  PLAY_WITH_ANIMAL: 'Play with the animal',
-  SELECT_PET: 'Select this pet',
+  // Bot Interactions
+  INTERACT_BOT: 'Interact with the bot',
+  CHARGE_BOT: 'Charge the bot',
+  TRAIN_BOT: 'Train the bot',
+  SELECT_BOT: 'Select this bot',
   FAVORITE_PET: 'Add to favorites',
   UNFAVORITE_PET: 'Remove from favorites',
-  VIEW_PET_DETAILS: 'View pet details',
+  VIEW_BOT_DETAILS: 'View bot details',
 
   // Shop & Currency
   PURCHASE_ITEM: 'Purchase this item',
@@ -90,7 +90,7 @@ export const ARIA_LABELS = {
 // ============================================================================
 
 export const ariaLabel = {
-  // Pet labels
+  // Bot labels
   petCard: (name: string, isLocked: boolean, level?: number) =>
     isLocked
       ? `${name} - Locked. Unlock at level ${level}`
@@ -136,7 +136,7 @@ export const ariaLabel = {
   toggle: (name: string, enabled: boolean) =>
     `${name}: ${enabled ? 'On' : 'Off'}. Tap to toggle.`,
 
-  // World/Biome labels
+  // World/Zone labels
   biome: (name: string, isActive: boolean, isLocked: boolean, level?: number) => {
     if (isLocked) return `${name} - Locked. Unlock at level ${level}`;
     if (isActive) return `${name} - Current location`;
@@ -154,7 +154,7 @@ export const ROLE_DESCRIPTIONS = {
   STREAK_DISPLAY: 'Current streak counter',
   COIN_DISPLAY: 'Coin balance display',
   LEVEL_DISPLAY: 'Current level indicator',
-  PET_GRID: 'Pet collection grid',
+  PET_GRID: 'Bot collection grid',
   SHOP_ITEM: 'Shop item for purchase',
   ACHIEVEMENT_BADGE: 'Achievement badge',
   QUEST_ITEM: 'Quest objective',

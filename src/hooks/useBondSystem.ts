@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { bondLogger } from '@/lib/logger';
 
 export interface BondData {
-  animalId: string;
+  botId: string;
   bondLevel: number; // 1-10
   experience: number; // 0-100 per level
   lastInteraction: number;
@@ -20,20 +20,20 @@ export interface BondData {
 
 export interface BondSystemReturn {
   bonds: Record<string, BondData>;
-  getBondLevel: (animalId: string) => number;
-  getExperienceProgress: (animalId: string) => number;
-  getMoodState: (animalId: string) => string;
-  interactWithPet: (animalId: string, activity: string) => Promise<boolean>;
-  feedPet: (animalId: string) => Promise<boolean>;
-  playWithPet: (animalId: string) => Promise<boolean>;
-  trainPet: (animalId: string, skill: string) => Promise<boolean>;
-  giftTreat: (animalId: string) => Promise<boolean>;
-  getAbilityBonuses: (animalId: string) => Record<string, number>;
-  getPetPersonality: (animalId: string) => BondData['personality'];
-  resetBond: (animalId: string) => void;
+  getBondLevel: (botId: string) => number;
+  getExperienceProgress: (botId: string) => number;
+  getMoodState: (botId: string) => string;
+  interactWithBot: (botId: string, activity: string) => Promise<boolean>;
+  feedBot: (botId: string) => Promise<boolean>;
+  playWithBot: (botId: string) => Promise<boolean>;
+  trainBot: (botId: string, skill: string) => Promise<boolean>;
+  giftUpgrade: (botId: string) => Promise<boolean>;
+  getAbilityBonuses: (botId: string) => Record<string, number>;
+  getBotPersonality: (botId: string) => BondData['personality'];
+  resetBond: (botId: string) => void;
 }
 
-const BOND_STORAGE_KEY = 'pet-bond-data';
+const BOND_STORAGE_KEY = 'bot-bond-data';
 const EXPERIENCE_PER_LEVEL = 100;
 const ABILITIES_BY_LEVEL = {
   1: ['Basic Companion'],
@@ -66,10 +66,10 @@ export const useBondSystem = (): BondSystemReturn => {
     }
   }, []);
 
-  // Initialize bond data for new animal
-  const initializeBond = useCallback((animalId: string): BondData => {
+  // Initialize bond data for new bot
+  const initializeBond = useCallback((botId: string): BondData => {
     return {
-      animalId,
+      botId,
       bondLevel: 1,
       experience: 0,
       lastInteraction: Date.now(),
@@ -85,19 +85,19 @@ export const useBondSystem = (): BondSystemReturn => {
     };
   }, []);
 
-  // Get bond level for animal
-  const getBondLevel = useCallback((animalId: string): number => {
-    return bonds[animalId]?.bondLevel || 1;
+  // Get bond level for bot
+  const getBondLevel = useCallback((botId: string): number => {
+    return bonds[botId]?.bondLevel || 1;
   }, [bonds]);
 
   // Get experience progress (0-100)
-  const getExperienceProgress = useCallback((animalId: string): number => {
-    return bonds[animalId]?.experience || 0;
+  const getExperienceProgress = useCallback((botId: string): number => {
+    return bonds[botId]?.experience || 0;
   }, [bonds]);
 
   // Get mood state
-  const getMoodState = useCallback((animalId: string): string => {
-    return bonds[animalId]?.moodState || 'content';
+  const getMoodState = useCallback((botId: string): string => {
+    return bonds[botId]?.moodState || 'content';
   }, [bonds]);
 
   // Calculate mood based on interactions
@@ -112,9 +112,9 @@ export const useBondSystem = (): BondSystemReturn => {
   }, []);
 
   // Add experience and handle level ups
-  const addExperience = useCallback((animalId: string, amount: number): boolean => {
+  const addExperience = useCallback((botId: string, amount: number): boolean => {
     setBonds(prev => {
-      const current = prev[animalId] || initializeBond(animalId);
+      const current = prev[botId] || initializeBond(botId);
       const newExperience = current.experience + amount;
       const newLevel = Math.min(10, current.bondLevel + Math.floor(newExperience / EXPERIENCE_PER_LEVEL));
       const remainingExp = newExperience % EXPERIENCE_PER_LEVEL;
@@ -137,12 +137,12 @@ export const useBondSystem = (): BondSystemReturn => {
         unlockedAbilities: newAbilities
       };
 
-      const newBonds = { ...prev, [animalId]: updated };
+      const newBonds = { ...prev, [botId]: updated };
       saveBondData(newBonds);
 
       if (leveledUp) {
         toast.success("Bond Level Up!", {
-          description: `Your bond with ${animalId} reached level ${newLevel}!`,
+          description: `Your bond with ${botId} reached level ${newLevel}!`,
         });
       }
 
@@ -155,14 +155,14 @@ export const useBondSystem = (): BondSystemReturn => {
   // Generic interaction method.
   // Automatic interactions (like 'focus_session') skip the toast to avoid
   // spamming the user on every timer completion.
-  const interactWithPet = useCallback(async (animalId: string, activity: string): Promise<boolean> => {
+  const interactWithBot = useCallback(async (botId: string, activity: string): Promise<boolean> => {
     const experienceGain = Math.floor(Math.random() * 15) + 10;
-    addExperience(animalId, experienceGain);
+    addExperience(botId, experienceGain);
 
     // Only show toast for explicit user-initiated interactions
     if (activity !== 'focus_session') {
-      toast.success("Pet Interaction", {
-        description: `${activity} with your pet! +${experienceGain} bond experience`,
+      toast.success("Bot Interaction", {
+        description: `${activity} with your bot! +${experienceGain} bond experience`,
       });
     }
 
@@ -170,19 +170,19 @@ export const useBondSystem = (): BondSystemReturn => {
   }, [addExperience]);
 
   // Specific interaction methods
-  const feedPet = useCallback(async (animalId: string): Promise<boolean> => {
-    return interactWithPet(animalId, "Fed");
-  }, [interactWithPet]);
+  const feedBot = useCallback(async (botId: string): Promise<boolean> => {
+    return interactWithBot(botId, "Fed");
+  }, [interactWithBot]);
 
-  const playWithPet = useCallback(async (animalId: string): Promise<boolean> => {
-    return interactWithPet(animalId, "Played");
-  }, [interactWithPet]);
+  const playWithBot = useCallback(async (botId: string): Promise<boolean> => {
+    return interactWithBot(botId, "Played");
+  }, [interactWithBot]);
 
-  const trainPet = useCallback(async (animalId: string, skill: string): Promise<boolean> => {
+  const trainBot = useCallback(async (botId: string, skill: string): Promise<boolean> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         const experienceGain = Math.floor(Math.random() * 25) + 20;
-        addExperience(animalId, experienceGain);
+        addExperience(botId, experienceGain);
         
         toast.success("Training Complete", {
           description: `Trained ${skill}! +${experienceGain} bond experience`,
@@ -193,13 +193,13 @@ export const useBondSystem = (): BondSystemReturn => {
     });
   }, [addExperience]);
 
-  const giftTreat = useCallback(async (animalId: string): Promise<boolean> => {
-    return interactWithPet(animalId, "Gave treat to");
-  }, [interactWithPet]);
+  const giftUpgrade = useCallback(async (botId: string): Promise<boolean> => {
+    return interactWithBot(botId, "Gave treat to");
+  }, [interactWithBot]);
 
   // Get ability bonuses based on bond level
-  const getAbilityBonuses = useCallback((animalId: string): Record<string, number> => {
-    const bondLevel = getBondLevel(animalId);
+  const getAbilityBonuses = useCallback((botId: string): Record<string, number> => {
+    const bondLevel = getBondLevel(botId);
     return {
       focusBonus: bondLevel * 2, // 2% per level
       experienceBonus: Math.floor(bondLevel / 2) * 5, // 5% every 2 levels
@@ -207,16 +207,16 @@ export const useBondSystem = (): BondSystemReturn => {
     };
   }, [getBondLevel]);
 
-  // Get pet personality
-  const getPetPersonality = useCallback((animalId: string): BondData['personality'] => {
-    return bonds[animalId]?.personality || { energy: 3, curiosity: 3, loyalty: 3 };
+  // Get bot personality
+  const getBotPersonality = useCallback((botId: string): BondData['personality'] => {
+    return bonds[botId]?.personality || { energy: 3, curiosity: 3, loyalty: 3 };
   }, [bonds]);
 
   // Reset bond (for testing)
-  const resetBond = useCallback((animalId: string): void => {
+  const resetBond = useCallback((botId: string): void => {
     setBonds(prev => {
       const updated = { ...prev };
-      delete updated[animalId];
+      delete updated[botId];
       saveBondData(updated);
       return updated;
     });
@@ -232,13 +232,13 @@ export const useBondSystem = (): BondSystemReturn => {
     getBondLevel,
     getExperienceProgress,
     getMoodState,
-    interactWithPet,
-    feedPet,
-    playWithPet,
-    trainPet,
-    giftTreat,
+    interactWithBot,
+    feedBot,
+    playWithBot,
+    trainBot,
+    giftUpgrade,
     getAbilityBonuses,
-    getPetPersonality,
+    getBotPersonality,
     resetBond
   };
 };
