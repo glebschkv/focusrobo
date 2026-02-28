@@ -21,7 +21,7 @@ interface MechHangarProps {
  * with a central charging bay, display bays, and stats.
  */
 export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel }: MechHangarProps) => {
-  const activeHomeBots = useActiveHomePets();
+  const activeHomeBots = useActiveHomeBots();
   const shopOwnedCharacters = useOwnedCharacters();
   const toggleHomeActive = useCollectionStore((s) => s.toggleHomeActive);
   const streak = useCurrentStreak();
@@ -58,7 +58,7 @@ export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel 
     if (idx > 0) {
       current.splice(idx, 1);
       current.unshift(botId);
-      useCollectionStore.getState().setActiveHomePets(current);
+      useCollectionStore.getState().setActiveHomeBots(current);
     }
   };
 

@@ -2,9 +2,10 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockTimerWidget - "Pet Buddy" Widget
+ * BotBlockTimerWidget - "Focus Bot" Widget
  *
- * Shows your active pet alongside the focus timer.
+ * Shows your active bot alongside the focus timer.
+ * Robot-themed messages powered by WidgetBotMessages.
  * Features rotating funny messages based on session state.
  * Screenshot-worthy design with retro pixel aesthetic.
  *
@@ -21,8 +22,8 @@ struct BotBlockTimerWidget: Widget {
         StaticConfiguration(kind: kind, provider: TimerProvider()) { entry in
             TimerWidgetView(entry: entry)
         }
-        .configurationDisplayName("Pet Buddy")
-        .description("Your pet keeps you company during focus sessions")
+        .configurationDisplayName("Focus Bot")
+        .description("Your bot keeps you company during focus sessions")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -47,7 +48,7 @@ struct TimerProvider: TimelineProvider {
 
     private func loadEntry() -> TimerEntry {
         let data = WidgetDataReader.timerData
-        let pet = WidgetDataReader.petInfo
+        let bot = WidgetDataReader.botInfo
         return TimerEntry(
             date: Date(),
             isRunning: data.isRunning,
@@ -55,8 +56,8 @@ struct TimerProvider: TimelineProvider {
             sessionDuration: data.sessionDuration,
             sessionType: data.sessionType,
             taskLabel: data.taskLabel,
-            petName: pet.activePetName,
-            petEmoji: pet.activePetEmoji
+            botName: bot.activeBotName,
+            botEmoji: bot.activeBotEmoji
         )
     }
 }
@@ -70,8 +71,8 @@ struct TimerEntry: TimelineEntry {
     let sessionDuration: Int
     let sessionType: String?
     let taskLabel: String?
-    let petName: String?
-    let petEmoji: String?
+    let botName: String?
+    let botEmoji: String?
 
     static let placeholder = TimerEntry(
         date: Date(),
@@ -80,8 +81,8 @@ struct TimerEntry: TimelineEntry {
         sessionDuration: 25 * 60,
         sessionType: "Focus",
         taskLabel: nil,
-        petName: "Dewdrop Frog",
-        petEmoji: "🐸"
+        botName: "Bit",
+        botEmoji: "🤖"
     )
 
     var progress: Double {
@@ -107,18 +108,18 @@ struct TimerEntry: TimelineEntry {
     var funMessage: String {
         if isRunning {
             return isAlmostDone
-                ? WidgetPetMessages.timerAlmostDone
-                : WidgetPetMessages.timerRunning
+                ? WidgetBotMessages.timerAlmostDone
+                : WidgetBotMessages.timerRunning
         }
-        return WidgetPetMessages.timerIdle
+        return WidgetBotMessages.timerIdle
     }
 
     var displayEmoji: String {
-        petEmoji ?? "🐾"
+        botEmoji ?? "🤖"
     }
 
     var displayName: String {
-        WidgetPetMessages.petDisplayName(petName)
+        WidgetBotMessages.botDisplayName(botName)
     }
 
     // MARK: - Accessibility
@@ -165,7 +166,7 @@ struct TimerWidgetView: View {
 
     private var smallLayout: some View {
         VStack(spacing: 4) {
-            // Pet header
+            // Bot header
             HStack(spacing: 4) {
                 Text(entry.displayEmoji)
                     .font(.system(size: 16))
@@ -219,7 +220,7 @@ struct TimerWidgetView: View {
 
     private var mediumLayout: some View {
         HStack(spacing: 12) {
-            // Left: Pet + message
+            // Left: Bot + message
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
                     Text(entry.displayEmoji)
@@ -326,7 +327,7 @@ struct TimerWidget_Previews: PreviewProvider {
             TimerWidgetView(entry: TimerEntry(
                 date: Date(), isRunning: false, timeRemaining: 0,
                 sessionDuration: 0, sessionType: nil, taskLabel: nil,
-                petName: "Shadow Cat", petEmoji: "🐱"
+                botName: "Shadow Bot", botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Idle - Small")
@@ -338,7 +339,7 @@ struct TimerWidget_Previews: PreviewProvider {
             TimerWidgetView(entry: TimerEntry(
                 date: Date(), isRunning: true, timeRemaining: 180,
                 sessionDuration: 1500, sessionType: "Deep Work", taskLabel: nil,
-                petName: "Star Wizard", petEmoji: "⭐"
+                botName: "Star Bot", botEmoji: "⭐"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Almost Done")

@@ -2,11 +2,48 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
 
+// Mock logger
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
+
 // Mock the achievement service
 vi.mock('@/services/achievementService', () => ({
   ACHIEVEMENT_STORAGE_KEY: 'nomo_achievements',
   ACHIEVEMENT_UNLOCK_EVENT: 'achievement_unlock',
   ACHIEVEMENT_CLAIMED_EVENT: 'achievement_claimed',
+  TIER_POINTS: { bronze: 10, silver: 25, gold: 50, platinum: 100, diamond: 200 },
+  ACHIEVEMENT_DEFINITIONS: [],
   initializeAchievements: vi.fn(() => [
     { id: 'first-session', title: 'First Session', name: 'First Session', description: 'Complete first focus', category: 'beginner', tier: 'bronze', icon: '🎯', progress: 0, target: 1, isUnlocked: false, rewardsClaimed: false, rewards: [{ type: 'xp', amount: 50, description: '+50 XP' }] },
     { id: 'focus-streak-3', title: '3 Day Streak', name: '3 Day Streak', description: '3 day streak', category: 'streak', tier: 'bronze', icon: '🔥', progress: 0, target: 3, isUnlocked: false, rewardsClaimed: false, rewards: [{ type: 'xp', amount: 50, description: '+50 XP' }] },
@@ -22,6 +59,7 @@ vi.mock('@/services/achievementService', () => ({
   })),
   loadFromStorage: vi.fn(() => null),
   saveToStorage: vi.fn(),
+  setAchievementUserId: vi.fn(),
   checkAchievementProgress: vi.fn((achievement, type, value) => {
     if (achievement.id === 'first-session' && type === 'session_complete') {
       return { shouldUpdate: true, newProgress: value };

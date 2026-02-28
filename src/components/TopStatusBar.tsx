@@ -39,7 +39,7 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
     currentLevel,
     currentXP,
     xpToNextLevel,
-    unlockedAnimals,
+    unlockedRobots,
     getLevelProgress,
     streakData,
     availableZones,
@@ -121,10 +121,10 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="heart-pets" size={14} className="inline mr-1 align-middle" />
-                      Pets Collected
+                      <PixelIcon name="robot" size={14} className="inline mr-1 align-middle" />
+                      Bots Collected
                     </span>
-                    <span className="stat-val">{unlockedAnimals.length}</span>
+                    <span className="stat-val">{unlockedRobots.length}</span>
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">

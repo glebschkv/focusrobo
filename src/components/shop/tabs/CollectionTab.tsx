@@ -313,7 +313,7 @@ const PetBundleCard = ({
       setSelectedItem(bundle as unknown as ShopItem);
       setShowPurchaseConfirm(true);
     } else {
-      toast.info("You already own all pets in this bundle!");
+      toast.info("You already own all bots in this bundle!");
     }
   };
 

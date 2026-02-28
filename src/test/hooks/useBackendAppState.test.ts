@@ -3,14 +3,39 @@ import { renderHook, act } from '@testing-library/react';
 import { useBackendAppState } from '@/hooks/useBackendAppState';
 
 // Mock all the subsystem hooks
-vi.mock('@/lib/logger', () => ({
-  syncLogger: {
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 vi.mock('sonner', () => ({
   toast: {
@@ -47,8 +72,8 @@ const mockXPSystem = {
   currentLevel: 5,
   xpToNextLevel: 100,
   totalXPForCurrentLevel: 400,
-  currentBiome: 'Snow',
-  availableBiomes: ['Snow', 'Forest'],
+  currentZone: 'Snow',
+  availableZones: ['Snow', 'Forest'],
   isLoading: false,
   awardXP: vi.fn(() => ({
     xpGained: 50,
@@ -123,7 +148,7 @@ vi.mock('@/hooks/useSupabaseData', () => ({
 // Mock Bond System
 const mockBondSystem = {
   getBondLevel: vi.fn(() => 3),
-  interactWithPet: vi.fn(() => Promise.resolve({ bondXp: 10 })),
+  interactWithBot: vi.fn(() => Promise.resolve({ bondXp: 10 })),
 };
 
 vi.mock('@/hooks/useBondSystem', () => ({
@@ -132,7 +157,7 @@ vi.mock('@/hooks/useBondSystem', () => ({
 
 // Mock Collection
 const mockCollection = {
-  unlockedAnimals: ['panda', 'cat'],
+  unlockedRobots: ['panda', 'cat'],
 };
 
 vi.mock('@/hooks/useCollection', () => ({
@@ -223,7 +248,7 @@ describe('useBackendAppState', () => {
       const { result } = renderHook(() => useBackendAppState());
 
       expect(typeof result.current.awardXP).toBe('function');
-      expect(typeof result.current.interactWithPet).toBe('function');
+      expect(typeof result.current.interactWithBot).toBe('function');
       expect(typeof result.current.getLevelProgress).toBe('function');
       expect(typeof result.current.getAppState).toBe('function');
     });
@@ -262,9 +287,9 @@ describe('useBackendAppState', () => {
       expect(state).toHaveProperty('boosterMultiplier');
 
       // Collection properties
-      expect(state).toHaveProperty('unlockedAnimals');
-      expect(state).toHaveProperty('currentBiome');
-      expect(state).toHaveProperty('availableBiomes');
+      expect(state).toHaveProperty('unlockedRobots');
+      expect(state).toHaveProperty('currentZone');
+      expect(state).toHaveProperty('availableZones');
 
       // Achievement properties
       expect(state).toHaveProperty('totalAchievements');
@@ -283,7 +308,7 @@ describe('useBackendAppState', () => {
       // Backend data
       expect(state).toHaveProperty('profile');
       expect(state).toHaveProperty('progress');
-      expect(state).toHaveProperty('pets');
+      expect(state).toHaveProperty('bots');
 
       // Loading state
       expect(state).toHaveProperty('isLoading');
@@ -352,7 +377,7 @@ describe('useBackendAppState', () => {
       });
 
       // Only the favorite bot should have interaction
-      expect(mockBondSystem.interactWithPet).toHaveBeenCalledWith('panda', 'focus_session');
+      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('panda', 'focus_session');
     });
 
     it('should return coin reward in result', async () => {
@@ -379,16 +404,16 @@ describe('useBackendAppState', () => {
     });
   });
 
-  describe('interactWithPet', () => {
+  describe('interactWithBot', () => {
     it('should interact with bot and return result', async () => {
       const { result } = renderHook(() => useBackendAppState());
 
       let interactionResult: unknown;
       await act(async () => {
-        interactionResult = await result.current.interactWithPet('panda', 'play');
+        interactionResult = await result.current.interactWithBot('panda', 'play');
       });
 
-      expect(mockBondSystem.interactWithPet).toHaveBeenCalledWith('panda', 'play');
+      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('panda', 'play');
       expect(interactionResult).toHaveProperty('bondLevelUp');
       expect(interactionResult).toHaveProperty('newBondLevel');
       expect(interactionResult).toHaveProperty('interaction');
@@ -398,20 +423,20 @@ describe('useBackendAppState', () => {
       const { result } = renderHook(() => useBackendAppState());
 
       await act(async () => {
-        await result.current.interactWithPet('cat');
+        await result.current.interactWithBot('cat');
       });
 
-      expect(mockBondSystem.interactWithPet).toHaveBeenCalledWith('cat', 'play');
+      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('cat', 'play');
     });
 
     it('should update quest progress for bot interactions', async () => {
       const { result } = renderHook(() => useBackendAppState());
 
       await act(async () => {
-        await result.current.interactWithPet('panda', 'feed');
+        await result.current.interactWithBot('panda', 'feed');
       });
 
-      expect(mockQuests.updateQuestProgress).toHaveBeenCalledWith('pet_interaction', 1);
+      expect(mockQuests.updateQuestProgress).toHaveBeenCalledWith('bot_interaction', 1);
     });
 
     it('should detect bond level up', async () => {
@@ -424,7 +449,7 @@ describe('useBackendAppState', () => {
 
       let interactionResult: unknown;
       await act(async () => {
-        interactionResult = await result.current.interactWithPet('panda');
+        interactionResult = await result.current.interactWithBot('panda');
       });
 
       expect((interactionResult as { bondLevelUp: boolean }).bondLevelUp).toBe(true);
@@ -440,7 +465,7 @@ describe('useBackendAppState', () => {
       const { result } = renderHook(() => useBackendAppState());
 
       await act(async () => {
-        await result.current.interactWithPet('panda');
+        await result.current.interactWithBot('panda');
       });
 
       expect(mockAchievements.checkAndUnlockAchievements).toHaveBeenCalledWith('bond_level', 4);
@@ -496,22 +521,22 @@ describe('useBackendAppState', () => {
       });
     });
 
-    it('should provide pets data', () => {
+    it('should provide bots data', () => {
       const { result } = renderHook(() => useBackendAppState());
 
-      expect(result.current.pets).toHaveLength(2);
-      expect(result.current.pets[0].pet_type).toBe('panda');
+      expect(result.current.bots).toHaveLength(2);
+      expect(result.current.bots[0].pet_type).toBe('panda');
     });
   });
 
-  describe('Unlocked Animals', () => {
-    it('should return unlocked animals based on level', () => {
+  describe('Unlocked Robots', () => {
+    it('should return unlocked robots based on level', () => {
       const { result } = renderHook(() => useBackendAppState());
       const state = result.current.getAppState();
 
-      expect(state.unlockedAnimals).toContain('panda');
-      expect(state.unlockedAnimals).toContain('cat');
-      expect(state.unlockedAnimals).toContain('dog');
+      expect(state.unlockedRobots).toContain('panda');
+      expect(state.unlockedRobots).toContain('cat');
+      expect(state.unlockedRobots).toContain('dog');
     });
   });
 
@@ -519,15 +544,15 @@ describe('useBackendAppState', () => {
     it('should return current zone', () => {
       const { result } = renderHook(() => useBackendAppState());
 
-      expect(result.current.currentBiome).toBe('Snow');
+      expect(result.current.currentZone).toBe('Snow');
     });
 
-    it('should return available biomes', () => {
+    it('should return available zones', () => {
       const { result } = renderHook(() => useBackendAppState());
       const state = result.current.getAppState();
 
-      expect(state.availableBiomes).toContain('Snow');
-      expect(state.availableBiomes).toContain('Forest');
+      expect(state.availableZones).toContain('Snow');
+      expect(state.availableZones).toContain('Forest');
     });
   });
 

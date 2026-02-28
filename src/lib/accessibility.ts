@@ -91,14 +91,25 @@ export const ARIA_LABELS = {
 
 export const ariaLabel = {
   // Bot labels
+  botCard: (name: string, isLocked: boolean, level?: number) =>
+    isLocked
+      ? `${name} - Locked. Unlock at level ${level}`
+      : `${name} - Tap to view details`,
+  /** @deprecated Use botCard */
   petCard: (name: string, isLocked: boolean, level?: number) =>
     isLocked
       ? `${name} - Locked. Unlock at level ${level}`
       : `${name} - Tap to view details`,
 
+  favoriteBot: (name: string, isFavorite: boolean) =>
+    isFavorite ? `Remove ${name} from favorites` : `Add ${name} to favorites`,
+  /** @deprecated Use favoriteBot */
   favoritePet: (name: string, isFavorite: boolean) =>
     isFavorite ? `Remove ${name} from favorites` : `Add ${name} to favorites`,
 
+  homeActiveBot: (name: string, isActive: boolean) =>
+    isActive ? `Remove ${name} from home screen` : `Add ${name} to home screen`,
+  /** @deprecated Use homeActiveBot */
   homeActivePet: (name: string, isActive: boolean) =>
     isActive ? `Remove ${name} from home screen` : `Add ${name} to home screen`,
 

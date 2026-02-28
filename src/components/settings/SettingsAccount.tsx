@@ -315,7 +315,7 @@ export const SettingsAccount = () => {
                   </p>
                   <p className="text-[11px] text-amber-400/70 mt-1">
                     {isLocalOnlyGuest
-                      ? 'Sign in to sync your pets and progress across devices'
+                      ? 'Sign in to sync your bots and progress across devices'
                       : 'Create an account to keep your progress and sync across devices'}
                   </p>
                 </div>
@@ -404,7 +404,7 @@ export const SettingsAccount = () => {
         onCancel={() => setDeleteDialogOpen(false)}
         onConfirm={handleDeleteAccount}
         title="Delete Account?"
-        description="This will permanently delete your account and all your data including pets, progress, and achievements. This action cannot be undone."
+        description="This will permanently delete your account and all your data including bots, progress, and achievements. This action cannot be undone."
         confirmLabel="Delete Forever"
         loadingLabel="Deleting..."
         confirmClassName="bg-red-500 text-white px-3 py-2 text-xs font-bold rounded-lg"

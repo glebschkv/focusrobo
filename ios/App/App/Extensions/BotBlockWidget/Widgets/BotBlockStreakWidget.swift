@@ -21,7 +21,7 @@ struct BotBlockStreakWidget: Widget {
             StreakWidgetView(entry: entry)
         }
         .configurationDisplayName("Streak Fire")
-        .description("Watch your streak grow with your pet cheering you on")
+        .description("Watch your streak grow with your bot cheering you on!")
         .supportedFamilies([.systemSmall])
     }
 }
@@ -46,13 +46,13 @@ struct StreakProvider: TimelineProvider {
 
     private func loadEntry() -> StreakEntry {
         let data = WidgetDataReader.streakData
-        let pet = WidgetDataReader.petInfo
+        let bot = WidgetDataReader.botInfo
         return StreakEntry(
             date: Date(),
             currentStreak: data.currentStreak,
             longestStreak: data.longestStreak,
             streakFreezes: data.streakFreezes,
-            petEmoji: pet.activePetEmoji
+            botEmoji: bot.activeBotEmoji
         )
     }
 }
@@ -64,14 +64,14 @@ struct StreakEntry: TimelineEntry {
     let currentStreak: Int
     let longestStreak: Int
     let streakFreezes: Int
-    let petEmoji: String?
+    let botEmoji: String?
 
     static let placeholder = StreakEntry(
         date: Date(),
         currentStreak: 7,
         longestStreak: 14,
         streakFreezes: 2,
-        petEmoji: "🐸"
+        botEmoji: "🤖"
     )
 
     var isNewRecord: Bool {
@@ -97,11 +97,11 @@ struct StreakEntry: TimelineEntry {
     }
 
     var funMessage: String {
-        WidgetPetMessages.streakMessage(days: currentStreak)
+        WidgetBotMessages.streakMessage(days: currentStreak)
     }
 
     var displayEmoji: String {
-        petEmoji ?? "🐾"
+        botEmoji ?? "🤖"
     }
 
     // MARK: - Accessibility
@@ -195,21 +195,21 @@ struct StreakWidget_Previews: PreviewProvider {
 
             StreakWidgetView(entry: StreakEntry(
                 date: Date(), currentStreak: 14, longestStreak: 14,
-                streakFreezes: 1, petEmoji: "🦊"
+                streakFreezes: 1, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Record Streak")
 
             StreakWidgetView(entry: StreakEntry(
                 date: Date(), currentStreak: 0, longestStreak: 10,
-                streakFreezes: 0, petEmoji: "🐱"
+                streakFreezes: 0, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("No Streak")
 
             StreakWidgetView(entry: StreakEntry(
                 date: Date(), currentStreak: 100, longestStreak: 100,
-                streakFreezes: 3, petEmoji: "🐸"
+                streakFreezes: 3, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("100+ Legend")

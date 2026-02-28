@@ -37,13 +37,39 @@ vi.mock('sonner', () => ({
   }),
 }));
 
-vi.mock('@/lib/logger', () => ({
-  notificationLogger: {
-    debug: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 import { PushNotifications } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';

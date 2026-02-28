@@ -2,10 +2,11 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockStatsWidget - "Pet Stats Card" Widget
+ * BotBlockStatsWidget - "Bot Stats" Widget
  *
  * Trading card-style layout showing your level, XP, and
- * focus stats with your pet's emoji and funny rank titles.
+ * focus stats with your bot's emoji and funny rank titles.
+ * Robot-themed messages powered by WidgetBotMessages.
  *
  * Accessibility Features:
  * - Full VoiceOver support
@@ -19,7 +20,7 @@ struct BotBlockStatsWidget: Widget {
         StaticConfiguration(kind: kind, provider: StatsProvider()) { entry in
             StatsWidgetView(entry: entry)
         }
-        .configurationDisplayName("Pet Stats Card")
+        .configurationDisplayName("Bot Stats")
         .description("Your focus stats as an RPG character card")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
@@ -45,16 +46,16 @@ struct StatsProvider: TimelineProvider {
 
     private func loadEntry() -> StatsEntry {
         let data = WidgetDataReader.stats
-        let pet = WidgetDataReader.petInfo
+        let bot = WidgetDataReader.botInfo
         return StatsEntry(
             date: Date(),
             level: data.level,
             totalXP: data.totalXP,
             totalFocusTime: data.totalFocusTime,
             totalSessions: data.totalSessions,
-            petName: pet.activePetName,
-            petEmoji: pet.activePetEmoji,
-            totalPets: pet.totalPetsCollected
+            botName: bot.activeBotName,
+            botEmoji: bot.activeBotEmoji,
+            totalBots: bot.totalBotsCollected
         )
     }
 }
@@ -67,9 +68,9 @@ struct StatsEntry: TimelineEntry {
     let totalXP: Int
     let totalFocusTime: Int
     let totalSessions: Int
-    let petName: String?
-    let petEmoji: String?
-    let totalPets: Int
+    let botName: String?
+    let botEmoji: String?
+    let totalBots: Int
 
     static let placeholder = StatsEntry(
         date: Date(),
@@ -77,9 +78,9 @@ struct StatsEntry: TimelineEntry {
         totalXP: 2450,
         totalFocusTime: 3600,
         totalSessions: 48,
-        petName: "Dewdrop Frog",
-        petEmoji: "🐸",
-        totalPets: 8
+        botName: "Bit",
+        botEmoji: "🤖",
+        totalBots: 8
     )
 
     var formattedFocusTime: String {
@@ -100,27 +101,27 @@ struct StatsEntry: TimelineEntry {
     }
 
     var displayEmoji: String {
-        petEmoji ?? "🐾"
+        botEmoji ?? "🤖"
     }
 
     var displayName: String {
-        WidgetPetMessages.petDisplayName(petName)
+        WidgetBotMessages.botDisplayName(botName)
     }
 
     var funMessage: String {
-        WidgetPetMessages.statsMessage(level: level)
+        WidgetBotMessages.statsMessage(level: level)
     }
 
     /// RPG-style rank title based on level
     var rankTitle: String {
         switch level {
-        case 1...3: return "Novice Tamer"
+        case 1...3: return "Novice Operator"
         case 4...7: return "Focus Apprentice"
-        case 8...12: return "Pet Whisperer"
+        case 8...12: return "Bot Commander"
         case 13...18: return "Focus Knight"
         case 19...25: return "Zen Master"
         case 26...35: return "Focus Sage"
-        case 36...45: return "Grand Tamer"
+        case 36...45: return "Grand Operator"
         default: return "Legendary Hero"
         }
     }
@@ -130,7 +131,7 @@ struct StatsEntry: TimelineEntry {
     var accessibilityLabel: String {
         let focusHours = totalFocusTime / 60
         let focusMinutes = totalFocusTime % 60
-        return "Level \(level) \(rankTitle). \(formattedXP) XP. \(focusHours) hours \(focusMinutes) minutes focused across \(totalSessions) sessions. \(totalPets) pets collected"
+        return "Level \(level) \(rankTitle). \(formattedXP) XP. \(focusHours) hours \(focusMinutes) minutes focused across \(totalSessions) sessions. \(totalBots) bots collected"
     }
 
     var accessibilityHint: String {
@@ -175,7 +176,7 @@ struct StatsWidgetView: View {
                     .foregroundColor(WidgetColors.level)
             }
 
-            // Pet emoji + name
+            // Bot emoji + name
             Text(entry.displayEmoji)
                 .font(.system(size: 24))
 
@@ -221,7 +222,7 @@ struct StatsWidgetView: View {
         HStack(spacing: 12) {
             // Left: Character card
             VStack(spacing: 4) {
-                // Pet avatar area
+                // Bot avatar area
                 VStack(spacing: 2) {
                     Text(entry.displayEmoji)
                         .font(.system(size: 36))
@@ -275,7 +276,7 @@ struct StatsWidgetView: View {
                 // Stats grid
                 statRow(label: "Focus Time", value: entry.formattedFocusTime, icon: "🕐")
                 statRow(label: "Sessions", value: "\(entry.totalSessions)", icon: "✅")
-                statRow(label: "Pets", value: "\(entry.totalPets)/44", icon: "🐾")
+                statRow(label: "Bots", value: "\(entry.totalBots)/44", icon: "🤖")
             }
             .frame(maxWidth: .infinity)
         }
@@ -324,7 +325,7 @@ struct StatsWidget_Previews: PreviewProvider {
             StatsWidgetView(entry: StatsEntry(
                 date: Date(), level: 50, totalXP: 125000,
                 totalFocusTime: 12000, totalSessions: 500,
-                petName: "Storm Spirit", petEmoji: "⚡", totalPets: 44
+                botName: "Storm Bot", botEmoji: "⚡", totalBots: 44
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Max Level")
@@ -332,7 +333,7 @@ struct StatsWidget_Previews: PreviewProvider {
             StatsWidgetView(entry: StatsEntry(
                 date: Date(), level: 1, totalXP: 50,
                 totalFocusTime: 25, totalSessions: 1,
-                petName: "Mushroom Kid", petEmoji: "🍄", totalPets: 1
+                botName: "Starter Bot", botEmoji: "🤖", totalBots: 1
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("New User")
@@ -344,7 +345,7 @@ struct StatsWidget_Previews: PreviewProvider {
             StatsWidgetView(entry: StatsEntry(
                 date: Date(), level: 50, totalXP: 125000,
                 totalFocusTime: 12000, totalSessions: 500,
-                petName: "Storm Spirit", petEmoji: "⚡", totalPets: 44
+                botName: "Storm Bot", botEmoji: "⚡", totalBots: 44
             ))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
                 .previewDisplayName("Max Level - Medium")

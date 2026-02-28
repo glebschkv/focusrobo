@@ -50,46 +50,36 @@ vi.mock('@/hooks/useAchievementTracking', () => ({
 }));
 
 vi.mock('@/lib/logger', () => {
-  const createMockLogger = () => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  });
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
   return {
-    logger: createMockLogger(),
-    shopLogger: createMockLogger(),
-    coinLogger: createMockLogger(),
-    storageLogger: createMockLogger(),
-    storeKitLogger: createMockLogger(),
-    supabaseLogger: createMockLogger(),
-    xpLogger: createMockLogger(),
-    streakLogger: createMockLogger(),
-    questLogger: createMockLogger(),
-    settingsLogger: createMockLogger(),
-    deviceActivityLogger: createMockLogger(),
-    premiumLogger: createMockLogger(),
-    navigationLogger: createMockLogger(),
-    soundLogger: createMockLogger(),
-    themeLogger: createMockLogger(),
-    collectionLogger: createMockLogger(),
-    onboardingLogger: createMockLogger(),
-    offlineSyncLogger: createMockLogger(),
-    authLogger: createMockLogger(),
-    analyticsLogger: createMockLogger(),
-    notificationLogger: createMockLogger(),
-    syncLogger: createMockLogger(),
-    focusModeLogger: createMockLogger(),
-    widgetLogger: createMockLogger(),
-    backupLogger: createMockLogger(),
-    threeLogger: createMockLogger(),
-    timerLogger: createMockLogger(),
-    achievementLogger: createMockLogger(),
-    bondLogger: createMockLogger(),
-    performanceLogger: createMockLogger(),
-    appReviewLogger: createMockLogger(),
-    nativePluginLogger: createMockLogger(),
-    createLogger: (name: string) => createMockLogger(),
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
   };
 });
 
@@ -358,7 +348,7 @@ describe('Shop Database – Purchase Flows', () => {
 
       expect(purchaseResult).toMatchObject({
         success: false,
-        message: 'You already own all pets in this bundle',
+        message: 'You already own all bots in this bundle',
       });
     });
   });

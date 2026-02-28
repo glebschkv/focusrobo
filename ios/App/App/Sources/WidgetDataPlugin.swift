@@ -28,7 +28,7 @@ public class WidgetDataPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "updateStreak", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "updateDailyProgress", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "updateStats", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "updatePetInfo", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "updateBotInfo", returnType: CAPPluginReturnPromise)
     ]
 
     // MARK: - Dependencies
@@ -127,10 +127,10 @@ public class WidgetDataPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
-    @objc func updatePetInfo(_ call: CAPPluginCall) {
+    @objc func updateBotInfo(_ call: CAPPluginCall) {
         do {
-            let petData = try PluginValidation.requiredObject(call, key: "petInfo")
-            try widgetManager.updatePartialData(key: "petInfo", value: petData)
+            let botData = try PluginValidation.requiredObject(call, key: "botInfo")
+            try widgetManager.updatePartialData(key: "petInfo", value: botData)
             call.resolveSuccess()
         } catch {
             call.reject(with: error as? PluginError ?? .dataEncodingFailed)
@@ -207,25 +207,40 @@ struct WidgetSharedData: Codable {
         }
     }
 
-    struct PetInfo: Codable {
-        var activePetName: String?
-        var activePetEmoji: String?
-        var totalPetsCollected: Int
+    struct BotInfo: Codable {
+        var activeBotName: String?
+        var activeBotEmoji: String?
+        var totalBotsCollected: Int
         var currentBiome: String?
 
+        // Support decoding from legacy "pet" keys
+        enum CodingKeys: String, CodingKey {
+            case activeBotName = "activePetName"
+            case activeBotEmoji = "activePetEmoji"
+            case totalBotsCollected = "totalPetsCollected"
+            case currentBiome
+        }
+
         init() {
-            activePetName = nil
-            activePetEmoji = nil
-            totalPetsCollected = 0
+            activeBotName = nil
+            activeBotEmoji = nil
+            totalBotsCollected = 0
             currentBiome = nil
         }
+    }
+
+    // Support decoding from legacy "petInfo" key
+    enum CodingKeys: String, CodingKey {
+        case timer, streak, dailyProgress, stats
+        case botInfo = "petInfo"
+        case lastUpdated
     }
 
     var timer: TimerData
     var streak: StreakData
     var dailyProgress: DailyProgress
     var stats: Stats
-    var petInfo: PetInfo
+    var botInfo: BotInfo
     var lastUpdated: Double
 
     init() {
@@ -233,7 +248,7 @@ struct WidgetSharedData: Codable {
         streak = StreakData()
         dailyProgress = DailyProgress()
         stats = Stats()
-        petInfo = PetInfo()
+        botInfo = BotInfo()
         lastUpdated = Date().timeIntervalSince1970 * 1000
     }
 }
@@ -271,7 +286,7 @@ final class WidgetDataReader {
         load().stats
     }
 
-    static var petInfo: WidgetSharedData.PetInfo {
-        load().petInfo
+    static var botInfo: WidgetSharedData.BotInfo {
+        load().botInfo
     }
 }

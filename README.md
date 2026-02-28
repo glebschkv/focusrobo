@@ -1,19 +1,21 @@
-# Phone Pet Paradise 🐾
+# BotBlock
 
-A gamified mobile app that helps users develop healthier phone habits by rewarding phone-free time with adorable virtual pets, achievements, and daily quests.
+A robot-themed focus timer app that rewards users with collectible robots for putting down their phone. Build better screen time habits while assembling your ultimate robot collection.
 
 ## Overview
 
-Phone Pet Paradise is a full-stack React + Capacitor mobile application that turns digital wellness into a fun, engaging experience. Users earn rewards, collect pets, complete quests, and build streaks by spending time away from their phones.
+BotBlock is a full-stack React + Capacitor mobile application that turns digital wellness into a fun, engaging experience. Users earn rewards, collect robots, complete quests, and build streaks by spending time away from their phones.
 
 ### Key Features
 
-- **Virtual Pet Collection** - Collect and bond with 50+ unique animated pets
-- **Focus Timer** - Set phone-free sessions with app blocking
+- **Focus Timer** - Set phone-free sessions with app blocking to stay on track
+- **App Blocking** - Block distracting apps during focus sessions using iOS Screen Time APIs
+- **Robot Collection** - Collect and customize 50+ unique robots as rewards
+- **XP & Levels** - Earn experience points and level up as you build better habits
+- **Shop** - Spend coins on robots, items, themes, and upgrades
 - **Achievement System** - Unlock achievements as you build better habits
 - **Daily Quests** - Complete daily challenges for rewards
 - **Streak Tracking** - Maintain streaks for consistent phone-free time
-- **Shop & Inventory** - Spend coins on items, themes, and upgrades
 - **Battle Pass** - Season-based progression with exclusive rewards
 - **Premium Features** - Subscription tiers with enhanced benefits
 - **Offline Support** - Full functionality even without internet connection
@@ -50,7 +52,7 @@ Phone Pet Paradise is a full-stack React + Capacitor mobile application that tur
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd phone-pet-paradise
+cd focusrobo
 
 # Install dependencies
 npm install
@@ -96,19 +98,19 @@ VITE_SUPABASE_URL="https://your-project-id.supabase.co"
 
 ```
 src/
-├── components/          # React components (137 files)
+├── components/          # React components
 │   ├── ui/             # Base UI components (shadcn/ui)
-│   ├── collection/     # Pet collection components
+│   ├── collection/     # Robot collection components
 │   ├── shop/           # Shop/marketplace
 │   ├── focus-timer/    # Focus mode UI
 │   ├── gamification/   # Achievements, XP, rewards
 │   └── settings/       # App settings
-├── hooks/              # Custom React hooks (54 hooks)
-├── stores/             # Zustand state stores (15 stores)
+├── hooks/              # Custom React hooks
+├── stores/             # Zustand state stores
 ├── services/           # Business logic services
 ├── lib/                # Utilities and helpers
 ├── types/              # TypeScript type definitions
-├── data/               # Static game data (pets, items, etc.)
+├── data/               # Static game data (robots, items, etc.)
 ├── contexts/           # React context providers
 ├── pages/              # Route page components
 ├── plugins/            # Native Capacitor plugins

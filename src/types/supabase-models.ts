@@ -1,3 +1,4 @@
+// TODO: Supabase will be replaced with a new backend solution. These model types will need to be updated during migration.
 // Supabase Database Model Types
 // These types represent the database schema for Supabase tables
 // Note: These are separate from local analytics types (see analytics.ts)

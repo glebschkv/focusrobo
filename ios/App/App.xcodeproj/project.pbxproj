@@ -57,7 +57,7 @@
 		SCFEXT000950000000000000 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000600000000000000 /* ManagedSettingsUI.framework */; };
 /* -- BotBlockWidget build files -- */
 		NMWEXT001300000000000000 /* BotBlockWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */; };
-		NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT004100000000000000 /* WidgetPetMessages.swift */; };
+		NMWEXT004200000000000000 /* WidgetBotMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT004100000000000000 /* WidgetBotMessages.swift */; };
 		NMWEXT001400000000000000 /* WidgetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000200000000000000 /* WidgetColors.swift */; };
 		NMWEXT001500000000000000 /* WidgetStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000300000000000000 /* WidgetStrings.swift */; };
 		NMWEXT001600000000000000 /* AccessibilityUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000400000000000000 /* AccessibilityUtilities.swift */; };
@@ -167,7 +167,7 @@
 		SCFEXT000400000000000000 /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* -- BotBlockWidget file references -- */
 		NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockWidgetBundle.swift; sourceTree = "<group>"; };
-		NMWEXT004100000000000000 /* WidgetPetMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPetMessages.swift; sourceTree = "<group>"; };
+		NMWEXT004100000000000000 /* WidgetBotMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBotMessages.swift; sourceTree = "<group>"; };
 		NMWEXT000200000000000000 /* WidgetColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetColors.swift; sourceTree = "<group>"; };
 		NMWEXT000300000000000000 /* WidgetStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetStrings.swift; sourceTree = "<group>"; };
 		NMWEXT000400000000000000 /* AccessibilityUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUtilities.swift; sourceTree = "<group>"; };
@@ -387,7 +387,7 @@
 				NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */,
 				NMWEXT000200000000000000 /* WidgetColors.swift */,
 				NMWEXT000300000000000000 /* WidgetStrings.swift */,
-				NMWEXT004100000000000000 /* WidgetPetMessages.swift */,
+				NMWEXT004100000000000000 /* WidgetBotMessages.swift */,
 				NMWEXT000400000000000000 /* AccessibilityUtilities.swift */,
 				NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */,
 				NMWEXT002600000000000000 /* Widgets */,
@@ -684,7 +684,7 @@
 				NMWEXT002000000000000000 /* BotBlockStreakWidget.swift in Sources */,
 				NMWEXT002100000000000000 /* BotBlockTimerWidget.swift in Sources */,
 				NMWEXT002200000000000000 /* SharedConstants.swift in Sources */,
-				NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */,
+				NMWEXT004200000000000000 /* WidgetBotMessages.swift in Sources */,
 				SHARED0004000000000002 /* WidgetSharedModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

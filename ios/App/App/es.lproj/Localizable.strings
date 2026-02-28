@@ -15,7 +15,7 @@
 "shield.web_category_blocked" = "La navegación web en %@ está bloqueada";
 
 // Shield Motivational Messages
-"shield.motivation.1" = "¡Tu mascota de enfoque cuenta contigo!";
+"shield.motivation.1" = "¡Tu bot de enfoque cuenta contigo!";
 "shield.motivation.2" = "¡Mantente fuerte - tu yo futuro te lo agradecerá!";
 "shield.motivation.3" = "¡Cada minuto de enfoque te da recompensas!";
 "shield.motivation.4" = "¡Lo estás haciendo genial! ¡Sigue enfocado!";
@@ -24,7 +24,7 @@
 "shield.motivation.7" = "¡Tu racha depende de ti!";
 "shield.motivation.8" = "¡Ya casi! ¡No te rindas ahora!";
 "shield.motivation.9" = "¡Enfoque = XP = Subir de Nivel!";
-"shield.motivation.10" = "¡Tu mascota cree en ti!";
+"shield.motivation.10" = "¡Tu bot cree en ti!";
 
 // MARK: - Blocking
 

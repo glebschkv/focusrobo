@@ -45,13 +45,13 @@ struct ProgressProvider: TimelineProvider {
 
     private func loadEntry() -> ProgressEntry {
         let data = WidgetDataReader.dailyProgress
-        let pet = WidgetDataReader.petInfo
+        let bot = WidgetDataReader.botInfo
         return ProgressEntry(
             date: Date(),
             focusMinutes: data.focusMinutes,
             goalMinutes: data.goalMinutes,
             sessionsCompleted: data.sessionsCompleted,
-            petEmoji: pet.activePetEmoji
+            botEmoji: bot.activeBotEmoji
         )
     }
 }
@@ -63,14 +63,14 @@ struct ProgressEntry: TimelineEntry {
     let focusMinutes: Int
     let goalMinutes: Int
     let sessionsCompleted: Int
-    let petEmoji: String?
+    let botEmoji: String?
 
     static let placeholder = ProgressEntry(
         date: Date(),
         focusMinutes: 75,
         goalMinutes: 120,
         sessionsCompleted: 3,
-        petEmoji: "🐸"
+        botEmoji: "🤖"
     )
 
     var progress: Double {
@@ -87,7 +87,7 @@ struct ProgressEntry: TimelineEntry {
     }
 
     var funMessage: String {
-        WidgetPetMessages.progressMessage(percent: percentComplete)
+        WidgetBotMessages.progressMessage(percent: percentComplete)
     }
 
     var questStatusIcon: String {
@@ -99,7 +99,7 @@ struct ProgressEntry: TimelineEntry {
     }
 
     var displayEmoji: String {
-        petEmoji ?? "🐾"
+        botEmoji ?? "🤖"
     }
 
     // MARK: - Accessibility
@@ -294,14 +294,14 @@ struct ProgressWidget_Previews: PreviewProvider {
 
             ProgressWidgetView(entry: ProgressEntry(
                 date: Date(), focusMinutes: 120, goalMinutes: 120,
-                sessionsCompleted: 5, petEmoji: "🐝"
+                sessionsCompleted: 5, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Completed - Small")
 
             ProgressWidgetView(entry: ProgressEntry(
                 date: Date(), focusMinutes: 10, goalMinutes: 120,
-                sessionsCompleted: 1, petEmoji: "🐰"
+                sessionsCompleted: 1, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemSmall))
                 .previewDisplayName("Just Started")
@@ -312,7 +312,7 @@ struct ProgressWidget_Previews: PreviewProvider {
 
             ProgressWidgetView(entry: ProgressEntry(
                 date: Date(), focusMinutes: 120, goalMinutes: 120,
-                sessionsCompleted: 5, petEmoji: "🦊"
+                sessionsCompleted: 5, botEmoji: "🤖"
             ))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
                 .previewDisplayName("Completed - Medium")

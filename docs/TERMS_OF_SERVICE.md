@@ -1,10 +1,10 @@
 # Terms of Service
 
-**NoMo Phone**
+**BotBlock**
 **Last Updated: December 3, 2024**
 **Effective Date: December 3, 2024**
 
-Welcome to NoMo Phone. These Terms of Service ("Terms") govern your use of the NoMo Phone mobile application (the "App") provided by NoMo Inc. ("we," "our," or "us").
+Welcome to BotBlock. These Terms of Service ("Terms") govern your use of the BotBlock mobile application (the "App") provided by NoMo Inc. ("we," "our," or "us").
 
 By downloading, installing, or using the App, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the App.
 
@@ -12,10 +12,10 @@ By downloading, installing, or using the App, you agree to be bound by these Ter
 
 ## 1. Description of Service
 
-NoMo Phone is a focus and digital wellness application that:
+BotBlock is a focus and digital wellness application that:
 - Tracks time spent away from your phone using iOS Screen Time APIs
 - Rewards you with virtual coins for maintaining focus
-- Allows you to care for virtual pets and build virtual worlds
+- Allows you to collect virtual robots and build virtual worlds
 - Offers premium subscriptions for enhanced features
 
 ---
@@ -76,7 +76,7 @@ We may change subscription prices at any time. Price changes will take effect at
 ## 6. Virtual Currency and Items
 
 - **Coins**: Virtual currency earned through focus sessions or purchased
-- **Pets and Worlds**: Virtual items purchased with coins
+- **Robots and Worlds**: Virtual items purchased with coins
 - **No Real Value**: Virtual currency and items have no real-world monetary value
 - **No Transfer**: Virtual items cannot be transferred, traded, or exchanged outside the App
 - **No Refunds**: Purchases of virtual currency are final (subject to App Store policies)
@@ -196,7 +196,7 @@ Website: https://nomoinc.co
 
 The following additional terms apply to your use of the App on Apple devices:
 
-- These Terms are between you and NoMo Inc., not Apple
+- These Terms are between you and NoMo Inc. (BotBlock), not Apple
 - Apple has no obligation to provide maintenance or support
 - Apple is not responsible for any claims related to the App
 - Apple is a third-party beneficiary of these Terms

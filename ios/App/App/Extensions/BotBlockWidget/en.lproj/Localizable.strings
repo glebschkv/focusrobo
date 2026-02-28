@@ -6,14 +6,14 @@
 */
 
 // Widget Titles
-"widget.timer_title" = "Pet Buddy";
+"widget.timer_title" = "Focus Bot";
 "widget.streak_title" = "Streak Fire";
 "widget.progress_title" = "Daily Quest";
-"widget.stats_title" = "Pet Stats Card";
+"widget.stats_title" = "Bot Stats";
 
 // Widget Descriptions
-"widget.timer_description" = "Your pet keeps you company during focus sessions";
-"widget.streak_description" = "Watch your streak grow with your pet cheering you on";
+"widget.timer_description" = "Your bot keeps you company during focus sessions";
+"widget.streak_description" = "Watch your streak grow with your bot cheering you on";
 "widget.progress_description" = "Track your daily focus quest like an RPG adventure";
 "widget.stats_description" = "Your focus stats as an RPG character card";
 
@@ -46,10 +46,10 @@
 "a11y.icon.level" = "Level indicator";
 
 // Accessibility - Widget Labels
-"a11y.widget.timer" = "Pet Buddy focus timer widget";
+"a11y.widget.timer" = "Focus Bot timer widget";
 "a11y.widget.streak" = "Streak fire widget";
 "a11y.widget.progress" = "Daily quest progress widget";
-"a11y.widget.stats" = "Pet stats card widget";
+"a11y.widget.stats" = "Bot stats widget";
 
 // Accessibility - Hints
 "a11y.hint.tap_to_open" = "Tap to open the app";
@@ -96,10 +96,10 @@
 
 // Accessibility - Timer State
 "a11y.timer.running" = "%@ session in progress. %@ remaining";
-"a11y.timer.idle" = "No focus session active. Your pet is waiting";
+"a11y.timer.idle" = "No focus session active. Your bot is waiting";
 "a11y.session.focus" = "Focus";
 "a11y.timer.summary_active" = "%@ session. %@ remaining. %d percent complete";
-"a11y.timer.summary_inactive" = "No active focus session. Your pet is waiting for you";
+"a11y.timer.summary_inactive" = "No active focus session. Your bot is waiting for you";
 
 // Accessibility - Shield
 "a11y.shield.title" = "Focus shield active";

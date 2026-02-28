@@ -14,14 +14,39 @@ import {
 } from '@/stores/xpStore';
 
 // Mock the logger to avoid console noise
-vi.mock('@/lib/logger', () => ({
-  xpLogger: {
-    debug: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 // Mock the validated storage
 vi.mock('@/lib/validated-zustand-storage', () => ({
@@ -117,19 +142,19 @@ describe('xpStore', () => {
       expect(xpToNextLevel).toBe(15);
     });
 
-    it('should have empty unlocked animals initially', () => {
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toEqual([]);
+    it('should have empty unlocked robots initially', () => {
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toEqual([]);
     });
 
     it('should have Assembly Line as default zone', () => {
-      const { currentBiome } = useXPStore.getState();
-      expect(currentBiome).toBe('Snow');
+      const { currentZone } = useXPStore.getState();
+      expect(currentZone).toBe('Assembly Line');
     });
 
-    it('should have Snow in available biomes', () => {
-      const { availableBiomes } = useXPStore.getState();
-      expect(availableBiomes).toContain('Snow');
+    it('should have Assembly Line in available zones', () => {
+      const { availableZones } = useXPStore.getState();
+      expect(availableZones).toContain('Assembly Line');
     });
   });
 
@@ -230,85 +255,85 @@ describe('xpStore', () => {
     });
   });
 
-  describe('addAnimal', () => {
+  describe('addRobot', () => {
     it('should add a new robot', () => {
-      const { addAnimal } = useXPStore.getState();
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('panda');
+        addRobot('panda');
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toContain('panda');
+      expect(useXPStore.getState().unlockedRobots).toContain('panda');
     });
 
-    it('should not add duplicate animals', () => {
-      const { addAnimal } = useXPStore.getState();
+    it('should not add duplicate robots', () => {
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('cat');
-        addAnimal('cat');
-        addAnimal('cat');
+        addRobot('cat');
+        addRobot('cat');
+        addRobot('cat');
       });
 
-      const animals = useXPStore.getState().unlockedAnimals;
-      expect(animals.filter(a => a === 'cat')).toHaveLength(1);
+      const robots = useXPStore.getState().unlockedRobots;
+      expect(robots.filter(a => a === 'cat')).toHaveLength(1);
     });
 
-    it('should maintain existing animals when adding new', () => {
-      const { addAnimal } = useXPStore.getState();
+    it('should maintain existing robots when adding new', () => {
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('dog');
-        addAnimal('cat');
+        addRobot('dog');
+        addRobot('cat');
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toContain('dog');
-      expect(unlockedAnimals).toContain('cat');
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toContain('dog');
+      expect(unlockedRobots).toContain('cat');
     });
   });
 
-  describe('addAnimals', () => {
-    it('should add multiple animals at once', () => {
-      const { addAnimals } = useXPStore.getState();
+  describe('addRobots', () => {
+    it('should add multiple robots at once', () => {
+      const { addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimals(['bird', 'fish', 'rabbit']);
+        addRobots(['bird', 'fish', 'rabbit']);
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toContain('bird');
-      expect(unlockedAnimals).toContain('fish');
-      expect(unlockedAnimals).toContain('rabbit');
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toContain('bird');
+      expect(unlockedRobots).toContain('fish');
+      expect(unlockedRobots).toContain('rabbit');
     });
 
     it('should filter out duplicates when adding multiple', () => {
-      const { addAnimal, addAnimals } = useXPStore.getState();
+      const { addRobot, addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimal('dog');
-        addAnimals(['dog', 'cat', 'bird']);
+        addRobot('dog');
+        addRobots(['dog', 'cat', 'bird']);
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals.filter(a => a === 'dog')).toHaveLength(1);
-      expect(unlockedAnimals).toHaveLength(3);
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots.filter(a => a === 'dog')).toHaveLength(1);
+      expect(unlockedRobots).toHaveLength(3);
     });
 
-    it('should not update state if no new animals', () => {
-      const { addAnimals } = useXPStore.getState();
+    it('should not update state if no new robots', () => {
+      const { addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimals(['cat', 'dog']);
+        addRobots(['cat', 'dog']);
       });
 
-      const initialAnimals = [...useXPStore.getState().unlockedAnimals];
+      const initialRobots = [...useXPStore.getState().unlockedRobots];
 
       act(() => {
-        addAnimals(['cat', 'dog']);
+        addRobots(['cat', 'dog']);
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toEqual(initialAnimals);
+      expect(useXPStore.getState().unlockedRobots).toEqual(initialRobots);
     });
   });
 

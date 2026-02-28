@@ -7,23 +7,48 @@ import { useCollectionStore, useShopStore } from '@/stores';
 vi.mock('@/hooks/useXPSystem', () => ({
   useXPSystem: () => ({
     currentLevel: 1,
-    unlockedAnimals: ['Dewdrop Frog'],
-    currentBiome: 'forest',
-    availableBiomes: ['forest'],
+    unlockedRobots: ['Dewdrop Frog'],
+    currentZone: 'forest',
+    availableZones: ['forest'],
     isLoading: false,
     totalStudyMinutes: 0,
   }),
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
-  collectionLogger: {
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 // Mock RobotDatabase
 vi.mock('@/data/RobotDatabase', () => ({
@@ -108,7 +133,7 @@ describe('useCollection', () => {
 
     // Reset Zustand stores to known state
     useCollectionStore.setState({
-      activeHomePets: [],
+      activeHomeBots: [],
       favorites: [],
     });
     useShopStore.setState({
@@ -143,12 +168,12 @@ describe('useCollection', () => {
 
     it('should load active home pets from store', async () => {
       // Set up store state
-      useCollectionStore.setState({ activeHomePets: ['moss-turtle'] });
+      useCollectionStore.setState({ activeHomeBots: ['moss-turtle'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('moss-turtle')).toBe(true);
+        expect(result.current.activeHomeBots.has('moss-turtle')).toBe(true);
       });
     });
 
@@ -157,7 +182,7 @@ describe('useCollection', () => {
 
       await waitFor(() => {
         // Store is reset to empty in beforeEach
-        expect(result.current.activeHomePets.size).toBe(0);
+        expect(result.current.activeHomeBots.size).toBe(0);
       });
     });
 
@@ -227,7 +252,7 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.size).toBe(0);
+        expect(result.current.activeHomeBots.size).toBe(0);
       });
 
       act(() => {
@@ -235,18 +260,18 @@ describe('useCollection', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(true);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(true);
       });
     });
 
     it('should remove bot from active home bots', async () => {
       // Set up store state
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(true);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(true);
       });
 
       act(() => {
@@ -254,7 +279,7 @@ describe('useCollection', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(false);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(false);
       });
     });
 
@@ -268,7 +293,7 @@ describe('useCollection', () => {
       await waitFor(() => {
         // Verify store was updated
         const storeState = useCollectionStore.getState();
-        expect(storeState.activeHomePets).toContain('moss-turtle');
+        expect(storeState.activeHomeBots).toContain('moss-turtle');
       });
     });
   });
@@ -329,7 +354,7 @@ describe('useCollection', () => {
   describe('isAnimalHomeActive', () => {
     it('should return true for active home pets', async () => {
       // Set up store with active bot
-      useCollectionStore.setState({ activeHomePets: ['moss-turtle'] });
+      useCollectionStore.setState({ activeHomeBots: ['moss-turtle'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -340,7 +365,7 @@ describe('useCollection', () => {
 
     it('should return false for non-active pets', async () => {
       // Set up store with a different bot
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -384,7 +409,7 @@ describe('useCollection', () => {
   describe('getActiveHomePetsData', () => {
     it('should return only unlocked active pets', async () => {
       // Set up store with mixed pets (one unlocked, one locked by level)
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog', 'crystal-dragon'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog', 'crystal-dragon'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -398,7 +423,7 @@ describe('useCollection', () => {
 
     it('should include purchased shop animals', async () => {
       // Set up both stores
-      useCollectionStore.setState({ activeHomePets: ['golden-phoenix'] });
+      useCollectionStore.setState({ activeHomeBots: ['golden-phoenix'] });
       useShopStore.setState({ ownedCharacters: ['golden-phoenix'] });
 
       const { result } = renderHook(() => useCollection());
@@ -460,10 +485,10 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       expect(result.current.stats).toBeDefined();
-      expect(typeof result.current.stats.totalAnimals).toBe('number');
-      expect(typeof result.current.stats.unlockedAnimals).toBe('number');
-      expect(typeof result.current.stats.shopPetsTotal).toBe('number');
-      expect(typeof result.current.stats.shopPetsOwned).toBe('number');
+      expect(typeof result.current.stats.totalBots).toBe('number');
+      expect(typeof result.current.stats.unlockedRobots).toBe('number');
+      expect(typeof result.current.stats.shopBotsTotal).toBe('number');
+      expect(typeof result.current.stats.shopBotsOwned).toBe('number');
     });
 
     it('should track favorites count', async () => {
@@ -479,12 +504,12 @@ describe('useCollection', () => {
 
     it('should track active home pets count', async () => {
       // Set up store with active bot
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.stats.activeHomePetsCount).toBe(1);
+        expect(result.current.stats.activeHomeBotsCount).toBe(1);
       });
     });
 

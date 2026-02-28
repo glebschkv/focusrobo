@@ -311,6 +311,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
           }
           break;
         case 'bot_unlock':
+        case 'pet_unlock': // backward-compat
           if (reward.itemId) {
             addRobot(reward.itemId);
             unlockedBots.push(reward.description || reward.itemId);

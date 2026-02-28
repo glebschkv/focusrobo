@@ -6,14 +6,14 @@
 */
 
 // Widget Titles
-"widget.timer_title" = "Compañero Pet";
+"widget.timer_title" = "Focus Bot";
 "widget.streak_title" = "Racha de Fuego";
 "widget.progress_title" = "Misión Diaria";
-"widget.stats_title" = "Carta de Stats";
+"widget.stats_title" = "Stats del Bot";
 
 // Widget Descriptions
-"widget.timer_description" = "Tu mascota te acompaña durante las sesiones de enfoque";
-"widget.streak_description" = "Mira crecer tu racha mientras tu mascota te anima";
+"widget.timer_description" = "Tu bot te acompaña durante las sesiones de enfoque";
+"widget.streak_description" = "Mira crecer tu racha mientras tu bot te anima";
 "widget.progress_description" = "Sigue tu misión de enfoque diaria como una aventura RPG";
 "widget.stats_description" = "Tus estadísticas de enfoque como carta de personaje RPG";
 
@@ -46,10 +46,10 @@
 "a11y.icon.level" = "Indicador de nivel";
 
 // Accessibility - Widget Labels
-"a11y.widget.timer" = "Widget de compañero pet";
+"a11y.widget.timer" = "Widget de Focus Bot";
 "a11y.widget.streak" = "Widget de racha de fuego";
 "a11y.widget.progress" = "Widget de misión diaria";
-"a11y.widget.stats" = "Widget de carta de stats";
+"a11y.widget.stats" = "Widget de stats del bot";
 
 // Accessibility - Hints
 "a11y.hint.tap_to_open" = "Toca para abrir la app";
@@ -96,10 +96,10 @@
 
 // Accessibility - Timer State
 "a11y.timer.running" = "Sesión de %@ en progreso. %@ restantes";
-"a11y.timer.idle" = "Sin sesión de enfoque activa. Tu mascota está esperando";
+"a11y.timer.idle" = "Sin sesión de enfoque activa. Tu bot está esperando";
 "a11y.session.focus" = "Enfoque";
 "a11y.timer.summary_active" = "Sesión de %@. %@ restantes. %d por ciento completado";
-"a11y.timer.summary_inactive" = "Sin sesión de enfoque activa. Tu mascota te está esperando";
+"a11y.timer.summary_inactive" = "Sin sesión de enfoque activa. Tu bot te está esperando";
 
 // Accessibility - Shield
 "a11y.shield.title" = "Escudo de enfoque activo";
