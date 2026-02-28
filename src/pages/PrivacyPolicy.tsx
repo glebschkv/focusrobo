@@ -27,14 +27,14 @@ const PrivacyPolicyContent = () => {
       <ScrollArea className="h-[calc(100vh-60px)]">
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold">NoMo Phone Privacy Policy</h2>
+            <h2 className="text-3xl font-bold">BotBlock Privacy Policy</h2>
             <p className="text-white/60">Last updated: {lastUpdated}</p>
           </div>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold text-blue-300">Introduction</h3>
             <p className="text-white/80 leading-relaxed">
-              NoMo Inc. ("we", "our", or "us") operates the NoMo Phone mobile application (the "App").
+              BotBlock Inc. ("we", "our", or "us") operates the BotBlock mobile application (the "App").
               This Privacy Policy explains how we collect, use, disclose, and safeguard your information
               when you use our App. Please read this privacy policy carefully.
             </p>
@@ -63,7 +63,7 @@ const PrivacyPolicyContent = () => {
             <div className="space-y-3">
               <h4 className="font-medium text-white">Screen Time Data</h4>
               <p className="text-white/80 leading-relaxed">
-                With your permission, NoMo Phone uses Apple's Screen Time API (Family Controls)
+                With your permission, BotBlock uses Apple's Screen Time API (Family Controls)
                 to monitor when you're away from your device. This allows us to reward you for
                 staying focused. This data is processed locally on your device and is not transmitted
                 to our servers.
@@ -140,7 +140,7 @@ const PrivacyPolicyContent = () => {
           <section className="space-y-4">
             <h3 className="text-xl font-semibold text-blue-300">Children's Privacy</h3>
             <p className="text-white/80 leading-relaxed">
-              NoMo Phone is intended for users of all ages. We do not knowingly collect
+              BotBlock is intended for users of all ages. We do not knowingly collect
               personal information from children under 13 without parental consent. If you
               believe we have collected information from a child under 13, please contact us.
             </p>
@@ -170,14 +170,14 @@ const PrivacyPolicyContent = () => {
               If you have any questions about this Privacy Policy, please contact us at:
             </p>
             <div className="bg-white/5 rounded-lg p-4 space-y-1">
-              <p className="text-white font-medium">NoMo Inc.</p>
+              <p className="text-white font-medium">BotBlock Inc.</p>
               <p className="text-white/80">Email: privacy@nomoinc.co</p>
               <p className="text-white/80">Website: https://nomoinc.co</p>
             </div>
           </section>
 
           <div className="pt-8 pb-16 text-center text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} NoMo Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} BotBlock Inc. All rights reserved.
           </div>
         </div>
       </ScrollArea>

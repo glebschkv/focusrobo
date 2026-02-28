@@ -952,7 +952,7 @@ describe('usePremiumStatus', () => {
       let validateResult: { success: boolean; message: string } | undefined;
       await act(async () => {
         validateResult = await result.current.validatePurchase(
-          'co.nomoinc.nomo.premium.monthly',
+          'co.botblock.app.premium.monthly',
           'txn_123',
           'receipt_data'
         );
@@ -978,7 +978,7 @@ describe('usePremiumStatus', () => {
       let validateResult: { success: boolean; message: string } | undefined;
       await act(async () => {
         validateResult = await result.current.validatePurchase(
-          'co.nomoinc.nomo.premium.monthly',
+          'co.botblock.app.premium.monthly',
           'txn_123',
           'receipt_data'
         );
@@ -1007,7 +1007,7 @@ describe('usePremiumStatus', () => {
       let validateResult: { success: boolean; message: string } | undefined;
       await act(async () => {
         validateResult = await result.current.validatePurchase(
-          'co.nomoinc.nomo.premium.monthly',
+          'co.botblock.app.premium.monthly',
           'txn_123',
           'receipt_data'
         );
@@ -1029,7 +1029,7 @@ describe('usePremiumStatus', () => {
       let validateResult: { success: boolean; message: string } | undefined;
       await act(async () => {
         validateResult = await result.current.validatePurchase(
-          'co.nomoinc.nomo.premium.monthly',
+          'co.botblock.app.premium.monthly',
           'txn_123',
           'receipt_data'
         );
@@ -1061,7 +1061,7 @@ describe('usePremiumStatus', () => {
 
       await act(async () => {
         await result.current.validatePurchase(
-          'co.nomoinc.nomo.premiumplus.yearly',
+          'co.botblock.app.premiumplus.yearly',
           'txn_456'
         );
       });

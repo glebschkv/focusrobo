@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * NoMoStatsWidget - "Pet Stats Card" Widget
+ * BotBlockStatsWidget - "Pet Stats Card" Widget
  *
  * Trading card-style layout showing your level, XP, and
  * focus stats with your pet's emoji and funny rank titles.
@@ -12,8 +12,8 @@ import WidgetKit
  * - Dynamic Type support
  * - High contrast support
  */
-struct NoMoStatsWidget: Widget {
-    let kind = "NoMoStatsWidget"
+struct BotBlockStatsWidget: Widget {
+    let kind = "BotBlockStatsWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: StatsProvider()) { entry in

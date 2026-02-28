@@ -487,7 +487,7 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
                 <div>
                   <span className="text-xs font-bold retro-neon-green">{currentPlan.name} Active</span>
                   <span className="text-[10px] block" style={{ color: 'hsl(140 20% 55%)' }}>
-                    Thank you for supporting NoMo!
+                    Thank you for supporting BotBlock!
                   </span>
                 </div>
               </div>

@@ -144,7 +144,7 @@ export const FeaturedTab = ({
               </div>
             </div>
             <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('co.nomoinc.nomo.premium.monthly', '€4,99')}</span>
+              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('co.botblock.app.premium.monthly', '€4,99')}</span>
               <span className="text-white/50 text-[10px] font-bold">/month</span>
             </div>
           </div>

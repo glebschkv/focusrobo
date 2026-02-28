@@ -27,23 +27,23 @@ const TermsOfServiceContent = () => {
       <ScrollArea className="h-[calc(100vh-60px)]">
         <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold">NoMo Phone Terms of Service</h2>
+            <h2 className="text-3xl font-bold">BotBlock Terms of Service</h2>
             <p className="text-white/60">Last updated: {lastUpdated}</p>
           </div>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold text-blue-300">1. Acceptance of Terms</h3>
             <p className="text-white/80 leading-relaxed">
-              By downloading, installing, or using NoMo Phone ("the App"), you agree to be bound by
+              By downloading, installing, or using BotBlock ("the App"), you agree to be bound by
               these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the App.
-              NoMo Inc. ("we", "us", or "our") reserves the right to modify these Terms at any time.
+              BotBlock Inc. ("we", "us", or "our") reserves the right to modify these Terms at any time.
             </p>
           </section>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold text-blue-300">2. Description of Service</h3>
             <p className="text-white/80 leading-relaxed">
-              NoMo Phone is a productivity application that helps users reduce phone usage through
+              BotBlock is a productivity application that helps users reduce phone usage through
               gamification. The App includes features such as focus timers, virtual pet collection,
               achievement systems, and device activity monitoring.
             </p>
@@ -68,7 +68,7 @@ const TermsOfServiceContent = () => {
             <div className="space-y-3">
               <h4 className="font-medium text-white">4.1 Premium Subscriptions</h4>
               <p className="text-white/80 leading-relaxed">
-                NoMo Phone offers premium subscription plans that provide access to additional features.
+                BotBlock offers premium subscription plans that provide access to additional features.
                 Subscriptions are billed through Apple's App Store and are subject to Apple's terms and conditions.
               </p>
             </div>
@@ -147,7 +147,7 @@ const TermsOfServiceContent = () => {
             <h3 className="text-xl font-semibold text-blue-300">8. Intellectual Property</h3>
             <p className="text-white/80 leading-relaxed">
               All content in the App, including but not limited to graphics, animations, sounds,
-              text, and software, is owned by NoMo Inc. or its licensors and is protected by
+              text, and software, is owned by BotBlock Inc. or its licensors and is protected by
               copyright, trademark, and other intellectual property laws. You may not use,
               reproduce, or distribute any content without our express written permission.
             </p>
@@ -165,7 +165,7 @@ const TermsOfServiceContent = () => {
           <section className="space-y-4">
             <h3 className="text-xl font-semibold text-blue-300">10. Limitation of Liability</h3>
             <p className="text-white/80 leading-relaxed">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, NOMO INC. SHALL NOT BE LIABLE FOR ANY
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, BOTBLOCK INC. SHALL NOT BE LIABLE FOR ANY
               INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF
               OR RELATED TO YOUR USE OF THE APP, INCLUDING BUT NOT LIMITED TO LOSS OF DATA,
               LOSS OF PROFITS, OR BUSINESS INTERRUPTION.
@@ -206,14 +206,14 @@ const TermsOfServiceContent = () => {
               If you have any questions about these Terms of Service, please contact us at:
             </p>
             <div className="bg-white/5 rounded-lg p-4 space-y-1">
-              <p className="text-white font-medium">NoMo Inc.</p>
+              <p className="text-white font-medium">BotBlock Inc.</p>
               <p className="text-white/80">Email: support@nomoinc.co</p>
               <p className="text-white/80">Website: https://nomoinc.co</p>
             </div>
           </section>
 
           <div className="pt-8 pb-16 text-center text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} NoMo Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} BotBlock Inc. All rights reserved.
           </div>
         </div>
       </ScrollArea>

@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'co.nomoinc.nomo',
-  appName: 'NoMo Phone',
+  appId: 'co.botblock.app',
+  appName: 'BotBlock',
   webDir: 'dist',
   ios: {
     // Set WKWebView background to dark so there's no white flash between
@@ -31,7 +31,7 @@ const config: CapacitorConfig = {
       }
     },
     BackgroundTask: {
-      label: "co.nomoinc.nomo.background-tracking",
+      label: "co.botblock.app.background-tracking",
       description: "Tracks app usage and awards points for time away from device"
     }
   },

@@ -57,7 +57,7 @@ export const Settings = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-transparent to-pink-900/50" />
         <div className="relative flex items-center gap-3">
           <div className="w-12 h-12 retro-icon-badge flex items-center justify-center">
-            <img src="/app-icon.png" alt="NoMo Phone" width={32} height={32} className="rounded-lg" draggable={false} />
+            <img src="/app-icon.png" alt="BotBlock" width={32} height={32} className="rounded-lg" draggable={false} />
           </div>
           <div>
             <h1 className="text-xl font-bold retro-pixel-text retro-neon-text">

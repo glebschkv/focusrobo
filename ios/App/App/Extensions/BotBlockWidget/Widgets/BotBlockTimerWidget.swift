@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * NoMoTimerWidget - "Pet Buddy" Widget
+ * BotBlockTimerWidget - "Pet Buddy" Widget
  *
  * Shows your active pet alongside the focus timer.
  * Features rotating funny messages based on session state.
@@ -14,8 +14,8 @@ import WidgetKit
  * - High contrast support
  * - Reduced motion support
  */
-struct NoMoTimerWidget: Widget {
-    let kind = "NoMoTimerWidget"
+struct BotBlockTimerWidget: Widget {
+    let kind = "BotBlockTimerWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TimerProvider()) { entry in

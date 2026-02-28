@@ -10,10 +10,10 @@
 // ============================================================================
 
 export const APP_CONFIG = {
-  APP_NAME: 'NoMo Phone',
+  APP_NAME: 'BotBlock',
   APP_VERSION: '1.0.0',
-  APP_GROUP_IDENTIFIER: 'group.co.nomoinc.nomo',
-  BUNDLE_IDENTIFIER: 'co.nomoinc.nomo',
+  APP_GROUP_IDENTIFIER: 'group.co.botblock.app',
+  BUNDLE_IDENTIFIER: 'co.botblock.app',
   STORAGE_PREFIX: 'nomo_',
 } as const;
 
@@ -526,7 +526,7 @@ export const UI_CONFIG = {
 
 export const IOS_CONFIG = {
   /** Background task identifier */
-  BACKGROUND_TASK_ID: 'co.nomoinc.nomo.background-tracking',
+  BACKGROUND_TASK_ID: 'co.botblock.app.background-tracking',
 
   /** Background refresh interval in minutes */
   BACKGROUND_REFRESH_INTERVAL_MINUTES: 15,
@@ -537,22 +537,22 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
-    PREMIUM_MONTHLY: 'co.nomoinc.nomo.premium.monthly',
-    PREMIUM_YEARLY: 'co.nomoinc.nomo.premium.yearly',
-    PREMIUM_PLUS_MONTHLY: 'co.nomoinc.nomo.premiumplus.monthly',
-    PREMIUM_PLUS_YEARLY: 'co.nomoinc.nomo.premiumplus.yearly',
-    LIFETIME: 'co.nomoinc.nomo.lifetime',
+    PREMIUM_MONTHLY: 'co.botblock.app.premium.monthly',
+    PREMIUM_YEARLY: 'co.botblock.app.premium.yearly',
+    PREMIUM_PLUS_MONTHLY: 'co.botblock.app.premiumplus.monthly',
+    PREMIUM_PLUS_YEARLY: 'co.botblock.app.premiumplus.yearly',
+    LIFETIME: 'co.botblock.app.lifetime',
     // Coin Packs
-    COINS_VALUE: 'co.nomoinc.nomo.coins.value',
-    COINS_PREMIUM: 'co.nomoinc.nomo.coins.premium',
-    COINS_MEGA: 'co.nomoinc.nomo.coins.mega',
-    COINS_ULTRA: 'co.nomoinc.nomo.coins.ultra',
-    COINS_LEGENDARY: 'co.nomoinc.nomo.coins.legendary',
+    COINS_VALUE: 'co.botblock.app.coins.value',
+    COINS_PREMIUM: 'co.botblock.app.coins.premium',
+    COINS_MEGA: 'co.botblock.app.coins.mega',
+    COINS_ULTRA: 'co.botblock.app.coins.ultra',
+    COINS_LEGENDARY: 'co.botblock.app.coins.legendary',
     // Starter Bundles
-    BUNDLE_WELCOME: 'co.nomoinc.nomo.bundle.welcome',
-    BUNDLE_STARTER: 'co.nomoinc.nomo.bundle.starter',
-    BUNDLE_COLLECTOR: 'co.nomoinc.nomo.bundle.collector',
-    BUNDLE_ULTIMATE: 'co.nomoinc.nomo.bundle.ultimate',
+    BUNDLE_WELCOME: 'co.botblock.app.bundle.welcome',
+    BUNDLE_STARTER: 'co.botblock.app.bundle.starter',
+    BUNDLE_COLLECTOR: 'co.botblock.app.bundle.collector',
+    BUNDLE_ULTIMATE: 'co.botblock.app.bundle.ultimate',
   } as const,
 } as const;
 

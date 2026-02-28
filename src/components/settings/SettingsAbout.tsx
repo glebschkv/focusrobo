@@ -25,11 +25,11 @@ export const SettingsAbout = () => {
                 boxShadow: '0 4px 0 hsl(260 50% 35%), 0 8px 16px hsl(260 50% 30% / 0.3), inset 0 2px 0 hsl(260 70% 70% / 0.3)',
               }}
             >
-              <img src="/app-icon.png" alt="NoMo Phone" width={48} height={48} className="rounded-lg" draggable={false} />
+              <img src="/app-icon.png" alt="BotBlock" width={48} height={48} className="rounded-lg" draggable={false} />
             </div>
 
             {/* App Name */}
-            <h2 className="text-xl font-bold retro-pixel-text retro-neon-text mb-1">NoMo Phone</h2>
+            <h2 className="text-xl font-bold retro-pixel-text retro-neon-text mb-1">BotBlock</h2>
             <p className="text-sm text-purple-300/80 mb-4">
               Put down your phone, grow your island
             </p>
@@ -93,7 +93,7 @@ export const SettingsAbout = () => {
             className="w-full retro-arcade-btn retro-arcade-btn-green px-3 py-2.5 text-sm flex items-center gap-3"
           >
             <Heart className="w-5 h-5" />
-            <span className="font-bold flex-1 text-left">Visit NoMo Inc.</span>
+            <span className="font-bold flex-1 text-left">Visit BotBlock Inc.</span>
             <ExternalLink className="w-4 h-4" />
           </button>
         </div>
@@ -102,7 +102,7 @@ export const SettingsAbout = () => {
       {/* Footer */}
       <div className="retro-stat-pill p-3 text-center">
         <p className="text-[11px] text-purple-300/60">
-          &copy; {new Date().getFullYear()} NoMo Inc. All rights reserved.
+          &copy; {new Date().getFullYear()} BotBlock Inc. All rights reserved.
         </p>
       </div>
     </div>

@@ -330,7 +330,7 @@ function _initAuth(): void {
 
   // Deep link handler for magic link authentication on native (Capacitor).
   // When the user taps a magic link in their email, iOS opens the app via
-  // the co.nomoinc.nomo:// URL scheme. We need to extract the auth tokens
+  // the co.botblock.app:// URL scheme. We need to extract the auth tokens
   // from the URL and pass them to Supabase so onAuthStateChange fires.
   if (Capacitor.isNativePlatform()) {
     CapApp.addListener('appUrlOpen', async ({ url }) => {

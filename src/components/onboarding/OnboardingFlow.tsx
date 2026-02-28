@@ -543,7 +543,7 @@ const StepWelcome = () => (
             '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
         }}
       >
-        Welcome to NoMo
+        Welcome to BotBlock
       </h1>
       <p
         className="text-base px-2 leading-relaxed"
