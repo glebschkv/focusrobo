@@ -337,78 +337,78 @@ describe('xpStore', () => {
     });
   });
 
-  describe('switchBiome', () => {
+  describe('switchZone', () => {
     it('should switch to available zone', () => {
-      const { addBiome, switchBiome } = useXPStore.getState();
+      const { addZone, switchZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Forest');
-        switchBiome('Forest');
+        addZone('Forest');
+        switchZone('Forest');
       });
 
-      expect(useXPStore.getState().currentBiome).toBe('Forest');
+      expect(useXPStore.getState().currentZone).toBe('Forest');
     });
 
     it('should not switch to unavailable zone', () => {
-      const { switchBiome } = useXPStore.getState();
+      const { switchZone } = useXPStore.getState();
 
       act(() => {
-        switchBiome('Desert');
+        switchZone('Desert');
       });
 
-      expect(useXPStore.getState().currentBiome).toBe('Snow');
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
     });
 
     it('should allow switching back to original zone', () => {
-      const { addBiome, switchBiome } = useXPStore.getState();
+      const { addZone, switchZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Beach');
-        switchBiome('Beach');
+        addZone('Beach');
+        switchZone('Beach');
       });
 
-      expect(useXPStore.getState().currentBiome).toBe('Beach');
+      expect(useXPStore.getState().currentZone).toBe('Beach');
 
       act(() => {
-        switchBiome('Snow');
+        switchZone('Assembly Line');
       });
 
-      expect(useXPStore.getState().currentBiome).toBe('Snow');
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
     });
   });
 
-  describe('addBiome', () => {
+  describe('addZone', () => {
     it('should add a new zone', () => {
-      const { addBiome } = useXPStore.getState();
+      const { addZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Mountain');
+        addZone('Mountain');
       });
 
-      expect(useXPStore.getState().availableBiomes).toContain('Mountain');
+      expect(useXPStore.getState().availableZones).toContain('Mountain');
     });
 
-    it('should not add duplicate biomes', () => {
-      const { addBiome } = useXPStore.getState();
+    it('should not add duplicate zones', () => {
+      const { addZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Forest');
-        addBiome('Forest');
+        addZone('Forest');
+        addZone('Forest');
       });
 
-      const biomes = useXPStore.getState().availableBiomes;
-      expect(biomes.filter(b => b === 'Forest')).toHaveLength(1);
+      const zones = useXPStore.getState().availableZones;
+      expect(zones.filter(b => b === 'Forest')).toHaveLength(1);
     });
 
-    it('should keep default Snow when adding new biomes', () => {
-      const { addBiome } = useXPStore.getState();
+    it('should keep default Assembly Line when adding new zones', () => {
+      const { addZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Ocean');
-        addBiome('Cave');
+        addZone('Ocean');
+        addZone('Cave');
       });
 
-      expect(useXPStore.getState().availableBiomes).toContain('Snow');
+      expect(useXPStore.getState().availableZones).toContain('Assembly Line');
     });
   });
 
@@ -420,7 +420,7 @@ describe('xpStore', () => {
         updateState({
           currentXP: 500,
           currentLevel: 10,
-          currentBiome: 'Meadow',
+          currentZone: 'Meadow',
         });
       });
 
@@ -430,29 +430,29 @@ describe('xpStore', () => {
     });
 
     it('should not affect unspecified properties', () => {
-      const { addAnimal, updateState } = useXPStore.getState();
+      const { addRobot, updateState } = useXPStore.getState();
 
       act(() => {
-        addAnimal('tiger');
+        addRobot('tiger');
       });
 
       act(() => {
         updateState({ currentXP: 100 });
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toContain('tiger');
+      expect(useXPStore.getState().unlockedRobots).toContain('tiger');
     });
   });
 
   describe('resetXP', () => {
     it('should reset all state to initial values', () => {
-      const { addXP, setLevel, addAnimal, addBiome, resetXP } = useXPStore.getState();
+      const { addXP, setLevel, addRobot, addZone, resetXP } = useXPStore.getState();
 
       act(() => {
         addXP(1000);
         setLevel(15);
-        addAnimal('lion');
-        addBiome('Jungle');
+        addRobot('lion');
+        addZone('Jungle');
       });
 
       act(() => {
@@ -462,9 +462,9 @@ describe('xpStore', () => {
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(0);
       expect(state.currentLevel).toBe(0);
-      expect(state.unlockedAnimals).toEqual([]);
-      expect(state.availableBiomes).toEqual(['Snow']);
-      expect(state.currentBiome).toBe('Snow');
+      expect(state.unlockedRobots).toEqual([]);
+      expect(state.availableZones).toEqual(['Assembly Line']);
+      expect(state.currentZone).toBe('Assembly Line');
     });
   });
 
@@ -487,9 +487,9 @@ describe('xpStore', () => {
       expect(result.current).toBe(7);
     });
 
-    it('useUnlockedAnimals should return animals array', () => {
+    it('useUnlockedAnimals should return robots array', () => {
       act(() => {
-        useXPStore.getState().addAnimals(['bear', 'deer']);
+        useXPStore.getState().addRobots(['bear', 'deer']);
       });
 
       const { result } = renderHook(() => useUnlockedAnimals());
@@ -497,18 +497,18 @@ describe('xpStore', () => {
       expect(result.current).toContain('deer');
     });
 
-    it('useCurrentZone should return current zone', () => {
+    it('useCurrentBiome should return current zone', () => {
       const { result } = renderHook(() => useCurrentBiome());
-      expect(result.current).toBe('Snow');
+      expect(result.current).toBe('Assembly Line');
     });
 
-    it('useAvailableBiomes should return available biomes', () => {
+    it('useAvailableBiomes should return available zones', () => {
       act(() => {
-        useXPStore.getState().addBiome('Meadow');
+        useXPStore.getState().addZone('Meadow');
       });
 
       const { result } = renderHook(() => useAvailableBiomes());
-      expect(result.current).toContain('Snow');
+      expect(result.current).toContain('Assembly Line');
       expect(result.current).toContain('Meadow');
     });
 
@@ -586,15 +586,15 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentXP).toBe(1000);
     });
 
-    it('should handle many animals without issue', () => {
-      const { addAnimals } = useXPStore.getState();
-      const manyAnimals = Array.from({ length: 50 }, (_, i) => `animal_${i}`);
+    it('should handle many robots without issue', () => {
+      const { addRobots } = useXPStore.getState();
+      const manyRobots = Array.from({ length: 50 }, (_, i) => `robot_${i}`);
 
       act(() => {
-        addAnimals(manyAnimals);
+        addRobots(manyRobots);
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toHaveLength(50);
+      expect(useXPStore.getState().unlockedRobots).toHaveLength(50);
     });
   });
 });
