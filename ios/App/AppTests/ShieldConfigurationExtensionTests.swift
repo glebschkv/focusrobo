@@ -168,17 +168,17 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
 
     // MARK: - Icon Creation Tests
 
-    func testCreateNoMoIconDoesNotReturnNil() {
+    func testCreateAppIconDoesNotReturnNil() {
         // When
-        let icon = sut.createNoMoIcon()
+        let icon = sut.createAppIcon()
 
         // Then
         XCTAssertNotNil(icon)
     }
 
-    func testCreateNoMoIconReturnsValidImage() {
+    func testCreateAppIconReturnsValidImage() {
         // When
-        let icon = sut.createNoMoIcon()
+        let icon = sut.createAppIcon()
 
         // Then
         XCTAssertNotNil(icon)
@@ -186,10 +186,10 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
         XCTAssertGreaterThan(icon!.size.height, 0)
     }
 
-    func testCreateNoMoIconIsReusable() {
+    func testCreateAppIconIsReusable() {
         // When - create icon multiple times
-        let icon1 = sut.createNoMoIcon()
-        let icon2 = sut.createNoMoIcon()
+        let icon1 = sut.createAppIcon()
+        let icon2 = sut.createAppIcon()
 
         // Then - both should be valid
         XCTAssertNotNil(icon1)
@@ -293,7 +293,7 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
         XCTAssertEqual(sut.shieldAttempts, initialAttempts + 1)
 
         // And - icon should be creatable
-        let icon = sut.createNoMoIcon()
+        let icon = sut.createAppIcon()
         XCTAssertNotNil(icon)
 
         // And - motivational message should be available
@@ -303,10 +303,10 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
 
     // MARK: - Title Tests
 
-    func testGetTitleAlwaysReturnsNOMO() {
+    func testGetTitleAlwaysReturnsBOTBLOCK() {
         // Title is always the brand name — messages go in subtitle
         for _ in 0..<10 {
-            XCTAssertEqual(sut.getTitle(), "NOMO")
+            XCTAssertEqual(sut.getTitle(), "BOTBLOCK")
         }
     }
 

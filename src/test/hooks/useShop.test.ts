@@ -54,40 +54,36 @@ vi.mock('@/hooks/useAchievementTracking', () => ({
 
 // Mock logger
 vi.mock('@/lib/logger', () => {
-  const createMockLogger = () => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  });
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
   return {
-    logger: createMockLogger(),
-    shopLogger: createMockLogger(),
-    coinLogger: createMockLogger(),
-    storageLogger: createMockLogger(),
-    storeKitLogger: createMockLogger(),
-    supabaseLogger: createMockLogger(),
-    xpLogger: createMockLogger(),
-    streakLogger: createMockLogger(),
-    questLogger: createMockLogger(),
-    settingsLogger: createMockLogger(),
-    deviceActivityLogger: createMockLogger(),
-    soundLogger: createMockLogger(),
-    collectionLogger: createMockLogger(),
-    authLogger: createMockLogger(),
-    notificationLogger: createMockLogger(),
-    syncLogger: createMockLogger(),
-    focusModeLogger: createMockLogger(),
-    widgetLogger: createMockLogger(),
-    backupLogger: createMockLogger(),
-    threeLogger: createMockLogger(),
-    timerLogger: createMockLogger(),
-    achievementLogger: createMockLogger(),
-    bondLogger: createMockLogger(),
-    performanceLogger: createMockLogger(),
-    appReviewLogger: createMockLogger(),
-    nativePluginLogger: createMockLogger(),
-    createLogger: (name: string) => createMockLogger(),
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
   };
 });
 
@@ -112,9 +108,9 @@ vi.mock('@/lib/errorReporting', () => ({
   initErrorReporting: vi.fn(),
 }));
 
-// Mock animal database
-vi.mock('@/data/AnimalDatabase', () => ({
-  getAnimalById: vi.fn((id: string) => {
+// Mock robot database
+vi.mock('@/data/RobotDatabase', () => ({
+  getRobotById: vi.fn((id: string) => {
     if (id === 'dog') {
       return {
         id: 'dog',
@@ -171,8 +167,8 @@ vi.mock('@/data/ShopData', () => ({
   PET_BUNDLES: [
     {
       id: 'bundle-pets',
-      name: 'Pet Bundle',
-      bundleType: 'pets',
+      name: 'Bot Bundle',
+      bundleType: 'bots',
       itemIds: ['dog', 'cat'],
       coinPrice: 200,
     },
@@ -187,8 +183,8 @@ vi.mock('@/data/ShopData', () => ({
     },
     {
       id: 'bundle-pets',
-      name: 'Pet Bundle',
-      bundleType: 'pets',
+      name: 'Bot Bundle',
+      bundleType: 'bots',
       itemIds: ['dog', 'cat'],
       coinPrice: 200,
     },
@@ -367,7 +363,7 @@ describe('useShop', () => {
       expect(result.current.inventory.ownedBackgrounds).toContain('bg-forest');
     });
 
-    it('should successfully purchase a pet bundle', async () => {
+    it('should successfully purchase a bot bundle', async () => {
       const { result } = renderHook(() => useShop());
 
       let purchaseResult: { success: boolean; message: string } | undefined;
@@ -376,7 +372,7 @@ describe('useShop', () => {
       });
 
       expect(purchaseResult?.success).toBe(true);
-      expect(purchaseResult?.message).toContain('Pet Bundle purchased!');
+      expect(purchaseResult?.message).toContain('Bot Bundle purchased!');
       expect(mockCoinSystem.spendCoins).toHaveBeenCalledWith(200, 'pet_unlock', 'bundle-pets');
       expect(result.current.inventory.ownedCharacters).toContain('dog');
       expect(result.current.inventory.ownedCharacters).toContain('cat');
@@ -586,7 +582,7 @@ describe('useShop', () => {
       expect(result.current.isBundleOwned('bundle-nature')).toBe(false);
     });
 
-    it('should correctly check if pet bundle is owned', () => {
+    it('should correctly check if bot bundle is owned', () => {
       setShopState({
         ownedCharacters: ['dog', 'cat'],
       });

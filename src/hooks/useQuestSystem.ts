@@ -91,9 +91,9 @@ const WEEKLY_QUEST_TEMPLATES: QuestTemplate[] = [
     rewards: [{ type: 'xp' as const, amount: 600, description: "+600 XP" }, { type: 'coins' as const, amount: 500, description: "+500 coins" }]
   },
   {
-    title: "Pet Collector",
-    description: "Unlock a new pet",
-    objectives: [{ type: 'collection', target: 1, description: "Unlock 1 new pet" }],
+    title: "Bot Collector",
+    description: "Unlock a new bot",
+    objectives: [{ type: 'collection', target: 1, description: "Unlock 1 new bot" }],
     rewards: [{ type: 'xp' as const, amount: 400, description: "+400 XP" }, { type: 'coins' as const, amount: 300, description: "+300 coins" }]
   }
 ];
@@ -101,10 +101,10 @@ const WEEKLY_QUEST_TEMPLATES: QuestTemplate[] = [
 const STORY_QUESTS = [
   {
     id: 'story-1',
-    title: "Welcome to Paradise",
-    description: "Begin your journey by meeting your first companion",
-    objectives: [{ type: 'pet_interaction', target: 1, description: "Meet your first pet" }],
-    rewards: [{ type: 'pet_unlock', itemId: 'panda', description: "Unlock Panda companion" }, { type: 'xp', amount: 100, description: "+100 XP" }],
+    title: "Welcome to BotBlock",
+    description: "Begin your journey by activating your first bot",
+    objectives: [{ type: 'bot_interaction', target: 1, description: "Activate your first bot" }],
+    rewards: [{ type: 'bot_unlock', itemId: 'bolt-bot', description: "Unlock Bolt Bot companion" }, { type: 'xp', amount: 100, description: "+100 XP" }],
     unlockLevel: 1,
     storylineChapter: 1
   },
@@ -119,36 +119,36 @@ const STORY_QUESTS = [
   },
   {
     id: 'story-3',
-    title: "Forest Explorer",
-    description: "Unlock the mystical jungle biome",
-    objectives: [{ type: 'biome_unlock', target: 1, description: "Reach level 13" }],
-    rewards: [{ type: 'pet_unlock', itemId: 'jungle-bird', description: "Unlock Tropical Bird companion" }, { type: 'xp', amount: 400, description: "+400 XP" }],
+    title: "Biotech Pioneer",
+    description: "Unlock the Biotech Zone",
+    objectives: [{ type: 'zone_unlock', target: 1, description: "Reach level 13" }],
+    rewards: [{ type: 'bot_unlock', itemId: 'moss-mech', description: "Unlock Moss Mech companion" }, { type: 'xp', amount: 400, description: "+400 XP" }],
     unlockLevel: 13,
     storylineChapter: 2
   },
   {
     id: 'story-4',
-    title: "Arctic Adventure",
-    description: "Brave the harsh tundra lands",
-    objectives: [{ type: 'biome_unlock', target: 1, description: "Reach level 19" }],
-    rewards: [{ type: 'pet_unlock', itemId: 'arctic-hare', description: "Unlock Arctic Hare companion" }, { type: 'xp', amount: 500, description: "+500 XP" }],
+    title: "Solar Expedition",
+    description: "Harness the power of the Solar Fields",
+    objectives: [{ type: 'zone_unlock', target: 1, description: "Reach level 19" }],
+    rewards: [{ type: 'bot_unlock', itemId: 'sun-charger', description: "Unlock Sun Charger companion" }, { type: 'xp', amount: 500, description: "+500 XP" }],
     unlockLevel: 19,
     storylineChapter: 3
   },
   {
     id: 'story-5',
-    title: "Legendary Peaks",
-    description: "Ascend to the mythical mountains",
-    objectives: [{ type: 'biome_unlock', target: 1, description: "Reach level 27" }],
-    rewards: [{ type: 'pet_unlock', itemId: 'alpha-bear', description: "Unlock Alpha Bear companion" }, { type: 'xp', amount: 750, description: "+750 XP" }],
-    unlockLevel: 27,
+    title: "Cyber Ascension",
+    description: "Enter the Cyber District",
+    objectives: [{ type: 'zone_unlock', target: 1, description: "Reach level 25" }],
+    rewards: [{ type: 'bot_unlock', itemId: 'neon-sentinel', description: "Unlock Neon Sentinel companion" }, { type: 'xp', amount: 750, description: "+750 XP" }],
+    unlockLevel: 25,
     storylineChapter: 4
   }
 ];
 
 export const useQuestSystem = (): QuestSystemReturn => {
   const [quests, setQuests] = useState<Quest[]>([]);
-  const { addXP, addAnimal } = useXPStore();
+  const { addXP, addRobot } = useXPStore();
   const { addCoins } = useCoinStore();
 
   // Load quest data
@@ -291,7 +291,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
     // Track rewards for the toast
     let totalXPEarned = 0;
     let totalCoinsEarned = 0;
-    const unlockedPets: string[] = [];
+    const unlockedBots: string[] = [];
 
     // Process and apply rewards
     quest.rewards.forEach(reward => {
@@ -310,11 +310,12 @@ export const useQuestSystem = (): QuestSystemReturn => {
             questLogger.debug(`Applied ${reward.amount} coins reward from quest ${questId}`);
           }
           break;
-        case 'pet_unlock':
+        case 'bot_unlock':
+        case 'pet_unlock': // backward-compat
           if (reward.itemId) {
-            addAnimal(reward.itemId);
-            unlockedPets.push(reward.description || reward.itemId);
-            questLogger.debug(`Unlocked pet ${reward.itemId} from quest ${questId}`);
+            addRobot(reward.itemId);
+            unlockedBots.push(reward.description || reward.itemId);
+            questLogger.debug(`Unlocked bot ${reward.itemId} from quest ${questId}`);
           }
           break;
         case 'ability':
@@ -335,8 +336,8 @@ export const useQuestSystem = (): QuestSystemReturn => {
     if (totalCoinsEarned > 0) {
       rewardMessages.push(`+${totalCoinsEarned} coins`);
     }
-    if (unlockedPets.length > 0) {
-      rewardMessages.push(unlockedPets.join(', '));
+    if (unlockedBots.length > 0) {
+      rewardMessages.push(unlockedBots.join(', '));
     }
 
     playSoundEffect('success');
@@ -351,7 +352,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
       saveQuestData(updated);
       return updated;
     });
-  }, [quests, saveQuestData, addXP, addCoins, addAnimal]);
+  }, [quests, saveQuestData, addXP, addCoins, addRobot]);
 
   // Get quest by ID
   const getQuestById = useCallback((questId: string): Quest | undefined => {

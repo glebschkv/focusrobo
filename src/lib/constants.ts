@@ -10,10 +10,10 @@
 // ============================================================================
 
 export const APP_CONFIG = {
-  APP_NAME: 'NoMo Phone',
+  APP_NAME: 'BotBlock',
   APP_VERSION: '1.0.0',
-  APP_GROUP_IDENTIFIER: 'group.co.nomoinc.nomo',
-  BUNDLE_IDENTIFIER: 'co.nomoinc.nomo',
+  APP_GROUP_IDENTIFIER: 'group.co.botblock.app',
+  BUNDLE_IDENTIFIER: 'co.botblock.app',
   STORAGE_PREFIX: 'nomo_',
 } as const;
 
@@ -77,22 +77,22 @@ export const XP_CONFIG = {
     30,     // Level 2 - 1 session
     70,     // Level 3 - ~1-2 sessions
     120,    // Level 4 - ~2 sessions
-    180,    // Level 5 - ~2 sessions (first biome unlock)
+    180,    // Level 5 - ~2 sessions (first zone unlock)
     260,    // Level 6
     350,    // Level 7
     460,    // Level 8
     590,    // Level 9
-    740,    // Level 10 (second biome unlock)
+    740,    // Level 10 (second zone unlock)
     920,    // Level 11
     1120,   // Level 12
     1350,   // Level 13
     1610,   // Level 14
-    1900,   // Level 15 (third biome unlock)
+    1900,   // Level 15 (third zone unlock)
     2230,   // Level 16
     2600,   // Level 17
     3010,   // Level 18
     3470,   // Level 19
-    3980,   // Level 20 (fourth biome unlock)
+    3980,   // Level 20 (fourth zone unlock)
   ] as const,
 
   /** Maximum level */
@@ -276,7 +276,7 @@ export const ACHIEVEMENT_CONFIG = {
     FOCUS_SESSIONS: [1, 5, 10, 25, 50, 100, 250, 500, 1000],
     TOTAL_MINUTES: [60, 300, 600, 1200, 3000, 6000, 12000, 24000],
     STREAK_DAYS: [3, 7, 14, 30, 60, 100, 365],
-    PETS_COLLECTED: [1, 3, 5, 10, 15, 20],
+    BOTS_COLLECTED: [1, 3, 5, 10, 15, 20],
     COINS_EARNED: [100, 500, 1000, 5000, 10000, 50000],
   } as const,
 } as const;
@@ -327,10 +327,10 @@ export const LUCKY_WHEEL_CONFIG = {
 } as const;
 
 // ============================================================================
-// PET SYSTEM
+// BOT SYSTEM
 // ============================================================================
 
-export const PET_CONFIG = {
+export const BOT_CONFIG = {
   /** Maximum bond level */
   MAX_BOND_LEVEL: 10,
 
@@ -342,17 +342,17 @@ export const PET_CONFIG = {
     play: 10,
     feed: 15,
     focus_session: 25,
-    pet: 5,
+    bot: 5,
   } as const,
 
   /** Interaction cooldowns in minutes */
   INTERACTION_COOLDOWNS: {
     play: 30,
     feed: 60,
-    pet: 5,
+    bot: 5,
   } as const,
 
-  /** Pet unlock levels */
+  /** Bot unlock levels */
   UNLOCK_LEVELS: {
     STARTER: 1,
     EARLY: 5,
@@ -362,14 +362,17 @@ export const PET_CONFIG = {
   } as const,
 } as const;
 
+/** @deprecated Use BOT_CONFIG */
+export const PET_CONFIG = BOT_CONFIG;
+
 // ============================================================================
-// BIOME SYSTEM
+// ZONE SYSTEM
 // ============================================================================
 
-export const BIOME_CONFIG = {
-  /** Biome unlock levels (balanced progression - new biome every 5-10 levels) */
+export const ZONE_CONFIG = {
+  /** Zone unlock levels (balanced progression - new zone every 5-10 levels) */
   UNLOCK_LEVELS: {
-    meadow: 1,    // Starter biome
+    workshop: 1,    // Starter zone
     forest: 5,    // First milestone
     beach: 10,    // Second milestone
     mountain: 15, // Mid-game
@@ -380,8 +383,8 @@ export const BIOME_CONFIG = {
     void: 50,     // Max level exclusive
   } as const,
 
-  /** Map biome names to background theme IDs */
-  BIOME_TO_BACKGROUND: {
+  /** Map zone names to background theme IDs */
+  ZONE_TO_BACKGROUND: {
     'Meadow': 'day',
     'Sunset': 'sunset',
     'Night': 'night',
@@ -391,8 +394,8 @@ export const BIOME_CONFIG = {
     'Deep Ocean': 'deepocean',
   } as const,
 
-  /** Biome display icons (emoji) */
-  BIOME_ICONS: {
+  /** Zone display icons (emoji) */
+  ZONE_ICONS: {
     'Meadow': '☀️',
     'Sunset': '🌅',
     'Night': '🌙',
@@ -402,6 +405,9 @@ export const BIOME_CONFIG = {
     'Deep Ocean': '🌊',
   } as const,
 } as const;
+
+/** @deprecated Use ZONE_CONFIG */
+export const BIOME_CONFIG = ZONE_CONFIG;
 
 // ============================================================================
 // BACKGROUND THEMES
@@ -526,7 +532,7 @@ export const UI_CONFIG = {
 
 export const IOS_CONFIG = {
   /** Background task identifier */
-  BACKGROUND_TASK_ID: 'co.nomoinc.nomo.background-tracking',
+  BACKGROUND_TASK_ID: 'co.botblock.app.background-tracking',
 
   /** Background refresh interval in minutes */
   BACKGROUND_REFRESH_INTERVAL_MINUTES: 15,
@@ -537,22 +543,22 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
-    PREMIUM_MONTHLY: 'co.nomoinc.nomo.premium.monthly',
-    PREMIUM_YEARLY: 'co.nomoinc.nomo.premium.yearly',
-    PREMIUM_PLUS_MONTHLY: 'co.nomoinc.nomo.premiumplus.monthly',
-    PREMIUM_PLUS_YEARLY: 'co.nomoinc.nomo.premiumplus.yearly',
-    LIFETIME: 'co.nomoinc.nomo.lifetime',
+    PREMIUM_MONTHLY: 'co.botblock.app.premium.monthly',
+    PREMIUM_YEARLY: 'co.botblock.app.premium.yearly',
+    PREMIUM_PLUS_MONTHLY: 'co.botblock.app.premiumplus.monthly',
+    PREMIUM_PLUS_YEARLY: 'co.botblock.app.premiumplus.yearly',
+    LIFETIME: 'co.botblock.app.lifetime',
     // Coin Packs
-    COINS_VALUE: 'co.nomoinc.nomo.coins.value',
-    COINS_PREMIUM: 'co.nomoinc.nomo.coins.premium',
-    COINS_MEGA: 'co.nomoinc.nomo.coins.mega',
-    COINS_ULTRA: 'co.nomoinc.nomo.coins.ultra',
-    COINS_LEGENDARY: 'co.nomoinc.nomo.coins.legendary',
+    COINS_VALUE: 'co.botblock.app.coins.value',
+    COINS_PREMIUM: 'co.botblock.app.coins.premium',
+    COINS_MEGA: 'co.botblock.app.coins.mega',
+    COINS_ULTRA: 'co.botblock.app.coins.ultra',
+    COINS_LEGENDARY: 'co.botblock.app.coins.legendary',
     // Starter Bundles
-    BUNDLE_WELCOME: 'co.nomoinc.nomo.bundle.welcome',
-    BUNDLE_STARTER: 'co.nomoinc.nomo.bundle.starter',
-    BUNDLE_COLLECTOR: 'co.nomoinc.nomo.bundle.collector',
-    BUNDLE_ULTIMATE: 'co.nomoinc.nomo.bundle.ultimate',
+    BUNDLE_WELCOME: 'co.botblock.app.bundle.welcome',
+    BUNDLE_STARTER: 'co.botblock.app.bundle.starter',
+    BUNDLE_COLLECTOR: 'co.botblock.app.bundle.collector',
+    BUNDLE_ULTIMATE: 'co.botblock.app.bundle.ultimate',
   } as const,
 } as const;
 

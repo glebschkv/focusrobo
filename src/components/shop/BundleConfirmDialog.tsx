@@ -3,7 +3,7 @@ import { Sparkles, Zap, Shield, Star, Loader2 } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { StarterBundle, CoinPack } from "@/data/ShopData";
-import { getAnimalById } from "@/data/AnimalDatabase";
+import { getRobotById } from "@/data/RobotDatabase";
 import { BOOSTER_TYPES } from "@/hooks/useCoinBooster";
 import { SpritePreview } from "./ShopPreviewComponents";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -59,16 +59,16 @@ export const BundleConfirmDialog = ({
     }
 
     if (starterBundle.contents.characterId) {
-      const animal = getAnimalById(starterBundle.contents.characterId);
+      const animal = getRobotById(starterBundle.contents.characterId);
       if (animal) {
         contentItems.push({
-          icon: animal.spriteConfig ? (
-            <SpritePreview animal={animal} scale={0.4} />
+          icon: animal.imageConfig ? (
+            <SpritePreview robot={animal} scale={0.4} />
           ) : (
             <PixelIcon name={animal.icon} size={16} />
           ),
           label: animal.name,
-          sublabel: `${animal.rarity.charAt(0).toUpperCase() + animal.rarity.slice(1)} Pet`,
+          sublabel: `${animal.rarity.charAt(0).toUpperCase() + animal.rarity.slice(1)} Bot`,
           variant: 'epic',
         });
       }
@@ -100,9 +100,9 @@ export const BundleConfirmDialog = ({
     }
   }
 
-  // Pet preview for bundles that include a character
+  // Bot preview for bundles that include a character
   const petId = isStarterBundle ? (bundle as StarterBundle).contents.characterId : null;
-  const pet = petId ? getAnimalById(petId) : null;
+  const pet = petId ? getRobotById(petId) : null;
 
   return (
     <Dialog open={open && !!bundle} onOpenChange={onOpenChange}>
@@ -115,9 +115,9 @@ export const BundleConfirmDialog = ({
           <div className="retro-modal-header p-4 text-center relative">
             <div className="retro-scanlines opacity-20" />
 
-            {/* Pet sprite preview or bundle icon */}
+            {/* Bot sprite preview or bundle icon */}
             <div className="h-24 mb-2 flex items-center justify-center relative z-[1]">
-              {pet?.spriteConfig ? (
+              {pet?.imageConfig ? (
                 <div className="relative">
                   <div
                     className="absolute inset-0 rounded-full blur-xl scale-[2]"
@@ -125,7 +125,7 @@ export const BundleConfirmDialog = ({
                   />
                   <SpritePreview
                     animal={pet}
-                    scale={Math.min(2.5, 80 / Math.max(pet.spriteConfig.frameWidth, pet.spriteConfig.frameHeight))}
+                    scale={Math.min(2.5, 80 / Math.max(pet.imageConfig?.size || 64, pet.imageConfig?.size || 64))}
                   />
                 </div>
               ) : (

@@ -1,7 +1,7 @@
 /**
  * CollectionTab Component
  *
- * Merged view of pet bundles, individual pets, background bundles,
+ * Merged view of bot bundles, individual bots, background bundles,
  * and individual backgrounds. Bundles are shown above individual items
  * so users see the better-value option first.
  */
@@ -18,7 +18,7 @@ import {
   ShopCategory,
 } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { getCoinExclusiveAnimals, AnimalData, getAnimalById } from "@/data/AnimalDatabase";
+import { getCoinExclusiveRobots, RobotData, getRobotById } from "@/data/RobotDatabase";
 import { toast } from "sonner";
 import { SpritePreview, BackgroundPreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
 import { RARITY_COLORS, RARITY_BG, RARITY_BORDER, RARITY_GLOW } from "../styles";
@@ -30,7 +30,7 @@ interface CollectionTabProps {
   isOwned: (itemId: string, category: ShopCategory) => boolean;
   isBundleOwned: (bundleId: string) => boolean;
   equipBackground: (backgroundId: string | null) => void;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
@@ -44,7 +44,7 @@ export const CollectionTab = ({
   setShowPurchaseConfirm,
   canAfford,
 }: CollectionTabProps) => {
-  const characters = getCoinExclusiveAnimals();
+  const characters = getCoinExclusiveRobots();
   const setHomeBackground = useThemeStore((state) => state.setHomeBackground);
   const backgroundsWithPreviews = PREMIUM_BACKGROUNDS.filter(bg => bg.previewImage);
 
@@ -78,10 +78,10 @@ export const CollectionTab = ({
 
   return (
     <div className="space-y-4">
-      {/* ── Pet Bundles ── */}
+      {/* ── Bot Bundles ── */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Pet Bundles</span>
+          <span className="shop-section-title">Bot Bundles</span>
         </div>
         <div className="space-y-2">
           {PET_BUNDLES.map((bundle) => (
@@ -139,7 +139,7 @@ export const CollectionTab = ({
                   <div className="h-16 mb-2 flex items-center justify-center overflow-hidden">
                     {character.spriteConfig ? (
                       <SpritePreview
-                        animal={character}
+                        robot={character}
                         scale={Math.min(2, 64 / Math.max(character.spriteConfig.frameWidth, character.spriteConfig.frameHeight))}
                       />
                     ) : (
@@ -294,7 +294,7 @@ const PetBundleCard = ({
 }: {
   bundle: Bundle;
   inventory: ShopInventory;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }) => {
@@ -305,15 +305,15 @@ const PetBundleCard = ({
 
   const previewAnimals = bundle.itemIds
     .slice(0, 3)
-    .map(id => getAnimalById(id))
-    .filter(Boolean) as AnimalData[];
+    .map(id => getRobotById(id))
+    .filter(Boolean) as RobotData[];
 
   const handleClick = () => {
     if (!allOwned) {
       setSelectedItem(bundle as unknown as ShopItem);
       setShowPurchaseConfirm(true);
     } else {
-      toast.info("You already own all pets in this bundle!");
+      toast.info("You already own all bots in this bundle!");
     }
   };
 
@@ -329,7 +329,7 @@ const PetBundleCard = ({
         <div className="flex-shrink-0 w-20 h-16 rounded-lg bg-white/50 dark:bg-black/20 flex items-center justify-center overflow-hidden">
           {previewAnimals.length > 0 && previewAnimals[0]?.spriteConfig ? (
             <SpritePreview
-              animal={previewAnimals[0]}
+              robot={previewAnimals[0]}
               scale={Math.min(1.2, 56 / Math.max(
                 previewAnimals[0].spriteConfig.frameWidth,
                 previewAnimals[0].spriteConfig.frameHeight
@@ -403,7 +403,7 @@ const BackgroundBundleCard = ({
 }: {
   bundle: Bundle;
   isBundleOwned: (bundleId: string) => boolean;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }) => {

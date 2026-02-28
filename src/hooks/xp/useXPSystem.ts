@@ -18,7 +18,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { BIOME_DATABASE, getUnlockedAnimals } from '@/data/AnimalDatabase';
+import { ZONE_DATABASE, getUnlockableRobots } from '@/data/RobotDatabase';
 import { xpLogger as logger } from '@/lib/logger';
 import { safeJsonParse } from '@/lib/apiUtils';
 import { usePremiumStore } from '@/stores/premiumStore';
@@ -81,7 +81,7 @@ import {
 import {
   calculateRandomBonus,
   calculateLevelRequirement,
-  normalizeAnimalList,
+  normalizeRobotList,
   calculateLevel,
 } from './xpUtils';
 
@@ -91,7 +91,7 @@ const LEGACY_KEY = 'petIsland_xpSystem';
 /**
  * Attempts to extract XP data from a storage object (handles both direct and Zustand formats)
  */
-const extractXPData = (data: unknown): { xp: number; level: number; animals?: string[]; biome?: string; totalStudyMinutes?: number } | null => {
+const extractXPData = (data: unknown): { xp: number; level: number; robots?: string[]; zone?: string; totalStudyMinutes?: number } | null => {
   if (!data || typeof data !== 'object') return null;
 
   // Handle Zustand's wrapped format { state: {...}, version: ... }
@@ -108,8 +108,8 @@ const extractXPData = (data: unknown): { xp: number; level: number; animals?: st
   return {
     xp,
     level: validateLevel(stateData.currentLevel),
-    animals: Array.isArray(stateData.unlockedAnimals) ? stateData.unlockedAnimals as string[] : undefined,
-    biome: typeof stateData.currentBiome === 'string' ? stateData.currentBiome : undefined,
+    robots: Array.isArray(stateData.unlockedRobots) ? stateData.unlockedRobots as string[] : undefined,
+    zone: typeof stateData.currentZone === 'string' ? stateData.currentZone : undefined,
     totalStudyMinutes: typeof stateData.totalStudyMinutes === 'number' ? stateData.totalStudyMinutes : undefined,
   };
 };
@@ -117,15 +117,15 @@ const extractXPData = (data: unknown): { xp: number; level: number; animals?: st
 /**
  * Loads and recovers XP state from localStorage with fallback logic
  */
-const loadXPState = (defaultAnimals: string[]): XPSystemState => {
+const loadXPState = (defaultRobots: string[]): XPSystemState => {
   const defaultState: XPSystemState = {
     currentXP: 0,
     currentLevel: 0,
     xpToNextLevel: 15,
     totalXPForCurrentLevel: 0,
-    unlockedAnimals: defaultAnimals,
-    currentBiome: 'Snow',
-    availableBiomes: ['Snow'],
+    unlockedRobots: defaultRobots,
+    currentZone: 'Snow',
+    availableZones: ['Snow'],
     totalStudyMinutes: 0,
   };
 
@@ -168,31 +168,31 @@ const loadXPState = (defaultAnimals: string[]): XPSystemState => {
   const currentLevelXP = calculateLevelRequirement(level);
   const nextLevelXP = level >= MAX_LEVEL ? currentLevelXP : calculateLevelRequirement(level + 1);
 
-  const savedAnimals = normalizeAnimalList(bestData.animals);
-  const allAnimals = Array.from(new Set([...defaultAnimals, ...savedAnimals]));
+  const savedRobots = normalizeRobotList(bestData.robots);
+  const allRobots = Array.from(new Set([...defaultRobots, ...savedRobots]));
 
-  const availableBiomes = BIOME_DATABASE
-    .filter(biome => biome.unlockLevel <= level)
-    .map(biome => biome.name);
+  const availableZones = ZONE_DATABASE
+    .filter(zone => zone.unlockLevel <= level)
+    .map(zone => zone.name);
 
-  const currentBiome = availableBiomes.includes(bestData.biome || '')
-    ? bestData.biome!
-    : availableBiomes[availableBiomes.length - 1] || 'Meadow';
+  const currentZone = availableZones.includes(bestData.zone || '')
+    ? bestData.zone!
+    : availableZones[availableZones.length - 1] || 'Meadow';
 
   const recoveredState: XPSystemState = {
     currentXP: bestData.xp,
     currentLevel: level,
     xpToNextLevel: level >= MAX_LEVEL ? 0 : Math.max(0, nextLevelXP - bestData.xp),
     totalXPForCurrentLevel: currentLevelXP,
-    unlockedAnimals: allAnimals,
-    currentBiome,
-    availableBiomes,
+    unlockedRobots: allRobots,
+    currentZone,
+    availableZones,
     totalStudyMinutes: bestData.totalStudyMinutes ?? 0,
   };
 
   // Save to primary key for consistency
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recoveredState));
-  logger.debug(`Restored XP state: Level ${level}, ${bestData.xp} XP, ${allAnimals.length} animals`);
+  logger.debug(`Restored XP state: Level ${level}, ${bestData.xp} XP, ${allRobots.length} robots`);
 
   return recoveredState;
 };
@@ -202,9 +202,9 @@ export const useXPSystem = () => {
   const { isAuthenticated } = useAuth();
   const { progress, updateProgress, addFocusSession } = useSupabaseData();
 
-  // Get proper starting animals (level 0 and 1)
-  const startingAnimals = getUnlockedAnimals(0).map(a => a.name);
-  logger.debug('Starting animals for level 0:', startingAnimals);
+  // Get proper starting robots (level 0 and 1)
+  const startingRobots = getUnlockableRobots(0).map(a => a.name);
+  logger.debug('Starting robots for level 0:', startingRobots);
 
   // Use ref to track latest state for event handlers (fixes stale closure)
   const xpStateRef = useRef<XPSystemState | null>(null);
@@ -214,9 +214,9 @@ export const useXPSystem = () => {
     currentLevel: 0,
     xpToNextLevel: 15,
     totalXPForCurrentLevel: 0,
-    unlockedAnimals: startingAnimals,
-    currentBiome: 'Snow',
-    availableBiomes: ['Snow'],
+    unlockedRobots: startingRobots,
+    currentZone: 'Snow',
+    availableZones: ['Snow'],
     totalStudyMinutes: 0,
   });
 
@@ -242,20 +242,20 @@ export const useXPSystem = () => {
           : calculateLevelRequirement(effectiveLevel + 1);
         const xpToNextLevel = effectiveLevel >= MAX_LEVEL ? 0 : nextLevelXP - effectiveXP;
 
-        const unlockedAnimals = getUnlockedAnimals(effectiveLevel).map(a => a.name);
-        const availableBiomes = BIOME_DATABASE
-          .filter(biome => biome.unlockLevel <= effectiveLevel)
-          .map(biome => biome.name);
-        const currentBiome = availableBiomes[availableBiomes.length - 1] || 'Snow';
+        const unlockedRobots = getUnlockableRobots(effectiveLevel).map(a => a.name);
+        const availableZones = ZONE_DATABASE
+          .filter(zone => zone.unlockLevel <= effectiveLevel)
+          .map(zone => zone.name);
+        const currentZone = availableZones[availableZones.length - 1] || 'Snow';
 
         const newState = {
           currentXP: effectiveXP,
           currentLevel: effectiveLevel,
           xpToNextLevel,
           totalXPForCurrentLevel: currentLevelXP,
-          unlockedAnimals,
-          currentBiome,
-          availableBiomes,
+          unlockedRobots,
+          currentZone,
+          availableZones,
           totalStudyMinutes: currentLocal?.totalStudyMinutes ?? 0,
         };
 
@@ -269,8 +269,8 @@ export const useXPSystem = () => {
 
   // Load saved state from localStorage using simplified recovery logic
   useEffect(() => {
-    const defaultAnimals = getUnlockedAnimals(0).map(a => a.name);
-    const recoveredState = loadXPState(defaultAnimals);
+    const defaultRobots = getUnlockableRobots(0).map(a => a.name);
+    const recoveredState = loadXPState(defaultRobots);
     setXPState(recoveredState);
     xpStateRef.current = recoveredState;
   }, []);
@@ -302,20 +302,20 @@ export const useXPSystem = () => {
     };
   }, [xpState]);
 
-  // Listen for animal purchase events (from shop)
+  // Listen for robot purchase events (from shop)
   useEffect(() => {
-    const handleAnimalPurchased = (event: CustomEvent<{ animalId: string; animalName: string }>) => {
-      logger.debug('Animal purchased:', event.detail);
-      const { animalName } = event.detail;
+    const handleRobotPurchased = (event: CustomEvent<{ robotId: string; robotName: string }>) => {
+      logger.debug('Robot purchased:', event.detail);
+      const { robotName } = event.detail;
 
       setXPState(prev => {
-        if (prev.unlockedAnimals.includes(animalName)) {
+        if (prev.unlockedRobots.includes(robotName)) {
           return prev;
         }
 
         const updatedState = {
           ...prev,
-          unlockedAnimals: [...prev.unlockedAnimals, animalName],
+          unlockedRobots: [...prev.unlockedRobots, robotName],
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
         xpStateRef.current = updatedState;
@@ -324,10 +324,10 @@ export const useXPSystem = () => {
       });
     };
 
-    window.addEventListener(ANIMAL_PURCHASED_EVENT, handleAnimalPurchased as EventListener);
+    window.addEventListener(ANIMAL_PURCHASED_EVENT, handleRobotPurchased as EventListener);
 
     return () => {
-      window.removeEventListener(ANIMAL_PURCHASED_EVENT, handleAnimalPurchased as EventListener);
+      window.removeEventListener(ANIMAL_PURCHASED_EVENT, handleRobotPurchased as EventListener);
     };
   }, []);
 
@@ -335,8 +335,8 @@ export const useXPSystem = () => {
   const saveState = useCallback((newState: Partial<XPSystemState>) => {
     setXPState(prev => {
       const merged = { ...prev, ...newState };
-      const normalizedAnimals = normalizeAnimalList(merged.unlockedAnimals);
-      const updatedState = { ...merged, unlockedAnimals: normalizedAnimals };
+      const normalizedRobots = normalizeRobotList(merged.unlockedRobots);
+      const updatedState = { ...merged, unlockedRobots: normalizedRobots };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
       xpStateRef.current = updatedState;
       window.dispatchEvent(new CustomEvent(XP_UPDATE_EVENT, { detail: updatedState }));
@@ -470,22 +470,22 @@ export const useXPSystem = () => {
       }
     }
 
-    const newAnimals = [...xpState.unlockedAnimals];
+    const newRobots = [...xpState.unlockedRobots];
     unlockedRewards.forEach(reward => {
-      if (reward.type === 'animal' && !newAnimals.includes(reward.name)) {
-        newAnimals.push(reward.name);
+      if (reward.type === 'robot' && !newRobots.includes(reward.name)) {
+        newRobots.push(reward.name);
       }
     });
 
-    const newBiomes = BIOME_DATABASE
-      .filter(biome => biome.unlockLevel <= newLevel)
-      .map(biome => biome.name);
+    const newZones = ZONE_DATABASE
+      .filter(zone => zone.unlockLevel <= newLevel)
+      .map(zone => zone.name);
 
-    const oldBiomes = BIOME_DATABASE
-      .filter(biome => biome.unlockLevel <= oldLevel)
-      .map(biome => biome.name);
-    const newlyUnlockedBiome = newBiomes.find(b => !oldBiomes.includes(b));
-    const newCurrentBiome = newlyUnlockedBiome || xpState.currentBiome;
+    const oldZones = ZONE_DATABASE
+      .filter(zone => zone.unlockLevel <= oldLevel)
+      .map(zone => zone.name);
+    const newlyUnlockedZone = newZones.find(b => !oldZones.includes(b));
+    const newCurrentZone = newlyUnlockedZone || xpState.currentZone;
 
     const newTotalStudyMinutes = (xpState.totalStudyMinutes || 0) + validMinutes;
 
@@ -494,9 +494,9 @@ export const useXPSystem = () => {
       currentLevel: newLevel,
       xpToNextLevel,
       totalXPForCurrentLevel: currentLevelXP,
-      unlockedAnimals: newAnimals,
-      currentBiome: newCurrentBiome,
-      availableBiomes: newBiomes,
+      unlockedRobots: newRobots,
+      currentZone: newCurrentZone,
+      availableZones: newZones,
       totalStudyMinutes: newTotalStudyMinutes,
     });
 
@@ -582,31 +582,31 @@ export const useXPSystem = () => {
       }
     }
 
-    const newAnimals = [...xpState.unlockedAnimals];
+    const newRobots = [...xpState.unlockedRobots];
     unlockedRewards.forEach(reward => {
-      if (reward.type === 'animal' && !newAnimals.includes(reward.name)) {
-        newAnimals.push(reward.name);
+      if (reward.type === 'robot' && !newRobots.includes(reward.name)) {
+        newRobots.push(reward.name);
       }
     });
 
-    const newBiomes = BIOME_DATABASE
-      .filter(biome => biome.unlockLevel <= newLevel)
-      .map(biome => biome.name);
+    const newZones = ZONE_DATABASE
+      .filter(zone => zone.unlockLevel <= newLevel)
+      .map(zone => zone.name);
 
-    const oldBiomes = BIOME_DATABASE
-      .filter(biome => biome.unlockLevel <= oldLevel)
-      .map(biome => biome.name);
-    const newlyUnlockedBiome = newBiomes.find(b => !oldBiomes.includes(b));
-    const newCurrentBiome = newlyUnlockedBiome || xpState.currentBiome;
+    const oldZones = ZONE_DATABASE
+      .filter(zone => zone.unlockLevel <= oldLevel)
+      .map(zone => zone.name);
+    const newlyUnlockedZone = newZones.find(b => !oldZones.includes(b));
+    const newCurrentZone = newlyUnlockedZone || xpState.currentZone;
 
     saveState({
       currentXP: newTotalXP,
       currentLevel: newLevel,
       xpToNextLevel,
       totalXPForCurrentLevel: currentLevelXP,
-      unlockedAnimals: newAnimals,
-      currentBiome: newCurrentBiome,
-      availableBiomes: newBiomes,
+      unlockedRobots: newRobots,
+      currentZone: newCurrentZone,
+      availableZones: newZones,
     });
 
     // Sync to backend asynchronously
@@ -638,24 +638,24 @@ export const useXPSystem = () => {
     return Math.min(100, (progressXP / totalXPNeeded) * 100);
   }, [xpState]);
 
-  // Switch biome
-  const switchBiome = useCallback((biomeName: string) => {
-    if (xpState.availableBiomes.includes(biomeName)) {
-      saveState({ currentBiome: biomeName });
+  // Switch zone
+  const switchZone = useCallback((zoneName: string) => {
+    if (xpState.availableZones.includes(zoneName)) {
+      saveState({ currentZone: zoneName });
     }
-  }, [xpState.availableBiomes, saveState]);
+  }, [xpState.availableZones, saveState]);
 
   // Reset progress
   const resetProgress = useCallback(() => {
-    const startingAnimals = getUnlockedAnimals(0).map(a => a.name);
+    const startingRobots = getUnlockableRobots(0).map(a => a.name);
     const resetState: XPSystemState = {
       currentXP: 0,
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedAnimals: startingAnimals,
-      currentBiome: 'Meadow',
-      availableBiomes: ['Meadow'],
+      unlockedRobots: startingRobots,
+      currentZone: 'Meadow',
+      availableZones: ['Meadow'],
       totalStudyMinutes: 0,
     };
     setXPState(resetState);
@@ -667,7 +667,7 @@ export const useXPSystem = () => {
     awardXP,
     addDirectXP,
     getLevelProgress,
-    switchBiome,
+    switchZone,
     resetProgress,
     calculateXPFromDuration,
     getSubscriptionMultiplier,

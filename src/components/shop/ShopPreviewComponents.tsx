@@ -1,63 +1,29 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { AnimalData, getAnimalById } from "@/data/AnimalDatabase";
+import { RobotData, getRobotById } from "@/data/RobotDatabase";
 
-// Animated sprite preview component for shop
-export const SpritePreview = ({ animal, scale = 4 }: { animal: AnimalData; scale?: number }) => {
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const frameTimeRef = useRef(0);
-  const spriteConfig = animal.spriteConfig;
+// Static robot image preview component for shop
+export const SpritePreview = ({ robot, scale = 4 }: { robot: RobotData; scale?: number }) => {
+  const imageConfig = robot.imageConfig;
 
-  useEffect(() => {
-    if (!spriteConfig) return;
+  if (!imageConfig) return null;
 
-    const { frameCount, animationSpeed = 10 } = spriteConfig;
-    const frameDuration = 1000 / animationSpeed;
-
-    let animationFrame: number;
-    let lastTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      const deltaTime = currentTime - lastTime;
-      lastTime = currentTime;
-
-      frameTimeRef.current += deltaTime;
-      if (frameTimeRef.current >= frameDuration) {
-        setCurrentFrame(prev => (prev + 1) % frameCount);
-        frameTimeRef.current = 0;
-      }
-
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-    };
-  }, [spriteConfig]);
-
-  if (!spriteConfig) return null;
-
-  const { spritePath, frameCount, frameWidth, frameHeight, frameRow = 0 } = spriteConfig;
-  const scaledWidth = frameWidth * scale;
-  const scaledHeight = frameHeight * scale;
-  const backgroundPositionX = -(currentFrame * frameWidth * scale);
-  const backgroundPositionY = -(frameRow * frameHeight * scale);
+  const size = imageConfig.size || 64 * Math.min(scale, 3);
 
   return (
-    <div
-      className="mx-auto"
-      style={{
-        width: `${scaledWidth}px`,
-        height: `${scaledHeight}px`,
-        backgroundImage: `url(${spritePath})`,
-        backgroundSize: `${frameCount * scaledWidth}px auto`,
-        backgroundPosition: `${backgroundPositionX}px ${backgroundPositionY}px`,
-        backgroundRepeat: 'no-repeat',
-        imageRendering: 'pixelated',
-      }}
-    />
+    <div className="mx-auto flex items-center justify-center">
+      <img
+        src={imageConfig.imagePath}
+        alt={robot.name}
+        className="object-contain"
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+          imageRendering: 'pixelated',
+        }}
+        draggable={false}
+      />
+    </div>
   );
 };
 
@@ -153,38 +119,35 @@ export const BundlePreviewCarousel = ({ images }: { images: string[] }) => {
   );
 };
 
-// Pet bundle preview carousel - shows all pets in the bundle
-export const PetBundlePreviewCarousel = ({ petIds }: { petIds: string[] }) => {
+// Bot bundle preview carousel - shows all bots in the bundle
+export const BotBundlePreviewCarousel = ({ botIds }: { botIds: string[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const pets = petIds.map(id => getAnimalById(id)).filter(Boolean) as AnimalData[];
+  const bots = botIds.map(id => getRobotById(id)).filter(Boolean) as RobotData[];
 
   useEffect(() => {
-    if (pets.length <= 1) return;
+    if (bots.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % pets.length);
+      setCurrentIndex((prev) => (prev + 1) % bots.length);
     }, 1500);
     return () => clearInterval(timer);
-  }, [pets.length]);
+  }, [bots.length]);
 
-  if (pets.length === 0) return null;
+  if (bots.length === 0) return null;
 
-  const currentPet = pets[currentIndex];
-  const scale = currentPet?.spriteConfig
-    ? Math.min(2.5, 80 / Math.max(currentPet.spriteConfig.frameWidth, currentPet.spriteConfig.frameHeight))
-    : 1;
+  const currentBot = bots[currentIndex];
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
       <div className="flex-1 flex items-center justify-center min-h-0">
-        {currentPet?.spriteConfig ? (
-          <SpritePreview animal={currentPet} scale={scale} />
+        {currentBot?.imageConfig ? (
+          <SpritePreview robot={currentBot} scale={2.5} />
         ) : (
-          <span className="text-4xl">{currentPet?.emoji}</span>
+          <span className="text-4xl">{currentBot?.icon}</span>
         )}
       </div>
-      <div className="text-xs text-white/80 font-medium mb-1">{currentPet?.name}</div>
+      <div className="text-xs text-white/80 font-medium mb-1">{currentBot?.name}</div>
       <div className="flex gap-1">
-        {pets.map((_, idx) => (
+        {bots.map((_, idx) => (
           <div
             key={idx}
             className={cn(
@@ -197,3 +160,6 @@ export const PetBundlePreviewCarousel = ({ petIds }: { petIds: string[] }) => {
     </div>
   );
 };
+
+/** @deprecated Use BotBundlePreviewCarousel instead */
+export const PetBundlePreviewCarousel = BotBundlePreviewCarousel;

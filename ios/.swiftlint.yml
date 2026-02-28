@@ -1,4 +1,4 @@
-# SwiftLint Configuration for NoMo Phone iOS App
+# SwiftLint Configuration for BotBlock iOS App
 
 disabled_rules:
   - trailing_whitespace

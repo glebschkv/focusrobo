@@ -7,11 +7,11 @@ export interface QuestObjective {
   description: string;
   target: number;
   current: number;
-  type: 'focus_time' | 'pet_interaction' | 'bond_level' | 'streak' | 'collection' | 'biome_unlock';
+  type: 'focus_time' | 'bot_interaction' | 'bond_level' | 'streak' | 'collection' | 'zone_unlock';
 }
 
 export interface QuestReward {
-  type: 'xp' | 'coins' | 'pet_unlock' | 'badge' | 'item';
+  type: 'xp' | 'coins' | 'bot_unlock' | 'badge' | 'item';
   amount?: number;
   itemId?: string;
   description: string;
@@ -86,7 +86,7 @@ export const useQuestStore = create<QuestStore>()(
       onRehydrateStorage: () => (state) => {
         if (!state) {
           try {
-            const legacy = localStorage.getItem('quest-system-data') || localStorage.getItem('pet_paradise_quest_system');
+            const legacy = localStorage.getItem('quest-system-data') || localStorage.getItem('botblock_quest_system');
             if (legacy) { const parsed = JSON.parse(legacy); return { quests: parsed.quests || [], lastDailyReset: null, lastWeeklyReset: null }; }
           } catch { /* ignore */ }
         }

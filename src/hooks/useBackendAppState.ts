@@ -27,7 +27,7 @@ import { useCoinBooster } from './useCoinBooster';
 import { useAuth } from './useAuth';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { getUnlockedAnimals } from '@/data/AnimalDatabase';
+import { getUnlockableRobots } from '@/data/RobotDatabase';
 import { syncLogger as logger } from '@/lib/logger';
 
 // Type definitions for better type safety
@@ -41,11 +41,14 @@ interface XPRewardResult {
   coinReward: number;
 }
 
-interface PetInteractionResult {
+interface BotInteractionResult {
   bondLevelUp: boolean;
   newBondLevel: number;
   interaction: unknown;
 }
+
+/** @deprecated Use BotInteractionResult */
+type PetInteractionResult = BotInteractionResult;
 
 export const useBackendAppState = () => {
   const { isAuthenticated } = useAuth();
@@ -170,7 +173,7 @@ export const useBackendAppState = () => {
       await systems.quests.updateQuestProgress('focus_time', sessionMinutes);
 
       // NOTE: Bond system interactions removed — they awarded phantom XP/bond
-      // on every timer completion for every favorite pet, causing unearned rewards.
+      // on every timer completion for every favorite bot, causing unearned rewards.
 
       return {
         xpGained: reward.xpGained,
@@ -188,28 +191,28 @@ export const useBackendAppState = () => {
     }
   }, []); // Empty dependency array - uses refs for all subsystem access
 
-  // Get pet interaction handler
-  const interactWithPet = useCallback(async (
-    petType: string,
+  // Get bot interaction handler
+  const interactWithBot = useCallback(async (
+    botType: string,
     interactionType: string = 'play'
-  ): Promise<PetInteractionResult> => {
+  ): Promise<BotInteractionResult> => {
     const systems = subsystemsRef.current;
 
     // Get bond level before interaction to detect level ups
-    const previousBondLevel = systems.bondSystem.getBondLevel(petType);
+    const previousBondLevel = systems.bondSystem.getBondLevel(botType);
 
-    const interaction = await systems.bondSystem.interactWithPet(petType, interactionType);
+    const interaction = await systems.bondSystem.interactWithBot(botType, interactionType);
 
-    // Update quest progress for pet interactions
-    await systems.quests.updateQuestProgress('pet_interaction', 1);
+    // Update quest progress for bot interactions
+    await systems.quests.updateQuestProgress('bot_interaction', 1);
 
     // Get new bond level after interaction to detect level up
-    const newBondLevel = systems.bondSystem.getBondLevel(petType);
+    const newBondLevel = systems.bondSystem.getBondLevel(botType);
     const bondLevelUp = newBondLevel > previousBondLevel;
 
     if (bondLevelUp) {
       toast.success(`Bond Level Up!`, {
-        description: `${petType} is now bond level ${newBondLevel}!`
+        description: `${botType} is now bond level ${newBondLevel}!`
       });
 
       // Check for bond-related achievements
@@ -226,7 +229,7 @@ export const useBackendAppState = () => {
 
   // Memoized app state to prevent unnecessary recalculations
   const appState = useMemo(() => {
-    const unlockedAnimals = getUnlockedAnimals(effectiveLevel).map(a => a.name);
+    const unlockedRobots = getUnlockableRobots(effectiveLevel).map(a => a.name);
 
     return {
       // XP System
@@ -247,9 +250,9 @@ export const useBackendAppState = () => {
       boosterTimeRemaining: coinBooster.getTimeRemainingFormatted(),
 
       // Collection
-      unlockedAnimals,
-      currentBiome: xpSystem.currentBiome,
-      availableBiomes: xpSystem.availableBiomes,
+      unlockedRobots,
+      currentZone: xpSystem.currentZone,
+      availableZones: xpSystem.availableZones,
 
       // Achievements
       totalAchievements: achievements.achievements.length,
@@ -268,7 +271,7 @@ export const useBackendAppState = () => {
       // Backend data
       profile: supabaseData.profile,
       progress: supabaseData.progress,
-      pets: supabaseData.pets,
+      bots: supabaseData.pets,
 
       // Loading states (subsystems handle their own loading)
       isLoading:
@@ -294,7 +297,7 @@ export const useBackendAppState = () => {
   return {
     // Main functions
     awardXP,
-    interactWithPet,
+    interactWithBot,
     getLevelProgress,
     getAppState,
 

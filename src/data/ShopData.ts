@@ -1,5 +1,5 @@
 import { BOOSTER_TYPES } from '@/hooks/useCoinBooster';
-import { getCoinExclusiveAnimals } from './AnimalDatabase';
+import { getCoinExclusiveRobots } from './RobotDatabase';
 import type {
   ShopCategory,
   ShopItem,
@@ -167,7 +167,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
   {
     id: 'bg-halloween',
     name: 'Spooky Hollow',
-    description: 'A haunted forest perfect for the spookiest of pets.',
+    description: 'A haunted forest perfect for the spookiest of bots.',
     category: 'backgrounds',
     coinPrice: 3000,
     icon: 'pumpkin',
@@ -238,7 +238,7 @@ export const COIN_PACKS: CoinPack[] = [
     description: 'Great value for regular shoppers.',
     category: 'coins',
     iapPrice: '€2,99',
-    iapProductId: 'co.nomoinc.nomo.coins.value',
+    iapProductId: 'co.botblock.app.coins.value',
     icon: 'money-bag',
     coinAmount: 1500,
     bonusCoins: 300,
@@ -250,7 +250,7 @@ export const COIN_PACKS: CoinPack[] = [
     description: 'For the serious collector.',
     category: 'coins',
     iapPrice: '€7,99',
-    iapProductId: 'co.nomoinc.nomo.coins.premium',
+    iapProductId: 'co.botblock.app.coins.premium',
     icon: 'diamond',
     coinAmount: 5000,
     bonusCoins: 1000,
@@ -262,7 +262,7 @@ export const COIN_PACKS: CoinPack[] = [
     description: 'The ultimate coin pack - best value!',
     category: 'coins',
     iapPrice: '€19,99',
-    iapProductId: 'co.nomoinc.nomo.coins.mega',
+    iapProductId: 'co.botblock.app.coins.mega',
     icon: 'trophy',
     coinAmount: 15000,
     bonusCoins: 5000,
@@ -274,7 +274,7 @@ export const COIN_PACKS: CoinPack[] = [
     description: 'The VIP experience - maximum coins!',
     category: 'coins',
     iapPrice: '€49,99',
-    iapProductId: 'co.nomoinc.nomo.coins.ultra',
+    iapProductId: 'co.botblock.app.coins.ultra',
     icon: 'crown-ultra',
     coinAmount: 40000,
     bonusCoins: 20000,
@@ -286,7 +286,7 @@ export const COIN_PACKS: CoinPack[] = [
     description: 'The ultimate collection accelerator - massive coin haul!',
     category: 'coins',
     iapPrice: '€99,99',
-    iapProductId: 'co.nomoinc.nomo.coins.legendary',
+    iapProductId: 'co.botblock.app.coins.legendary',
     icon: 'crown-legendary',
     coinAmount: 100000,
     bonusCoins: 50000,
@@ -306,7 +306,7 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     description: 'A perfect start to your journey! Coins, protection, and a boost.',
     category: 'bundles',
     iapPrice: '€2,99',
-    iapProductId: 'co.nomoinc.nomo.bundle.welcome',
+    iapProductId: 'co.botblock.app.bundle.welcome',
     icon: 'bundle-welcome',
     rarity: 'rare',
     contents: {
@@ -322,7 +322,7 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     description: 'Perfect for new players! Includes coins, a booster, and an exclusive character.',
     category: 'bundles',
     iapPrice: '€4,99',
-    iapProductId: 'co.nomoinc.nomo.bundle.starter',
+    iapProductId: 'co.botblock.app.bundle.starter',
     icon: 'bundle-starter',
     rarity: 'epic',
     contents: {
@@ -338,7 +338,7 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     description: 'For the dedicated collector - premium coins and exclusive rewards.',
     category: 'bundles',
     iapPrice: '€14,99',
-    iapProductId: 'co.nomoinc.nomo.bundle.collector',
+    iapProductId: 'co.botblock.app.bundle.collector',
     icon: 'bundle-collector',
     rarity: 'legendary',
     contents: {
@@ -351,10 +351,10 @@ export const STARTER_BUNDLES: StarterBundle[] = [
   {
     id: 'bundle-ultimate',
     name: 'Ultimate Bundle',
-    description: 'The ultimate collection - exclusive pets, massive coins, and premium extras.',
+    description: 'The ultimate collection - exclusive bots, massive coins, and premium extras.',
     category: 'bundles',
     iapPrice: '€29,99',
-    iapProductId: 'co.nomoinc.nomo.bundle.ultimate',
+    iapProductId: 'co.botblock.app.bundle.ultimate',
     icon: 'treasure-chest',
     rarity: 'legendary',
     contents: {
@@ -368,7 +368,7 @@ export const STARTER_BUNDLES: StarterBundle[] = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-// BUNDLES (Purchasable with coins — pets or backgrounds)
+// BUNDLES (Purchasable with coins — bots or backgrounds)
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const BACKGROUND_BUNDLES: Bundle[] = [
@@ -400,76 +400,78 @@ export const BACKGROUND_BUNDLES: Bundle[] = [
   },
 ];
 
-export const PET_BUNDLES: Bundle[] = [
+export const BOT_BUNDLES: Bundle[] = [
   {
     id: 'bundle-mystical-spirits',
-    name: 'Mystical Spirits Bundle',
+    name: 'Quantum Spirits Bundle',
     description: 'Harness the power of the elements! Includes Kitsune Spirit and Storm Spirit.',
     category: 'bundles',
     coinPrice: 24800,
     icon: 'sparkles',
     rarity: 'legendary',
-    bundleType: 'pets',
+    bundleType: 'bots',
     itemIds: ['kitsune-spirit', 'storm-spirit'],
     totalValue: 31000, // 16000+15000
     savings: '20%',
   },
   {
     id: 'bundle-night-creatures',
-    name: 'Night Creatures Bundle',
+    name: 'Shadow Ops Bundle',
     description: 'Embrace the darkness! Includes Cute Ghost and Golden Moth.',
     category: 'bundles',
     coinPrice: 12800,
     icon: 'moon',
     rarity: 'epic',
-    bundleType: 'pets',
+    bundleType: 'bots',
     itemIds: ['cute-ghost', 'golden-moth'],
     totalValue: 16000, // 7500+8500
     savings: '20%',
   },
   {
     id: 'bundle-costume-kids',
-    name: 'Costume Kids Bundle',
+    name: 'Mech Mashup Bundle',
     description: 'Adorable costume characters! Includes Cat Hood and Robot Buddy.',
     category: 'bundles',
     coinPrice: 10400,
     icon: 'masks',
     rarity: 'epic',
-    bundleType: 'pets',
+    bundleType: 'bots',
     itemIds: ['cat-hood', 'robot-buddy'],
     totalValue: 13000, // 3500+9500
     savings: '20%',
   },
   {
     id: 'bundle-meadow-friends',
-    name: 'Meadow Friends Bundle',
+    name: 'Workshop Starter Bundle',
     description: 'Cheerful meadow companions! Includes Clover Cat and Slime King.',
     category: 'bundles',
     coinPrice: 6800,
     icon: 'leaf',
     rarity: 'rare',
-    bundleType: 'pets',
+    bundleType: 'bots',
     itemIds: ['clover-cat', 'slime-king'],
     totalValue: 8500, // 2500+6000
     savings: '20%',
   },
   {
     id: 'bundle-complete-collection',
-    name: 'Complete Collection Bundle',
-    description: 'All 8 exclusive pets in one legendary bundle! The ultimate collector\'s dream.',
+    name: 'Complete Bot Collection',
+    description: 'All 8 exclusive bots in one legendary bundle! The ultimate collector\'s dream.',
     category: 'bundles',
     coinPrice: 54800,
     icon: 'crown',
     rarity: 'legendary',
-    bundleType: 'pets',
+    bundleType: 'bots',
     itemIds: ['clover-cat', 'slime-king', 'cute-ghost', 'kitsune-spirit', 'golden-moth', 'storm-spirit', 'cat-hood', 'robot-buddy'],
     totalValue: 68500, // 2500+6000+7500+16000+8500+15000+3500+9500
     savings: '20%',
   },
 ];
 
-/** All bundles (both pet and background) */
-export const ALL_BUNDLES: Bundle[] = [...PET_BUNDLES, ...BACKGROUND_BUNDLES];
+/** All bundles (both bot and background) */
+/** @deprecated Use BOT_BUNDLES */
+export const PET_BUNDLES = BOT_BUNDLES;
+export const ALL_BUNDLES: Bundle[] = [...BOT_BUNDLES, ...BACKGROUND_BUNDLES];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SHOP HELPER FUNCTIONS
@@ -496,17 +498,18 @@ export const getBackgroundsInBundle = (bundleId: string): PremiumBackground[] =>
 export const getShopItemsByCategory = (category: ShopCategory): ShopItem[] => {
   switch (category) {
     case 'featured':
-      // Featured tab shows bundles, pet bundles and limited time items
-      return [...STARTER_BUNDLES, ...PET_BUNDLES.slice(0, 4), ...getLimitedTimeItems()];
-    case 'pets':
-      return getCoinExclusiveAnimals().map(animal => ({
-        id: animal.id,
-        name: animal.name,
-        description: animal.description,
-        category: 'pets' as ShopCategory,
-        coinPrice: animal.coinPrice,
-        icon: animal.emoji,
-        rarity: animal.rarity,
+      // Featured tab shows bundles, bot bundles and limited time items
+      return [...STARTER_BUNDLES, ...BOT_BUNDLES.slice(0, 4), ...getLimitedTimeItems()];
+    case 'bots':
+    case 'pets': // backward-compat
+      return getCoinExclusiveRobots().map(bot => ({
+        id: bot.id,
+        name: bot.name,
+        description: bot.description,
+        category: 'bots' as ShopCategory,
+        coinPrice: bot.coinPrice,
+        icon: bot.icon,
+        rarity: bot.rarity,
       }));
     case 'customize':
       return [...PREMIUM_BACKGROUNDS];
@@ -551,9 +554,9 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
   return getAllShopItems().filter(item => item.rarity === rarity);
 };
 
-// Shop categories for UI - 3 tabs: Featured highlights, Collection (pets+bundles), Power-Ups
+// Shop categories for UI - 3 tabs: Featured highlights, Collection (bots+bundles), Power-Ups
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'featured', name: 'Featured', icon: 'star' },
-  { id: 'pets', name: 'Collection', icon: 'paw' },
+  { id: 'bots', name: 'Collection', icon: 'bot' },
   { id: 'powerups', name: 'Power-Ups', icon: 'lightning' },
 ];

@@ -153,7 +153,7 @@ export const questSystemSchema = z.object({
 export type ValidatedQuestSystem = z.infer<typeof questSystemSchema>;
 
 // ============================================================================
-// Pet Bond Data Schema
+// Bot Bond Data Schema
 // ============================================================================
 
 const petBondSchema = z.object({

@@ -73,7 +73,7 @@ export const SplashScreen = () => {
           }}
         />
 
-        {/* NOMO title */}
+        {/* BOTBLOCK title */}
         <h1
           className="text-[42px] font-extrabold tracking-[12px] mb-2.5"
           style={{
@@ -81,7 +81,7 @@ export const SplashScreen = () => {
             textShadow: '0 0 16px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.25)',
           }}
         >
-          NOMO
+          BOTBLOCK
         </h1>
 
         {/* Tagline */}
@@ -89,7 +89,7 @@ export const SplashScreen = () => {
           className="text-[11px] font-semibold tracking-[4px] uppercase mb-11"
           style={{ color: 'rgba(168, 140, 210, 0.55)' }}
         >
-          Focus &middot; Grow &middot; Collect
+          Focus &middot; Build &middot; Collect
         </p>
 
         {/* Loading bar */}

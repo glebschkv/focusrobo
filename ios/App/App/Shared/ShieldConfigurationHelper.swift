@@ -43,7 +43,7 @@ class ShieldConfigurationHelper {
         "This app will still be here later. So will your regret.",
         "Nothing on this app is more important than what you're supposed to be doing.",
         "The people who built this app want you to open it. We don't.",
-        "Your pet is growing while you're not looking. Don't ruin that.",
+        "Your bot is upgrading itself while you're not looking. Don't ruin that.",
         "You were doing so well. Keep going.",
         "Three minutes from now you won't even remember why you wanted this.",
         "This is the part where the main character puts the phone down.",
@@ -52,7 +52,7 @@ class ShieldConfigurationHelper {
         "The notification can wait. It's never as urgent as it feels.",
         "Plot twist: the app you actually need is already open.",
         "You're not bored. You're avoiding something. Go do that thing instead.",
-        "Every second you spend here is a second your pet doesn't get.",
+        "Every cycle your bot doesn't get is a cycle wasted.",
         "This is a sign. Not a metaphorical one. A literal one. Go back.",
         "Fun fact: the average person checks their phone 96 times a day. Be below average.",
         "Whatever you were about to scroll through, it wasn't worth it.",
@@ -72,15 +72,15 @@ class ShieldConfigurationHelper {
     // MARK: - Title
 
     func getTitle() -> String {
-        return "NOMO"
+        return "BOTBLOCK"
     }
 
-    // MARK: - Neon NOMO Icon
+    // MARK: - Neon App Icon
 
-    /// Creates a large glowing "NOMO" neon sign icon with radial glow backdrop.
+    /// Creates a large glowing "BB" neon sign icon with radial glow backdrop.
     /// Matches the app's splash screen aesthetic with layered Core Graphics glow.
     /// Rendered at 240x120pt @3x (720x360px) for maximum visual impact.
-    func createNoMoIcon() -> UIImage? {
+    func createAppIcon() -> UIImage? {
         let size = CGSize(width: 240, height: 120)
         let renderer = UIGraphicsImageRenderer(size: size, format: {
             let format = UIGraphicsImageRendererFormat()
@@ -111,7 +111,7 @@ class ShieldConfigurationHelper {
             }
 
             // Text setup — SF Pro Rounded Heavy, wide kerning
-            let text = "NOMO"
+            let text = "BB"
             let fontSize: CGFloat = 52
             let font: UIFont
             if let desc = UIFont.systemFont(ofSize: fontSize, weight: .heavy)
@@ -199,15 +199,15 @@ class ShieldConfigurationHelper {
     // MARK: - Accessibility
 
     static var shieldAccessibilityDescription: String {
-        "This app is blocked to help you stay focused. Tap the button to return to NoMo."
+        "This app is blocked to help you stay focused. Tap the button to return to BotBlock."
     }
 
     static var returnButtonAccessibilityLabel: String {
-        "Return to NoMo app"
+        "Return to BotBlock app"
     }
 
     static var returnButtonAccessibilityHint: String {
-        "Double tap to close this blocked app and return to NoMo"
+        "Double tap to close this blocked app and return to BotBlock"
     }
 }
 

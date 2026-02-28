@@ -14,14 +14,39 @@ import {
 } from '@/stores/xpStore';
 
 // Mock the logger to avoid console noise
-vi.mock('@/lib/logger', () => ({
-  xpLogger: {
-    debug: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 // Mock the validated storage
 vi.mock('@/lib/validated-zustand-storage', () => ({
@@ -117,19 +142,19 @@ describe('xpStore', () => {
       expect(xpToNextLevel).toBe(15);
     });
 
-    it('should have empty unlocked animals initially', () => {
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toEqual([]);
+    it('should have empty unlocked robots initially', () => {
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toEqual([]);
     });
 
-    it('should have Snow as default biome', () => {
-      const { currentBiome } = useXPStore.getState();
-      expect(currentBiome).toBe('Snow');
+    it('should have Assembly Line as default zone', () => {
+      const { currentZone } = useXPStore.getState();
+      expect(currentZone).toBe('Assembly Line');
     });
 
-    it('should have Snow in available biomes', () => {
-      const { availableBiomes } = useXPStore.getState();
-      expect(availableBiomes).toContain('Snow');
+    it('should have Assembly Line in available zones', () => {
+      const { availableZones } = useXPStore.getState();
+      expect(availableZones).toContain('Assembly Line');
     });
   });
 
@@ -230,160 +255,160 @@ describe('xpStore', () => {
     });
   });
 
-  describe('addAnimal', () => {
-    it('should add a new animal', () => {
-      const { addAnimal } = useXPStore.getState();
+  describe('addRobot', () => {
+    it('should add a new robot', () => {
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('panda');
+        addRobot('panda');
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toContain('panda');
+      expect(useXPStore.getState().unlockedRobots).toContain('panda');
     });
 
-    it('should not add duplicate animals', () => {
-      const { addAnimal } = useXPStore.getState();
+    it('should not add duplicate robots', () => {
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('cat');
-        addAnimal('cat');
-        addAnimal('cat');
+        addRobot('cat');
+        addRobot('cat');
+        addRobot('cat');
       });
 
-      const animals = useXPStore.getState().unlockedAnimals;
-      expect(animals.filter(a => a === 'cat')).toHaveLength(1);
+      const robots = useXPStore.getState().unlockedRobots;
+      expect(robots.filter(a => a === 'cat')).toHaveLength(1);
     });
 
-    it('should maintain existing animals when adding new', () => {
-      const { addAnimal } = useXPStore.getState();
+    it('should maintain existing robots when adding new', () => {
+      const { addRobot } = useXPStore.getState();
 
       act(() => {
-        addAnimal('dog');
-        addAnimal('cat');
+        addRobot('dog');
+        addRobot('cat');
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toContain('dog');
-      expect(unlockedAnimals).toContain('cat');
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toContain('dog');
+      expect(unlockedRobots).toContain('cat');
     });
   });
 
-  describe('addAnimals', () => {
-    it('should add multiple animals at once', () => {
-      const { addAnimals } = useXPStore.getState();
+  describe('addRobots', () => {
+    it('should add multiple robots at once', () => {
+      const { addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimals(['bird', 'fish', 'rabbit']);
+        addRobots(['bird', 'fish', 'rabbit']);
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals).toContain('bird');
-      expect(unlockedAnimals).toContain('fish');
-      expect(unlockedAnimals).toContain('rabbit');
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots).toContain('bird');
+      expect(unlockedRobots).toContain('fish');
+      expect(unlockedRobots).toContain('rabbit');
     });
 
     it('should filter out duplicates when adding multiple', () => {
-      const { addAnimal, addAnimals } = useXPStore.getState();
+      const { addRobot, addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimal('dog');
-        addAnimals(['dog', 'cat', 'bird']);
+        addRobot('dog');
+        addRobots(['dog', 'cat', 'bird']);
       });
 
-      const { unlockedAnimals } = useXPStore.getState();
-      expect(unlockedAnimals.filter(a => a === 'dog')).toHaveLength(1);
-      expect(unlockedAnimals).toHaveLength(3);
+      const { unlockedRobots } = useXPStore.getState();
+      expect(unlockedRobots.filter(a => a === 'dog')).toHaveLength(1);
+      expect(unlockedRobots).toHaveLength(3);
     });
 
-    it('should not update state if no new animals', () => {
-      const { addAnimals } = useXPStore.getState();
+    it('should not update state if no new robots', () => {
+      const { addRobots } = useXPStore.getState();
 
       act(() => {
-        addAnimals(['cat', 'dog']);
+        addRobots(['cat', 'dog']);
       });
 
-      const initialAnimals = [...useXPStore.getState().unlockedAnimals];
+      const initialRobots = [...useXPStore.getState().unlockedRobots];
 
       act(() => {
-        addAnimals(['cat', 'dog']);
+        addRobots(['cat', 'dog']);
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toEqual(initialAnimals);
-    });
-  });
-
-  describe('switchBiome', () => {
-    it('should switch to available biome', () => {
-      const { addBiome, switchBiome } = useXPStore.getState();
-
-      act(() => {
-        addBiome('Forest');
-        switchBiome('Forest');
-      });
-
-      expect(useXPStore.getState().currentBiome).toBe('Forest');
-    });
-
-    it('should not switch to unavailable biome', () => {
-      const { switchBiome } = useXPStore.getState();
-
-      act(() => {
-        switchBiome('Desert');
-      });
-
-      expect(useXPStore.getState().currentBiome).toBe('Snow');
-    });
-
-    it('should allow switching back to original biome', () => {
-      const { addBiome, switchBiome } = useXPStore.getState();
-
-      act(() => {
-        addBiome('Beach');
-        switchBiome('Beach');
-      });
-
-      expect(useXPStore.getState().currentBiome).toBe('Beach');
-
-      act(() => {
-        switchBiome('Snow');
-      });
-
-      expect(useXPStore.getState().currentBiome).toBe('Snow');
+      expect(useXPStore.getState().unlockedRobots).toEqual(initialRobots);
     });
   });
 
-  describe('addBiome', () => {
-    it('should add a new biome', () => {
-      const { addBiome } = useXPStore.getState();
+  describe('switchZone', () => {
+    it('should switch to available zone', () => {
+      const { addZone, switchZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Mountain');
+        addZone('Forest');
+        switchZone('Forest');
       });
 
-      expect(useXPStore.getState().availableBiomes).toContain('Mountain');
+      expect(useXPStore.getState().currentZone).toBe('Forest');
     });
 
-    it('should not add duplicate biomes', () => {
-      const { addBiome } = useXPStore.getState();
+    it('should not switch to unavailable zone', () => {
+      const { switchZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Forest');
-        addBiome('Forest');
+        switchZone('Desert');
       });
 
-      const biomes = useXPStore.getState().availableBiomes;
-      expect(biomes.filter(b => b === 'Forest')).toHaveLength(1);
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
     });
 
-    it('should keep default Snow when adding new biomes', () => {
-      const { addBiome } = useXPStore.getState();
+    it('should allow switching back to original zone', () => {
+      const { addZone, switchZone } = useXPStore.getState();
 
       act(() => {
-        addBiome('Ocean');
-        addBiome('Cave');
+        addZone('Beach');
+        switchZone('Beach');
       });
 
-      expect(useXPStore.getState().availableBiomes).toContain('Snow');
+      expect(useXPStore.getState().currentZone).toBe('Beach');
+
+      act(() => {
+        switchZone('Assembly Line');
+      });
+
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
+    });
+  });
+
+  describe('addZone', () => {
+    it('should add a new zone', () => {
+      const { addZone } = useXPStore.getState();
+
+      act(() => {
+        addZone('Mountain');
+      });
+
+      expect(useXPStore.getState().availableZones).toContain('Mountain');
+    });
+
+    it('should not add duplicate zones', () => {
+      const { addZone } = useXPStore.getState();
+
+      act(() => {
+        addZone('Forest');
+        addZone('Forest');
+      });
+
+      const zones = useXPStore.getState().availableZones;
+      expect(zones.filter(b => b === 'Forest')).toHaveLength(1);
+    });
+
+    it('should keep default Assembly Line when adding new zones', () => {
+      const { addZone } = useXPStore.getState();
+
+      act(() => {
+        addZone('Ocean');
+        addZone('Cave');
+      });
+
+      expect(useXPStore.getState().availableZones).toContain('Assembly Line');
     });
   });
 
@@ -395,7 +420,7 @@ describe('xpStore', () => {
         updateState({
           currentXP: 500,
           currentLevel: 10,
-          currentBiome: 'Meadow',
+          currentZone: 'Meadow',
         });
       });
 
@@ -405,29 +430,29 @@ describe('xpStore', () => {
     });
 
     it('should not affect unspecified properties', () => {
-      const { addAnimal, updateState } = useXPStore.getState();
+      const { addRobot, updateState } = useXPStore.getState();
 
       act(() => {
-        addAnimal('tiger');
+        addRobot('tiger');
       });
 
       act(() => {
         updateState({ currentXP: 100 });
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toContain('tiger');
+      expect(useXPStore.getState().unlockedRobots).toContain('tiger');
     });
   });
 
   describe('resetXP', () => {
     it('should reset all state to initial values', () => {
-      const { addXP, setLevel, addAnimal, addBiome, resetXP } = useXPStore.getState();
+      const { addXP, setLevel, addRobot, addZone, resetXP } = useXPStore.getState();
 
       act(() => {
         addXP(1000);
         setLevel(15);
-        addAnimal('lion');
-        addBiome('Jungle');
+        addRobot('lion');
+        addZone('Jungle');
       });
 
       act(() => {
@@ -437,9 +462,9 @@ describe('xpStore', () => {
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(0);
       expect(state.currentLevel).toBe(0);
-      expect(state.unlockedAnimals).toEqual([]);
-      expect(state.availableBiomes).toEqual(['Snow']);
-      expect(state.currentBiome).toBe('Snow');
+      expect(state.unlockedRobots).toEqual([]);
+      expect(state.availableZones).toEqual(['Assembly Line']);
+      expect(state.currentZone).toBe('Assembly Line');
     });
   });
 
@@ -462,9 +487,9 @@ describe('xpStore', () => {
       expect(result.current).toBe(7);
     });
 
-    it('useUnlockedAnimals should return animals array', () => {
+    it('useUnlockedAnimals should return robots array', () => {
       act(() => {
-        useXPStore.getState().addAnimals(['bear', 'deer']);
+        useXPStore.getState().addRobots(['bear', 'deer']);
       });
 
       const { result } = renderHook(() => useUnlockedAnimals());
@@ -472,18 +497,18 @@ describe('xpStore', () => {
       expect(result.current).toContain('deer');
     });
 
-    it('useCurrentBiome should return current biome', () => {
+    it('useCurrentBiome should return current zone', () => {
       const { result } = renderHook(() => useCurrentBiome());
-      expect(result.current).toBe('Snow');
+      expect(result.current).toBe('Assembly Line');
     });
 
-    it('useAvailableBiomes should return available biomes', () => {
+    it('useAvailableBiomes should return available zones', () => {
       act(() => {
-        useXPStore.getState().addBiome('Meadow');
+        useXPStore.getState().addZone('Meadow');
       });
 
       const { result } = renderHook(() => useAvailableBiomes());
-      expect(result.current).toContain('Snow');
+      expect(result.current).toContain('Assembly Line');
       expect(result.current).toContain('Meadow');
     });
 
@@ -561,15 +586,15 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentXP).toBe(1000);
     });
 
-    it('should handle many animals without issue', () => {
-      const { addAnimals } = useXPStore.getState();
-      const manyAnimals = Array.from({ length: 50 }, (_, i) => `animal_${i}`);
+    it('should handle many robots without issue', () => {
+      const { addRobots } = useXPStore.getState();
+      const manyRobots = Array.from({ length: 50 }, (_, i) => `robot_${i}`);
 
       act(() => {
-        addAnimals(manyAnimals);
+        addRobots(manyRobots);
       });
 
-      expect(useXPStore.getState().unlockedAnimals).toHaveLength(50);
+      expect(useXPStore.getState().unlockedRobots).toHaveLength(50);
     });
   });
 });

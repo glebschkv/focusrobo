@@ -186,7 +186,7 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
   </div>
 );
 
-// ─── Walking pet sprite ─────────────────────────────────────────────────────
+// ─── Walking bot sprite ─────────────────────────────────────────────────────
 
 const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Standard
@@ -345,7 +345,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       {/* Inject CSS keyframes once */}
       <OnboardingKeyframes />
 
-      {/* Immersive background — dark sky fading to snow biome feel */}
+      {/* Immersive background — dark sky fading to assembly line zone feel */}
       <div
         className="absolute inset-0"
         style={{
@@ -543,7 +543,7 @@ const StepWelcome = () => (
             '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
         }}
       >
-        Welcome to NoMo
+        Welcome to BotBlock
       </h1>
       <p
         className="text-base px-2 leading-relaxed"

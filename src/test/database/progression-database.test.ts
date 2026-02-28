@@ -15,11 +15,34 @@ import { act, renderHook } from '@testing-library/react';
 vi.mock('@/lib/logger', () => {
   const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
   return {
+    logger: l(),
+    createLogger: () => l(),
     xpLogger: l(),
     coinLogger: l(),
     shopLogger: l(),
     storageLogger: l(),
-    createLogger: () => l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
   };
 });
 
@@ -30,9 +53,9 @@ import {
   MAX_LEVEL,
   useCurrentXP,
   useCurrentLevel,
-  useUnlockedAnimals,
-  useCurrentBiome,
-  useAvailableBiomes,
+  useUnlockedRobots,
+  useCurrentZone,
+  useAvailableZones,
 } from '@/stores/xpStore';
 
 import {
@@ -52,9 +75,9 @@ describe('Progression Database – XP Store', () => {
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedAnimals: [],
-      currentBiome: 'Snow',
-      availableBiomes: ['Snow'],
+      unlockedRobots: [],
+      currentZone: 'Assembly Line',
+      availableZones: ['Assembly Line'],
     });
   });
 
@@ -69,10 +92,10 @@ describe('Progression Database – XP Store', () => {
       expect(state.currentLevel).toBe(0);
     });
 
-    it('should start in Snow biome', () => {
+    it('should start in Assembly Line zone', () => {
       const state = useXPStore.getState();
-      expect(state.currentBiome).toBe('Snow');
-      expect(state.availableBiomes).toContain('Snow');
+      expect(state.currentZone).toBe('Assembly Line');
+      expect(state.availableZones).toContain('Assembly Line');
     });
 
     it('should require 15 XP to reach next level', () => {
@@ -110,13 +133,13 @@ describe('Progression Database – XP Store', () => {
         useXPStore.getState().updateState({
           currentXP: 500,
           currentLevel: 5,
-          currentBiome: 'Forest',
+          currentZone: 'Forest',
         });
       });
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(500);
       expect(state.currentLevel).toBe(5);
-      expect(state.currentBiome).toBe('Forest');
+      expect(state.currentZone).toBe('Forest');
     });
   });
 
@@ -154,75 +177,75 @@ describe('Progression Database – XP Store', () => {
     });
   });
 
-  describe('Animal Unlocks', () => {
-    it('should add a single animal', () => {
+  describe('Robot Unlocks', () => {
+    it('should add a single robot', () => {
       act(() => {
-        useXPStore.getState().addAnimal('Fox');
+        useXPStore.getState().addRobot('Fox');
       });
-      expect(useXPStore.getState().unlockedAnimals).toContain('Fox');
+      expect(useXPStore.getState().unlockedRobots).toContain('Fox');
     });
 
-    it('should not add duplicate animals', () => {
+    it('should not add duplicate robots', () => {
       act(() => {
-        useXPStore.getState().addAnimal('Fox');
-        useXPStore.getState().addAnimal('Fox');
+        useXPStore.getState().addRobot('Fox');
+        useXPStore.getState().addRobot('Fox');
       });
-      expect(useXPStore.getState().unlockedAnimals.filter(a => a === 'Fox')).toHaveLength(1);
+      expect(useXPStore.getState().unlockedRobots.filter(a => a === 'Fox')).toHaveLength(1);
     });
 
-    it('should add multiple animals at once', () => {
+    it('should add multiple robots at once', () => {
       act(() => {
-        useXPStore.getState().addAnimals(['Fox', 'Bear', 'Owl']);
+        useXPStore.getState().addRobots(['Fox', 'Bear', 'Owl']);
       });
-      const animals = useXPStore.getState().unlockedAnimals;
-      expect(animals).toContain('Fox');
-      expect(animals).toContain('Bear');
-      expect(animals).toContain('Owl');
+      const robots = useXPStore.getState().unlockedRobots;
+      expect(robots).toContain('Fox');
+      expect(robots).toContain('Bear');
+      expect(robots).toContain('Owl');
     });
 
     it('should filter duplicates in batch add', () => {
       act(() => {
-        useXPStore.getState().addAnimal('Fox');
-        useXPStore.getState().addAnimals(['Fox', 'Bear']);
+        useXPStore.getState().addRobot('Fox');
+        useXPStore.getState().addRobots(['Fox', 'Bear']);
       });
-      const animals = useXPStore.getState().unlockedAnimals;
-      expect(animals.filter(a => a === 'Fox')).toHaveLength(1);
-      expect(animals).toContain('Bear');
+      const robots = useXPStore.getState().unlockedRobots;
+      expect(robots.filter(a => a === 'Fox')).toHaveLength(1);
+      expect(robots).toContain('Bear');
     });
   });
 
-  describe('Biome Management', () => {
-    it('should switch to available biome', () => {
+  describe('Zone Management', () => {
+    it('should switch to available zone', () => {
       act(() => {
-        useXPStore.getState().addBiome('Forest');
-        useXPStore.getState().switchBiome('Forest');
+        useXPStore.getState().addZone('Forest');
+        useXPStore.getState().switchZone('Forest');
       });
-      expect(useXPStore.getState().currentBiome).toBe('Forest');
+      expect(useXPStore.getState().currentZone).toBe('Forest');
     });
 
-    it('should not switch to unavailable biome', () => {
+    it('should not switch to unavailable zone', () => {
       act(() => {
-        useXPStore.getState().switchBiome('Volcano');
+        useXPStore.getState().switchZone('Volcano');
       });
-      expect(useXPStore.getState().currentBiome).toBe('Snow');
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
     });
 
-    it('should add new biomes', () => {
+    it('should add new zones', () => {
       act(() => {
-        useXPStore.getState().addBiome('Forest');
-        useXPStore.getState().addBiome('Beach');
+        useXPStore.getState().addZone('Forest');
+        useXPStore.getState().addZone('Beach');
       });
-      const biomes = useXPStore.getState().availableBiomes;
-      expect(biomes).toContain('Snow');
-      expect(biomes).toContain('Forest');
-      expect(biomes).toContain('Beach');
+      const zones = useXPStore.getState().availableZones;
+      expect(zones).toContain('Assembly Line');
+      expect(zones).toContain('Forest');
+      expect(zones).toContain('Beach');
     });
 
-    it('should not add duplicate biomes', () => {
+    it('should not add duplicate zones', () => {
       act(() => {
-        useXPStore.getState().addBiome('Snow');
+        useXPStore.getState().addZone('Assembly Line');
       });
-      expect(useXPStore.getState().availableBiomes.filter(b => b === 'Snow')).toHaveLength(1);
+      expect(useXPStore.getState().availableZones.filter(b => b === 'Assembly Line')).toHaveLength(1);
     });
   });
 
@@ -231,8 +254,8 @@ describe('Progression Database – XP Store', () => {
       act(() => {
         useXPStore.getState().setXP(5000);
         useXPStore.getState().setLevel(10);
-        useXPStore.getState().addAnimal('Dragon');
-        useXPStore.getState().addBiome('Volcano');
+        useXPStore.getState().addRobot('Dragon');
+        useXPStore.getState().addZone('Volcano');
       });
 
       act(() => {
@@ -242,9 +265,9 @@ describe('Progression Database – XP Store', () => {
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(0);
       expect(state.currentLevel).toBe(0);
-      expect(state.unlockedAnimals).toEqual([]);
-      expect(state.currentBiome).toBe('Snow');
-      expect(state.availableBiomes).toEqual(['Snow']);
+      expect(state.unlockedRobots).toEqual([]);
+      expect(state.currentZone).toBe('Assembly Line');
+      expect(state.availableZones).toEqual(['Assembly Line']);
     });
   });
 
@@ -265,25 +288,25 @@ describe('Progression Database – XP Store', () => {
       expect(result.current).toBe(7);
     });
 
-    it('should return unlocked animals via selector hook', () => {
+    it('should return unlocked robots via selector hook', () => {
       act(() => {
-        useXPStore.getState().addAnimals(['Fox', 'Bear']);
+        useXPStore.getState().addRobots(['Fox', 'Bear']);
       });
-      const { result } = renderHook(() => useUnlockedAnimals());
+      const { result } = renderHook(() => useUnlockedRobots());
       expect(result.current).toEqual(['Fox', 'Bear']);
     });
 
-    it('should return current biome via selector hook', () => {
-      const { result } = renderHook(() => useCurrentBiome());
-      expect(result.current).toBe('Snow');
+    it('should return current zone via selector hook', () => {
+      const { result } = renderHook(() => useCurrentZone());
+      expect(result.current).toBe('Assembly Line');
     });
 
-    it('should return available biomes via selector hook', () => {
+    it('should return available zones via selector hook', () => {
       act(() => {
-        useXPStore.getState().addBiome('Forest');
+        useXPStore.getState().addZone('Forest');
       });
-      const { result } = renderHook(() => useAvailableBiomes());
-      expect(result.current).toContain('Snow');
+      const { result } = renderHook(() => useAvailableZones());
+      expect(result.current).toContain('Assembly Line');
       expect(result.current).toContain('Forest');
     });
   });
@@ -294,7 +317,7 @@ describe('Progression Database – XP Store', () => {
         useXPStore.getState().updateState({
           currentXP: 1000,
           currentLevel: 5,
-          unlockedAnimals: ['Fox'],
+          unlockedRobots: ['Fox'],
         });
       });
 
@@ -305,7 +328,7 @@ describe('Progression Database – XP Store', () => {
       const parsed = JSON.parse(saved!);
       expect(parsed.state.currentXP).toBe(1000);
       expect(parsed.state.currentLevel).toBe(5);
-      expect(parsed.state.unlockedAnimals).toContain('Fox');
+      expect(parsed.state.unlockedRobots).toContain('Fox');
     });
   });
 });
@@ -601,9 +624,9 @@ describe('Progression Database – End-to-End Flows', () => {
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedAnimals: [],
-      currentBiome: 'Snow',
-      availableBiomes: ['Snow'],
+      unlockedRobots: [],
+      currentZone: 'Assembly Line',
+      availableZones: ['Assembly Line'],
     });
     useCoinStore.setState({
       balance: 0,

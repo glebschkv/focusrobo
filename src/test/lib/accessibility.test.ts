@@ -32,10 +32,10 @@ describe('Accessibility Utilities', () => {
       expect(ARIA_LABELS.STOP_TIMER).toBe('Stop focus session');
     });
 
-    it('should have pet interaction labels', () => {
-      expect(ARIA_LABELS.PET_ANIMAL).toBe('Pet the animal');
-      expect(ARIA_LABELS.FEED_ANIMAL).toBe('Feed the animal');
-      expect(ARIA_LABELS.SELECT_PET).toBe('Select this pet');
+    it('should have bot interaction labels', () => {
+      expect(ARIA_LABELS.INTERACT_BOT).toBe('Interact with the bot');
+      expect(ARIA_LABELS.CHARGE_BOT).toBe('Charge the bot');
+      expect(ARIA_LABELS.SELECT_BOT).toBe('Select this bot');
     });
 
     it('should have shop labels', () => {
@@ -60,7 +60,7 @@ describe('Accessibility Utilities', () => {
     });
 
     it('should have collection role descriptions', () => {
-      expect(ROLE_DESCRIPTIONS.PET_GRID).toBe('Pet collection grid');
+      expect(ROLE_DESCRIPTIONS.PET_GRID).toBe('Bot collection grid');
       expect(ROLE_DESCRIPTIONS.SHOP_ITEM).toBe('Shop item for purchase');
       expect(ROLE_DESCRIPTIONS.ACHIEVEMENT_BADGE).toBe('Achievement badge');
     });

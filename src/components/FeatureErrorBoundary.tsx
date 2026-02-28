@@ -202,7 +202,7 @@ export const PurchaseModalErrorBoundary = ({ children }: { children: ReactNode }
 );
 
 export const PetDetailErrorBoundary = ({ children }: { children: ReactNode }) => (
-  <ModalErrorBoundary modalName="Pet Details">
+  <ModalErrorBoundary modalName="Bot Details">
     {children}
   </ModalErrorBoundary>
 );

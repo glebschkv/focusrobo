@@ -112,7 +112,7 @@ export const useSettings = () => {
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'phone-pet-paradise-settings.json';
+      link.download = 'botblock-settings.json';
       link.click();
       URL.revokeObjectURL(url);
       

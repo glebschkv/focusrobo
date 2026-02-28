@@ -53,7 +53,7 @@ export function preloadSpecialAnimations(): void {
 }
 
 /**
- * Check if an animal has special animations (sync version using cached data).
+ * Check if a robot has special animations (sync version using cached data).
  * Returns false if data isn't loaded yet.
  */
 export function hasSpecialAnimationsSync(baseSpritePath: string): boolean {
@@ -64,7 +64,7 @@ export function hasSpecialAnimationsSync(baseSpritePath: string): boolean {
 }
 
 /**
- * Check if an animal has special animations (async version).
+ * Check if a robot has special animations (async version).
  */
 export async function hasSpecialAnimations(baseSpritePath: string): Promise<boolean> {
   const module = await loadModule();
@@ -72,7 +72,7 @@ export async function hasSpecialAnimations(baseSpritePath: string): Promise<bool
 }
 
 /**
- * Get a random special animation for an animal (sync version using cached data).
+ * Get a random special animation for a robot (sync version using cached data).
  * Returns null if data isn't loaded yet.
  */
 export function getRandomSpecialAnimationSync(baseSpritePath: string): SpecialAnimationConfig | null {
@@ -83,7 +83,7 @@ export function getRandomSpecialAnimationSync(baseSpritePath: string): SpecialAn
 }
 
 /**
- * Get a random special animation for an animal (async version).
+ * Get a random special animation for a robot (async version).
  */
 export async function getRandomSpecialAnimation(baseSpritePath: string): Promise<SpecialAnimationConfig | null> {
   const module = await loadModule();

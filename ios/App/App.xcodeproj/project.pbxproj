@@ -55,17 +55,17 @@
 		SCFEXT000800000000000000 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000100000000000000 /* FamilyControls.framework */; };
 		SCFEXT000900000000000000 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000300000000000000 /* ManagedSettings.framework */; };
 		SCFEXT000950000000000000 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000600000000000000 /* ManagedSettingsUI.framework */; };
-/* -- NoMoWidget build files -- */
-		NMWEXT001300000000000000 /* NoMoWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */; };
-		NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT004100000000000000 /* WidgetPetMessages.swift */; };
+/* -- BotBlockWidget build files -- */
+		NMWEXT001300000000000000 /* BotBlockWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */; };
+		NMWEXT004200000000000000 /* WidgetBotMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT004100000000000000 /* WidgetBotMessages.swift */; };
 		NMWEXT001400000000000000 /* WidgetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000200000000000000 /* WidgetColors.swift */; };
 		NMWEXT001500000000000000 /* WidgetStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000300000000000000 /* WidgetStrings.swift */; };
 		NMWEXT001600000000000000 /* AccessibilityUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000400000000000000 /* AccessibilityUtilities.swift */; };
 		NMWEXT001700000000000000 /* WidgetAccessibilityStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */; };
-		NMWEXT001800000000000000 /* NoMoProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000600000000000000 /* NoMoProgressWidget.swift */; };
-		NMWEXT001900000000000000 /* NoMoStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000700000000000000 /* NoMoStatsWidget.swift */; };
-		NMWEXT002000000000000000 /* NoMoStreakWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000800000000000000 /* NoMoStreakWidget.swift */; };
-		NMWEXT002100000000000000 /* NoMoTimerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000900000000000000 /* NoMoTimerWidget.swift */; };
+		NMWEXT001800000000000000 /* BotBlockProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000600000000000000 /* BotBlockProgressWidget.swift */; };
+		NMWEXT001900000000000000 /* BotBlockStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000700000000000000 /* BotBlockStatsWidget.swift */; };
+		NMWEXT002000000000000000 /* BotBlockStreakWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000800000000000000 /* BotBlockStreakWidget.swift */; };
+		NMWEXT002100000000000000 /* BotBlockTimerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000900000000000000 /* BotBlockTimerWidget.swift */; };
 		NMWEXT002200000000000000 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0001000000000000 /* SharedConstants.swift */; };
 		NMWEXT002300000000000000 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000400000000000000 /* WidgetKit.framework */; };
 		NMWEXT002400000000000000 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000500000000000000 /* SwiftUI.framework */; };
@@ -73,7 +73,7 @@
 /* -- Embed Extensions build files -- */
 		EMBEXT000200000000000000 /* DeviceActivityMonitor.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EMBEXT000300000000000000 /* ShieldConfiguration.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = SCFEXT000400000000000000 /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		EMBEXT000400000000000000 /* NoMoWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = NMWEXT001200000000000000 /* NoMoWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EMBEXT000400000000000000 /* BotBlockWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = NMWEXT001200000000000000 /* BotBlockWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +96,7 @@
 			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = NMWEXT003000000000000000;
-			remoteInfo = NoMoWidget;
+			remoteInfo = BotBlockWidget;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -109,7 +109,7 @@
 			files = (
 				EMBEXT000200000000000000 /* DeviceActivityMonitor.appex in Embed App Extensions */,
 				EMBEXT000300000000000000 /* ShieldConfiguration.appex in Embed App Extensions */,
-				EMBEXT000400000000000000 /* NoMoWidget.appex in Embed App Extensions */,
+				EMBEXT000400000000000000 /* BotBlockWidget.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,20 +165,20 @@
 		SCFEXT000200000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		SCFEXT000300000000000000 /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
 		SCFEXT000400000000000000 /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-/* -- NoMoWidget file references -- */
-		NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoWidgetBundle.swift; sourceTree = "<group>"; };
-		NMWEXT004100000000000000 /* WidgetPetMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPetMessages.swift; sourceTree = "<group>"; };
+/* -- BotBlockWidget file references -- */
+		NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockWidgetBundle.swift; sourceTree = "<group>"; };
+		NMWEXT004100000000000000 /* WidgetBotMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBotMessages.swift; sourceTree = "<group>"; };
 		NMWEXT000200000000000000 /* WidgetColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetColors.swift; sourceTree = "<group>"; };
 		NMWEXT000300000000000000 /* WidgetStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetStrings.swift; sourceTree = "<group>"; };
 		NMWEXT000400000000000000 /* AccessibilityUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUtilities.swift; sourceTree = "<group>"; };
 		NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetAccessibilityStrings.swift; sourceTree = "<group>"; };
-		NMWEXT000600000000000000 /* NoMoProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoProgressWidget.swift; sourceTree = "<group>"; };
-		NMWEXT000700000000000000 /* NoMoStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoStatsWidget.swift; sourceTree = "<group>"; };
-		NMWEXT000800000000000000 /* NoMoStreakWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoStreakWidget.swift; sourceTree = "<group>"; };
-		NMWEXT000900000000000000 /* NoMoTimerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoTimerWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000600000000000000 /* BotBlockProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockProgressWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000700000000000000 /* BotBlockStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockStatsWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000800000000000000 /* BotBlockStreakWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockStreakWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000900000000000000 /* BotBlockTimerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotBlockTimerWidget.swift; sourceTree = "<group>"; };
 		NMWEXT001000000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		NMWEXT001100000000000000 /* NoMoWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoMoWidget.entitlements; sourceTree = "<group>"; };
-		NMWEXT001200000000000000 /* NoMoWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoMoWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		NMWEXT001100000000000000 /* BotBlockWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BotBlockWidget.entitlements; sourceTree = "<group>"; };
+		NMWEXT001200000000000000 /* BotBlockWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BotBlockWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		NMWEXT003700000000000000 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		NMWEXT003800000000000000 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* -- Framework file references -- */
@@ -262,7 +262,7 @@
 				504EC3041FED79650016851F /* App.app */,
 				DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */,
 				SCFEXT000400000000000000 /* ShieldConfiguration.appex */,
-				NMWEXT001200000000000000 /* NoMoWidget.appex */,
+				NMWEXT001200000000000000 /* BotBlockWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -355,7 +355,7 @@
 			children = (
 				DAMEXT001100000000000000 /* DeviceActivityMonitor */,
 				SCFEXT001000000000000000 /* ShieldConfiguration */,
-				NMWEXT002500000000000000 /* NoMoWidget */,
+				NMWEXT002500000000000000 /* BotBlockWidget */,
 			);
 			name = Extensions;
 			path = App/Extensions;
@@ -381,30 +381,30 @@
 			path = ShieldConfiguration;
 			sourceTree = "<group>";
 		};
-		NMWEXT002500000000000000 /* NoMoWidget */ = {
+		NMWEXT002500000000000000 /* BotBlockWidget */ = {
 			isa = PBXGroup;
 			children = (
-				NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */,
+				NMWEXT000100000000000000 /* BotBlockWidgetBundle.swift */,
 				NMWEXT000200000000000000 /* WidgetColors.swift */,
 				NMWEXT000300000000000000 /* WidgetStrings.swift */,
-				NMWEXT004100000000000000 /* WidgetPetMessages.swift */,
+				NMWEXT004100000000000000 /* WidgetBotMessages.swift */,
 				NMWEXT000400000000000000 /* AccessibilityUtilities.swift */,
 				NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */,
 				NMWEXT002600000000000000 /* Widgets */,
 				NMWEXT003600000000000000 /* Localizable.strings */,
 				NMWEXT001000000000000000 /* Info.plist */,
-				NMWEXT001100000000000000 /* NoMoWidget.entitlements */,
+				NMWEXT001100000000000000 /* BotBlockWidget.entitlements */,
 			);
-			path = NoMoWidget;
+			path = BotBlockWidget;
 			sourceTree = "<group>";
 		};
 		NMWEXT002600000000000000 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
-				NMWEXT000600000000000000 /* NoMoProgressWidget.swift */,
-				NMWEXT000700000000000000 /* NoMoStatsWidget.swift */,
-				NMWEXT000800000000000000 /* NoMoStreakWidget.swift */,
-				NMWEXT000900000000000000 /* NoMoTimerWidget.swift */,
+				NMWEXT000600000000000000 /* BotBlockProgressWidget.swift */,
+				NMWEXT000700000000000000 /* BotBlockStatsWidget.swift */,
+				NMWEXT000800000000000000 /* BotBlockStreakWidget.swift */,
+				NMWEXT000900000000000000 /* BotBlockTimerWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -469,9 +469,9 @@
 			productReference = SCFEXT000400000000000000 /* ShieldConfiguration.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		NMWEXT003000000000000000 /* NoMoWidget */ = {
+		NMWEXT003000000000000000 /* BotBlockWidget */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "NoMoWidget" */;
+			buildConfigurationList = NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "BotBlockWidget" */;
 			buildPhases = (
 				NMWEXT002700000000000000 /* Sources */,
 				NMWEXT002800000000000000 /* Frameworks */,
@@ -481,9 +481,9 @@
 			);
 			dependencies = (
 			);
-			name = NoMoWidget;
-			productName = NoMoWidget;
-			productReference = NMWEXT001200000000000000 /* NoMoWidget.appex */;
+			name = BotBlockWidget;
+			productName = BotBlockWidget;
+			productReference = NMWEXT001200000000000000 /* BotBlockWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -537,7 +537,7 @@
 				504EC3031FED79650016851F /* App */,
 				DAMEXT001500000000000000 /* DeviceActivityMonitor */,
 				SCFEXT001400000000000000 /* ShieldConfiguration */,
-				NMWEXT003000000000000000 /* NoMoWidget */,
+				NMWEXT003000000000000000 /* BotBlockWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -674,17 +674,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				NMWEXT001300000000000000 /* NoMoWidgetBundle.swift in Sources */,
+				NMWEXT001300000000000000 /* BotBlockWidgetBundle.swift in Sources */,
 				NMWEXT001400000000000000 /* WidgetColors.swift in Sources */,
 				NMWEXT001500000000000000 /* WidgetStrings.swift in Sources */,
 				NMWEXT001600000000000000 /* AccessibilityUtilities.swift in Sources */,
 				NMWEXT001700000000000000 /* WidgetAccessibilityStrings.swift in Sources */,
-				NMWEXT001800000000000000 /* NoMoProgressWidget.swift in Sources */,
-				NMWEXT001900000000000000 /* NoMoStatsWidget.swift in Sources */,
-				NMWEXT002000000000000000 /* NoMoStreakWidget.swift in Sources */,
-				NMWEXT002100000000000000 /* NoMoTimerWidget.swift in Sources */,
+				NMWEXT001800000000000000 /* BotBlockProgressWidget.swift in Sources */,
+				NMWEXT001900000000000000 /* BotBlockStatsWidget.swift in Sources */,
+				NMWEXT002000000000000000 /* BotBlockStreakWidget.swift in Sources */,
+				NMWEXT002100000000000000 /* BotBlockTimerWidget.swift in Sources */,
 				NMWEXT002200000000000000 /* SharedConstants.swift in Sources */,
-				NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */,
+				NMWEXT004200000000000000 /* WidgetBotMessages.swift in Sources */,
 				SHARED0004000000000002 /* WidgetSharedModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -704,7 +704,7 @@
 		};
 		NMWEXT003500000000000000 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = NMWEXT003000000000000000 /* NoMoWidget */;
+			target = NMWEXT003000000000000000 /* BotBlockWidget */;
 			targetProxy = NMWEXT003400000000000000 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -858,7 +858,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -878,7 +878,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_VERSION = 5.0;
@@ -899,7 +899,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.DeviceActivityMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.DeviceActivityMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -920,7 +920,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.DeviceActivityMonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.DeviceActivityMonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -942,8 +942,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.ShieldConfiguration;
-				PRODUCT_MODULE_NAME = NoMoShieldConfig;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.ShieldConfiguration;
+				PRODUCT_MODULE_NAME = BotBlockShieldConfig;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -964,8 +964,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.ShieldConfiguration;
-				PRODUCT_MODULE_NAME = NoMoShieldConfig;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.ShieldConfiguration;
+				PRODUCT_MODULE_NAME = BotBlockShieldConfig;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -974,20 +974,20 @@
 			};
 			name = Release;
 		};
-/* -- NoMoWidget build configs -- */
+/* -- BotBlockWidget build configs -- */
 		NMWEXT003100000000000000 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = App/Extensions/NoMoWidget/NoMoWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/BotBlockWidget/BotBlockWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = App/Extensions/NoMoWidget/Info.plist;
+				INFOPLIST_FILE = App/Extensions/BotBlockWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1000,15 +1000,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = App/Extensions/NoMoWidget/NoMoWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/BotBlockWidget/BotBlockWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = App/Extensions/NoMoWidget/Info.plist;
+				INFOPLIST_FILE = App/Extensions/BotBlockWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.widget;
+				PRODUCT_BUNDLE_IDENTIFIER = co.botblock.app.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1056,7 +1056,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "NoMoWidget" */ = {
+		NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "BotBlockWidget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				NMWEXT003100000000000000 /* Debug */,

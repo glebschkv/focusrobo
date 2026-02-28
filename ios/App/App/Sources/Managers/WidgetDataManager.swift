@@ -100,22 +100,22 @@ final class WidgetDataManager: WidgetDataManaging {
 
     func updateTimer(_ data: WidgetTimerData) throws {
         try updatePartialData(key: "timer", value: data.asDictionary)
-        refreshWidget(kind: "NoMoTimerWidget")
+        refreshWidget(kind: "BotBlockTimerWidget")
     }
 
     func updateStreak(_ data: WidgetStreakData) throws {
         try updatePartialData(key: "streak", value: data.asDictionary)
-        refreshWidget(kind: "NoMoStreakWidget")
+        refreshWidget(kind: "BotBlockStreakWidget")
     }
 
     func updateDailyProgress(_ data: WidgetDailyProgress) throws {
         try updatePartialData(key: "dailyProgress", value: data.asDictionary)
-        refreshWidget(kind: "NoMoProgressWidget")
+        refreshWidget(kind: "BotBlockProgressWidget")
     }
 
     func updateStats(_ data: WidgetStats) throws {
         try updatePartialData(key: "stats", value: data.asDictionary)
-        refreshWidget(kind: "NoMoStatsWidget")
+        refreshWidget(kind: "BotBlockStatsWidget")
     }
 
     // MARK: - Widget Refresh

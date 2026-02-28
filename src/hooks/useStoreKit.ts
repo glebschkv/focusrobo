@@ -154,22 +154,22 @@ async function serverValidatePurchase(
 // All IAP product IDs
 const ALL_PRODUCT_IDS = [
   // Subscriptions
-  'co.nomoinc.nomo.premium.monthly',
-  'co.nomoinc.nomo.premium.yearly',
-  'co.nomoinc.nomo.premiumplus.monthly',
-  'co.nomoinc.nomo.premiumplus.yearly',
-  'co.nomoinc.nomo.lifetime',
+  'co.botblock.app.premium.monthly',
+  'co.botblock.app.premium.yearly',
+  'co.botblock.app.premiumplus.monthly',
+  'co.botblock.app.premiumplus.yearly',
+  'co.botblock.app.lifetime',
   // Coin Packs (Consumables)
-  'co.nomoinc.nomo.coins.value',
-  'co.nomoinc.nomo.coins.premium',
-  'co.nomoinc.nomo.coins.mega',
-  'co.nomoinc.nomo.coins.ultra',
-  'co.nomoinc.nomo.coins.legendary',
+  'co.botblock.app.coins.value',
+  'co.botblock.app.coins.premium',
+  'co.botblock.app.coins.mega',
+  'co.botblock.app.coins.ultra',
+  'co.botblock.app.coins.legendary',
   // Starter Bundles (Non-Consumables)
-  'co.nomoinc.nomo.bundle.welcome',
-  'co.nomoinc.nomo.bundle.starter',
-  'co.nomoinc.nomo.bundle.collector',
-  'co.nomoinc.nomo.bundle.ultimate',
+  'co.botblock.app.bundle.welcome',
+  'co.botblock.app.bundle.starter',
+  'co.botblock.app.bundle.collector',
+  'co.botblock.app.bundle.ultimate',
 ];
 
 // Custom events for IAP fulfillment

@@ -36,9 +36,9 @@ const DEFAULT_STATS: TrackingStats = {
 export interface AchievementTrackingHook {
   // Track focus session completion
   trackFocusSession: (minutes: number, wasMegaBonus?: boolean) => void;
-  // Track pet unlocks
+  // Track bot unlocks
   trackPetUnlock: (totalPets: number, rarePets: number, epicPets: number, legendaryPets: number) => void;
-  // Track biome unlocks
+  // Track zone unlocks
   trackBiomeUnlock: (totalBiomes: number) => void;
   // Track bond level changes
   trackBondLevel: (bondLevel: number, maxBondPets: number) => void;
@@ -127,7 +127,7 @@ export const useAchievementTracking = (): AchievementTrackingHook => {
     }
   }, [checkAndUnlockAchievements, saveStats]);
 
-  // Track pet unlocks
+  // Track bot unlocks
   const trackPetUnlock = useCallback((
     totalPets: number,
     rarePets: number,
@@ -140,7 +140,7 @@ export const useAchievementTracking = (): AchievementTrackingHook => {
     checkAndUnlockAchievements('legendary_pets', legendaryPets);
   }, [checkAndUnlockAchievements]);
 
-  // Track biome unlocks
+  // Track zone unlocks
   const trackBiomeUnlock = useCallback((totalBiomes: number) => {
     checkAndUnlockAchievements('biome_unlock', totalBiomes);
   }, [checkAndUnlockAchievements]);
@@ -210,7 +210,7 @@ export const useAchievementTracking = (): AchievementTrackingHook => {
 // Custom event names for cross-component communication
 export const ACHIEVEMENT_EVENTS = {
   FOCUS_SESSION_COMPLETE: 'achievement:focus-session-complete',
-  PET_UNLOCKED: 'achievement:pet-unlocked',
+  BOT_UNLOCKED: 'achievement:bot-unlocked',
   LEVEL_UP: 'achievement:level-up',
   COINS_EARNED: 'achievement:coins-earned',
   PURCHASE_MADE: 'achievement:purchase-made',

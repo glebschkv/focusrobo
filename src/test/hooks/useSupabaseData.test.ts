@@ -27,14 +27,39 @@ vi.mock('@/hooks/useAuth', () => ({
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
-  supabaseLogger: {
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
 // Mock toast
 vi.mock('sonner', () => ({
@@ -187,7 +212,7 @@ describe('useSupabaseData', () => {
 
       await waitFor(() => {
         expect(result.current.profile).not.toBeNull();
-        expect(result.current.profile?.display_name).toBe('NoMo Player');
+        expect(result.current.profile?.display_name).toBe('BotBlock Player');
         expect(result.current.progress).not.toBeNull();
         expect(result.current.progress?.total_xp).toBe(0);
         expect(result.current.pets.length).toBe(1);

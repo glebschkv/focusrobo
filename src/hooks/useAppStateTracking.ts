@@ -75,7 +75,7 @@ export const useAppStateTracking = () => {
   // NOTE: Automatic XP awarding on foreground resume has been REMOVED.
   // Previously, this hook awarded XP for every 30+ minute absence, but that
   // conflicted with the actual focus timer rewards — causing double XP,
-  // phantom "pet bonding" toasts, and duplicate streak recordings.
+  // phantom "bot bonding" toasts, and duplicate streak recordings.
   // The focus timer (useTimerLogic → useTimerRewards) is the ONLY source
   // of session XP/coin/streak rewards.
 

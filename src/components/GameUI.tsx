@@ -20,7 +20,7 @@ import { TabContent, preloadTabComponents } from "@/components/TabContent";
 import { RewardModals } from "@/components/RewardModals";
 import { GlobalSoundToggle } from "@/components/GlobalSoundToggle";
 
-const TAB_STORAGE_KEY = 'petIsland_currentTab';
+const TAB_STORAGE_KEY = 'botblock_currentTab';
 const VALID_TABS = ['home', 'timer', 'collection', 'challenges', 'shop', 'settings'];
 
 function getPersistedTab(): string {
@@ -51,7 +51,7 @@ export const GameUI = () => {
     if (!meta) return;
 
     const themeColors: Record<string, string> = {
-      home: 'hsl(200, 60%, 85%)',
+      home: '#0a0a1a',
       timer: 'hsl(252, 40%, 16%)',
       collection: 'hsl(252, 40%, 16%)',
       settings: 'hsl(260, 30%, 12%)',
@@ -59,7 +59,7 @@ export const GameUI = () => {
       challenges: 'hsl(280, 25%, 8%)',
     };
 
-    meta.setAttribute('content', themeColors[currentTab] || 'hsl(200, 60%, 85%)');
+    meta.setAttribute('content', themeColors[currentTab] || '#0a0a1a');
   }, [currentTab]);
 
   // Listen for programmatic tab switches (e.g. from collection "Buy from Shop" button)

@@ -17,7 +17,7 @@ input, textarea, [contenteditable="true"] {
   user-select: text;
 }
 
-/* iOS-Style NoMo - Cupertino Design System */
+/* iOS-Style BotBlock - Cupertino Design System */
 
 @layer base {
   :root {

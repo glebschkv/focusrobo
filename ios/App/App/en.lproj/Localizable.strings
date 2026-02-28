@@ -1,6 +1,6 @@
 /*
   Localizable.strings (English)
-  NoMo Phone
+  BotBlock
 
   Base English localization for all user-facing strings.
   Generated from Strings.swift - keep in sync.
@@ -9,14 +9,14 @@
 // MARK: - Shield Configuration
 
 "shield.title" = "Stay Focused!";
-"shield.return_button" = "Return to NoMo";
+"shield.return_button" = "Return to BotBlock";
 "shield.app_blocked" = "%@ is blocked";
 "shield.category_blocked" = "%@ is blocked during your focus session";
 "shield.domain_blocked" = "%@ is blocked during your focus session";
 "shield.web_category_blocked" = "Web browsing in %@ is blocked";
 
 // Shield Motivational Messages
-"shield.motivation.1" = "Your focus pet is counting on you!";
+"shield.motivation.1" = "Your focus bot is counting on you!";
 "shield.motivation.2" = "Stay strong - your future self will thank you!";
 "shield.motivation.3" = "Every minute of focus earns you rewards!";
 "shield.motivation.4" = "You're doing great! Keep focusing!";
@@ -25,7 +25,7 @@
 "shield.motivation.7" = "Your streak depends on you!";
 "shield.motivation.8" = "Almost there! Don't give up now!";
 "shield.motivation.9" = "Focus = XP = Level Up!";
-"shield.motivation.10" = "Your pet believes in you!";
+"shield.motivation.10" = "Your bot believes in you!";
 
 // MARK: - Blocking
 
@@ -147,7 +147,7 @@
 
 // MARK: - Accessibility: Hints
 
-"a11y.hint.tap_to_open" = "Double tap to open NoMo app";
+"a11y.hint.tap_to_open" = "Double tap to open BotBlock app";
 "a11y.hint.tap_to_start" = "Double tap to start a new focus session";
 "a11y.hint.live_progress" = "This information updates automatically";
 
@@ -218,6 +218,6 @@
 // MARK: - Accessibility: Shield
 
 "a11y.shield.title" = "App blocked during focus session";
-"a11y.shield.description" = "This app is blocked to help you stay focused. You can return to NoMo to continue your session.";
-"a11y.shield.return_button" = "Return to NoMo app";
-"a11y.shield.return_hint" = "Double tap to close this blocked app and return to NoMo";
+"a11y.shield.description" = "This app is blocked to help you stay focused. You can return to BotBlock to continue your session.";
+"a11y.shield.return_button" = "Return to BotBlock app";
+"a11y.shield.return_hint" = "Double tap to close this blocked app and return to BotBlock";

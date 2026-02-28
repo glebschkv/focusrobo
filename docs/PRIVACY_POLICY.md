@@ -1,10 +1,10 @@
 # Privacy Policy
 
-**NoMo Phone**
+**BotBlock**
 **Last Updated: January 26, 2025**
 **Effective Date: December 3, 2024**
 
-NoMo Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the NoMo Phone mobile application (the "App").
+NoMo Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the BotBlock mobile application (the "App").
 
 Please read this Privacy Policy carefully. By using the App, you agree to the collection and use of information in accordance with this policy.
 
@@ -38,7 +38,7 @@ We use the information we collect to:
 
 - **Provide Core Functionality**: Track your focus sessions and calculate time spent away from your phone
 - **Award Rewards**: Provide in-app coins and rewards based on your focus achievements
-- **Sync Progress**: Maintain your focus streaks, pet care progress, and virtual world state
+- **Sync Progress**: Maintain your focus streaks, robot collection progress, and virtual world state
 - **Process Purchases**: Verify and manage your subscription status
 - **Improve the App**: Understand usage patterns to improve features (using aggregated, anonymized data only)
 - **Send Notifications**: Remind you of focus goals or streak maintenance (only if you opt in)
@@ -47,18 +47,18 @@ We use the information we collect to:
 
 ## 3. Screen Time and Family Controls
 
-NoMo Phone uses Apple's Screen Time APIs (DeviceActivityMonitor, ManagedSettings) to provide its core functionality. Specifically:
+BotBlock uses Apple's Screen Time APIs (DeviceActivityMonitor, ManagedSettings) to provide its core functionality. Specifically:
 
 - **What We Access**: We detect when your device screen is off or when you're not actively using apps, allowing us to measure focus time.
 - **What We Do NOT Access**: We cannot see which specific apps you use, your browsing history, or any content within apps.
 - **Data Storage**: Screen Time detection happens entirely on your device. Focus session durations are stored locally and synced to your account if you're signed in.
-- **Your Control**: You can revoke Screen Time access at any time through iOS Settings > Screen Time > NoMo Phone.
+- **Your Control**: You can revoke Screen Time access at any time through iOS Settings > Screen Time > BotBlock.
 
 ---
 
 ## 4. Data Storage and Security
 
-- **Local Storage**: Most of your data (focus sessions, pet state, coins) is stored locally on your device.
+- **Local Storage**: Most of your data (focus sessions, robot state, coins) is stored locally on your device.
 - **Cloud Sync**: If you create an account, your progress is synced to our secure cloud servers (hosted on Supabase) to enable cross-device access and backup.
 - **Encryption**: All data transmitted to our servers is encrypted using industry-standard TLS encryption.
 - **Retention**: We retain your account data for as long as your account is active. You can request deletion at any time.
@@ -80,7 +80,7 @@ We do not use any third-party analytics, advertising, or tracking services.
 
 ## 6. Children's Privacy
 
-NoMo Phone is designed to promote healthy screen time habits and is suitable for users of all ages. We do not knowingly collect personal information from children under 13 without parental consent.
+BotBlock is designed to promote healthy screen time habits and is suitable for users of all ages. We do not knowingly collect personal information from children under 13 without parental consent.
 
 If you are a parent or guardian and believe your child has provided us with personal information, please contact us at the email below, and we will delete such information.
 

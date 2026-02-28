@@ -6,18 +6,20 @@
  */
 export type QuestObjectiveType =
   | 'focus_time'
-  | 'pet_interaction'
+  | 'bot_interaction'
   | 'bond_level'
-  | 'biome_unlock'
+  | 'zone_unlock'
   | 'streak'
   | 'collection'
   | 'sessions'
-  | 'perfect_focus';
+  | 'perfect_focus'
+  | 'pet_interaction'  // backward-compat alias for bot_interaction
+  | 'biome_unlock';    // backward-compat alias for zone_unlock
 
 /**
  * The type of quest reward
  */
-export type QuestRewardType = 'xp' | 'coins' | 'pet_unlock' | 'ability' | 'cosmetic';
+export type QuestRewardType = 'xp' | 'coins' | 'bot_unlock' | 'ability' | 'cosmetic' | 'pet_unlock'; // pet_unlock is backward-compat alias for bot_unlock
 
 /**
  * The type of quest (daily, weekly, or story-based)

@@ -97,7 +97,7 @@ export const useWidgetSync = () => {
   const syncPetInfo = useCallback(
     (data: Partial<WidgetData['petInfo']>) => {
       widgetDataService.updatePetInfo(data).catch((err) => {
-        widgetLogger.error('Pet info sync failed:', err);
+        widgetLogger.error('Bot info sync failed:', err);
       });
     },
     [],

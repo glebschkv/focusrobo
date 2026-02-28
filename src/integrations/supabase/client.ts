@@ -1,3 +1,4 @@
+// TODO: Supabase will be replaced with a new backend solution. This client and all Supabase dependencies are scheduled for migration.
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { supabaseLogger } from "@/lib/logger";
 import type { Database } from './types';

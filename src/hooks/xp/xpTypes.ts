@@ -18,7 +18,7 @@ export interface XPReward {
 }
 
 export interface UnlockedReward {
-  type: 'animal' | 'biome';
+  type: 'robot' | 'zone';
   name: string;
   description: string;
   level: number;

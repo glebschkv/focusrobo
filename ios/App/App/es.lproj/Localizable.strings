@@ -1,6 +1,6 @@
 /*
   Localizable.strings (Spanish)
-  NoMo Phone
+  BotBlock
 
   Spanish localization for all user-facing strings.
 */
@@ -8,14 +8,14 @@
 // MARK: - Shield Configuration
 
 "shield.title" = "¡Mantente enfocado!";
-"shield.return_button" = "Volver a NoMo";
+"shield.return_button" = "Volver a BotBlock";
 "shield.app_blocked" = "%@ está bloqueada";
 "shield.category_blocked" = "%@ está bloqueada durante tu sesión de enfoque";
 "shield.domain_blocked" = "%@ está bloqueado durante tu sesión de enfoque";
 "shield.web_category_blocked" = "La navegación web en %@ está bloqueada";
 
 // Shield Motivational Messages
-"shield.motivation.1" = "¡Tu mascota de enfoque cuenta contigo!";
+"shield.motivation.1" = "¡Tu bot de enfoque cuenta contigo!";
 "shield.motivation.2" = "¡Mantente fuerte - tu yo futuro te lo agradecerá!";
 "shield.motivation.3" = "¡Cada minuto de enfoque te da recompensas!";
 "shield.motivation.4" = "¡Lo estás haciendo genial! ¡Sigue enfocado!";
@@ -24,7 +24,7 @@
 "shield.motivation.7" = "¡Tu racha depende de ti!";
 "shield.motivation.8" = "¡Ya casi! ¡No te rindas ahora!";
 "shield.motivation.9" = "¡Enfoque = XP = Subir de Nivel!";
-"shield.motivation.10" = "¡Tu mascota cree en ti!";
+"shield.motivation.10" = "¡Tu bot cree en ti!";
 
 // MARK: - Blocking
 
@@ -146,7 +146,7 @@
 
 // MARK: - Accessibility: Hints
 
-"a11y.hint.tap_to_open" = "Doble toque para abrir la app NoMo";
+"a11y.hint.tap_to_open" = "Doble toque para abrir la app BotBlock";
 "a11y.hint.tap_to_start" = "Doble toque para iniciar una nueva sesión de enfoque";
 "a11y.hint.live_progress" = "Esta información se actualiza automáticamente";
 
@@ -217,6 +217,6 @@
 // MARK: - Accessibility: Shield
 
 "a11y.shield.title" = "App bloqueada durante la sesión de enfoque";
-"a11y.shield.description" = "Esta app está bloqueada para ayudarte a mantener el enfoque. Puedes volver a NoMo para continuar tu sesión.";
-"a11y.shield.return_button" = "Volver a la app NoMo";
-"a11y.shield.return_hint" = "Doble toque para cerrar esta app bloqueada y volver a NoMo";
+"a11y.shield.description" = "Esta app está bloqueada para ayudarte a mantener el enfoque. Puedes volver a BotBlock para continuar tu sesión.";
+"a11y.shield.return_button" = "Volver a la app BotBlock";
+"a11y.shield.return_hint" = "Doble toque para cerrar esta app bloqueada y volver a BotBlock";

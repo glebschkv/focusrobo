@@ -7,98 +7,123 @@ import { useCollectionStore, useShopStore } from '@/stores';
 vi.mock('@/hooks/useXPSystem', () => ({
   useXPSystem: () => ({
     currentLevel: 1,
-    unlockedAnimals: ['Dewdrop Frog'],
-    currentBiome: 'forest',
-    availableBiomes: ['forest'],
+    unlockedRobots: ['Dewdrop Frog'],
+    currentZone: 'forest',
+    availableZones: ['forest'],
     isLoading: false,
     totalStudyMinutes: 0,
   }),
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
-  collectionLogger: {
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/lib/logger', () => {
+  const l = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+  return {
+    logger: l(),
+    createLogger: () => l(),
+    xpLogger: l(),
+    coinLogger: l(),
+    shopLogger: l(),
+    storageLogger: l(),
+    supabaseLogger: l(),
+    authLogger: l(),
+    storeKitLogger: l(),
+    notificationLogger: l(),
+    syncLogger: l(),
+    deviceActivityLogger: l(),
+    focusModeLogger: l(),
+    widgetLogger: l(),
+    backupLogger: l(),
+    threeLogger: l(),
+    timerLogger: l(),
+    questLogger: l(),
+    achievementLogger: l(),
+    bondLogger: l(),
+    streakLogger: l(),
+    soundLogger: l(),
+    performanceLogger: l(),
+    appReviewLogger: l(),
+    settingsLogger: l(),
+    collectionLogger: l(),
+    nativePluginLogger: l(),
+    analyticsLogger: l(),
+  };
+});
 
-// Mock AnimalDatabase
-vi.mock('@/data/AnimalDatabase', () => ({
-  ANIMAL_DATABASE: [
+// Mock RobotDatabase
+vi.mock('@/data/RobotDatabase', () => ({
+  ROBOT_DATABASE: [
     {
       id: 'dewdrop-frog',
       name: 'Dewdrop Frog',
       rarity: 'common',
-      biome: 'forest',
+      zone: 'Biotech Zone',
       unlockLevel: 1,
       isExclusive: false,
-      spriteConfig: { idle: 'sprite.png' },
+      imageConfig: { imagePath: 'sprite.png' },
     },
     {
       id: 'moss-turtle',
       name: 'Moss Turtle',
       rarity: 'common',
-      biome: 'forest',
+      zone: 'Biotech Zone',
       unlockLevel: 2,
       isExclusive: false,
-      spriteConfig: { idle: 'sprite.png' },
+      imageConfig: { imagePath: 'sprite.png' },
     },
     {
       id: 'golden-phoenix',
       name: 'Golden Phoenix',
       rarity: 'legendary',
-      biome: 'volcano',
+      zone: 'Solar Fields',
       unlockLevel: 99,
       isExclusive: true,
       coinPrice: 5000,
-      spriteConfig: { idle: 'sprite.png' },
+      imageConfig: { imagePath: 'sprite.png' },
     },
     {
       id: 'crystal-dragon',
       name: 'Crystal Dragon',
       rarity: 'epic',
-      biome: 'mountain',
+      zone: 'Cyber District',
       unlockLevel: 20,
       isExclusive: false,
-      spriteConfig: { idle: 'sprite.png' },
+      imageConfig: { imagePath: 'sprite.png' },
     },
   ],
-  getAnimalById: vi.fn((id: string) => {
+  getRobotById: vi.fn((id: string) => {
     const animals = [
-      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', biome: 'forest', unlockLevel: 1, isExclusive: false, spriteConfig: { idle: 'sprite.png' } },
-      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', biome: 'forest', unlockLevel: 2, isExclusive: false, spriteConfig: { idle: 'sprite.png' } },
-      { id: 'golden-phoenix', name: 'Golden Phoenix', rarity: 'legendary', biome: 'volcano', unlockLevel: 99, isExclusive: true, coinPrice: 5000, spriteConfig: { idle: 'sprite.png' } },
-      { id: 'crystal-dragon', name: 'Crystal Dragon', rarity: 'epic', biome: 'mountain', unlockLevel: 20, isExclusive: false, spriteConfig: { idle: 'sprite.png' } },
+      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 1, isExclusive: false, imageConfig: { imagePath: 'sprite.png' } },
+      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 2, isExclusive: false, imageConfig: { imagePath: 'sprite.png' } },
+      { id: 'golden-phoenix', name: 'Golden Phoenix', rarity: 'legendary', zone: 'Solar Fields', unlockLevel: 99, isExclusive: true, coinPrice: 5000, imageConfig: { imagePath: 'sprite.png' } },
+      { id: 'crystal-dragon', name: 'Crystal Dragon', rarity: 'epic', zone: 'Cyber District', unlockLevel: 20, isExclusive: false, imageConfig: { imagePath: 'sprite.png' } },
     ];
     return animals.find(a => a.id === id);
   }),
-  getUnlockedAnimals: vi.fn((level: number) => {
+  getUnlockableRobots: vi.fn((level: number) => {
     const animals = [
-      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', biome: 'forest', unlockLevel: 1, isExclusive: false },
-      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', biome: 'forest', unlockLevel: 2, isExclusive: false },
-      { id: 'crystal-dragon', name: 'Crystal Dragon', rarity: 'epic', biome: 'mountain', unlockLevel: 20, isExclusive: false },
+      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 1, isExclusive: false },
+      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 2, isExclusive: false },
+      { id: 'crystal-dragon', name: 'Crystal Dragon', rarity: 'epic', zone: 'Cyber District', unlockLevel: 20, isExclusive: false },
     ];
     return animals.filter(a => a.unlockLevel <= level);
   }),
-  getAnimalsByBiome: vi.fn((biome: string) => {
+  getRobotsByZone: vi.fn((biome: string) => {
     const animals = [
-      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', biome: 'forest', unlockLevel: 1 },
-      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', biome: 'forest', unlockLevel: 2 },
+      { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 1 },
+      { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 2 },
     ];
-    return animals.filter(a => a.biome === biome);
+    return animals.filter(a => a.zone === zone);
   }),
-  getXPUnlockableAnimals: vi.fn(() => [
+  getXPUnlockableRobots: vi.fn(() => [
     { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common' },
     { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common' },
     { id: 'crystal-dragon', name: 'Crystal Dragon', rarity: 'epic' },
   ]),
-  isStudyHoursAnimal: vi.fn((animal: { requiredStudyHours?: number }) => {
+  isStudyHoursRobot: vi.fn((animal: { requiredStudyHours?: number }) => {
     return animal.requiredStudyHours !== undefined && animal.requiredStudyHours > 0;
   }),
-  getStudyHoursAnimals: vi.fn(() => []),
+  getStudyHoursRobots: vi.fn(() => []),
 }));
 
 describe('useCollection', () => {
@@ -108,7 +133,7 @@ describe('useCollection', () => {
 
     // Reset Zustand stores to known state
     useCollectionStore.setState({
-      activeHomePets: [],
+      activeHomeBots: [],
       favorites: [],
     });
     useShopStore.setState({
@@ -143,12 +168,12 @@ describe('useCollection', () => {
 
     it('should load active home pets from store', async () => {
       // Set up store state
-      useCollectionStore.setState({ activeHomePets: ['moss-turtle'] });
+      useCollectionStore.setState({ activeHomeBots: ['moss-turtle'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('moss-turtle')).toBe(true);
+        expect(result.current.activeHomeBots.has('moss-turtle')).toBe(true);
       });
     });
 
@@ -157,7 +182,7 @@ describe('useCollection', () => {
 
       await waitFor(() => {
         // Store is reset to empty in beforeEach
-        expect(result.current.activeHomePets.size).toBe(0);
+        expect(result.current.activeHomeBots.size).toBe(0);
       });
     });
 
@@ -170,7 +195,7 @@ describe('useCollection', () => {
   });
 
   describe('toggleFavorite', () => {
-    it('should add animal to favorites', async () => {
+    it('should add bot to favorites', async () => {
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
@@ -186,7 +211,7 @@ describe('useCollection', () => {
       });
     });
 
-    it('should remove animal from favorites', async () => {
+    it('should remove bot from favorites', async () => {
       // Set up store state with a favorite
       useCollectionStore.setState({ favorites: ['dewdrop-frog'] });
 
@@ -221,13 +246,13 @@ describe('useCollection', () => {
   });
 
   describe('toggleHomeActive', () => {
-    it('should add animal to active home pets', async () => {
+    it('should add bot to active home bots', async () => {
       // Store is already reset to empty in beforeEach
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.size).toBe(0);
+        expect(result.current.activeHomeBots.size).toBe(0);
       });
 
       act(() => {
@@ -235,18 +260,18 @@ describe('useCollection', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(true);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(true);
       });
     });
 
-    it('should remove animal from active home pets', async () => {
+    it('should remove bot from active home bots', async () => {
       // Set up store state
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(true);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(true);
       });
 
       act(() => {
@@ -254,7 +279,7 @@ describe('useCollection', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.activeHomePets.has('dewdrop-frog')).toBe(false);
+        expect(result.current.activeHomeBots.has('dewdrop-frog')).toBe(false);
       });
     });
 
@@ -268,7 +293,7 @@ describe('useCollection', () => {
       await waitFor(() => {
         // Verify store was updated
         const storeState = useCollectionStore.getState();
-        expect(storeState.activeHomePets).toContain('moss-turtle');
+        expect(storeState.activeHomeBots).toContain('moss-turtle');
       });
     });
   });
@@ -277,14 +302,14 @@ describe('useCollection', () => {
     it('should return true for level-unlocked animals', () => {
       const { result } = renderHook(() => useCollection());
 
-      // Level 1 animal should be unlocked
+      // Level 1 bot should be unlocked
       expect(result.current.isAnimalUnlocked('dewdrop-frog')).toBe(true);
     });
 
     it('should return false for high-level animals', () => {
       const { result } = renderHook(() => useCollection());
 
-      // Level 20 animal should not be unlocked at level 1
+      // Level 20 bot should not be unlocked at level 1
       expect(result.current.isAnimalUnlocked('crystal-dragon')).toBe(false);
     });
 
@@ -328,8 +353,8 @@ describe('useCollection', () => {
 
   describe('isAnimalHomeActive', () => {
     it('should return true for active home pets', async () => {
-      // Set up store with active pet
-      useCollectionStore.setState({ activeHomePets: ['moss-turtle'] });
+      // Set up store with active bot
+      useCollectionStore.setState({ activeHomeBots: ['moss-turtle'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -339,8 +364,8 @@ describe('useCollection', () => {
     });
 
     it('should return false for non-active pets', async () => {
-      // Set up store with a different pet
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      // Set up store with a different bot
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -364,19 +389,19 @@ describe('useCollection', () => {
     });
   });
 
-  describe('getAnimalData', () => {
-    it('should return animal data by id', () => {
+  describe('getRobotData', () => {
+    it('should return robot data by id', () => {
       const { result } = renderHook(() => useCollection());
 
-      const animal = result.current.getAnimalData('dewdrop-frog');
+      const animal = result.current.getRobotData('dewdrop-frog');
       expect(animal).toBeDefined();
       expect(animal?.name).toBe('Dewdrop Frog');
     });
 
-    it('should return undefined for non-existent animal', () => {
+    it('should return undefined for non-existent robot', () => {
       const { result } = renderHook(() => useCollection());
 
-      const animal = result.current.getAnimalData('non-existent');
+      const animal = result.current.getRobotData('non-existent');
       expect(animal).toBeUndefined();
     });
   });
@@ -384,7 +409,7 @@ describe('useCollection', () => {
   describe('getActiveHomePetsData', () => {
     it('should return only unlocked active pets', async () => {
       // Set up store with mixed pets (one unlocked, one locked by level)
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog', 'crystal-dragon'] });
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog', 'crystal-dragon'] });
 
       const { result } = renderHook(() => useCollection());
 
@@ -398,7 +423,7 @@ describe('useCollection', () => {
 
     it('should include purchased shop animals', async () => {
       // Set up both stores
-      useCollectionStore.setState({ activeHomePets: ['golden-phoenix'] });
+      useCollectionStore.setState({ activeHomeBots: ['golden-phoenix'] });
       useShopStore.setState({ ownedCharacters: ['golden-phoenix'] });
 
       const { result } = renderHook(() => useCollection());
@@ -423,16 +448,16 @@ describe('useCollection', () => {
 
       const filtered = result.current.filterAnimals('', 'common');
       filtered.forEach(animal => {
-        expect(animal.rarity).toBe('common');
+        expect(robot.rarity).toBe('common');
       });
     });
 
-    it('should filter by biome', () => {
+    it('should filter by zone', () => {
       const { result } = renderHook(() => useCollection());
 
       const filtered = result.current.filterAnimals('', undefined, 'forest');
       filtered.forEach(animal => {
-        expect(animal.biome).toBe('forest');
+        expect(robot.zone).toBe('forest');
       });
     });
 
@@ -441,8 +466,8 @@ describe('useCollection', () => {
 
       const filtered = result.current.filterAnimals('', 'common', 'forest');
       filtered.forEach(animal => {
-        expect(animal.rarity).toBe('common');
-        expect(animal.biome).toBe('forest');
+        expect(robot.rarity).toBe('common');
+        expect(robot.zone).toBe('forest');
       });
     });
 
@@ -460,10 +485,10 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       expect(result.current.stats).toBeDefined();
-      expect(typeof result.current.stats.totalAnimals).toBe('number');
-      expect(typeof result.current.stats.unlockedAnimals).toBe('number');
-      expect(typeof result.current.stats.shopPetsTotal).toBe('number');
-      expect(typeof result.current.stats.shopPetsOwned).toBe('number');
+      expect(typeof result.current.stats.totalBots).toBe('number');
+      expect(typeof result.current.stats.unlockedRobots).toBe('number');
+      expect(typeof result.current.stats.shopBotsTotal).toBe('number');
+      expect(typeof result.current.stats.shopBotsOwned).toBe('number');
     });
 
     it('should track favorites count', async () => {
@@ -478,13 +503,13 @@ describe('useCollection', () => {
     });
 
     it('should track active home pets count', async () => {
-      // Set up store with active pet
-      useCollectionStore.setState({ activeHomePets: ['dewdrop-frog'] });
+      // Set up store with active bot
+      useCollectionStore.setState({ activeHomeBots: ['dewdrop-frog'] });
 
       const { result } = renderHook(() => useCollection());
 
       await waitFor(() => {
-        expect(result.current.stats.activeHomePetsCount).toBe(1);
+        expect(result.current.stats.activeHomeBotsCount).toBe(1);
       });
     });
 

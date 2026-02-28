@@ -3,13 +3,13 @@
  * Configuration values for XP rewards and level progression
  */
 
-import { ANIMAL_DATABASE, BIOME_DATABASE } from '@/data/AnimalDatabase';
+import { ROBOT_DATABASE, ZONE_DATABASE } from '@/data/RobotDatabase';
 import { UnlockedReward } from './xpTypes';
 
 // Use standardized storage key - legacy 'petIsland_xpSystem' is migrated automatically
 export const STORAGE_KEY = 'nomo_xp_system';
 export const XP_UPDATE_EVENT = 'petIsland_xpUpdate';
-export const ANIMAL_PURCHASED_EVENT = 'petIsland_animalPurchased';
+export const ANIMAL_PURCHASED_EVENT = 'petIsland_robotPurchased';
 
 export const MAX_LEVEL = 50 as const;
 
@@ -37,32 +37,32 @@ export const LEVEL_REQUIREMENTS = [
   70,     // Level 2 - ~1-2 sessions
   120,    // Level 3 - ~2 sessions
   180,    // Level 4 - ~2 sessions
-  260,    // Level 5 - First biome unlock (Forest)
+  260,    // Level 5 - First zone unlock (Forest)
   350,    // Level 6
   460,    // Level 7
   590,    // Level 8
   740,    // Level 9
-  920,    // Level 10 - Second biome unlock (Beach)
+  920,    // Level 10 - Second zone unlock (Beach)
   1120,   // Level 11
   1350,   // Level 12
   1610,   // Level 13
   1900,   // Level 14
-  2230,   // Level 15 - Third biome unlock (Mountain)
+  2230,   // Level 15 - Third zone unlock (Mountain)
   2600,   // Level 16
   3010,   // Level 17
   3470,   // Level 18
   3980,   // Level 19
-  4550,   // Level 20 - Fourth biome unlock (Desert)
+  4550,   // Level 20 - Fourth zone unlock (Desert)
   5180,   // Level 21
   5880,   // Level 22
   6650,   // Level 23
   7500,   // Level 24
-  8430,   // Level 25 - Fifth biome unlock (Arctic)
+  8430,   // Level 25 - Fifth zone unlock (Arctic)
   9450,   // Level 26
   10560,  // Level 27
   11770,  // Level 28
   13090,  // Level 29
-  14530,  // Level 30 - Sixth biome unlock (Volcano)
+  14530,  // Level 30 - Sixth zone unlock (Volcano)
   16100,  // Level 31
   17810,  // Level 32
   19670,  // Level 33
@@ -72,7 +72,7 @@ export const LEVEL_REQUIREMENTS = [
   28880,  // Level 37
   31690,  // Level 38
   34730,  // Level 39
-  38020,  // Level 40 - Seventh biome unlock (Space)
+  38020,  // Level 40 - Seventh zone unlock (Space)
   41580,  // Level 41
   45430,  // Level 42
   49590,  // Level 43
@@ -82,32 +82,32 @@ export const LEVEL_REQUIREMENTS = [
   69870,  // Level 47
   75990,  // Level 48
   82600,  // Level 49
-  89700,  // Level 50 (MAX) - Void biome unlock
+  89700,  // Level 50 (MAX) - Void zone unlock
 ];
 
-// Generate unlocks by level from the database (animals and biomes)
+// Generate unlocks by level from the database (robots and zones)
 export const UNLOCKS_BY_LEVEL: Record<number, UnlockedReward[]> = {};
 
-// Add animal unlocks
-ANIMAL_DATABASE.forEach(animal => {
-  const level = animal.unlockLevel;
+// Add robot unlocks
+ROBOT_DATABASE.forEach(robot => {
+  const level = robot.unlockLevel;
   if (!UNLOCKS_BY_LEVEL[level]) UNLOCKS_BY_LEVEL[level] = [];
   UNLOCKS_BY_LEVEL[level].push({
-    type: 'animal',
-    name: animal.name,
-    description: animal.description,
+    type: 'robot',
+    name: robot.name,
+    description: robot.description,
     level: level
   });
 });
 
-// Add biome unlocks (world themes every few levels)
-BIOME_DATABASE.forEach(biome => {
-  const level = biome.unlockLevel;
+// Add zone unlocks (world themes every few levels)
+ZONE_DATABASE.forEach(zone => {
+  const level = zone.unlockLevel;
   if (!UNLOCKS_BY_LEVEL[level]) UNLOCKS_BY_LEVEL[level] = [];
   UNLOCKS_BY_LEVEL[level].push({
-    type: 'biome',
-    name: biome.name,
-    description: biome.description,
+    type: 'zone',
+    name: zone.name,
+    description: zone.description,
     level: level
   });
 });

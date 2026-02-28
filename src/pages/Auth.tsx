@@ -417,7 +417,7 @@ export default function Auth() {
           const hashedNonce = await sha256(rawNonce);
 
           const result = await SignInWithApple.authorize({
-            clientId: 'co.nomoinc.nomo',
+            clientId: 'co.botblock.app',
             redirectURI: 'https://nomoinc.co',
             scopes: 'email name',
             state: crypto.randomUUID(),
@@ -460,7 +460,7 @@ export default function Auth() {
         const hashedNonce = await sha256(rawNonce);
 
         const result = await SignInWithApple.authorize({
-          clientId: 'co.nomoinc.nomo',
+          clientId: 'co.botblock.app',
           redirectURI: 'https://nomoinc.co',
           scopes: 'email name',
           state: crypto.randomUUID(),
@@ -544,7 +544,7 @@ export default function Auth() {
               />
               <img
                 src="/app-icon.png"
-                alt="NoMo"
+                alt="BotBlock"
                 className="relative w-20 h-20 mx-auto rounded-2xl"
                 style={{
                   border: '3px solid hsl(280 50% 45%)',
@@ -556,7 +556,7 @@ export default function Auth() {
               className="text-3xl font-black uppercase tracking-tight text-white"
               style={{ textShadow: '0 0 20px hsl(280 80% 60% / 0.5), 0 0 40px hsl(280 80% 60% / 0.2)' }}
             >
-              NoMo
+              BotBlock
             </h1>
             <p className="text-sm text-purple-300/70">Focus, grow, and collect pets!</p>
           </div>
@@ -943,7 +943,7 @@ export default function Auth() {
                   />
                   <img
                     src="/app-icon.png"
-                    alt="NoMo"
+                    alt="BotBlock"
                     className="relative w-14 h-14 mx-auto rounded-xl"
                     style={{
                       border: '2px solid hsl(280 50% 45%)',
@@ -953,7 +953,7 @@ export default function Auth() {
                 </div>
                 <h2 className="text-xl font-bold text-white">Create Account</h2>
                 <p className="text-sm text-purple-300/70">
-                  Join NoMo and sync your progress
+                  Join BotBlock and sync your progress
                 </p>
               </div>
 

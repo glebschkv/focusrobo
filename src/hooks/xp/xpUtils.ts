@@ -3,7 +3,7 @@
  * Helper functions for XP calculations and data normalization
  */
 
-import { ANIMAL_DATABASE, getUnlockedAnimals } from '@/data/AnimalDatabase';
+import { ROBOT_DATABASE, getUnlockableRobots } from '@/data/RobotDatabase';
 import { BonusResult } from './xpTypes';
 import { LEVEL_REQUIREMENTS, MAX_LEVEL } from './xpConstants';
 
@@ -62,16 +62,16 @@ export const calculateLevelRequirement = (level: number): number => {
   return result;
 };
 
-// Normalize animal naming across old saves and DB
-const NAME_MAP: Record<string, string> = ANIMAL_DATABASE.reduce((acc, a) => {
+// Normalize robot naming across old saves and DB
+const NAME_MAP: Record<string, string> = ROBOT_DATABASE.reduce((acc, a) => {
   acc[a.name.toLowerCase()] = a.name;
   acc[a.id.toLowerCase()] = a.name;
   return acc;
 }, {} as Record<string, string>);
 
-export const normalizeAnimalList = (list: string[] | undefined): string[] => {
-  const defaultAnimals = list ?? getUnlockedAnimals(1).map(a => a.name);
-  const names = defaultAnimals.map((n) => NAME_MAP[n?.toLowerCase?.() || ''] || n);
+export const normalizeRobotList = (list: string[] | undefined): string[] => {
+  const defaultRobots = list ?? getUnlockableRobots(1).map(a => a.name);
+  const names = defaultRobots.map((n) => NAME_MAP[n?.toLowerCase?.() || ''] || n);
   return Array.from(new Set(names));
 };
 

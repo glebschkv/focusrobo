@@ -223,7 +223,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'first-friend',
     title: 'First Friend',
-    description: 'Unlock your first pet companion',
+    description: 'Unlock your first bot',
     category: 'collection',
     tier: 'bronze',
     icon: 'paw',
@@ -234,9 +234,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     ]
   },
   {
-    id: 'pet-collector-5',
+    id: 'bot-collector-5',
     title: 'Budding Collector',
-    description: 'Unlock 5 different pets',
+    description: 'Unlock 5 different bots',
     category: 'collection',
     tier: 'bronze',
     icon: 'fox',
@@ -247,9 +247,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     ]
   },
   {
-    id: 'pet-collector',
-    title: 'Pet Collector',
-    description: 'Unlock 10 different pets',
+    id: 'bot-collector',
+    title: 'Bot Collector',
+    description: 'Unlock 10 different bots',
     category: 'collection',
     tier: 'silver',
     icon: 'butterfly',
@@ -261,8 +261,8 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   },
   {
     id: 'zoo-keeper',
-    title: 'Zoo Keeper',
-    description: 'Unlock 20 different pets',
+    title: 'Hangar Keeper',
+    description: 'Unlock 20 different bots',
     category: 'collection',
     tier: 'gold',
     icon: 'lion',
@@ -275,7 +275,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'menagerie-master',
     title: 'Menagerie Master',
-    description: 'Unlock 35 different pets',
+    description: 'Unlock 35 different bots',
     category: 'collection',
     tier: 'platinum',
     icon: 'elephant',
@@ -288,7 +288,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'legendary-collector',
     title: 'Legendary Collector',
-    description: 'Unlock all 50+ pets',
+    description: 'Unlock all 50+ bots',
     category: 'collection',
     tier: 'diamond',
     icon: 'diamond',
@@ -301,7 +301,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'rare-finder',
     title: 'Rare Finder',
-    description: 'Unlock 5 rare pets',
+    description: 'Unlock 5 rare bots',
     category: 'collection',
     tier: 'silver',
     icon: 'sparkles',
@@ -314,7 +314,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'epic-hunter',
     title: 'Epic Hunter',
-    description: 'Unlock 5 epic pets',
+    description: 'Unlock 5 epic bots',
     category: 'collection',
     tier: 'gold',
     icon: 'crystal-ball',
@@ -327,7 +327,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'legendary-hunter',
     title: 'Legendary Hunter',
-    description: 'Unlock 3 legendary pets',
+    description: 'Unlock 3 legendary bots',
     category: 'collection',
     tier: 'platinum',
     icon: 'rainbow',
@@ -338,9 +338,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     ]
   },
   {
-    id: 'biome-explorer',
-    title: 'Biome Explorer',
-    description: 'Unlock all biomes',
+    id: 'zone-explorer',
+    title: 'Zone Explorer',
+    description: 'Unlock all zones',
     category: 'collection',
     tier: 'platinum',
     icon: 'globe',
@@ -355,7 +355,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'first-bond',
     title: 'First Bond',
-    description: 'Reach bond level 3 with any pet',
+    description: 'Reach bond level 3 with any bot',
     category: 'bond',
     tier: 'bronze',
     icon: 'heart',
@@ -368,7 +368,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'growing-bond',
     title: 'Growing Bond',
-    description: 'Reach bond level 5 with any pet',
+    description: 'Reach bond level 5 with any bot',
     category: 'bond',
     tier: 'silver',
     icon: 'heart',
@@ -381,7 +381,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'strong-bond',
     title: 'Strong Bond',
-    description: 'Reach bond level 7 with any pet',
+    description: 'Reach bond level 7 with any bot',
     category: 'bond',
     tier: 'gold',
     icon: 'heart',
@@ -392,9 +392,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     ]
   },
   {
-    id: 'pet-whisperer',
-    title: 'Pet Whisperer',
-    description: 'Reach max bond (level 10) with any pet',
+    id: 'bot-whisperer',
+    title: 'Bot Whisperer',
+    description: 'Reach max bond (level 10) with any bot',
     category: 'bond',
     tier: 'platinum',
     icon: 'sparkles',
@@ -407,7 +407,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'bond-collector',
     title: 'Bond Collector',
-    description: 'Reach max bond with 3 different pets',
+    description: 'Reach max bond with 3 different bots',
     category: 'bond',
     tier: 'platinum',
     icon: 'heart-ribbon',
@@ -420,7 +420,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: 'bond-master',
     title: 'Bond Master',
-    description: 'Reach max bond with 5 different pets',
+    description: 'Reach max bond with 5 different bots',
     category: 'bond',
     tier: 'diamond',
     icon: 'star',

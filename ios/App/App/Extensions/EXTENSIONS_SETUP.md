@@ -1,12 +1,12 @@
-# NoMo Phone - iOS Extensions Setup Guide
+# BotBlock - iOS Extensions Setup Guide
 
 ## Overview
 
-NoMo Phone uses three iOS app extensions:
+BotBlock uses three iOS app extensions:
 
 1. **ShieldConfiguration** — Custom UI when users try to open blocked apps
 2. **DeviceActivityMonitor** — Monitors device activity lifecycle (session start/end)
-3. **NoMoWidget** — Home screen widgets (timer, streak, progress, stats)
+3. **BotBlockWidget** — Home screen widgets (timer, streak, progress, stats)
 
 ## Why Extensions Must Be Added Manually
 
@@ -19,10 +19,10 @@ cannot be added programmatically — you must create them in Xcode. They persist
 - Xcode 16.0+ (for iOS 18 SDK; iOS 26 runtime requires Xcode 18 beta)
 - Physical iOS device (Family Controls does NOT work in Simulator)
 - Apple Developer account with **Family Controls** capability enabled for:
-  - `co.nomoinc.nomo` (main app)
-  - `co.nomoinc.nomo.ShieldConfiguration`
-  - `co.nomoinc.nomo.DeviceActivityMonitor`
-- App Group `group.co.nomoinc.nomo` registered for all bundle IDs above + widget
+  - `co.botblock.app` (main app)
+  - `co.botblock.app.ShieldConfiguration`
+  - `co.botblock.app.DeviceActivityMonitor`
+- App Group `group.co.botblock.app` registered for all bundle IDs above + widget
 
 ## Extension Setup
 
@@ -32,7 +32,7 @@ cannot be added programmatically — you must create them in Xcode. They persist
 1. In Xcode: **File → New → Target**
 2. Search for and select **Shield Configuration Extension**
 3. Product Name: `ShieldConfiguration` (MUST match exactly — the Info.plist uses `$(PRODUCT_MODULE_NAME).ShieldConfigurationExtension` to find the class)
-4. Bundle Identifier: `co.nomoinc.nomo.ShieldConfiguration`
+4. Bundle Identifier: `co.botblock.app.ShieldConfiguration`
 5. Embed in Application: **App**
 6. Language: Swift
 7. Click **Finish**
@@ -62,7 +62,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities** (Signing & Capabilities):
 - **Family Controls**
-- **App Groups** → add `group.co.nomoinc.nomo`
+- **App Groups** → add `group.co.botblock.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -75,7 +75,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 1. **File → New → Target**
 2. Search for and select **Device Activity Monitor Extension**
 3. Product Name: `DeviceActivityMonitor` (MUST match exactly)
-4. Bundle Identifier: `co.nomoinc.nomo.DeviceActivityMonitor`
+4. Bundle Identifier: `co.botblock.app.DeviceActivityMonitor`
 5. Embed in Application: **App**
 6. Click **Finish**
 
@@ -97,20 +97,20 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities:**
 - **Family Controls**
-- **App Groups** → add `group.co.nomoinc.nomo`
+- **App Groups** → add `group.co.botblock.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 15.0
 
 ---
 
-### 3. NoMoWidget Extension
+### 3. BotBlockWidget Extension
 
 **Create the target:**
 1. **File → New → Target**
 2. Search for and select **Widget Extension**
-3. Product Name: `NoMoWidget`
-4. Bundle Identifier: `co.nomoinc.nomo.NoMoWidget`
+3. Product Name: `BotBlockWidget`
+4. Bundle Identifier: `co.botblock.app.BotBlockWidget`
 5. Embed in Application: **App**
 6. Uncheck "Include Live Activity" and "Include Configuration App Intent"
 7. Click **Finish**
@@ -118,15 +118,15 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 **Replace auto-generated files:**
 1. Delete ALL auto-generated files in the new target folder
 2. In Build Settings:
-   - **Info.plist File**: `App/Extensions/NoMoWidget/Info.plist`
-   - **Code Sign Entitlements**: `App/Extensions/NoMoWidget/NoMoWidget.entitlements`
+   - **Info.plist File**: `App/Extensions/BotBlockWidget/Info.plist`
+   - **Code Sign Entitlements**: `App/Extensions/BotBlockWidget/BotBlockWidget.entitlements`
 
 **Add source files to target:**
-- All `.swift` files in `App/Extensions/NoMoWidget/` and `App/Extensions/NoMoWidget/Widgets/`
+- All `.swift` files in `App/Extensions/BotBlockWidget/` and `App/Extensions/BotBlockWidget/Widgets/`
 - `App/Shared/SharedConstants.swift`
 
 **Add capabilities:**
-- **App Groups** → add `group.co.nomoinc.nomo`
+- **App Groups** → add `group.co.botblock.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -140,7 +140,7 @@ After adding all three targets:
 1. In `project.pbxproj`, the `targets` array should list 4 targets (App + 3 extensions)
 2. The main App target should have an **Embed App Extensions** build phase containing all 3 `.appex` products
 3. Build the project (Cmd+B) — all 4 targets should compile successfully
-4. Check the built `.app` bundle contains `PlugIns/ShieldConfiguration.appex`, `PlugIns/DeviceActivityMonitor.appex`, and `PlugIns/NoMoWidget.appex`
+4. Check the built `.app` bundle contains `PlugIns/ShieldConfiguration.appex`, `PlugIns/DeviceActivityMonitor.appex`, and `PlugIns/BotBlockWidget.appex`
 
 ## Common Issues
 
@@ -178,7 +178,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.co.nomoinc.nomo</string>
+    <string>group.co.botblock.app</string>
 </array>
 ```
 
@@ -188,7 +188,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.co.nomoinc.nomo</string>
+    <string>group.co.botblock.app</string>
 </array>
 ```
 
@@ -200,7 +200,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.co.nomoinc.nomo</string>
+    <string>group.co.botblock.app</string>
 </array>
 ```
 
@@ -222,17 +222,17 @@ ios/App/App/
     │   ├── DeviceActivityMonitorExtension.swift
     │   ├── Info.plist
     │   └── DeviceActivityMonitor.entitlements
-    └── NoMoWidget/
-        ├── NoMoWidgetBundle.swift
+    └── BotBlockWidget/
+        ├── BotBlockWidgetBundle.swift
         ├── Info.plist
-        ├── NoMoWidget.entitlements
+        ├── BotBlockWidget.entitlements
         ├── WidgetColors.swift
         ├── WidgetStrings.swift
         ├── AccessibilityUtilities.swift
         ├── WidgetAccessibilityStrings.swift
         └── Widgets/
-            ├── NoMoTimerWidget.swift
-            ├── NoMoStreakWidget.swift
-            ├── NoMoProgressWidget.swift
-            └── NoMoStatsWidget.swift
+            ├── BotBlockTimerWidget.swift
+            ├── BotBlockStreakWidget.swift
+            ├── BotBlockProgressWidget.swift
+            └── BotBlockStatsWidget.swift
 ```

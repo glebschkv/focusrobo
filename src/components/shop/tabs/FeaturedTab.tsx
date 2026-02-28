@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ShopItem, COIN_PACKS, StarterBundle, CoinPack, Bundle } from "@/data/ShopData";
 import { BACKGROUND_BUNDLES, STARTER_BUNDLES } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { getCoinExclusiveAnimals, AnimalData } from "@/data/AnimalDatabase";
+import { getCoinExclusiveRobots, RobotData } from "@/data/RobotDatabase";
 import { toast } from "sonner";
 import { SpritePreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
 import { BundleConfirmDialog } from "../BundleConfirmDialog";
@@ -17,7 +17,7 @@ interface FeaturedTabProps {
   isOwned: (itemId: string, category: ShopCategory) => boolean;
   isBundleOwned: (bundleId: string) => boolean;
   setActiveCategory: (category: ShopCategory) => void;
-  setSelectedItem: (item: ShopItem | AnimalData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   setShowPremiumModal: (show: boolean) => void;
   isPremium: boolean;
@@ -37,7 +37,7 @@ export const FeaturedTab = ({
   currentPlan,
   canAfford,
 }: FeaturedTabProps) => {
-  const bestSellingPets = getCoinExclusiveAnimals().slice(0, 2);
+  const bestSellingBots = getCoinExclusiveRobots().slice(0, 2);
   const storeKit = useStoreKit();
   const bestValuePack = COIN_PACKS.find(pack => pack.isBestValue) || COIN_PACKS[COIN_PACKS.length - 1];
 
@@ -71,7 +71,7 @@ export const FeaturedTab = ({
           const bundle = result.validationResult.bundle;
           const items: string[] = [];
           if (bundle.coinsGranted > 0) items.push(`${bundle.coinsGranted.toLocaleString()} coins`);
-          if (bundle.characterId) items.push('Exclusive pet');
+          if (bundle.characterId) items.push('Exclusive bot');
           if (bundle.boosterId) items.push('Booster');
           if (bundle.streakFreezes > 0) items.push(`${bundle.streakFreezes} Streak Freeze${bundle.streakFreezes > 1 ? 's' : ''}`);
           toast.success(`${selectedBundle.name} purchased! Received: ${items.join(', ')}`);
@@ -144,7 +144,7 @@ export const FeaturedTab = ({
               </div>
             </div>
             <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('co.nomoinc.nomo.premium.monthly', '€4,99')}</span>
+              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('co.botblock.app.premium.monthly', '€4,99')}</span>
               <span className="text-white/50 text-[10px] font-bold">/month</span>
             </div>
           </div>
@@ -328,11 +328,11 @@ export const FeaturedTab = ({
         </button>
       </div>
 
-      {/* Popular Pets — matching CollectionTab pet cards */}
+      {/* Popular Bots — matching CollectionTab bot cards */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <div className="shop-section-header" style={{ marginBottom: 0 }}>
-            <span className="shop-section-title">Popular Pets</span>
+            <span className="shop-section-title">Popular Bots</span>
           </div>
           <button
             onClick={() => setActiveCategory('pets')}
@@ -342,7 +342,7 @@ export const FeaturedTab = ({
           </button>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          {bestSellingPets.map((pet) => {
+          {bestSellingBots.map((pet) => {
             const owned = inventory.ownedCharacters.includes(pet.id);
             return (
               <button
@@ -352,18 +352,18 @@ export const FeaturedTab = ({
                   if (!owned) setShowPurchaseConfirm(true);
                 }}
                 className={cn(
-                  "shop-pet-card",
+                  "shop-bot-card",
                   owned && "owned"
                 )}
               >
                 <div className="h-14 mb-1 flex items-center justify-center overflow-hidden">
-                  {pet.spriteConfig ? (
+                  {pet.imageConfig ? (
                     <SpritePreview
-                      animal={pet}
-                      scale={Math.min(1.8, 56 / Math.max(pet.spriteConfig.frameWidth, pet.spriteConfig.frameHeight))}
+                      robot={pet}
+                      scale={Math.min(1.8, 56 / Math.max(pet.imageConfig?.size || 64, pet.imageConfig?.size || 64))}
                     />
                   ) : (
-                    <span className="text-3xl">{pet.emoji}</span>
+                    <span className="text-3xl">{pet.icon}</span>
                   )}
                 </div>
                 <span className="text-xs font-bold block">{pet.name}</span>
