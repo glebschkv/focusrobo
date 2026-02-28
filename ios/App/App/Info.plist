@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>NoMo Phone</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<!-- iPhone: Portrait only -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<!-- iPad: All orientations -->
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+
+	<!-- URL Scheme for deep links (Supabase auth redirects) -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>co.nomoinc.nomo</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>co.nomoinc.nomo</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Privacy Usage Descriptions -->
+	<key>NSFamilyControlsUsageDescription</key>
+	<string>NoMo uses Screen Time to track when you're away from your phone, rewarding you for staying focused.</string>
+
+	<!-- Push Notifications and Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>processing</string>
+	</array>
+
+	<!-- Background Task Identifiers -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>co.nomoinc.nomo.background-tracking</string>
+	</array>
+
+	<!-- Screen Time API Usage -->
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>DeviceActivityMonitor</string>
+	</array>
+
+	<!-- Live Activities (disabled for now) -->
+	<key>NSSupportsLiveActivities</key>
+	<false/>
+
+	<!-- Minimum iOS Version -->
+	<key>MinimumOSVersion</key>
+	<string>15.0</string>
+
+	<!-- Accessibility Features -->
+	<!--
+	 * NoMo Phone Accessibility Implementation
+	 *
+	 * This app implements comprehensive accessibility support:
+	 * - Full VoiceOver support with labels, hints, and traits
+	 * - Dynamic Type support for all text elements
+	 * - High Contrast mode support
+	 * - Reduced Motion support
+	 * - WCAG 2.1 Level AAA color contrast compliance
+	 *
+	 * All widgets are fully accessible:
+	 * - Focus Timer Widget: Live progress updates, time announcements
+	 * - Streak Widget: Streak status, record indicators
+	 * - Progress Widget: Goal progress, completion announcements
+	 * - Stats Widget: Level, XP, focus time summaries
+	 *
+	 * Shield screens provide accessible blocking notifications
+	 * with clear instructions for returning to the app.
+	-->
+
+	<!-- Accessibility Usage Description -->
+	<key>NSAccessibilityUsageDescription</key>
+	<string>NoMo Phone is designed to be fully accessible. All features support VoiceOver, Dynamic Type, and other assistive technologies.</string>
+
+	<!-- Large Content Viewer Support -->
+	<key>UILargeContentViewerInteractionEnabled</key>
+	<true/>
+
+	<!-- Supports RTL Languages -->
+	<key>UIUserInterfaceLayoutDirection</key>
+	<string>Automatic</string>
+
+	<!-- Export Compliance - App only uses standard HTTPS/TLS (no custom encryption) -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+</dict>
+</plist>

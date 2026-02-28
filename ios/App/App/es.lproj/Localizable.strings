@@ -1,0 +1,222 @@
+/*
+  Localizable.strings (Spanish)
+  NoMo Phone
+
+  Spanish localization for all user-facing strings.
+*/
+
+// MARK: - Shield Configuration
+
+"shield.title" = "¡Mantente enfocado!";
+"shield.return_button" = "Volver a NoMo";
+"shield.app_blocked" = "%@ está bloqueada";
+"shield.category_blocked" = "%@ está bloqueada durante tu sesión de enfoque";
+"shield.domain_blocked" = "%@ está bloqueado durante tu sesión de enfoque";
+"shield.web_category_blocked" = "La navegación web en %@ está bloqueada";
+
+// Shield Motivational Messages
+"shield.motivation.1" = "¡Tu mascota de enfoque cuenta contigo!";
+"shield.motivation.2" = "¡Mantente fuerte - tu yo futuro te lo agradecerá!";
+"shield.motivation.3" = "¡Cada minuto de enfoque te da recompensas!";
+"shield.motivation.4" = "¡Lo estás haciendo genial! ¡Sigue enfocado!";
+"shield.motivation.5" = "¡Las distracciones pueden esperar - tus metas no!";
+"shield.motivation.6" = "¡Enfócate ahora, navega después!";
+"shield.motivation.7" = "¡Tu racha depende de ti!";
+"shield.motivation.8" = "¡Ya casi! ¡No te rindas ahora!";
+"shield.motivation.9" = "¡Enfoque = XP = Subir de Nivel!";
+"shield.motivation.10" = "¡Tu mascota cree en ti!";
+
+// MARK: - Blocking
+
+"blocking.selection_saved" = "Selección de apps guardada";
+"blocking.no_apps" = "No hay apps configuradas para bloquear";
+"blocking.session_started" = "Sesión de enfoque iniciada";
+"blocking.session_ended" = "Sesión de enfoque terminada";
+
+// MARK: - Permissions
+
+"permissions.granted" = "concedido";
+"permissions.denied" = "denegado";
+"permissions.family_controls_required" = "Se requiere permiso de Controles Familiares";
+
+// MARK: - Widgets
+
+"widget.timer_title" = "Temporizador de Enfoque";
+"widget.streak_title" = "Racha Actual";
+"widget.progress_title" = "Progreso Diario";
+"widget.stats_title" = "Estadísticas de Enfoque";
+"widget.no_session" = "Sin sesión activa";
+"widget.focus_session" = "Sesión de Enfoque";
+"widget.streak_days" = "%d días";
+"widget.minutes_remaining" = "%d min restantes";
+"widget.percent_complete" = "%d%% completado";
+"widget.tap_to_start" = "Toca para iniciar";
+"widget.sessions" = "sesiones";
+"widget.focused" = "enfocado";
+"widget.record" = "¡Récord!";
+
+// MARK: - StoreKit
+
+"storekit.purchase_success" = "Compra exitosa";
+"storekit.purchase_cancelled" = "Usuario canceló la compra";
+"storekit.purchase_pending" = "Compra pendiente de aprobación";
+"storekit.restore_success" = "Compras restauradas exitosamente";
+"storekit.transaction_verification_failed" = "Verificación de transacción fallida";
+
+// MARK: - Errors
+
+"error.missing_parameter" = "Falta el parámetro requerido: %@";
+"error.invalid_parameter" = "Parámetro inválido '%@': %@";
+"error.invalid_format" = "Formato inválido para '%@'. Esperado: %@";
+"error.permission_denied" = "Permiso de %@ denegado";
+"error.permission_not_determined" = "Permiso de %@ aún no solicitado";
+"error.permission_restricted" = "%@ está restringido en este dispositivo";
+"error.product_not_found" = "Producto no encontrado: %@";
+"error.purchase_failed" = "Compra fallida: %@";
+"error.purchase_cancelled" = "La compra fue cancelada";
+"error.purchase_pending" = "La compra está pendiente de aprobación";
+"error.transaction_verification_failed" = "Verificación de transacción fallida";
+"error.no_active_subscription" = "No se encontró suscripción activa";
+"error.monitoring_failed" = "Monitoreo fallido: %@";
+"error.selection_decoding_failed" = "Error al decodificar selección de apps";
+"error.activity_scheduling_failed" = "Programación de actividad fallida: %@";
+"error.blocking_not_configured" = "El bloqueo de apps no está configurado";
+"error.shield_application_failed" = "Error al aplicar el escudo: %@";
+"error.shared_container_unavailable" = "Contenedor compartido no disponible";
+"error.data_encoding_failed" = "Error al codificar datos";
+"error.data_decoding_failed" = "Error al decodificar datos";
+"error.window_scene_unavailable" = "Escena de ventana no disponible";
+"error.background_task_failed" = "Tarea en segundo plano fallida: %@";
+"error.network_error" = "Error de red: %@";
+"error.network_error_generic" = "Ocurrió un error de red";
+"error.unknown" = "Ocurrió un error: %@";
+
+// MARK: - General
+
+"general.success" = "Éxito";
+"general.error" = "Error";
+"general.cancel" = "Cancelar";
+"general.ok" = "OK";
+"general.done" = "Listo";
+"general.loading" = "Cargando...";
+"general.retry" = "Reintentar";
+
+// MARK: - Time Formatting
+
+"time.hours" = "%d horas";
+"time.minutes" = "%d minutos";
+"time.seconds" = "%d segundos";
+"time.hours_short" = "%dh";
+"time.minutes_short" = "%dm";
+"time.seconds_short" = "%ds";
+
+// MARK: - Stats
+
+"stats.level" = "Nivel %d";
+"stats.xp" = "%d XP";
+"stats.total_focus_time" = "Tiempo Total de Enfoque";
+"stats.total_sessions" = "Sesiones Totales";
+"stats.current_streak" = "Racha Actual";
+"stats.longest_streak" = "Racha Más Larga";
+
+// MARK: - Session Types
+
+"session.focus" = "Enfoque";
+"session.short_break" = "Descanso Corto";
+"session.long_break" = "Descanso Largo";
+
+// MARK: - Accessibility: Icon Descriptions
+
+"a11y.icon.timer" = "Temporizador";
+"a11y.icon.moon" = "Modo de enfoque";
+"a11y.icon.flame_active" = "Racha activa";
+"a11y.icon.flame_inactive" = "Sin racha actual";
+"a11y.icon.star" = "Récord personal";
+"a11y.icon.snowflake" = "Congelación de racha disponible";
+"a11y.icon.checkmark" = "Meta completada";
+"a11y.icon.clock" = "Tiempo total de enfoque";
+"a11y.icon.level" = "Nivel actual";
+
+// MARK: - Accessibility: Widget Labels
+
+"a11y.widget.timer" = "Widget de Temporizador de Enfoque";
+"a11y.widget.streak" = "Widget de Racha de Enfoque";
+"a11y.widget.progress" = "Widget de Progreso Diario";
+"a11y.widget.stats" = "Widget de Estadísticas de Enfoque";
+
+// MARK: - Accessibility: Hints
+
+"a11y.hint.tap_to_open" = "Doble toque para abrir la app NoMo";
+"a11y.hint.tap_to_start" = "Doble toque para iniciar una nueva sesión de enfoque";
+"a11y.hint.live_progress" = "Esta información se actualiza automáticamente";
+
+// MARK: - Accessibility: Time Formatting
+
+"a11y.time.remaining_minutes_seconds" = "%d minutos y %d segundos restantes";
+"a11y.time.remaining_minutes" = "%d minutos restantes";
+"a11y.time.remaining_seconds" = "%d segundos restantes";
+
+// MARK: - Accessibility: Progress
+
+"a11y.progress.complete" = "Meta diaria completada";
+"a11y.progress.percent" = "%d por ciento de la meta diaria";
+
+// MARK: - Accessibility: Streak
+
+"a11y.streak.record" = "Racha de %d días, este es tu récord personal";
+"a11y.streak.none" = "Sin racha actual, empieza a enfocarte para construir tu racha";
+"a11y.streak.one_day" = "Racha de 1 día";
+"a11y.streak.days" = "Racha de %d días";
+"a11y.freeze.one" = "1 congelación de racha disponible";
+"a11y.freeze.multiple" = "%d congelaciones de racha disponibles";
+
+// MARK: - Accessibility: Focus Time
+
+"a11y.focus.time_progress" = "%d de %d minutos enfocados hoy";
+"a11y.sessions.one" = "1 sesión completada hoy";
+"a11y.sessions.multiple" = "%d sesiones completadas hoy";
+
+// MARK: - Accessibility: Total Time
+
+"a11y.total.hours_minutes" = "%d horas y %d minutos de tiempo total de enfoque";
+"a11y.total.hours" = "%d horas de tiempo total de enfoque";
+"a11y.total.minutes" = "%d minutos de tiempo total de enfoque";
+
+// MARK: - Accessibility: Stats
+
+"a11y.stats.xp" = "%d puntos de experiencia";
+"a11y.stats.level" = "Nivel %d";
+
+// MARK: - Accessibility: Timer State
+
+"a11y.timer.running" = "Sesión de %@ en progreso, %@ restantes";
+"a11y.timer.idle" = "Sin sesión de enfoque activa";
+"a11y.session.focus" = "Enfoque";
+
+// MARK: - Accessibility: Timer Widget Summary
+
+"a11y.timer.summary_active" = "Temporizador de Enfoque: sesión de %@, %@ restantes, %d por ciento completado";
+"a11y.timer.summary_inactive" = "Temporizador de Enfoque: Sin sesión activa. Doble toque para comenzar a enfocarte";
+
+// MARK: - Accessibility: Streak Widget Summary
+
+"a11y.streak.summary" = "Racha de Enfoque: %d días";
+"a11y.streak.summary_record" = "Racha de Enfoque: %d días, récord personal";
+"a11y.streak.summary_freezes" = "Racha de Enfoque: %d días, %d congelaciones disponibles";
+"a11y.streak.summary_record_freezes" = "Racha de Enfoque: %d días, récord personal, %d congelaciones disponibles";
+
+// MARK: - Accessibility: Progress Widget Summary
+
+"a11y.progress.summary" = "Progreso Diario: %d por ciento, %d de %d minutos enfocados, %d sesiones completadas";
+"a11y.progress.goal_reached" = "¡Felicidades! Has alcanzado tu meta diaria de enfoque";
+
+// MARK: - Accessibility: Stats Widget Summary
+
+"a11y.stats.summary" = "Estadísticas de Enfoque: Nivel %d, %d XP, %@ tiempo total de enfoque, %d sesiones completadas";
+
+// MARK: - Accessibility: Shield
+
+"a11y.shield.title" = "App bloqueada durante la sesión de enfoque";
+"a11y.shield.description" = "Esta app está bloqueada para ayudarte a mantener el enfoque. Puedes volver a NoMo para continuar tu sesión.";
+"a11y.shield.return_button" = "Volver a la app NoMo";
+"a11y.shield.return_hint" = "Doble toque para cerrar esta app bloqueada y volver a NoMo";

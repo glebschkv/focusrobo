@@ -1,0 +1,1071 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
+		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
+		SHARED0001000000000001 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0001000000000000 /* SharedConstants.swift */; };
+		SHARED0002000000000001 /* ShieldConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0002000000000000 /* ShieldConfigurationHelper.swift */; };
+		SHARED0003000000000001 /* DeviceActivityMonitorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0003000000000000 /* DeviceActivityMonitorHelper.swift */; };
+		SHARED0004000000000002 /* WidgetSharedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0004000000000000 /* WidgetSharedModels.swift */; };
+		SRC00010000000000000001 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00010000000000000000 /* AppConfig.swift */; };
+		SRC00020000000000000001 /* AppReviewPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00020000000000000000 /* AppReviewPlugin.swift */; };
+		SRC00030000000000000001 /* DeviceActivityPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00030000000000000000 /* DeviceActivityPlugin.swift */; };
+		SRC00040000000000000001 /* StoreKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00040000000000000000 /* StoreKitPlugin.swift */; };
+		SRC00050000000000000001 /* WidgetDataPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00050000000000000000 /* WidgetDataPlugin.swift */; };
+		SRC00060000000000000001 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00060000000000000000 /* Logger.swift */; };
+		SRC00070000000000000001 /* PluginError.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00070000000000000000 /* PluginError.swift */; };
+		SRC00080000000000000001 /* PluginValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00080000000000000000 /* PluginValidation.swift */; };
+		SRC00090000000000000001 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00090000000000000000 /* Protocols.swift */; };
+		SRC00100000000000000001 /* StoreKitConverters.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00100000000000000000 /* StoreKitConverters.swift */; };
+		SRC00110000000000000001 /* StoreKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00110000000000000000 /* StoreKitError.swift */; };
+		SRC00120000000000000001 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00120000000000000000 /* Strings.swift */; };
+		SRC00130000000000000001 /* ActivityMonitorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00130000000000000000 /* ActivityMonitorManager.swift */; };
+		SRC00140000000000000001 /* AppBlockingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00140000000000000000 /* AppBlockingManager.swift */; };
+		SRC00150000000000000001 /* BackgroundTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00150000000000000000 /* BackgroundTaskManager.swift */; };
+		SRC00160000000000000001 /* FocusDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00160000000000000000 /* FocusDataManager.swift */; };
+		SRC00170000000000000001 /* HapticFeedbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00170000000000000000 /* HapticFeedbackManager.swift */; };
+		SRC00180000000000000001 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00180000000000000000 /* PermissionsManager.swift */; };
+		SRC00190000000000000001 /* StoreKitProductManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00190000000000000000 /* StoreKitProductManager.swift */; };
+		SRC00200000000000000001 /* StoreKitPurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00200000000000000000 /* StoreKitPurchaseService.swift */; };
+		SRC00210000000000000001 /* StoreKitTransactionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00210000000000000000 /* StoreKitTransactionManager.swift */; };
+		SRC00220000000000000001 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = SRC00220000000000000000 /* WidgetDataManager.swift */; };
+		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
+		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
+		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
+		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+/* -- DeviceActivityMonitor build files -- */
+		DAMEXT000500000000000000 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAMEXT000100000000000000 /* DeviceActivityMonitorExtension.swift */; };
+		DAMEXT000600000000000000 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0001000000000000 /* SharedConstants.swift */; };
+		DAMEXT000700000000000000 /* DeviceActivityMonitorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0003000000000000 /* DeviceActivityMonitorHelper.swift */; };
+		DAMEXT000800000000000000 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000100000000000000 /* FamilyControls.framework */; };
+		DAMEXT000900000000000000 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000200000000000000 /* DeviceActivity.framework */; };
+		DAMEXT001000000000000000 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000300000000000000 /* ManagedSettings.framework */; };
+/* -- ShieldConfiguration build files -- */
+		SCFEXT000500000000000000 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = SCFEXT000100000000000000 /* ShieldConfigurationExtension.swift */; };
+		SCFEXT000600000000000000 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0001000000000000 /* SharedConstants.swift */; };
+		SCFEXT000700000000000000 /* ShieldConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0002000000000000 /* ShieldConfigurationHelper.swift */; };
+		SCFEXT000800000000000000 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000100000000000000 /* FamilyControls.framework */; };
+		SCFEXT000900000000000000 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000300000000000000 /* ManagedSettings.framework */; };
+		SCFEXT000950000000000000 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000600000000000000 /* ManagedSettingsUI.framework */; };
+/* -- NoMoWidget build files -- */
+		NMWEXT001300000000000000 /* NoMoWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */; };
+		NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT004100000000000000 /* WidgetPetMessages.swift */; };
+		NMWEXT001400000000000000 /* WidgetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000200000000000000 /* WidgetColors.swift */; };
+		NMWEXT001500000000000000 /* WidgetStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000300000000000000 /* WidgetStrings.swift */; };
+		NMWEXT001600000000000000 /* AccessibilityUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000400000000000000 /* AccessibilityUtilities.swift */; };
+		NMWEXT001700000000000000 /* WidgetAccessibilityStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */; };
+		NMWEXT001800000000000000 /* NoMoProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000600000000000000 /* NoMoProgressWidget.swift */; };
+		NMWEXT001900000000000000 /* NoMoStatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000700000000000000 /* NoMoStatsWidget.swift */; };
+		NMWEXT002000000000000000 /* NoMoStreakWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000800000000000000 /* NoMoStreakWidget.swift */; };
+		NMWEXT002100000000000000 /* NoMoTimerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = NMWEXT000900000000000000 /* NoMoTimerWidget.swift */; };
+		NMWEXT002200000000000000 /* SharedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = SHARED0001000000000000 /* SharedConstants.swift */; };
+		NMWEXT002300000000000000 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000400000000000000 /* WidgetKit.framework */; };
+		NMWEXT002400000000000000 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FWKREF000500000000000000 /* SwiftUI.framework */; };
+		NMWEXT003900000000000000 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = NMWEXT003600000000000000 /* Localizable.strings */; };
+/* -- Embed Extensions build files -- */
+		EMBEXT000200000000000000 /* DeviceActivityMonitor.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EMBEXT000300000000000000 /* ShieldConfiguration.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = SCFEXT000400000000000000 /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EMBEXT000400000000000000 /* NoMoWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = NMWEXT001200000000000000 /* NoMoWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DAMEXT001900000000000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAMEXT001500000000000000;
+			remoteInfo = DeviceActivityMonitor;
+		};
+		SCFEXT001800000000000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = SCFEXT001400000000000000;
+			remoteInfo = ShieldConfiguration;
+		};
+		NMWEXT003400000000000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = NMWEXT003000000000000000;
+			remoteInfo = NoMoWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EMBEXT000100000000000000 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EMBEXT000200000000000000 /* DeviceActivityMonitor.appex in Embed App Extensions */,
+				EMBEXT000300000000000000 /* ShieldConfiguration.appex in Embed App Extensions */,
+				EMBEXT000400000000000000 /* NoMoWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
+		SHARED0001000000000000 /* SharedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConstants.swift; sourceTree = "<group>"; };
+		SHARED0002000000000000 /* ShieldConfigurationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationHelper.swift; sourceTree = "<group>"; };
+		SHARED0003000000000000 /* DeviceActivityMonitorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorHelper.swift; sourceTree = "<group>"; };
+		SHARED0004000000000000 /* WidgetSharedModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSharedModels.swift; sourceTree = "<group>"; };
+		SRC00010000000000000000 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		SRC00020000000000000000 /* AppReviewPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewPlugin.swift; sourceTree = "<group>"; };
+		SRC00030000000000000000 /* DeviceActivityPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityPlugin.swift; sourceTree = "<group>"; };
+		SRC00040000000000000000 /* StoreKitPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitPlugin.swift; sourceTree = "<group>"; };
+		SRC00050000000000000000 /* WidgetDataPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataPlugin.swift; sourceTree = "<group>"; };
+		SRC00060000000000000000 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		SRC00070000000000000000 /* PluginError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginError.swift; sourceTree = "<group>"; };
+		SRC00080000000000000000 /* PluginValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginValidation.swift; sourceTree = "<group>"; };
+		SRC00090000000000000000 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		SRC00100000000000000000 /* StoreKitConverters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitConverters.swift; sourceTree = "<group>"; };
+		SRC00110000000000000000 /* StoreKitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitError.swift; sourceTree = "<group>"; };
+		SRC00120000000000000000 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		SRC00130000000000000000 /* ActivityMonitorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMonitorManager.swift; sourceTree = "<group>"; };
+		SRC00140000000000000000 /* AppBlockingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBlockingManager.swift; sourceTree = "<group>"; };
+		SRC00150000000000000000 /* BackgroundTaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskManager.swift; sourceTree = "<group>"; };
+		SRC00160000000000000000 /* FocusDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusDataManager.swift; sourceTree = "<group>"; };
+		SRC00170000000000000000 /* HapticFeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackManager.swift; sourceTree = "<group>"; };
+		SRC00180000000000000000 /* PermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManager.swift; sourceTree = "<group>"; };
+		SRC00190000000000000000 /* StoreKitProductManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitProductManager.swift; sourceTree = "<group>"; };
+		SRC00200000000000000000 /* StoreKitPurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitPurchaseService.swift; sourceTree = "<group>"; };
+		SRC00210000000000000000 /* StoreKitTransactionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitTransactionManager.swift; sourceTree = "<group>"; };
+		SRC00220000000000000000 /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
+		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+/* -- DeviceActivityMonitor file references -- */
+		DAMEXT000100000000000000 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		DAMEXT000200000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DAMEXT000300000000000000 /* DeviceActivityMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeviceActivityMonitor.entitlements; sourceTree = "<group>"; };
+		DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* -- ShieldConfiguration file references -- */
+		SCFEXT000100000000000000 /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
+		SCFEXT000200000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		SCFEXT000300000000000000 /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
+		SCFEXT000400000000000000 /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* -- NoMoWidget file references -- */
+		NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoWidgetBundle.swift; sourceTree = "<group>"; };
+		NMWEXT004100000000000000 /* WidgetPetMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPetMessages.swift; sourceTree = "<group>"; };
+		NMWEXT000200000000000000 /* WidgetColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetColors.swift; sourceTree = "<group>"; };
+		NMWEXT000300000000000000 /* WidgetStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetStrings.swift; sourceTree = "<group>"; };
+		NMWEXT000400000000000000 /* AccessibilityUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUtilities.swift; sourceTree = "<group>"; };
+		NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetAccessibilityStrings.swift; sourceTree = "<group>"; };
+		NMWEXT000600000000000000 /* NoMoProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoProgressWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000700000000000000 /* NoMoStatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoStatsWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000800000000000000 /* NoMoStreakWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoStreakWidget.swift; sourceTree = "<group>"; };
+		NMWEXT000900000000000000 /* NoMoTimerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoMoTimerWidget.swift; sourceTree = "<group>"; };
+		NMWEXT001000000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		NMWEXT001100000000000000 /* NoMoWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoMoWidget.entitlements; sourceTree = "<group>"; };
+		NMWEXT001200000000000000 /* NoMoWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoMoWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		NMWEXT003700000000000000 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		NMWEXT003800000000000000 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+/* -- Framework file references -- */
+		FWKREF000100000000000000 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = SDKROOT; };
+		FWKREF000200000000000000 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		FWKREF000300000000000000 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		FWKREF000400000000000000 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		FWKREF000500000000000000 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		FWKREF000600000000000000 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		504EC3011FED79650016851F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAMEXT001300000000000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAMEXT000800000000000000 /* FamilyControls.framework in Frameworks */,
+				DAMEXT000900000000000000 /* DeviceActivity.framework in Frameworks */,
+				DAMEXT001000000000000000 /* ManagedSettings.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SCFEXT001200000000000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SCFEXT000800000000000000 /* FamilyControls.framework in Frameworks */,
+				SCFEXT000900000000000000 /* ManagedSettings.framework in Frameworks */,
+				SCFEXT000950000000000000 /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		NMWEXT002800000000000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				NMWEXT002300000000000000 /* WidgetKit.framework in Frameworks */,
+				NMWEXT002400000000000000 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		27E2DDA53C4D2A4D1A88CE4A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */,
+				FWKREF000100000000000000 /* FamilyControls.framework */,
+				FWKREF000200000000000000 /* DeviceActivity.framework */,
+				FWKREF000300000000000000 /* ManagedSettings.framework */,
+				FWKREF000400000000000000 /* WidgetKit.framework */,
+				FWKREF000500000000000000 /* SwiftUI.framework */,
+				FWKREF000600000000000000 /* ManagedSettingsUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		504EC2FB1FED79650016851F = {
+			isa = PBXGroup;
+			children = (
+				504EC3061FED79650016851F /* App */,
+				EXTGRP000100000000000000 /* Extensions */,
+				504EC3051FED79650016851F /* Products */,
+				7F8756D8B27F46E3366F6CEA /* Pods */,
+				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		504EC3051FED79650016851F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				504EC3041FED79650016851F /* App.app */,
+				DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */,
+				SCFEXT000400000000000000 /* ShieldConfiguration.appex */,
+				NMWEXT001200000000000000 /* NoMoWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		504EC3061FED79650016851F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				SHARED0001000000000002 /* Shared */,
+				SRCGRP0010000000000000 /* Sources */,
+				50379B222058CBB4000EE86E /* capacitor.config.json */,
+				504EC3071FED79650016851F /* AppDelegate.swift */,
+				504EC30B1FED79650016851F /* Main.storyboard */,
+				504EC30E1FED79650016851F /* Assets.xcassets */,
+				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
+				504EC3131FED79650016851F /* Info.plist */,
+				2FAD9762203C412B000D30F8 /* config.xml */,
+				50B271D01FEDC1A000F3C39B /* public */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		SHARED0001000000000002 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				SHARED0001000000000000 /* SharedConstants.swift */,
+				SHARED0002000000000000 /* ShieldConfigurationHelper.swift */,
+				SHARED0003000000000000 /* DeviceActivityMonitorHelper.swift */,
+				SHARED0004000000000000 /* WidgetSharedModels.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		SRCGRP0010000000000000 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				SRCGRP0020000000000000 /* Core */,
+				SRCGRP0030000000000000 /* Managers */,
+				SRC00010000000000000000 /* AppConfig.swift */,
+				SRC00020000000000000000 /* AppReviewPlugin.swift */,
+				SRC00030000000000000000 /* DeviceActivityPlugin.swift */,
+				SRC00040000000000000000 /* StoreKitPlugin.swift */,
+				SRC00050000000000000000 /* WidgetDataPlugin.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		SRCGRP0020000000000000 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				SRC00060000000000000000 /* Logger.swift */,
+				SRC00070000000000000000 /* PluginError.swift */,
+				SRC00080000000000000000 /* PluginValidation.swift */,
+				SRC00090000000000000000 /* Protocols.swift */,
+				SRC00100000000000000000 /* StoreKitConverters.swift */,
+				SRC00110000000000000000 /* StoreKitError.swift */,
+				SRC00120000000000000000 /* Strings.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		SRCGRP0030000000000000 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				SRC00130000000000000000 /* ActivityMonitorManager.swift */,
+				SRC00140000000000000000 /* AppBlockingManager.swift */,
+				SRC00150000000000000000 /* BackgroundTaskManager.swift */,
+				SRC00160000000000000000 /* FocusDataManager.swift */,
+				SRC00170000000000000000 /* HapticFeedbackManager.swift */,
+				SRC00180000000000000000 /* PermissionsManager.swift */,
+				SRC00190000000000000000 /* StoreKitProductManager.swift */,
+				SRC00200000000000000000 /* StoreKitPurchaseService.swift */,
+				SRC00210000000000000000 /* StoreKitTransactionManager.swift */,
+				SRC00220000000000000000 /* WidgetDataManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		7F8756D8B27F46E3366F6CEA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */,
+				AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* -- Extension Groups -- */
+		EXTGRP000100000000000000 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DAMEXT001100000000000000 /* DeviceActivityMonitor */,
+				SCFEXT001000000000000000 /* ShieldConfiguration */,
+				NMWEXT002500000000000000 /* NoMoWidget */,
+			);
+			name = Extensions;
+			path = App/Extensions;
+			sourceTree = "<group>";
+		};
+		DAMEXT001100000000000000 /* DeviceActivityMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				DAMEXT000100000000000000 /* DeviceActivityMonitorExtension.swift */,
+				DAMEXT000200000000000000 /* Info.plist */,
+				DAMEXT000300000000000000 /* DeviceActivityMonitor.entitlements */,
+			);
+			path = DeviceActivityMonitor;
+			sourceTree = "<group>";
+		};
+		SCFEXT001000000000000000 /* ShieldConfiguration */ = {
+			isa = PBXGroup;
+			children = (
+				SCFEXT000100000000000000 /* ShieldConfigurationExtension.swift */,
+				SCFEXT000200000000000000 /* Info.plist */,
+				SCFEXT000300000000000000 /* ShieldConfiguration.entitlements */,
+			);
+			path = ShieldConfiguration;
+			sourceTree = "<group>";
+		};
+		NMWEXT002500000000000000 /* NoMoWidget */ = {
+			isa = PBXGroup;
+			children = (
+				NMWEXT000100000000000000 /* NoMoWidgetBundle.swift */,
+				NMWEXT000200000000000000 /* WidgetColors.swift */,
+				NMWEXT000300000000000000 /* WidgetStrings.swift */,
+				NMWEXT004100000000000000 /* WidgetPetMessages.swift */,
+				NMWEXT000400000000000000 /* AccessibilityUtilities.swift */,
+				NMWEXT000500000000000000 /* WidgetAccessibilityStrings.swift */,
+				NMWEXT002600000000000000 /* Widgets */,
+				NMWEXT003600000000000000 /* Localizable.strings */,
+				NMWEXT001000000000000000 /* Info.plist */,
+				NMWEXT001100000000000000 /* NoMoWidget.entitlements */,
+			);
+			path = NoMoWidget;
+			sourceTree = "<group>";
+		};
+		NMWEXT002600000000000000 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				NMWEXT000600000000000000 /* NoMoProgressWidget.swift */,
+				NMWEXT000700000000000000 /* NoMoStatsWidget.swift */,
+				NMWEXT000800000000000000 /* NoMoStreakWidget.swift */,
+				NMWEXT000900000000000000 /* NoMoTimerWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		504EC3031FED79650016851F /* App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
+			buildPhases = (
+				6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */,
+				504EC3001FED79650016851F /* Sources */,
+				504EC3011FED79650016851F /* Frameworks */,
+				504EC3021FED79650016851F /* Resources */,
+				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
+				EMBEXT000100000000000000 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DAMEXT002000000000000000 /* PBXTargetDependency */,
+				SCFEXT001900000000000000 /* PBXTargetDependency */,
+				NMWEXT003500000000000000 /* PBXTargetDependency */,
+			);
+			name = App;
+			productName = App;
+			productReference = 504EC3041FED79650016851F /* App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DAMEXT001500000000000000 /* DeviceActivityMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DAMEXT001800000000000000 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */;
+			buildPhases = (
+				DAMEXT001200000000000000 /* Sources */,
+				DAMEXT001300000000000000 /* Frameworks */,
+				DAMEXT001400000000000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceActivityMonitor;
+			productName = DeviceActivityMonitor;
+			productReference = DAMEXT000400000000000000 /* DeviceActivityMonitor.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		SCFEXT001400000000000000 /* ShieldConfiguration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = SCFEXT001700000000000000 /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */;
+			buildPhases = (
+				SCFEXT001100000000000000 /* Sources */,
+				SCFEXT001200000000000000 /* Frameworks */,
+				SCFEXT001300000000000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShieldConfiguration;
+			productName = ShieldConfiguration;
+			productReference = SCFEXT000400000000000000 /* ShieldConfiguration.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		NMWEXT003000000000000000 /* NoMoWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "NoMoWidget" */;
+			buildPhases = (
+				NMWEXT002700000000000000 /* Sources */,
+				NMWEXT002800000000000000 /* Frameworks */,
+				NMWEXT002900000000000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NoMoWidget;
+			productName = NoMoWidget;
+			productReference = NMWEXT001200000000000000 /* NoMoWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		504EC2FC1FED79650016851F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
+				TargetAttributes = {
+					504EC3031FED79650016851F = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = V4SX56P296;
+						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
+					DAMEXT001500000000000000 = {
+						CreatedOnToolsVersion = 15.0;
+						DevelopmentTeam = V4SX56P296;
+						ProvisioningStyle = Automatic;
+					};
+					SCFEXT001400000000000000 = {
+						CreatedOnToolsVersion = 15.0;
+						DevelopmentTeam = V4SX56P296;
+						ProvisioningStyle = Automatic;
+					};
+					NMWEXT003000000000000000 = {
+						CreatedOnToolsVersion = 15.0;
+						DevelopmentTeam = V4SX56P296;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				es,
+				Base,
+			);
+			mainGroup = 504EC2FB1FED79650016851F;
+			packageReferences = (
+			);
+			productRefGroup = 504EC3051FED79650016851F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				504EC3031FED79650016851F /* App */,
+				DAMEXT001500000000000000 /* DeviceActivityMonitor */,
+				SCFEXT001400000000000000 /* ShieldConfiguration */,
+				NMWEXT003000000000000000 /* NoMoWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		504EC3021FED79650016851F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
+				50B271D11FEDC1A000F3C39B /* public in Resources */,
+				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
+				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
+				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
+				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAMEXT001400000000000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SCFEXT001300000000000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		NMWEXT002900000000000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				NMWEXT003900000000000000 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6634F4EFEBD30273BCE97C65 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-App-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		504EC3001FED79650016851F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
+				SHARED0001000000000001 /* SharedConstants.swift in Sources */,
+				SHARED0002000000000001 /* ShieldConfigurationHelper.swift in Sources */,
+				SHARED0003000000000001 /* DeviceActivityMonitorHelper.swift in Sources */,
+				SRC00010000000000000001 /* AppConfig.swift in Sources */,
+				SRC00020000000000000001 /* AppReviewPlugin.swift in Sources */,
+				SRC00030000000000000001 /* DeviceActivityPlugin.swift in Sources */,
+				SRC00040000000000000001 /* StoreKitPlugin.swift in Sources */,
+				SRC00050000000000000001 /* WidgetDataPlugin.swift in Sources */,
+				SRC00060000000000000001 /* Logger.swift in Sources */,
+				SRC00070000000000000001 /* PluginError.swift in Sources */,
+				SRC00080000000000000001 /* PluginValidation.swift in Sources */,
+				SRC00090000000000000001 /* Protocols.swift in Sources */,
+				SRC00100000000000000001 /* StoreKitConverters.swift in Sources */,
+				SRC00110000000000000001 /* StoreKitError.swift in Sources */,
+				SRC00120000000000000001 /* Strings.swift in Sources */,
+				SRC00130000000000000001 /* ActivityMonitorManager.swift in Sources */,
+				SRC00140000000000000001 /* AppBlockingManager.swift in Sources */,
+				SRC00150000000000000001 /* BackgroundTaskManager.swift in Sources */,
+				SRC00160000000000000001 /* FocusDataManager.swift in Sources */,
+				SRC00170000000000000001 /* HapticFeedbackManager.swift in Sources */,
+				SRC00180000000000000001 /* PermissionsManager.swift in Sources */,
+				SRC00190000000000000001 /* StoreKitProductManager.swift in Sources */,
+				SRC00200000000000000001 /* StoreKitPurchaseService.swift in Sources */,
+				SRC00210000000000000001 /* StoreKitTransactionManager.swift in Sources */,
+				SRC00220000000000000001 /* WidgetDataManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DAMEXT001200000000000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DAMEXT000500000000000000 /* DeviceActivityMonitorExtension.swift in Sources */,
+				DAMEXT000600000000000000 /* SharedConstants.swift in Sources */,
+				DAMEXT000700000000000000 /* DeviceActivityMonitorHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SCFEXT001100000000000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				SCFEXT000500000000000000 /* ShieldConfigurationExtension.swift in Sources */,
+				SCFEXT000600000000000000 /* SharedConstants.swift in Sources */,
+				SCFEXT000700000000000000 /* ShieldConfigurationHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		NMWEXT002700000000000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				NMWEXT001300000000000000 /* NoMoWidgetBundle.swift in Sources */,
+				NMWEXT001400000000000000 /* WidgetColors.swift in Sources */,
+				NMWEXT001500000000000000 /* WidgetStrings.swift in Sources */,
+				NMWEXT001600000000000000 /* AccessibilityUtilities.swift in Sources */,
+				NMWEXT001700000000000000 /* WidgetAccessibilityStrings.swift in Sources */,
+				NMWEXT001800000000000000 /* NoMoProgressWidget.swift in Sources */,
+				NMWEXT001900000000000000 /* NoMoStatsWidget.swift in Sources */,
+				NMWEXT002000000000000000 /* NoMoStreakWidget.swift in Sources */,
+				NMWEXT002100000000000000 /* NoMoTimerWidget.swift in Sources */,
+				NMWEXT002200000000000000 /* SharedConstants.swift in Sources */,
+				NMWEXT004200000000000000 /* WidgetPetMessages.swift in Sources */,
+				SHARED0004000000000002 /* WidgetSharedModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DAMEXT002000000000000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DAMEXT001500000000000000 /* DeviceActivityMonitor */;
+			targetProxy = DAMEXT001900000000000000 /* PBXContainerItemProxy */;
+		};
+		SCFEXT001900000000000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = SCFEXT001400000000000000 /* ShieldConfiguration */;
+			targetProxy = SCFEXT001800000000000000 /* PBXContainerItemProxy */;
+		};
+		NMWEXT003500000000000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = NMWEXT003000000000000000 /* NoMoWidget */;
+			targetProxy = NMWEXT003400000000000000 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		504EC30B1FED79650016851F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				504EC30C1FED79650016851F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		504EC3101FED79650016851F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				504EC3111FED79650016851F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		NMWEXT003600000000000000 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				NMWEXT003700000000000000 /* en */,
+				NMWEXT003800000000000000 /* es */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		504EC3141FED79650016851F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		504EC3151FED79650016851F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		504EC3171FED79650016851F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		504EC3181FED79650016851F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* -- DeviceActivityMonitor build configs -- */
+		DAMEXT001600000000000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DAMEXT001700000000000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.DeviceActivityMonitor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* -- ShieldConfiguration build configs -- */
+		SCFEXT001500000000000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.ShieldConfiguration;
+				PRODUCT_MODULE_NAME = NoMoShieldConfig;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		SCFEXT001600000000000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.ShieldConfiguration;
+				PRODUCT_MODULE_NAME = NoMoShieldConfig;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* -- NoMoWidget build configs -- */
+		NMWEXT003100000000000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/NoMoWidget/NoMoWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/NoMoWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		NMWEXT003200000000000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = App/Extensions/NoMoWidget/NoMoWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Extensions/NoMoWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.nomoinc.nomo.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				504EC3141FED79650016851F /* Debug */,
+				504EC3151FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				504EC3171FED79650016851F /* Debug */,
+				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DAMEXT001800000000000000 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAMEXT001600000000000000 /* Debug */,
+				DAMEXT001700000000000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		SCFEXT001700000000000000 /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				SCFEXT001500000000000000 /* Debug */,
+				SCFEXT001600000000000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		NMWEXT003300000000000000 /* Build configuration list for PBXNativeTarget "NoMoWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				NMWEXT003100000000000000 /* Debug */,
+				NMWEXT003200000000000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 504EC2FC1FED79650016851F /* Project object */;
+}

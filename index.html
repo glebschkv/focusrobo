@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>NoMo Phone</title>
+    <meta name="description" content="Stay focused, grow your island. NoMo Phone rewards you for putting down your phone with adorable pets and achievements." />
+    <meta name="author" content="NoMo Inc." />
+    <meta name="apple-mobile-web-app-title" content="NoMo Phone" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0a0014" />
+
+    <meta property="og:title" content="NoMo Phone - Focus Timer & Pet Rewards" />
+    <meta property="og:description" content="Stay focused, grow your island. NoMo Phone rewards you for putting down your phone with adorable pets and achievements." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nomoinc.co" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NoMo Phone - Focus Timer & Pet Rewards" />
+    <meta name="twitter:description" content="Stay focused, grow your island. NoMo Phone rewards you for putting down your phone." />
+
+    <!-- CSP: mitigate XSS and injection attacks -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self';">
+  </head>
+
+  <body style="background: #080012;">
+    <!-- Inline splash screen shown instantly while WKWebView cold-starts and
+         React loads. Lives OUTSIDE #root so React's createRoot() doesn't destroy
+         it. Removed by App.tsx useEffect after React mounts with a fade-out. -->
+    <div id="splash-screen" style="
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, #080012 0%, #16042a 40%, #0a0018 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Segoe UI', sans-serif;
+      overflow: hidden;
+      transition: opacity 0.4s ease-out;
+    ">
+      <!-- Scanlines overlay -->
+      <div style="
+        position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+        background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px);
+      "></div>
+
+      <!-- Radial glow -->
+      <div style="
+        position: absolute; width: 360px; height: 360px;
+        top: 50%; left: 50%; transform: translate(-50%, calc(-50% - 60px));
+        background: radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(126,34,206,0.08) 45%, transparent 100%);
+        pointer-events: none;
+        animation: splash-glow 3s ease-in-out infinite alternate;
+      "></div>
+
+      <!-- Content wrapper for entrance animation -->
+      <div style="animation: splash-entrance 0.6s ease-out 0.05s both;">
+        <!-- App icon -->
+        <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+          <img src="/app-icon.png" alt="" width="96" height="96" style="
+            border-radius: 22px;
+            box-shadow: 0 0 48px rgba(168, 85, 247, 0.5), 0 6px 24px rgba(0,0,0,0.5);
+          " />
+        </div>
+
+        <!-- NOMO title -->
+        <div style="
+          font-size: 42px; font-weight: 800; letter-spacing: 12px;
+          color: #f0e6ff; text-align: center;
+          text-shadow: 0 0 16px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.25);
+          margin-bottom: 10px;
+        ">NOMO</div>
+
+        <!-- Tagline -->
+        <div style="
+          font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+          color: rgba(168, 140, 210, 0.55); margin-bottom: 44px; text-align: center;
+        ">Focus &middot; Grow &middot; Collect</div>
+
+        <!-- Loading bar -->
+        <div style="
+          width: 220px; height: 4px; border-radius: 2px; margin: 0 auto;
+          background: rgba(168, 85, 247, 0.08);
+          overflow: hidden; position: relative;
+        ">
+          <div style="
+            width: 25%; height: 100%; border-radius: 2px;
+            background: linear-gradient(90deg, #a855f7, #c084fc);
+            animation: splash-fill 2s ease-in-out infinite alternate;
+            position: relative;
+          ">
+            <div style="
+              position: absolute; inset: 0;
+              background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+              animation: splash-shimmer 1.6s ease-in-out infinite;
+            "></div>
+          </div>
+        </div>
+      </div>
+
+      <style>
+        @keyframes splash-fill {
+          0% { width: 25%; }
+          100% { width: 80%; }
+        }
+        @keyframes splash-shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(300%); }
+        }
+        @keyframes splash-entrance {
+          0% { opacity: 0; transform: translateY(14px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes splash-glow {
+          0% { transform: translate(-50%, calc(-50% - 60px)) scale(1); opacity: 1; }
+          100% { transform: translate(-50%, calc(-50% - 60px)) scale(1.12); opacity: 0.7; }
+        }
+      </style>
+    </div>
+
+    <div id="root" style="background: #0a0014; min-height: 100vh;"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,559 @@
+import { BOOSTER_TYPES } from '@/hooks/useCoinBooster';
+import { getCoinExclusiveAnimals } from './AnimalDatabase';
+import type {
+  ShopCategory,
+  ShopItem,
+  PremiumBackground,
+  UtilityItem,
+  CoinPack,
+  StarterBundle,
+  Bundle,
+} from '@/types';
+
+export type {
+  ShopCategory,
+  ShopItem,
+  PremiumBackground,
+  UtilityItem,
+  CoinPack,
+  StarterBundle,
+  Bundle,
+} from '@/types';
+
+// Sky Bundle Backgrounds - Individual backgrounds that come with the Sky Bundle
+export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
+  {
+    id: 'bg-sky-islands',
+    name: 'Sky Islands',
+    description: 'Majestic rocky islands rising from calm waters under a serene sky.',
+    category: 'backgrounds',
+    coinPrice: 1200,
+    icon: 'island',
+    rarity: 'rare',
+    theme: 'sky-islands',
+    previewImage: '/assets/worlds/SKYBUNDLE1.png',
+    bundleId: 'bundle-sky-realms',
+  },
+  {
+    id: 'bg-calm-seas',
+    name: 'Calm Seas',
+    description: 'A peaceful ocean horizon under a beautiful gradient sky.',
+    category: 'backgrounds',
+    coinPrice: 1200,
+    icon: 'wave',
+    rarity: 'rare',
+    theme: 'calm-seas',
+    previewImage: '/assets/worlds/SKYBUNDLE2.png',
+    bundleId: 'bundle-sky-realms',
+  },
+  {
+    id: 'bg-twilight-clouds',
+    name: 'Twilight Clouds',
+    description: 'Dramatic clouds painted in soft twilight colors over the sea.',
+    category: 'backgrounds',
+    coinPrice: 1600,
+    icon: 'cloud',
+    rarity: 'epic',
+    theme: 'twilight-clouds',
+    previewImage: '/assets/worlds/SKYBUNDLE3.png',
+    bundleId: 'bundle-sky-realms',
+  },
+  {
+    id: 'bg-aurora-horizon',
+    name: 'Aurora Horizon',
+    description: 'A mesmerizing sky with ethereal light dancing across the clouds.',
+    category: 'backgrounds',
+    coinPrice: 1600,
+    icon: 'sparkles',
+    rarity: 'epic',
+    theme: 'aurora-horizon',
+    previewImage: '/assets/worlds/SKYBUNDLE4.png',
+    bundleId: 'bundle-sky-realms',
+  },
+  {
+    id: 'bg-sunset-clouds',
+    name: 'Sunset Clouds',
+    description: 'Breathtaking sunset clouds reflected in still waters.',
+    category: 'backgrounds',
+    coinPrice: 2000,
+    icon: 'sunset',
+    rarity: 'legendary',
+    theme: 'sunset-clouds',
+    previewImage: '/assets/worlds/SKYBUNDLE5.png',
+    bundleId: 'bundle-sky-realms',
+  },
+];
+
+export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
+  // Include Sky Bundle backgrounds
+  ...SKY_BUNDLE_BACKGROUNDS,
+  {
+    id: 'bg-sakura',
+    name: 'Sakura Garden',
+    description: 'A serene Japanese garden with cherry blossoms in full bloom.',
+    category: 'backgrounds',
+    coinPrice: 1600,
+    icon: 'sakura',
+    rarity: 'rare',
+    theme: 'sakura',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-cyberpunk',
+    name: 'Neon City',
+    description: 'A futuristic cyberpunk cityscape with neon lights and holograms.',
+    category: 'backgrounds',
+    coinPrice: 2400,
+    icon: 'neon-city',
+    rarity: 'epic',
+    theme: 'cyberpunk',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-aurora',
+    name: 'Aurora Borealis',
+    description: 'Dance under the magical northern lights in this stunning arctic scene.',
+    category: 'backgrounds',
+    coinPrice: 3000,
+    icon: 'aurora',
+    rarity: 'epic',
+    theme: 'aurora',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-crystal-cave',
+    name: 'Crystal Cavern',
+    description: 'A mystical underground cave filled with glowing crystals.',
+    category: 'backgrounds',
+    coinPrice: 2000,
+    icon: 'diamond',
+    rarity: 'rare',
+    theme: 'crystal',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-volcano',
+    name: 'Volcanic Island',
+    description: 'A dramatic volcanic landscape with flowing lava and ash.',
+    category: 'backgrounds',
+    coinPrice: 3600,
+    icon: 'volcano',
+    rarity: 'legendary',
+    theme: 'volcano',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-space',
+    name: 'Cosmic Void',
+    description: 'Float among the stars in the endless expanse of space.',
+    category: 'backgrounds',
+    coinPrice: 4000,
+    icon: 'rocket',
+    rarity: 'legendary',
+    theme: 'space',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-underwater',
+    name: 'Deep Sea Reef',
+    description: 'Explore a vibrant coral reef teeming with colorful life.',
+    category: 'backgrounds',
+    coinPrice: 1800,
+    icon: 'fish',
+    rarity: 'rare',
+    theme: 'underwater',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-halloween',
+    name: 'Spooky Hollow',
+    description: 'A haunted forest perfect for the spookiest of pets.',
+    category: 'backgrounds',
+    coinPrice: 3000,
+    icon: 'pumpkin',
+    rarity: 'epic',
+    isLimited: true,
+    theme: 'halloween',
+    comingSoon: false,
+  },
+  {
+    id: 'bg-winter-wonderland',
+    name: 'Winter Wonderland',
+    description: 'A magical snowy scene with twinkling lights and cozy vibes.',
+    category: 'backgrounds',
+    coinPrice: 3000,
+    icon: 'christmas-tree',
+    rarity: 'epic',
+    isLimited: true,
+    theme: 'winter',
+    comingSoon: false,
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITY ITEMS (Streak Freezes, etc.)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const UTILITY_ITEMS: UtilityItem[] = [
+  {
+    id: 'streak-freeze-1',
+    name: 'Streak Freeze',
+    description: 'Protect your streak for one missed day.',
+    category: 'utilities',
+    coinPrice: 150,
+    icon: 'ice-cube',
+    rarity: 'common',
+    quantity: 1,
+  },
+  {
+    id: 'streak-freeze-3',
+    name: 'Streak Freeze Pack',
+    description: 'A pack of 3 streak freezes at a discount.',
+    category: 'utilities',
+    coinPrice: 400,
+    icon: 'ice-cube',
+    rarity: 'rare',
+    quantity: 3,
+  },
+  {
+    id: 'streak-freeze-7',
+    name: 'Streak Freeze Bundle',
+    description: 'A bundle of 7 streak freezes - best value!',
+    category: 'utilities',
+    coinPrice: 800,
+    icon: 'ice-cube',
+    rarity: 'epic',
+    quantity: 7,
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COIN PACKS (In-App Purchases)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const COIN_PACKS: CoinPack[] = [
+  {
+    id: 'coins-value',
+    name: 'Value Pack',
+    description: 'Great value for regular shoppers.',
+    category: 'coins',
+    iapPrice: '€2,99',
+    iapProductId: 'co.nomoinc.nomo.coins.value',
+    icon: 'money-bag',
+    coinAmount: 1500,
+    bonusCoins: 300,
+    rarity: 'rare',
+  },
+  {
+    id: 'coins-premium',
+    name: 'Premium Pack',
+    description: 'For the serious collector.',
+    category: 'coins',
+    iapPrice: '€7,99',
+    iapProductId: 'co.nomoinc.nomo.coins.premium',
+    icon: 'diamond',
+    coinAmount: 5000,
+    bonusCoins: 1000,
+    rarity: 'epic',
+  },
+  {
+    id: 'coins-mega',
+    name: 'Mega Pack',
+    description: 'The ultimate coin pack - best value!',
+    category: 'coins',
+    iapPrice: '€19,99',
+    iapProductId: 'co.nomoinc.nomo.coins.mega',
+    icon: 'trophy',
+    coinAmount: 15000,
+    bonusCoins: 5000,
+    rarity: 'legendary',
+  },
+  {
+    id: 'coins-ultra',
+    name: 'Ultra Pack',
+    description: 'The VIP experience - maximum coins!',
+    category: 'coins',
+    iapPrice: '€49,99',
+    iapProductId: 'co.nomoinc.nomo.coins.ultra',
+    icon: 'crown-ultra',
+    coinAmount: 40000,
+    bonusCoins: 20000,
+    rarity: 'legendary',
+  },
+  {
+    id: 'coins-legendary',
+    name: 'Legendary Pack',
+    description: 'The ultimate collection accelerator - massive coin haul!',
+    category: 'coins',
+    iapPrice: '€99,99',
+    iapProductId: 'co.nomoinc.nomo.coins.legendary',
+    icon: 'crown-legendary',
+    coinAmount: 100000,
+    bonusCoins: 50000,
+    rarity: 'legendary',
+    isBestValue: true,
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STARTER BUNDLES (IAP-only — purchased via Apple Pay)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const STARTER_BUNDLES: StarterBundle[] = [
+  {
+    id: 'bundle-welcome',
+    name: 'Welcome Gift',
+    description: 'A perfect start to your journey! Coins, protection, and a boost.',
+    category: 'bundles',
+    iapPrice: '€2,99',
+    iapProductId: 'co.nomoinc.nomo.bundle.welcome',
+    icon: 'bundle-welcome',
+    rarity: 'rare',
+    contents: {
+      coins: 600,
+      boosterId: 'focus_boost',
+      streakFreezes: 2,
+    },
+    savings: '65%',
+  },
+  {
+    id: 'bundle-starter',
+    name: 'Starter Bundle',
+    description: 'Perfect for new players! Includes coins, a booster, and an exclusive character.',
+    category: 'bundles',
+    iapPrice: '€4,99',
+    iapProductId: 'co.nomoinc.nomo.bundle.starter',
+    icon: 'bundle-starter',
+    rarity: 'epic',
+    contents: {
+      coins: 1000,
+      boosterId: 'focus_boost',
+      characterId: 'clover-cat', // Lucky Clover Cat - rare tier unlock
+    },
+    savings: '50%',
+  },
+  {
+    id: 'bundle-collector',
+    name: 'Collector Bundle',
+    description: 'For the dedicated collector - premium coins and exclusive rewards.',
+    category: 'bundles',
+    iapPrice: '€14,99',
+    iapProductId: 'co.nomoinc.nomo.bundle.collector',
+    icon: 'bundle-collector',
+    rarity: 'legendary',
+    contents: {
+      coins: 5000,
+      boosterId: 'super_boost',
+      characterId: 'kitsune-spirit', // Legendary Kitsune Spirit
+    },
+    savings: '60%',
+  },
+  {
+    id: 'bundle-ultimate',
+    name: 'Ultimate Bundle',
+    description: 'The ultimate collection - exclusive pets, massive coins, and premium extras.',
+    category: 'bundles',
+    iapPrice: '€29,99',
+    iapProductId: 'co.nomoinc.nomo.bundle.ultimate',
+    icon: 'treasure-chest',
+    rarity: 'legendary',
+    contents: {
+      coins: 12000,
+      boosterId: 'super_boost',
+      characterId: 'storm-spirit', // Legendary Storm Spirit
+      streakFreezes: 5,
+    },
+    savings: '65%',
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BUNDLES (Purchasable with coins — pets or backgrounds)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const BACKGROUND_BUNDLES: Bundle[] = [
+  {
+    id: 'bundle-sky-realms',
+    name: 'Sky Realms Bundle',
+    description: 'A collection of 5 breathtaking sky and ocean themed backgrounds.',
+    category: 'bundles',
+    coinPrice: 4500,
+    icon: 'sun-cloud',
+    rarity: 'legendary',
+    bundleType: 'backgrounds',
+    itemIds: [
+      'bg-sky-islands',
+      'bg-calm-seas',
+      'bg-twilight-clouds',
+      'bg-aurora-horizon',
+      'bg-sunset-clouds',
+    ],
+    previewImages: [
+      '/assets/worlds/SKYBUNDLE1.png',
+      '/assets/worlds/SKYBUNDLE2.png',
+      '/assets/worlds/SKYBUNDLE3.png',
+      '/assets/worlds/SKYBUNDLE4.png',
+      '/assets/worlds/SKYBUNDLE5.png',
+    ],
+    totalValue: 7600, // Sum of individual prices: 1200+1200+1600+1600+2000
+    savings: '41%',
+  },
+];
+
+export const PET_BUNDLES: Bundle[] = [
+  {
+    id: 'bundle-mystical-spirits',
+    name: 'Mystical Spirits Bundle',
+    description: 'Harness the power of the elements! Includes Kitsune Spirit and Storm Spirit.',
+    category: 'bundles',
+    coinPrice: 24800,
+    icon: 'sparkles',
+    rarity: 'legendary',
+    bundleType: 'pets',
+    itemIds: ['kitsune-spirit', 'storm-spirit'],
+    totalValue: 31000, // 16000+15000
+    savings: '20%',
+  },
+  {
+    id: 'bundle-night-creatures',
+    name: 'Night Creatures Bundle',
+    description: 'Embrace the darkness! Includes Cute Ghost and Golden Moth.',
+    category: 'bundles',
+    coinPrice: 12800,
+    icon: 'moon',
+    rarity: 'epic',
+    bundleType: 'pets',
+    itemIds: ['cute-ghost', 'golden-moth'],
+    totalValue: 16000, // 7500+8500
+    savings: '20%',
+  },
+  {
+    id: 'bundle-costume-kids',
+    name: 'Costume Kids Bundle',
+    description: 'Adorable costume characters! Includes Cat Hood and Robot Buddy.',
+    category: 'bundles',
+    coinPrice: 10400,
+    icon: 'masks',
+    rarity: 'epic',
+    bundleType: 'pets',
+    itemIds: ['cat-hood', 'robot-buddy'],
+    totalValue: 13000, // 3500+9500
+    savings: '20%',
+  },
+  {
+    id: 'bundle-meadow-friends',
+    name: 'Meadow Friends Bundle',
+    description: 'Cheerful meadow companions! Includes Clover Cat and Slime King.',
+    category: 'bundles',
+    coinPrice: 6800,
+    icon: 'leaf',
+    rarity: 'rare',
+    bundleType: 'pets',
+    itemIds: ['clover-cat', 'slime-king'],
+    totalValue: 8500, // 2500+6000
+    savings: '20%',
+  },
+  {
+    id: 'bundle-complete-collection',
+    name: 'Complete Collection Bundle',
+    description: 'All 8 exclusive pets in one legendary bundle! The ultimate collector\'s dream.',
+    category: 'bundles',
+    coinPrice: 54800,
+    icon: 'crown',
+    rarity: 'legendary',
+    bundleType: 'pets',
+    itemIds: ['clover-cat', 'slime-king', 'cute-ghost', 'kitsune-spirit', 'golden-moth', 'storm-spirit', 'cat-hood', 'robot-buddy'],
+    totalValue: 68500, // 2500+6000+7500+16000+8500+15000+3500+9500
+    savings: '20%',
+  },
+];
+
+/** All bundles (both pet and background) */
+export const ALL_BUNDLES: Bundle[] = [...PET_BUNDLES, ...BACKGROUND_BUNDLES];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SHOP HELPER FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+export const getAllShopItems = (): ShopItem[] => {
+  return [
+    ...PREMIUM_BACKGROUNDS,
+    ...UTILITY_ITEMS,
+    ...COIN_PACKS,
+    ...STARTER_BUNDLES,
+    ...ALL_BUNDLES,
+  ];
+};
+
+export const getBundleById = (bundleId: string): Bundle | undefined => {
+  return ALL_BUNDLES.find(bundle => bundle.id === bundleId);
+};
+
+export const getBackgroundsInBundle = (bundleId: string): PremiumBackground[] => {
+  return PREMIUM_BACKGROUNDS.filter(bg => bg.bundleId === bundleId);
+};
+
+export const getShopItemsByCategory = (category: ShopCategory): ShopItem[] => {
+  switch (category) {
+    case 'featured':
+      // Featured tab shows bundles, pet bundles and limited time items
+      return [...STARTER_BUNDLES, ...PET_BUNDLES.slice(0, 4), ...getLimitedTimeItems()];
+    case 'pets':
+      return getCoinExclusiveAnimals().map(animal => ({
+        id: animal.id,
+        name: animal.name,
+        description: animal.description,
+        category: 'pets' as ShopCategory,
+        coinPrice: animal.coinPrice,
+        icon: animal.emoji,
+        rarity: animal.rarity,
+      }));
+    case 'customize':
+      return [...PREMIUM_BACKGROUNDS];
+    case 'powerups': {
+      // Combine boosters, utility items, and coins
+      const boosters = BOOSTER_TYPES.map(booster => ({
+        id: booster.id,
+        name: booster.name,
+        description: booster.description,
+        category: 'powerups' as ShopCategory,
+        coinPrice: booster.coinPrice,
+        iapPrice: booster.iapPrice,
+        icon: booster.id === 'focus_boost' ? 'lightning' : booster.id === 'super_boost' ? 'rocket' : 'calendar',
+        rarity: (booster.id === 'weekly_pass' ? 'epic' : booster.id === 'super_boost' ? 'rare' : 'common') as 'common' | 'rare' | 'epic' | 'legendary',
+      }));
+      return [...boosters, ...UTILITY_ITEMS, ...COIN_PACKS];
+    }
+    case 'bundles':
+      return [...ALL_BUNDLES];
+    default:
+      return [];
+  }
+};
+
+export const getShopItemById = (itemId: string): ShopItem | undefined => {
+  return getAllShopItems().find(item => item.id === itemId);
+};
+
+export const getBackgroundById = (backgroundId: string): PremiumBackground | undefined => {
+  return PREMIUM_BACKGROUNDS.find(bg => bg.id === backgroundId);
+};
+
+export const getCoinPackById = (packId: string): CoinPack | undefined => {
+  return COIN_PACKS.find(pack => pack.id === packId);
+};
+
+export const getLimitedTimeItems = (): ShopItem[] => {
+  return getAllShopItems().filter(item => item.isLimited);
+};
+
+export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary'): ShopItem[] => {
+  return getAllShopItems().filter(item => item.rarity === rarity);
+};
+
+// Shop categories for UI - 3 tabs: Featured highlights, Collection (pets+bundles), Power-Ups
+export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
+  { id: 'featured', name: 'Featured', icon: 'star' },
+  { id: 'pets', name: 'Collection', icon: 'paw' },
+  { id: 'powerups', name: 'Power-Ups', icon: 'lightning' },
+];

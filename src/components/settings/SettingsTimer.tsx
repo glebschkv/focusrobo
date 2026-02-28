@@ -1,0 +1,137 @@
+import { AppSettings } from "@/hooks/useSettings";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Clock, Coffee, Zap, Bell, Timer, Repeat } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface SettingsTimerProps {
+  settings: AppSettings;
+  onUpdate: (updates: Partial<AppSettings>) => void;
+}
+
+export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
+  return (
+    <div className="space-y-4">
+      {/* Focus & Break Times - Combined Card */}
+      <div className="retro-game-card p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Timer className="w-4 h-4 text-cyan-400" />
+          <span className="text-sm font-bold retro-pixel-text text-white">SESSION DURATIONS</span>
+        </div>
+
+        <div className="space-y-5">
+          {/* Focus Time */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 retro-level-badge rounded-md flex items-center justify-center">
+                  <Clock className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-semibold text-white">Focus</span>
+              </div>
+              <span className="text-sm font-bold retro-pixel-text retro-neon-text">{settings.defaultFocusTime}m</span>
+            </div>
+            <Slider
+              min={15}
+              max={90}
+              step={5}
+              value={[settings.defaultFocusTime]}
+              onValueChange={([value]) => onUpdate({ defaultFocusTime: value })}
+              className="w-full"
+            />
+          </div>
+
+          {/* Short Break */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 retro-stat-pill rounded-md flex items-center justify-center">
+                  <Coffee className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-xs font-semibold text-white">Short Break</span>
+              </div>
+              <span className="text-sm font-bold retro-pixel-text text-purple-300">{settings.shortBreakTime}m</span>
+            </div>
+            <Slider
+              min={3}
+              max={15}
+              step={1}
+              value={[settings.shortBreakTime]}
+              onValueChange={([value]) => onUpdate({ shortBreakTime: value })}
+              className="w-full"
+            />
+          </div>
+
+          {/* Long Break */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 retro-stat-pill rounded-md flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-xs font-semibold text-white">Long Break</span>
+              </div>
+              <span className="text-sm font-bold retro-pixel-text text-purple-300">{settings.longBreakTime}m</span>
+            </div>
+            <Slider
+              min={10}
+              max={30}
+              step={5}
+              value={[settings.longBreakTime]}
+              onValueChange={([value]) => onUpdate({ longBreakTime: value })}
+              className="w-full"
+            />
+          </div>
+
+          {/* Long Break Interval */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 retro-stat-pill rounded-md flex items-center justify-center">
+                  <Repeat className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-xs font-semibold text-white">Sessions Before Long Break</span>
+              </div>
+              <span className="text-sm font-bold retro-pixel-text text-purple-300">{settings.longBreakInterval}</span>
+            </div>
+            <Slider
+              min={2}
+              max={8}
+              step={1}
+              value={[settings.longBreakInterval]}
+              onValueChange={([value]) => onUpdate({ longBreakInterval: value })}
+              className="w-full"
+            />
+            <div className="flex justify-between text-[11px] text-purple-300/60 mt-1">
+              <span>2</span>
+              <span>8</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      <div className="retro-game-card p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              "w-9 h-9 rounded-lg flex items-center justify-center",
+              settings.enableNotifications ? "retro-level-badge" : "retro-stat-pill"
+            )}>
+              <Bell className="w-4 h-4" />
+            </div>
+            <div>
+              <Label className="text-sm font-bold text-white">Notifications</Label>
+              <p className="text-[11px] text-purple-300/80">Alert when timer ends</p>
+            </div>
+          </div>
+          <Switch
+            checked={settings.enableNotifications}
+            onCheckedChange={(checked) => onUpdate({ enableNotifications: checked })}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
