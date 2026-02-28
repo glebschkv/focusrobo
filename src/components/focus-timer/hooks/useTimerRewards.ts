@@ -7,7 +7,6 @@
 
 import { useCallback } from 'react';
 import { useBackendAppState } from '@/hooks/useBackendAppState';
-import { useBossChallenges } from '@/hooks/useBossChallenges';
 import { timerLogger } from '@/lib/logger';
 import { toast } from 'sonner';
 import { dispatchAchievementEvent, ACHIEVEMENT_EVENTS } from '@/hooks/useAchievementTracking';
@@ -17,13 +16,6 @@ interface RewardResult {
   xpEarned: number;
   coinsEarned: number;
   focusBonusType: string;
-  bossDefeated: boolean;
-  bossChallenge?: {
-    name: string;
-    xp: number;
-    coins: number;
-    hasBadge: boolean;
-  };
 }
 
 interface SessionInfo {
@@ -35,7 +27,6 @@ interface SessionInfo {
 
 export function useTimerRewards() {
   const { awardXP, coinSystem, xpSystem } = useBackendAppState();
-  const { recordFocusSession } = useBossChallenges();
 
   /**
    * Calculate and award rewards for a completed session
@@ -51,7 +42,6 @@ export function useTimerRewards() {
       xpEarned: 0,
       coinsEarned: 0,
       focusBonusType: '',
-      bossDefeated: false,
     };
 
     // Calculate focus bonus based on shield attempts
@@ -102,44 +92,8 @@ export function useTimerRewards() {
       });
     }
 
-    // Record focus session for boss challenge progress
-    if (sessionInfo.sessionType !== 'break' && completedMinutes >= 1) {
-      const bossResult = recordFocusSession(completedMinutes);
-
-      if (bossResult.challengeCompleted && bossResult.completedChallenge) {
-        const challenge = bossResult.completedChallenge;
-        result.bossDefeated = true;
-        result.bossChallenge = {
-          name: challenge.name,
-          xp: challenge.rewards.xp,
-          coins: challenge.rewards.coins,
-          hasBadge: !!challenge.rewards.badge,
-        };
-
-        // Award boss XP
-        if (challenge.rewards.xp > 0 && xpSystem && 'addDirectXP' in xpSystem) {
-          try {
-            (xpSystem as { addDirectXP: (xp: number) => void }).addDirectXP(challenge.rewards.xp);
-          } catch (error) {
-            timerLogger.error('Failed to award boss XP:', error);
-          }
-        }
-
-        // Award boss coins
-        if (challenge.rewards.coins > 0 && coinSystem) {
-          coinSystem.addCoins(challenge.rewards.coins);
-        }
-
-        // Show boss defeat toast
-        toast.success(`BOSS DEFEATED: ${challenge.name}!`, {
-          description: `+${challenge.rewards.xp} XP, +${challenge.rewards.coins} Coins${challenge.rewards.badge ? ', +Badge!' : ''}`,
-          duration: 5000,
-        });
-      }
-    }
-
     return result;
-  }, [awardXP, coinSystem, xpSystem, recordFocusSession]);
+  }, [awardXP, coinSystem, xpSystem]);
 
   /**
    * Show focus bonus toast notification
