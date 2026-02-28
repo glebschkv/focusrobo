@@ -113,7 +113,7 @@ vi.mock('@/data/RobotDatabase', () => ({
       { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 1 },
       { id: 'moss-turtle', name: 'Moss Turtle', rarity: 'common', zone: 'Biotech Zone', unlockLevel: 2 },
     ];
-    return animals.filter(a => a.zone === zone);
+    return animals.filter(a => a.zone === biome);
   }),
   getXPUnlockableRobots: vi.fn(() => [
     { id: 'dewdrop-frog', name: 'Dewdrop Frog', rarity: 'common' },
@@ -447,8 +447,8 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       const filtered = result.current.filterAnimals('', 'common');
-      filtered.forEach(animal => {
-        expect(robot.rarity).toBe('common');
+      filtered.forEach(bot => {
+        expect(bot.rarity).toBe('common');
       });
     });
 
@@ -456,8 +456,8 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       const filtered = result.current.filterAnimals('', undefined, 'forest');
-      filtered.forEach(animal => {
-        expect(robot.zone).toBe('forest');
+      filtered.forEach(bot => {
+        expect(bot.zone).toBe('forest');
       });
     });
 
@@ -465,9 +465,9 @@ describe('useCollection', () => {
       const { result } = renderHook(() => useCollection());
 
       const filtered = result.current.filterAnimals('', 'common', 'forest');
-      filtered.forEach(animal => {
-        expect(robot.rarity).toBe('common');
-        expect(robot.zone).toBe('forest');
+      filtered.forEach(bot => {
+        expect(bot.rarity).toBe('common');
+        expect(bot.zone).toBe('forest');
       });
     });
 

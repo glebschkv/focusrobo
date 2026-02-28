@@ -416,8 +416,8 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '🐾 Your pets miss you!',
-              body: 'Come back to feed and play with your island pets',
+              title: 'Your pets miss you!',
+              body: 'Come back and start a focus session!',
               id: 1001,
             }),
           ],
@@ -464,7 +464,7 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '✨ XP Earned!',
+              title: 'XP Earned!',
               body: 'You earned 100 XP for staying focused!',
             }),
           ],
@@ -485,7 +485,7 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '🎉 Level Up!',
+              title: 'Level Up!',
               body: 'Congratulations! You reached level 5!',
             }),
           ],
@@ -508,7 +508,7 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '🌟 2-Day Streak!',
+              title: '2-Day Streak!',
             }),
           ],
         });
@@ -528,7 +528,7 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '⭐ 5-Day Streak!',
+              title: '5-Day Streak!',
             }),
           ],
         });
@@ -548,8 +548,8 @@ describe('useNotifications', () => {
         expect(LocalNotifications.schedule).toHaveBeenCalledWith({
           notifications: [
             expect.objectContaining({
-              title: '🔥 10-Day Streak!',
-              body: "Amazing! You're on a 10-day focus streak. Keep it going!",
+              title: '10-Day Streak!',
+              body: "You're on a 10-day focus streak. Keep it going!",
             }),
           ],
         });

@@ -4,9 +4,9 @@ import {
   useXPStore,
   useCurrentXP,
   useCurrentLevel,
-  useUnlockedAnimals,
-  useCurrentBiome,
-  useAvailableBiomes,
+  useUnlockedRobots,
+  useCurrentZone,
+  useAvailableZones,
   subscribeToXPChanges,
   calculateLevelRequirement,
   calculateLevelFromXP,
@@ -487,27 +487,27 @@ describe('xpStore', () => {
       expect(result.current).toBe(7);
     });
 
-    it('useUnlockedAnimals should return robots array', () => {
+    it('useUnlockedRobots should return robots array', () => {
       act(() => {
         useXPStore.getState().addRobots(['bear', 'deer']);
       });
 
-      const { result } = renderHook(() => useUnlockedAnimals());
+      const { result } = renderHook(() => useUnlockedRobots());
       expect(result.current).toContain('bear');
       expect(result.current).toContain('deer');
     });
 
-    it('useCurrentBiome should return current zone', () => {
-      const { result } = renderHook(() => useCurrentBiome());
+    it('useCurrentZone should return current zone', () => {
+      const { result } = renderHook(() => useCurrentZone());
       expect(result.current).toBe('Assembly Line');
     });
 
-    it('useAvailableBiomes should return available zones', () => {
+    it('useAvailableZones should return available zones', () => {
       act(() => {
         useXPStore.getState().addZone('Meadow');
       });
 
-      const { result } = renderHook(() => useAvailableBiomes());
+      const { result } = renderHook(() => useAvailableZones());
       expect(result.current).toContain('Assembly Line');
       expect(result.current).toContain('Meadow');
     });
