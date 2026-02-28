@@ -26,7 +26,7 @@ export {
 export {
   calculateRandomBonus,
   calculateLevelRequirement,
-  normalizeAnimalList,
+  normalizeRobotList,
   calculateLevel,
 } from './xpUtils';
 
