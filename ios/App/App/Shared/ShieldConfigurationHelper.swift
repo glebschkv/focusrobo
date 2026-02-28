@@ -72,15 +72,15 @@ class ShieldConfigurationHelper {
     // MARK: - Title
 
     func getTitle() -> String {
-        return "NOMO"
+        return "BOTBLOCK"
     }
 
-    // MARK: - Neon NOMO Icon
+    // MARK: - Neon App Icon
 
-    /// Creates a large glowing "NOMO" neon sign icon with radial glow backdrop.
+    /// Creates a large glowing "BB" neon sign icon with radial glow backdrop.
     /// Matches the app's splash screen aesthetic with layered Core Graphics glow.
     /// Rendered at 240x120pt @3x (720x360px) for maximum visual impact.
-    func createNoMoIcon() -> UIImage? {
+    func createAppIcon() -> UIImage? {
         let size = CGSize(width: 240, height: 120)
         let renderer = UIGraphicsImageRenderer(size: size, format: {
             let format = UIGraphicsImageRendererFormat()
@@ -111,7 +111,7 @@ class ShieldConfigurationHelper {
             }
 
             // Text setup — SF Pro Rounded Heavy, wide kerning
-            let text = "NOMO"
+            let text = "BB"
             let fontSize: CGFloat = 52
             let font: UIFont
             if let desc = UIFont.systemFont(ofSize: fontSize, weight: .heavy)
@@ -199,15 +199,15 @@ class ShieldConfigurationHelper {
     // MARK: - Accessibility
 
     static var shieldAccessibilityDescription: String {
-        "This app is blocked to help you stay focused. Tap the button to return to NoMo."
+        "This app is blocked to help you stay focused. Tap the button to return to BotBlock."
     }
 
     static var returnButtonAccessibilityLabel: String {
-        "Return to NoMo app"
+        "Return to BotBlock app"
     }
 
     static var returnButtonAccessibilityHint: String {
-        "Double tap to close this blocked app and return to NoMo"
+        "Double tap to close this blocked app and return to BotBlock"
     }
 }
 

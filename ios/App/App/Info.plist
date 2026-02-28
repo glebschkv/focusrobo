@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>NoMo Phone</string>
+	<string>BotBlock</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -70,17 +70,17 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>co.nomoinc.nomo</string>
+			<string>co.botblock.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>co.nomoinc.nomo</string>
+				<string>co.botblock.app</string>
 			</array>
 		</dict>
 	</array>
 
 	<!-- Privacy Usage Descriptions -->
 	<key>NSFamilyControlsUsageDescription</key>
-	<string>NoMo uses Screen Time to track when you're away from your phone, rewarding you for staying focused.</string>
+	<string>BotBlock uses Screen Time to track when you're away from your phone, rewarding you for staying focused.</string>
 
 	<!-- Push Notifications and Background Modes -->
 	<key>UIBackgroundModes</key>
@@ -93,7 +93,7 @@
 	<!-- Background Task Identifiers -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>co.nomoinc.nomo.background-tracking</string>
+		<string>co.botblock.app.background-tracking</string>
 	</array>
 
 	<!-- Screen Time API Usage -->
@@ -112,7 +112,7 @@
 
 	<!-- Accessibility Features -->
 	<!--
-	 * NoMo Phone Accessibility Implementation
+	 * BotBlock Accessibility Implementation
 	 *
 	 * This app implements comprehensive accessibility support:
 	 * - Full VoiceOver support with labels, hints, and traits
@@ -133,7 +133,7 @@
 
 	<!-- Accessibility Usage Description -->
 	<key>NSAccessibilityUsageDescription</key>
-	<string>NoMo Phone is designed to be fully accessible. All features support VoiceOver, Dynamic Type, and other assistive technologies.</string>
+	<string>BotBlock is designed to be fully accessible. All features support VoiceOver, Dynamic Type, and other assistive technologies.</string>
 
 	<!-- Large Content Viewer Support -->
 	<key>UILargeContentViewerInteractionEnabled</key>

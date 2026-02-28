@@ -24,9 +24,9 @@ enum AppConfig {
 
     /// App Group identifier - references SharedConstants for consistency with extensions
     static let appGroupIdentifier = SharedConstants.appGroupIdentifier
-    static let bundleIdentifier = "co.nomoinc.nomo"
-    static let appName = "NoMo Phone"
-    static let merchantIdentifier = "merchant.co.nomoinc.nomo"
+    static let bundleIdentifier = "co.botblock.app"
+    static let appName = "BotBlock"
+    static let merchantIdentifier = "merchant.co.botblock.app"
 
     static var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
@@ -43,7 +43,7 @@ enum AppConfig {
     // MARK: - Background Tasks
 
     enum BackgroundTask {
-        static let identifier = "co.nomoinc.nomo.background-tracking"
+        static let identifier = "co.botblock.app.background-tracking"
         static let refreshIntervalMinutes: TimeInterval = 15
         static let refreshIntervalSeconds: TimeInterval = 15 * 60
     }
@@ -75,24 +75,24 @@ enum AppConfig {
 
     enum ProductIDs {
         // Subscriptions
-        static let premiumMonthly = "co.nomoinc.nomo.premium.monthly"
-        static let premiumYearly = "co.nomoinc.nomo.premium.yearly"
-        static let premiumPlusMonthly = "co.nomoinc.nomo.premiumplus.monthly"
-        static let premiumPlusYearly = "co.nomoinc.nomo.premiumplus.yearly"
-        static let lifetime = "co.nomoinc.nomo.lifetime"
+        static let premiumMonthly = "co.botblock.app.premium.monthly"
+        static let premiumYearly = "co.botblock.app.premium.yearly"
+        static let premiumPlusMonthly = "co.botblock.app.premiumplus.monthly"
+        static let premiumPlusYearly = "co.botblock.app.premiumplus.yearly"
+        static let lifetime = "co.botblock.app.lifetime"
 
         // Coin Packs (Consumables)
-        static let coinsValue = "co.nomoinc.nomo.coins.value"
-        static let coinsPremium = "co.nomoinc.nomo.coins.premium"
-        static let coinsMega = "co.nomoinc.nomo.coins.mega"
-        static let coinsUltra = "co.nomoinc.nomo.coins.ultra"
-        static let coinsLegendary = "co.nomoinc.nomo.coins.legendary"
+        static let coinsValue = "co.botblock.app.coins.value"
+        static let coinsPremium = "co.botblock.app.coins.premium"
+        static let coinsMega = "co.botblock.app.coins.mega"
+        static let coinsUltra = "co.botblock.app.coins.ultra"
+        static let coinsLegendary = "co.botblock.app.coins.legendary"
 
         // Starter Bundles (Non-Consumables)
-        static let bundleWelcome = "co.nomoinc.nomo.bundle.welcome"
-        static let bundleStarter = "co.nomoinc.nomo.bundle.starter"
-        static let bundleCollector = "co.nomoinc.nomo.bundle.collector"
-        static let bundleUltimate = "co.nomoinc.nomo.bundle.ultimate"
+        static let bundleWelcome = "co.botblock.app.bundle.welcome"
+        static let bundleStarter = "co.botblock.app.bundle.starter"
+        static let bundleCollector = "co.botblock.app.bundle.collector"
+        static let bundleUltimate = "co.botblock.app.bundle.ultimate"
 
         static let allProducts: [String] = [
             premiumMonthly,
@@ -155,10 +155,10 @@ enum AppConfig {
         static let defaultGoalMinutes = 120
 
         /// Widget kinds for WidgetKit
-        static let timerWidgetKind = "NoMoTimerWidget"
-        static let streakWidgetKind = "NoMoStreakWidget"
-        static let progressWidgetKind = "NoMoProgressWidget"
-        static let statsWidgetKind = "NoMoStatsWidget"
+        static let timerWidgetKind = "BotBlockTimerWidget"
+        static let streakWidgetKind = "BotBlockStreakWidget"
+        static let progressWidgetKind = "BotBlockProgressWidget"
+        static let statsWidgetKind = "BotBlockStatsWidget"
 
         /// Widget display names
         static let timerDisplayName = "Focus Timer"

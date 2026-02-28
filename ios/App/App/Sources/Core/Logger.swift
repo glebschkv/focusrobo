@@ -13,7 +13,7 @@ import OSLog
  *   Log.deviceActivity.debug("Monitoring started")
  */
 enum Log {
-    private static let subsystem = Bundle.main.bundleIdentifier ?? "co.nomoinc.nomo"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "co.botblock.app"
 
     // MARK: - Category Loggers
 

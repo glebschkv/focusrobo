@@ -5,7 +5,7 @@ import Capacitor
 /**
  * AppDelegate
  *
- * Main application delegate for NoMo Phone.
+ * Main application delegate for BotBlock.
  * Handles app launch, scene configuration, URL schemes, and background tasks.
  *
  * UIScene lifecycle adopted — SceneDelegate handles per-scene events
@@ -204,7 +204,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // conflict with iOS system gesture recognizers, preventing the
 // "System gesture gate timed out" error on touch interactions.
 
-class NomoViewController: CAPBridgeViewController {
+class BotBlockViewController: CAPBridgeViewController {
 
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
@@ -251,7 +251,7 @@ class NomoViewController: CAPBridgeViewController {
 // without needing a separate file in the build sources list.
 
 /// Native animated splash screen shown AFTER the static LaunchScreen.storyboard
-/// and BEFORE WKWebView content is ready.  Displays the branded NOMO design
+/// and BEFORE WKWebView content is ready.  Displays the branded BotBlock design
 /// with layered glow effects, scanlines, and smooth entrance animations.
 ///
 /// Lifecycle:
@@ -463,7 +463,7 @@ final class AnimatedSplashViewController: UIViewController {
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let text = "NOMO"
+        let text = "BOTBLOCK"
         let attributed = NSMutableAttributedString(string: text)
         attributed.addAttribute(.kern, value: 12.0,
                                 range: NSRange(location: 0, length: text.count))
@@ -491,7 +491,7 @@ final class AnimatedSplashViewController: UIViewController {
         taglineLabel.textAlignment = .center
         taglineLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let text = "FOCUS  \u{00B7}  GROW  \u{00B7}  COLLECT"
+        let text = "FOCUS  \u{00B7}  BUILD  \u{00B7}  COLLECT"
         let attributed = NSMutableAttributedString(string: text)
         attributed.addAttribute(.kern, value: 4.0,
                                 range: NSRange(location: 0, length: text.count))

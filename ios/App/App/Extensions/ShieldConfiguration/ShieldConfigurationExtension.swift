@@ -3,7 +3,7 @@ import ManagedSettingsUI
 import UIKit
 import os.log
 
-private let log = OSLog(subsystem: "co.nomoinc.nomo.ShieldConfiguration", category: "Shield")
+private let log = OSLog(subsystem: "co.botblock.app.ShieldConfiguration", category: "Shield")
 
 /// Custom shield shown when a user tries to open a blocked app.
 /// Neon-branded design matching the app's splash screen aesthetic.
@@ -43,7 +43,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         return ShieldConfiguration(
             backgroundBlurStyle: .systemThickMaterialDark,
             backgroundColor: ShieldConfigurationHelper.shieldBackgroundColor,
-            icon: helper.createNoMoIcon(),
+            icon: helper.createAppIcon(),
             title: ShieldConfiguration.Label(
                 text: message,
                 color: ShieldConfigurationHelper.shieldTitleColor
@@ -53,7 +53,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
                 color: ShieldConfigurationHelper.shieldSubtitleColor
             ),
             primaryButtonLabel: ShieldConfiguration.Label(
-                text: "Back to NoMo",
+                text: "Back to BotBlock",
                 color: .white
             ),
             primaryButtonBackgroundColor: ShieldConfigurationHelper.shieldButtonColor,

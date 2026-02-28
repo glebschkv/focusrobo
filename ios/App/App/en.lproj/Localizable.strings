@@ -1,6 +1,6 @@
 /*
   Localizable.strings (English)
-  NoMo Phone
+  BotBlock
 
   Base English localization for all user-facing strings.
   Generated from Strings.swift - keep in sync.
@@ -9,7 +9,7 @@
 // MARK: - Shield Configuration
 
 "shield.title" = "Stay Focused!";
-"shield.return_button" = "Return to NoMo";
+"shield.return_button" = "Return to BotBlock";
 "shield.app_blocked" = "%@ is blocked";
 "shield.category_blocked" = "%@ is blocked during your focus session";
 "shield.domain_blocked" = "%@ is blocked during your focus session";
@@ -147,7 +147,7 @@
 
 // MARK: - Accessibility: Hints
 
-"a11y.hint.tap_to_open" = "Double tap to open NoMo app";
+"a11y.hint.tap_to_open" = "Double tap to open BotBlock app";
 "a11y.hint.tap_to_start" = "Double tap to start a new focus session";
 "a11y.hint.live_progress" = "This information updates automatically";
 
@@ -218,6 +218,6 @@
 // MARK: - Accessibility: Shield
 
 "a11y.shield.title" = "App blocked during focus session";
-"a11y.shield.description" = "This app is blocked to help you stay focused. You can return to NoMo to continue your session.";
-"a11y.shield.return_button" = "Return to NoMo app";
-"a11y.shield.return_hint" = "Double tap to close this blocked app and return to NoMo";
+"a11y.shield.description" = "This app is blocked to help you stay focused. You can return to BotBlock to continue your session.";
+"a11y.shield.return_button" = "Return to BotBlock app";
+"a11y.shield.return_hint" = "Double tap to close this blocked app and return to BotBlock";

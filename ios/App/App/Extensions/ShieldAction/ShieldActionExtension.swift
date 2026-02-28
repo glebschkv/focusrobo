@@ -3,7 +3,7 @@ import ManagedSettingsUI
 import UIKit
 
 /// Handles button taps on the shield overlay.
-/// Both primary ("Back to NoMo") and secondary button close the blocked app.
+/// Both primary ("Back to BotBlock") and secondary button close the blocked app.
 /// NOTE: Do NOT import FamilyControls here — it crashes the extension on launch.
 class ShieldActionExtension: ShieldActionDelegate {
 
