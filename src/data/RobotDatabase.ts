@@ -42,7 +42,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Quick Charge', 'Bolt Shield', 'Spark Jolt'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/bolt-bot.svg',
+      imagePath: '/assets/robots/assembly-line/bolt-bot.png',
       glowColor: '#3b82f6',
     },
   },
@@ -328,7 +328,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Omega Blast', 'Prime Shield', 'Ultimate Focus'],
     zone: 'Cyber District',
     imageConfig: {
-      imagePath: '/assets/robots/cyber-district/omega-prime.svg',
+      imagePath: '/assets/robots/cyber-district/omega-prime.png',
       glowColor: '#06b6d4',
     },
   },
