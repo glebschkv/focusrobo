@@ -9,6 +9,7 @@ import { useActiveHomeBots, useOwnedCharacters } from '@/stores';
 import { useCollectionStore } from '@/stores/collectionStore';
 import { useCurrentStreak } from '@/stores/streakStore';
 import { useIsFocusModeActive } from '@/stores/focusStore';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface MechHangarProps {
   unlockedRobots: string[];
@@ -22,9 +23,9 @@ interface MechHangarProps {
 export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel }: MechHangarProps) => {
   const activeHomeBots = useActiveHomeBots();
   const shopOwnedCharacters = useOwnedCharacters();
-  const toggleHomeActive = useCollectionStore((s) => s.toggleHomeActive);
   const streak = useCurrentStreak();
   const isFocusActive = useIsFocusModeActive();
+  const { todayStats } = useAnalytics();
 
   const shopOwnedSet = useMemo(() => new Set(shopOwnedCharacters), [shopOwnedCharacters]);
 
@@ -43,12 +44,10 @@ export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel 
   // Display bots = other active bots (up to 3)
   const displayBots = activeBots.slice(1, 4);
 
-  // Calculate charge percentage (based on concept: 2 hours = 100%)
-  // For now, use a placeholder value. Real implementation will read from timer store.
-  const chargePercent = useMemo(() => {
-    // TODO: Read actual daily focus minutes from timer/XP store
-    return isFocusActive ? 65 : 42;
-  }, [isFocusActive]);
+  // Daily focus minutes from analytics (totalFocusTime is in seconds)
+  const focusMinutesToday = Math.floor((todayStats?.totalFocusTime || 0) / 60);
+  // 2 hours (120 min) = 100% charge
+  const chargePercent = Math.min(100, Math.round((focusMinutesToday / 120) * 100));
 
   const handleSwapBot = (botId: string) => {
     // Move tapped bot to front of activeHomeBots
@@ -93,7 +92,7 @@ export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel 
         <ChargeBar
           chargePercent={chargePercent}
           isCharging={isFocusActive}
-          focusMinutesToday={Math.round(chargePercent * 1.2)}
+          focusMinutesToday={focusMinutesToday}
         />
 
         {/* Stats */}

@@ -1,0 +1,399 @@
+  /* ---- COLLECTION PAGE (Game Inventory UI) ---- */
+
+  /* Dark game-style page background for collection */
+  /* Atelier Collection Background — warm white */
+  .collection-page-bg {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Collection header */
+  .collection-header {
+    background: white;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  /* Collection tab */
+  .collection-tab {
+    position: relative;
+    padding: 12px 0;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .collection-tab.active {
+    color: hsl(var(--primary));
+  }
+
+  .collection-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: hsl(var(--primary));
+    border-radius: 1px;
+  }
+
+  .collection-tab-count {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.6;
+    margin-top: 1px;
+  }
+
+  .collection-tab.active .collection-tab-count {
+    opacity: 1;
+    color: hsl(var(--primary));
+  }
+
+  /* Search toggle */
+  .collection-search-toggle {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .collection-search-toggle:active,
+  .collection-search-toggle.active {
+    background: hsl(var(--primary) / 0.08);
+    border-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
+  }
+
+  /* Search input */
+  .collection-search-input {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    color: hsl(var(--foreground));
+    font-size: 16px;
+    padding: 10px 12px 10px 36px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .collection-search-input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .collection-search-input:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+
+  /* Sort button */
+  .collection-sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .collection-sort-btn:active {
+    background: hsl(var(--muted));
+  }
+
+  /* Sort dropdown */
+  .collection-sort-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 150px;
+    background: hsl(252 35% 18%);
+    border: 1.5px solid hsl(255 35% 30%);
+    border-radius: 10px;
+    padding: 4px;
+    z-index: 50;
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.4);
+  }
+
+  .collection-sort-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: hsl(255 20% 68%);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .collection-sort-option:active {
+    background: hsl(255 35% 25%);
+  }
+
+  .collection-sort-option.active {
+    background: hsl(255 35% 25%);
+    color: hsl(180 80% 72%);
+  }
+
+  .collection-sort-option .sort-check {
+    color: hsl(180 80% 60%);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* ---- INVENTORY PET CARD ---- */
+
+  /* Atelier Collection Cards — White gallery grid */
+  .inventory-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 14px;
+    padding: 12px 6px 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .inventory-slot:active {
+    transform: scale(0.97);
+  }
+
+  /* Rarity top accent line — thin colored bar */
+  .inventory-slot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+  }
+
+  .inventory-slot.rarity-common::before {
+    background: hsl(var(--rarity-common));
+  }
+
+  .inventory-slot.rarity-rare::before {
+    background: hsl(var(--rarity-rare));
+  }
+
+  .inventory-slot.rarity-epic::before {
+    background: hsl(var(--rarity-epic));
+  }
+
+  .inventory-slot.rarity-legendary::before {
+    background: hsl(var(--rarity-legendary));
+    box-shadow: 0 0 8px hsl(var(--rarity-legendary) / 0.4);
+  }
+
+  /* Unlocked slot */
+  .inventory-slot.unlocked {
+    border-color: hsl(var(--border));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .inventory-slot.unlocked:active {
+    box-shadow: var(--shadow-xs);
+  }
+
+  /* Locked slot — faded */
+  .inventory-slot.locked {
+    background: hsl(var(--background));
+    border-color: hsl(var(--border));
+    opacity: 0.7;
+  }
+
+  /* Shop bot slot */
+  .inventory-slot.shop-bot,
+  .inventory-slot.shop-pet {
+    border-color: hsl(38 60% 80%);
+    background: hsl(48 80% 98%);
+  }
+
+  .inventory-slot.shop-bot::before,
+  .inventory-slot.shop-pet::before {
+    background: hsl(var(--rarity-legendary));
+  }
+
+  /* Study hours gated slot */
+  .inventory-slot.study-gated {
+    border-color: hsl(217 60% 85%);
+    background: hsl(217 80% 98%);
+  }
+
+  .inventory-slot.study-gated::before {
+    background: hsl(var(--rarity-rare));
+  }
+
+  /* Sprite area */
+  .inventory-sprite-area {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  /* Bot card name */
+  .inventory-pet-name,
+  .inventory-bot-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+
+  .inventory-slot.locked .inventory-pet-name,
+  .inventory-slot.locked .inventory-bot-name {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Rarity indicator dot — Atelier */
+  .rarity-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin: 0 auto 3px;
+  }
+
+  .rarity-dot.common {
+    background: hsl(var(--rarity-common));
+  }
+
+  .rarity-dot.rare {
+    background: hsl(var(--rarity-rare));
+  }
+
+  .rarity-dot.epic {
+    background: hsl(var(--rarity-epic));
+  }
+
+  .rarity-dot.legendary {
+    background: hsl(var(--rarity-legendary));
+    box-shadow: 0 0 6px hsl(var(--rarity-legendary) / 0.5);
+    animation: legendary-dot-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes legendary-dot-pulse {
+    0%, 100% { box-shadow: 0 0 4px hsl(var(--rarity-legendary) / 0.3); }
+    50% { box-shadow: 0 0 10px hsl(var(--rarity-legendary) / 0.6); }
+  }
+
+  /* Atelier inventory badges */
+  .inventory-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .inventory-badge.shop-badge {
+    background: hsl(38 92% 50%);
+    color: white;
+    border: none;
+  }
+
+  .inventory-badge.study-badge {
+    background: hsl(var(--rarity-rare));
+    color: white;
+    border: none;
+  }
+
+  .inventory-badge.level-badge {
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: none;
+  }
+
+  .inventory-fav {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+  }
+
+  .inventory-home {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+
+  .inventory-lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: hsl(var(--background) / 0.5);
+    border-radius: 14px;
+  }
+
+  /* ============================================
+     QUICK FOCUS FAB BUTTON
+     Floating action button on home screen
+     ============================================ */
+
+  /* Atelier Quick Focus FAB */
+  .quick-focus-fab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: hsl(var(--primary));
+    border: none;
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .quick-focus-fab:active {
+    transform: scale(0.93);
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
+  }
+
+  /* ============================================
+     FOCUS TIMER — GAME-DEPTH REDESIGN
+     Matches the retro pixel-art aesthetic used
+     in shop cards, pet collection, and FAB.
+     ============================================ */
+
