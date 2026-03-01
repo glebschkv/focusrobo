@@ -121,52 +121,50 @@ export const BUILDINGS: BuildingConfig[] = [
 export const VILLAGE_AREAS: VillageAreaConfig[] = [
   {
     id: 'cottage',
-    walkable: { minX: 25, maxX: 75, minY: 30, maxY: 50 },
+    walkable: { minX: 30, maxX: 60, minY: 28, maxY: 42 },
     spawnPoints: [
-      { x: 40, y: 40 },
-      { x: 55, y: 38 },
-      { x: 50, y: 45 },
+      { x: 42, y: 35 },
+      { x: 52, y: 33 },
     ],
   },
   {
     id: 'bakery',
-    walkable: { minX: 5, maxX: 40, minY: 35, maxY: 55 },
+    walkable: { minX: 5, maxX: 30, minY: 38, maxY: 52 },
     spawnPoints: [
-      { x: 20, y: 45 },
-      { x: 30, y: 50 },
+      { x: 15, y: 44 },
+      { x: 22, y: 48 },
     ],
   },
   {
     id: 'forge',
-    walkable: { minX: 55, maxX: 90, minY: 38, maxY: 58 },
+    walkable: { minX: 62, maxX: 92, minY: 42, maxY: 56 },
     spawnPoints: [
-      { x: 70, y: 48 },
-      { x: 80, y: 52 },
+      { x: 72, y: 48 },
+      { x: 82, y: 50 },
     ],
   },
   {
     id: 'fishing-dock',
-    walkable: { minX: 5, maxX: 35, minY: 58, maxY: 78 },
+    walkable: { minX: 5, maxX: 32, minY: 62, maxY: 78 },
     spawnPoints: [
-      { x: 15, y: 68 },
-      { x: 25, y: 72 },
+      { x: 14, y: 68 },
+      { x: 24, y: 72 },
     ],
   },
   {
     id: 'tower',
-    walkable: { minX: 55, maxX: 90, minY: 12, maxY: 35 },
+    walkable: { minX: 60, maxX: 92, minY: 12, maxY: 30 },
     spawnPoints: [
-      { x: 75, y: 25 },
-      { x: 65, y: 20 },
+      { x: 72, y: 22 },
+      { x: 80, y: 18 },
     ],
   },
   {
     id: 'town-square',
-    walkable: { minX: 20, maxX: 80, minY: 55, maxY: 80 },
+    walkable: { minX: 25, maxX: 70, minY: 60, maxY: 78 },
     spawnPoints: [
-      { x: 45, y: 65 },
-      { x: 55, y: 70 },
-      { x: 35, y: 68 },
+      { x: 45, y: 68 },
+      { x: 55, y: 72 },
     ],
   },
 ];

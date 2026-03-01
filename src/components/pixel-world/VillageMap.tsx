@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { BUILDINGS, type BuildingConfig } from './villageConfig';
 
 interface VillageMapProps {
@@ -7,14 +7,11 @@ interface VillageMapProps {
 
 /**
  * Renders the village background and building overlays.
- * Base map is a single pixel art image. Buildings are separate sprites
- * that appear/disappear based on the player's level.
+ * Buildings are separate pixel art sprites placed at configured positions.
  */
-export const VillageMap = memo(function VillageMap({ currentLevel }: VillageMapProps) {
-  const unlockedBuildings = useMemo(
-    () => BUILDINGS.filter(b => b.unlockLevel <= currentLevel),
-    [currentLevel],
-  );
+export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel }: VillageMapProps) {
+  // Show all buildings for preview (bypass level gating)
+  const unlockedBuildings = BUILDINGS;
 
   return (
     <div className="absolute inset-0">
