@@ -119,6 +119,37 @@
   pointer-events: none;
 }
 
+/* ── Ambient animations ──────────────────────────────────────────── */
+
+@keyframes cloud-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120px); }
+}
+
+@keyframes water-shimmer {
+  0%, 100% { opacity: 0.4; transform: scaleX(1); }
+  50% { opacity: 0.7; transform: scaleX(1.05); }
+}
+
+@keyframes butterfly-float {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(12px, -8px) rotate(5deg); }
+  50% { transform: translate(24px, 2px) rotate(-3deg); }
+  75% { transform: translate(10px, -12px) rotate(4deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes leaf-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.8; }
+  50% { transform: translate(20px, 40px) rotate(180deg); opacity: 0.6; }
+  100% { transform: translate(40px, 80px) rotate(360deg); opacity: 0; }
+}
+
 /* ── Reduced motion ──────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

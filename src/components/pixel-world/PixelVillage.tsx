@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { VillageMap } from './VillageMap';
 import { VillageCharacter } from './VillageCharacter';
+import { AmbientParticles } from './AmbientParticles';
 import { getUnlockedCharacters } from './villageConfig';
 import { useVillageMovement } from '@/hooks/useVillageMovement';
 import { useCurrentStreak } from '@/stores/streakStore';
@@ -14,8 +15,8 @@ interface PixelVillageProps {
   currentLevel: number;
 }
 
-/** Character display scale (32px native → 64px at 2x) */
-const SPRITE_SCALE = 2;
+/** Character display scale (32px native → 96px at 3x for better visibility) */
+const SPRITE_SCALE = 3;
 
 /**
  * PixelVillage — Main home screen component.
@@ -44,6 +45,9 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
     <div className="absolute inset-0 overflow-hidden">
       {/* Village background + buildings */}
       <VillageMap currentLevel={currentLevel} />
+
+      {/* Ambient life — butterflies, sparkles, leaves */}
+      <AmbientParticles />
 
       {/* Wandering NPCs */}
       {unlockedChars.map((char) => {
