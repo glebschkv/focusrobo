@@ -58,7 +58,9 @@ export const VillageCharacter = memo(function VillageCharacter({
           backgroundImage: `url(${character.spriteSheet})`,
           backgroundSize: `${sheetWidth}px ${sheetHeight}px`,
           filter: RARITY_GLOW[character.rarity] || 'none',
-        }}
+          '--frame-w': `${displaySize}px`,
+          '--frame-h': `${displaySize}px`,
+        } as React.CSSProperties}
       />
 
       {/* Ground shadow */}

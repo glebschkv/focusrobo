@@ -90,8 +90,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 7,
     x: 10,
     y: 60,
-    width: 48,
-    height: 40,
+    width: 62,
+    height: 52,
     imagePath: '/assets/pixel-world/buildings/fishing-dock.png',
   },
   {
@@ -100,7 +100,7 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 10,
     x: 70,
     y: 15,
-    width: 48,
+    width: 47,
     height: 72,
     imagePath: '/assets/pixel-world/buildings/tower.png',
   },
@@ -111,7 +111,7 @@ export const BUILDINGS: BuildingConfig[] = [
     x: 40,
     y: 55,
     width: 72,
-    height: 48,
+    height: 72,
     imagePath: '/assets/pixel-world/buildings/town-square.png',
   },
 ];

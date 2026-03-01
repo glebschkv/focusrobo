@@ -18,20 +18,9 @@ export const VillageMap = memo(function VillageMap({ currentLevel }: VillageMapP
 
   return (
     <div className="absolute inset-0">
-      {/* Base village ground — grass, paths, trees, terrain */}
+      {/* Base village ground — gradient sky + grass */}
       <div
-        className="absolute inset-0 pixel-render"
-        style={{
-          backgroundImage: 'url(/assets/pixel-world/village-base.svg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          imageRendering: 'pixelated',
-        }}
-      />
-
-      {/* Fallback gradient if image hasn't loaded */}
-      <div
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0"
         style={{
           background: 'linear-gradient(180deg, #87CEEB 0%, #87CEEB 30%, #5B8C3E 30%, #5B8C3E 45%, #4A7A32 45%, #4A7A32 100%)',
         }}
