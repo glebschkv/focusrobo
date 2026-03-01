@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 // Lazy load heavy components to reduce initial bundle size
-const MechHangar = lazy(() => import("@/components/hangar/MechHangar").then(m => ({ default: m.MechHangar })));
+const PixelVillage = lazy(() => import("@/components/pixel-world/PixelVillage").then(m => ({ default: m.PixelVillage })));
 const GameUI = lazy(() => import("@/components/GameUI").then(m => ({ default: m.GameUI })));
 const OnboardingFlow = lazy(() => import("@/components/onboarding/OnboardingFlow").then(m => ({ default: m.OnboardingFlow })));
 
@@ -105,11 +105,11 @@ const Index = () => {
   return (
     <PageErrorBoundary pageName="home page">
       <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#0a0a1a' }}>
-        {/* Mech Hangar Home Screen */}
+        {/* Pixel Village Home Screen */}
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
-            <MechHangar
-              unlockedAnimals={unlockedAnimals}
+            <PixelVillage
+              unlockedRobots={unlockedAnimals}
               currentLevel={currentLevel}
             />
           </Suspense>

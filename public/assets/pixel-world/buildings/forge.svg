@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" shape-rendering="crispEdges">
+  <!-- Roof -->
+  <rect x="6" y="10" width="44" height="4" fill="#444"/>
+  <polygon points="6,14 28,6 50,14" fill="#555"/>
+  <!-- Walls -->
+  <rect x="8" y="14" width="40" height="32" fill="#666"/>
+  <!-- Furnace glow -->
+  <rect x="14" y="28" width="14" height="18" fill="#333"/>
+  <rect x="16" y="30" width="10" height="10" fill="#FF6633"/>
+  <rect x="18" y="32" width="6" height="6" fill="#FFAA33"/>
+  <!-- Anvil -->
+  <rect x="36" y="38" width="10" height="4" fill="#555"/>
+  <rect x="38" y="34" width="6" height="4" fill="#777"/>
+  <!-- Chimney with smoke -->
+  <rect x="38" y="2" width="8" height="12" fill="#444"/>
+  <circle cx="42" cy="2" r="3" fill="#999" opacity="0.4"/>
+</svg>
