@@ -17,8 +17,7 @@ interface MechHangarProps {
 
 /**
  * MechHangar — Main home screen component.
- * Replaces RetroPixelPlatform. Shows robots in a dark industrial hangar
- * with a central charging bay, display bays, and stats.
+ * Atelier white surrealist gallery with robot exhibition.
  */
 export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel }: MechHangarProps) => {
   const activeHomeBots = useActiveHomeBots();
@@ -66,7 +65,7 @@ export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel 
     <div className="absolute inset-0 overflow-hidden">
       <HangarBackground />
 
-      <div className="relative z-10 flex flex-col items-center justify-center h-full pt-20 pb-28 gap-5">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full pt-16 pb-24 gap-3">
         {/* Display bays (other collected bots) */}
         {displayBots.length > 0 && (
           <div className="flex items-center gap-3">
