@@ -62,7 +62,7 @@ export const BUILDINGS: BuildingConfig[] = [
     y: 25,   // % from top
     width: 64,
     height: 64,
-    imagePath: '/assets/pixel-world/buildings/cottage.svg',
+    imagePath: '/assets/pixel-world/buildings/cottage.png',
   },
   {
     id: 'bakery',
@@ -72,7 +72,7 @@ export const BUILDINGS: BuildingConfig[] = [
     y: 35,
     width: 56,
     height: 56,
-    imagePath: '/assets/pixel-world/buildings/bakery.svg',
+    imagePath: '/assets/pixel-world/buildings/bakery.png',
   },
   {
     id: 'forge',
@@ -82,7 +82,7 @@ export const BUILDINGS: BuildingConfig[] = [
     y: 40,
     width: 56,
     height: 56,
-    imagePath: '/assets/pixel-world/buildings/forge.svg',
+    imagePath: '/assets/pixel-world/buildings/forge.png',
   },
   {
     id: 'fishing-dock',
@@ -90,9 +90,9 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 7,
     x: 10,
     y: 60,
-    width: 48,
-    height: 40,
-    imagePath: '/assets/pixel-world/buildings/fishing-dock.svg',
+    width: 62,
+    height: 52,
+    imagePath: '/assets/pixel-world/buildings/fishing-dock.png',
   },
   {
     id: 'tower',
@@ -100,9 +100,9 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 10,
     x: 70,
     y: 15,
-    width: 48,
+    width: 47,
     height: 72,
-    imagePath: '/assets/pixel-world/buildings/tower.svg',
+    imagePath: '/assets/pixel-world/buildings/tower.png',
   },
   {
     id: 'town-square',
@@ -111,8 +111,8 @@ export const BUILDINGS: BuildingConfig[] = [
     x: 40,
     y: 55,
     width: 72,
-    height: 48,
-    imagePath: '/assets/pixel-world/buildings/town-square.svg',
+    height: 72,
+    imagePath: '/assets/pixel-world/buildings/town-square.png',
   },
 ];
 
@@ -121,52 +121,50 @@ export const BUILDINGS: BuildingConfig[] = [
 export const VILLAGE_AREAS: VillageAreaConfig[] = [
   {
     id: 'cottage',
-    walkable: { minX: 25, maxX: 75, minY: 30, maxY: 50 },
+    walkable: { minX: 30, maxX: 60, minY: 28, maxY: 42 },
     spawnPoints: [
-      { x: 40, y: 40 },
-      { x: 55, y: 38 },
-      { x: 50, y: 45 },
+      { x: 42, y: 35 },
+      { x: 52, y: 33 },
     ],
   },
   {
     id: 'bakery',
-    walkable: { minX: 5, maxX: 40, minY: 35, maxY: 55 },
+    walkable: { minX: 5, maxX: 30, minY: 38, maxY: 52 },
     spawnPoints: [
-      { x: 20, y: 45 },
-      { x: 30, y: 50 },
+      { x: 15, y: 44 },
+      { x: 22, y: 48 },
     ],
   },
   {
     id: 'forge',
-    walkable: { minX: 55, maxX: 90, minY: 38, maxY: 58 },
+    walkable: { minX: 62, maxX: 92, minY: 42, maxY: 56 },
     spawnPoints: [
-      { x: 70, y: 48 },
-      { x: 80, y: 52 },
+      { x: 72, y: 48 },
+      { x: 82, y: 50 },
     ],
   },
   {
     id: 'fishing-dock',
-    walkable: { minX: 5, maxX: 35, minY: 58, maxY: 78 },
+    walkable: { minX: 5, maxX: 32, minY: 62, maxY: 78 },
     spawnPoints: [
-      { x: 15, y: 68 },
-      { x: 25, y: 72 },
+      { x: 14, y: 68 },
+      { x: 24, y: 72 },
     ],
   },
   {
     id: 'tower',
-    walkable: { minX: 55, maxX: 90, minY: 12, maxY: 35 },
+    walkable: { minX: 60, maxX: 92, minY: 12, maxY: 30 },
     spawnPoints: [
-      { x: 75, y: 25 },
-      { x: 65, y: 20 },
+      { x: 72, y: 22 },
+      { x: 80, y: 18 },
     ],
   },
   {
     id: 'town-square',
-    walkable: { minX: 20, maxX: 80, minY: 55, maxY: 80 },
+    walkable: { minX: 25, maxX: 70, minY: 60, maxY: 78 },
     spawnPoints: [
-      { x: 45, y: 65 },
-      { x: 55, y: 70 },
-      { x: 35, y: 68 },
+      { x: 45, y: 68 },
+      { x: 55, y: 72 },
     ],
   },
 ];
@@ -180,7 +178,7 @@ export const VILLAGE_CHARACTERS: VillageCharacterConfig[] = [
     unlockLevel: 1,
     rarity: 'common',
     description: 'A friendly farmer who tends the village garden.',
-    spriteSheet: '/assets/pixel-world/sprites/farmer.svg',
+    spriteSheet: '/assets/pixel-world/sprites/farmer.png',
     areaId: 'cottage',
   },
   {
@@ -189,7 +187,7 @@ export const VILLAGE_CHARACTERS: VillageCharacterConfig[] = [
     unlockLevel: 3,
     rarity: 'common',
     description: 'Bakes the coziest bread in the village.',
-    spriteSheet: '/assets/pixel-world/sprites/baker.svg',
+    spriteSheet: '/assets/pixel-world/sprites/baker.png',
     areaId: 'bakery',
   },
   {
@@ -198,7 +196,7 @@ export const VILLAGE_CHARACTERS: VillageCharacterConfig[] = [
     unlockLevel: 5,
     rarity: 'rare',
     description: 'Forges tools and trinkets at the village forge.',
-    spriteSheet: '/assets/pixel-world/sprites/blacksmith.svg',
+    spriteSheet: '/assets/pixel-world/sprites/blacksmith.png',
     areaId: 'forge',
   },
   {
@@ -207,7 +205,7 @@ export const VILLAGE_CHARACTERS: VillageCharacterConfig[] = [
     unlockLevel: 7,
     rarity: 'rare',
     description: 'Spends peaceful days by the dock, rod in hand.',
-    spriteSheet: '/assets/pixel-world/sprites/fisher.svg',
+    spriteSheet: '/assets/pixel-world/sprites/fisher.png',
     areaId: 'fishing-dock',
   },
   {
@@ -216,7 +214,7 @@ export const VILLAGE_CHARACTERS: VillageCharacterConfig[] = [
     unlockLevel: 10,
     rarity: 'epic',
     description: 'Studies ancient tomes in the tower above.',
-    spriteSheet: '/assets/pixel-world/sprites/wizard.svg',
+    spriteSheet: '/assets/pixel-world/sprites/wizard.png',
     areaId: 'tower',
   },
 ];

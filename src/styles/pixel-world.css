@@ -9,8 +9,11 @@
 }
 
 /* ── Walk cycle keyframes ────────────────────────────────────────── */
-/* Sprite sheet layout: 4 walk frames (0-3) + 2 idle frames (4-5)
-   Each frame is 32px wide. Rows: down=0, left=1, right=2, up=3 */
+/* Sprite sheet layout: 6 cols × 4 rows
+   Cols 0-3: walk frames, Cols 4-5: idle frames
+   Row 0: down (south), Row 1: left (west), Row 2: right (east), Row 3: up (north)
+   --frame-w and --frame-h are set as inline CSS vars by VillageCharacter.tsx
+   to match the scaled display size (native 32px × scale factor). */
 
 /* Walk Down (row 0) */
 .pixel-char-walk-down {
@@ -21,24 +24,24 @@
 /* Walk Left (row 1) */
 .pixel-char-walk-left {
   animation: sprite-walk 0.5s steps(4) infinite;
-  background-position-y: -32px;
+  background-position-y: calc(-1 * var(--frame-h, 32px));
 }
 
 /* Walk Right (row 2) */
 .pixel-char-walk-right {
   animation: sprite-walk 0.5s steps(4) infinite;
-  background-position-y: -64px;
+  background-position-y: calc(-2 * var(--frame-h, 32px));
 }
 
 /* Walk Up (row 3) */
 .pixel-char-walk-up {
   animation: sprite-walk 0.5s steps(4) infinite;
-  background-position-y: -96px;
+  background-position-y: calc(-3 * var(--frame-h, 32px));
 }
 
 @keyframes sprite-walk {
   from { background-position-x: 0px; }
-  to { background-position-x: -128px; } /* 4 frames × 32px */
+  to { background-position-x: calc(-4 * var(--frame-w, 32px)); }
 }
 
 /* ── Idle keyframes ──────────────────────────────────────────────── */
@@ -50,22 +53,22 @@
 
 .pixel-char-idle-left {
   animation: sprite-idle 1s steps(2) infinite;
-  background-position-y: -32px;
+  background-position-y: calc(-1 * var(--frame-h, 32px));
 }
 
 .pixel-char-idle-right {
   animation: sprite-idle 1s steps(2) infinite;
-  background-position-y: -64px;
+  background-position-y: calc(-2 * var(--frame-h, 32px));
 }
 
 .pixel-char-idle-up {
   animation: sprite-idle 1s steps(2) infinite;
-  background-position-y: -96px;
+  background-position-y: calc(-3 * var(--frame-h, 32px));
 }
 
 @keyframes sprite-idle {
-  from { background-position-x: -128px; } /* idle starts at frame 4 */
-  to { background-position-x: -192px; }   /* 2 idle frames × 32px */
+  from { background-position-x: calc(-4 * var(--frame-w, 32px)); }
+  to { background-position-x: calc(-6 * var(--frame-w, 32px)); }
 }
 
 /* ── Building appear animation ───────────────────────────────────── */
@@ -135,7 +138,7 @@
   .pixel-char-idle-right,
   .pixel-char-idle-up {
     animation: none;
-    background-position-x: -128px;
+    background-position-x: calc(-4 * var(--frame-w, 32px));
   }
 
   .building-enter {

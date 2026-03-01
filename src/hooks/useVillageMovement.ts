@@ -33,6 +33,8 @@ const MAX_IDLE_MS = 4500;
 const MIN_SPEED = 18;
 const MAX_SPEED = 35;
 const ARRIVAL_THRESHOLD = 3; // px
+const MIN_SEPARATION = 70;   // min px between character centers
+const SEPARATION_FORCE = 60; // push-apart speed (px/s)
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -196,6 +198,38 @@ export function useVillageMovement(
             changed = true;
           }
         }
+      }
+
+      // Separation pass — push overlapping characters apart
+      const entries = Array.from(map.values());
+      for (let i = 0; i < entries.length; i++) {
+        for (let j = i + 1; j < entries.length; j++) {
+          const a = entries[i];
+          const b = entries[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MIN_SEPARATION && dist > 0.1) {
+            const pushX = (dx / dist) * SEPARATION_FORCE * (dt / 1000);
+            const pushY = (dy / dist) * SEPARATION_FORCE * (dt / 1000);
+            a.x += pushX;
+            a.y += pushY;
+            b.x -= pushX;
+            b.y -= pushY;
+            changed = true;
+          } else if (dist <= 0.1) {
+            // Exactly overlapping — nudge randomly
+            a.x += (Math.random() - 0.5) * 4;
+            a.y += (Math.random() - 0.5) * 4;
+            changed = true;
+          }
+        }
+      }
+
+      // Clamp all characters within map bounds (with margin for sprite size)
+      for (const bot of entries) {
+        bot.x = Math.max(20, Math.min(MAP_WIDTH - 20, bot.x));
+        bot.y = Math.max(20, Math.min(MAP_HEIGHT - 20, bot.y));
       }
 
       if (changed) {

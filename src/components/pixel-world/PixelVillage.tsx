@@ -1,7 +1,7 @@
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { VillageMap } from './VillageMap';
 import { VillageCharacter } from './VillageCharacter';
-import { getUnlockedCharacters } from './villageConfig';
+import { VILLAGE_CHARACTERS } from './villageConfig';
 import { useVillageMovement } from '@/hooks/useVillageMovement';
 import { useCurrentStreak } from '@/stores/streakStore';
 import { useIsFocusModeActive } from '@/stores/focusStore';
@@ -27,11 +27,8 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
   const isFocusActive = useIsFocusModeActive();
   const { todayStats } = useAnalytics();
 
-  // Get characters unlocked at current level
-  const unlockedChars = useMemo(
-    () => getUnlockedCharacters(currentLevel),
-    [currentLevel],
-  );
+  // Show all characters for preview (bypass level gating)
+  const unlockedChars = VILLAGE_CHARACTERS;
 
   // Movement engine — drives all character positions
   const characterStates = useVillageMovement(unlockedChars);
