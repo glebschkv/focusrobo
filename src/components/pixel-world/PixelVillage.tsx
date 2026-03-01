@@ -38,7 +38,7 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
   const chargePercent = Math.min(100, Math.round((focusMinutesToday / 120) * 100));
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
       {/* Village background + buildings */}
       <VillageMap currentLevel={currentLevel} />
 

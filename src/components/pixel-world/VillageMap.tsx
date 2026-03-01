@@ -15,12 +15,13 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
 
   return (
     <div className="absolute inset-0">
-      {/* Base village ground — gradient sky + grass */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(180deg, #87CEEB 0%, #87CEEB 30%, #5B8C3E 30%, #5B8C3E 45%, #4A7A32 45%, #4A7A32 100%)',
-        }}
+      {/* Pixel art village ground */}
+      <img
+        src="/assets/pixel-world/village-ground.png"
+        alt=""
+        className="absolute inset-0 w-full h-full pixel-render"
+        style={{ imageRendering: 'pixelated', objectFit: 'fill' }}
+        draggable={false}
       />
 
       {/* Building overlays */}

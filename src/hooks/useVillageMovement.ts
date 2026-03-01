@@ -133,14 +133,8 @@ export function useVillageMovement(
           state: 'idle',
           speed: randomSpeed(),
           idleTimer: randomIdleTime(),
-          spawned: false,
+          spawned: true,
         });
-
-        // Mark spawned after a brief delay (for entrance animation)
-        setTimeout(() => {
-          const s = statesRef.current.get(char.id);
-          if (s) s.spawned = true;
-        }, 100);
       }
     }
 
