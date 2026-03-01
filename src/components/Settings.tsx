@@ -41,29 +41,33 @@ export const Settings = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center retro-arcade-container">
-        <div className="retro-game-card p-6 flex items-center gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-cyan-400" />
-          <span className="text-sm font-medium text-purple-300">Loading settings...</span>
+      <div className="h-full flex items-center justify-center bg-[#FAFAF9]">
+        <div
+          className="rounded-2xl p-6 flex items-center gap-3 bg-white border border-stone-200/60"
+          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
+        >
+          <Loader2 className="w-5 h-5 animate-spin text-sky-500" />
+          <span className="text-sm font-medium text-stone-600">Loading settings...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col retro-arcade-container">
+    <div className="h-full flex flex-col bg-[#FAFAF9]">
       {/* Header */}
-      <div className="relative p-4 border-b-4 border-purple-600/50">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-transparent to-pink-900/50" />
-        <div className="relative flex items-center gap-3">
-          <div className="w-12 h-12 retro-icon-badge flex items-center justify-center">
+      <div className="relative px-4 pt-4 pb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden bg-white border border-stone-200/60"
+            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+          >
             <img src="/app-icon.png" alt="BotBlock" width={32} height={32} className="rounded-lg" draggable={false} />
           </div>
           <div>
-            <h1 className="text-xl font-bold retro-pixel-text retro-neon-text">
-              SETTINGS
+            <h1 className="text-lg font-bold text-stone-900 tracking-tight">
+              Settings
             </h1>
-            <p className="text-xs text-purple-300/80 uppercase tracking-wider">
+            <p className="text-xs text-stone-400">
               Customize Your Experience
             </p>
           </div>
@@ -86,13 +90,16 @@ export const Settings = () => {
                 ref={isActive ? activeTabRef : null}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap transition-all active:scale-95 flex-shrink-0",
+                  "flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap transition-all duration-200 active:scale-95 flex-shrink-0 text-xs font-semibold",
                   isActive
-                    ? "retro-arcade-btn retro-arcade-btn-yellow text-xs retro-pixel-text"
-                    : "retro-game-card text-xs text-purple-300/70 retro-pixel-text"
+                    ? "bg-sky-500 text-white shadow-md"
+                    : "bg-stone-100 text-stone-500 border border-stone-200/50 hover:bg-stone-150"
                 )}
+                style={isActive ? {
+                  boxShadow: '0 2px 8px rgba(14,165,233,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                } : undefined}
               >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "opacity-100" : "opacity-50")} />
+                <Icon className={cn("w-3.5 h-3.5", isActive ? "opacity-100" : "opacity-60")} />
                 <span>{tab.label}</span>
               </button>
             );

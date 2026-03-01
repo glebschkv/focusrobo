@@ -30,44 +30,35 @@
     cursor: not-allowed;
   }
 
-  /* Selected state — purple game-depth */
+  /* Selected state — Atelier sky */
   .timer-preset-btn.selected {
-    border-color: hsl(260 50% 55%);
+    border-color: hsl(199 89% 48%);
     background: linear-gradient(180deg,
-      hsl(260 55% 68%) 0%,
-      hsl(260 55% 54%) 100%
+      hsl(199 89% 52%) 0%,
+      hsl(199 89% 44%) 100%
     );
+    color: white;
     box-shadow:
-      0 3px 0 hsl(260 50% 38%),
-      0 0 12px hsl(260 60% 55% / 0.3),
-      inset 0 1px 0 hsl(0 0% 100% / 0.3);
+      0 2px 8px hsl(199 80% 48% / 0.3),
+      inset 0 1px 0 hsl(0 0% 100% / 0.2);
   }
 
   .timer-preset-btn.selected:active:not(:disabled) {
-    transform: translateY(3px);
+    transform: scale(0.97);
     box-shadow:
-      0 0px 0 hsl(260 50% 38%),
-      0 0 8px hsl(260 60% 55% / 0.2),
-      inset 0 1px 0 hsl(0 0% 100% / 0.3);
+      0 1px 4px hsl(199 80% 48% / 0.2),
+      inset 0 1px 0 hsl(0 0% 100% / 0.2);
   }
 
   /* Break preset variant — warm amber */
   .timer-preset-btn.break-mode:not(.selected) {
-    border-color: hsl(35 40% 68%);
-    background: linear-gradient(180deg,
-      hsl(42 50% 95%) 0%,
-      hsl(38 45% 88%) 100%
-    );
-    box-shadow:
-      0 3px 0 hsl(35 35% 55%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    border-color: hsl(38 45% 80%);
+    background: hsl(42 40% 97%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   .timer-preset-btn.break-mode:not(.selected):active:not(:disabled) {
-    transform: translateY(3px);
-    box-shadow:
-      0 0px 0 hsl(35 35% 55%),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+    transform: scale(0.97);
   }
 
   /* ---- Timer Header Pill (mode indicator) ---- */

@@ -1,6 +1,5 @@
   /* ---- COLLECTION PAGE (Game Inventory UI) ---- */
 
-  /* Dark game-style page background for collection */
   /* Atelier Collection Background — warm white */
   .collection-page-bg {
     background: hsl(var(--background));
@@ -118,18 +117,18 @@
     background: hsl(var(--muted));
   }
 
-  /* Sort dropdown */
+  /* Sort dropdown — Atelier white card (was dark purple) */
   .collection-sort-dropdown {
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
     min-width: 150px;
-    background: hsl(252 35% 18%);
-    border: 1.5px solid hsl(255 35% 30%);
-    border-radius: 10px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
     padding: 4px;
     z-index: 50;
-    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.06);
   }
 
   .collection-sort-option {
@@ -137,26 +136,26 @@
     align-items: center;
     justify-content: space-between;
     padding: 11px 14px;
-    border-radius: 7px;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    color: hsl(255 20% 68%);
+    color: hsl(var(--foreground));
     transition: all 0.15s ease;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
 
   .collection-sort-option:active {
-    background: hsl(255 35% 25%);
+    background: hsl(var(--muted));
   }
 
   .collection-sort-option.active {
-    background: hsl(255 35% 25%);
-    color: hsl(180 80% 72%);
+    background: hsl(var(--primary) / 0.06);
+    color: hsl(var(--primary));
   }
 
   .collection-sort-option .sort-check {
-    color: hsl(180 80% 60%);
+    color: hsl(var(--primary));
     font-size: 14px;
     font-weight: 700;
   }
@@ -210,17 +209,17 @@
     box-shadow: 0 0 8px hsl(var(--rarity-legendary) / 0.4);
   }
 
-  /* Unlocked slot */
+  /* Unlocked slot — subtle shadow lift on hover */
   .inventory-slot.unlocked {
     border-color: hsl(var(--border));
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
   }
 
   .inventory-slot.unlocked:active {
-    box-shadow: var(--shadow-xs);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
   }
 
-  /* Locked slot — faded */
+  /* Locked slot — frosted glass overlay */
   .inventory-slot.locked {
     background: hsl(var(--background));
     border-color: hsl(var(--border));
@@ -230,8 +229,8 @@
   /* Shop bot slot */
   .inventory-slot.shop-bot,
   .inventory-slot.shop-pet {
-    border-color: hsl(38 60% 80%);
-    background: hsl(48 80% 98%);
+    border-color: hsl(38 50% 82%);
+    background: hsl(48 60% 99%);
   }
 
   .inventory-slot.shop-bot::before,
@@ -241,8 +240,8 @@
 
   /* Study hours gated slot */
   .inventory-slot.study-gated {
-    border-color: hsl(217 60% 85%);
-    background: hsl(217 80% 98%);
+    border-color: hsl(217 40% 87%);
+    background: hsl(217 50% 99%);
   }
 
   .inventory-slot.study-gated::before {
@@ -361,7 +360,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: hsl(var(--background) / 0.5);
+    background: hsl(var(--background) / 0.6);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border-radius: 14px;
   }
 
@@ -393,7 +394,4 @@
 
   /* ============================================
      FOCUS TIMER — GAME-DEPTH REDESIGN
-     Matches the retro pixel-art aesthetic used
-     in shop cards, pet collection, and FAB.
      ============================================ */
-

@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
 import { AchievementGallery } from '@/components/AchievementGallery';
-import { Trophy, ChevronRight, Gamepad2, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Trophy, ChevronRight, Zap } from 'lucide-react';
 
 interface GamificationHubProps {
   onXPReward?: (amount: number) => void;
@@ -26,7 +25,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
   // If achievements view is open, show it instead
   if (showAchievements) {
     return (
-      <div className="h-full flex flex-col retro-arcade-container">
+      <div className="h-full flex flex-col bg-[#FAFAF9]">
         <AchievementGallery
           embedded={true}
           onClose={() => setShowAchievements(false)}
@@ -36,19 +35,24 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
   }
 
   return (
-    <div className="h-full flex flex-col retro-arcade-container">
+    <div className="h-full flex flex-col bg-[#FAFAF9]">
       {/* Header */}
-      <div className="relative p-4 border-b-4 border-purple-600/50">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-transparent to-pink-900/50" />
-        <div className="relative flex items-center gap-3">
-          <div className="w-12 h-12 retro-icon-badge">
-            <Gamepad2 className="w-6 h-6 text-cyan-400" />
+      <div className="relative px-4 pt-4 pb-3">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(135deg, hsl(38 92% 50%), hsl(45 90% 55%))',
+              boxShadow: '0 2px 8px hsla(38, 80%, 50%, 0.25), inset 0 1px 0 hsla(0,0%,100%,0.3)',
+            }}
+          >
+            <Trophy className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="text-xl font-bold retro-pixel-text retro-neon-text">
-              CHALLENGES
+            <h1 className="text-lg font-bold text-stone-900 tracking-tight">
+              Challenges
             </h1>
-            <p className="text-xs text-purple-300/80 uppercase tracking-wider">
+            <p className="text-xs text-stone-400">
               Achievements & Rewards
             </p>
           </div>
@@ -56,60 +60,85 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
       </div>
 
       <ScrollArea className="flex-1 min-h-0">
-        <div className="p-4 space-y-4 pb-6">
-          {/* Achievements */}
+        <div className="px-4 pt-1 pb-6 space-y-4">
+          {/* Achievement Card */}
           <button
-            className={cn(
-              "w-full retro-game-card overflow-hidden cursor-pointer transition-all text-left touch-manipulation select-none active:scale-[0.98]",
-              unlockedAchievements.length > 0 && "retro-active-challenge"
-            )}
+            className="w-full overflow-hidden cursor-pointer text-left touch-manipulation select-none active:scale-[0.98] transition-transform duration-150 rounded-2xl bg-white border border-stone-200/60"
+            style={{
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)',
+            }}
             onClick={() => setShowAchievements(true)}
           >
-            <div className="h-2 bg-purple-900/50">
+            {/* Progress bar at top */}
+            <div className="h-1.5 bg-stone-100 rounded-t-2xl overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 transition-all"
-                style={{ width: `${achievementPercent}%` }}
+                className="h-full rounded-full transition-all duration-700 ease-out"
+                style={{
+                  width: `${achievementPercent}%`,
+                  background: 'linear-gradient(90deg, #f59e0b, #eab308)',
+                }}
               />
             </div>
+
             <div className="p-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+                {/* Trophy icon */}
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    boxShadow: '0 3px 10px rgba(245,158,11,0.3), inset 0 1px 0 rgba(255,255,255,0.25)',
+                  }}
+                >
                   <Trophy className="w-7 h-7 text-white" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-white retro-pixel-text">ACHIEVEMENTS</h3>
-                  <div className="flex items-center gap-2 text-sm text-purple-300/80">
-                    <span className="retro-neon-yellow">{achievementPoints} PTS</span>
-                    <span>·</span>
-                    <span>{unlockedAchievements.length}/{achievements.length} unlocked</span>
+
+                {/* Text content */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-stone-900 text-[15px]">Achievements</h3>
+                  <div className="flex items-center gap-2 text-sm mt-0.5">
+                    <span className="font-bold text-amber-600">{achievementPoints} pts</span>
+                    <span className="text-stone-300">·</span>
+                    <span className="text-stone-400">{unlockedAchievements.length}/{achievements.length} unlocked</span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-amber-400">{achievementPercent}%</div>
-                  <div className="text-[10px] text-purple-300/60">Complete</div>
+
+                {/* Completion percentage */}
+                <div className="text-right flex-shrink-0">
+                  <div className="text-xl font-bold text-amber-500 tabular-nums">{achievementPercent}%</div>
+                  <div className="text-[10px] text-stone-400 font-medium">Complete</div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-purple-400" />
+
+                <ChevronRight className="w-5 h-5 text-stone-300 flex-shrink-0" />
               </div>
             </div>
           </button>
 
           {/* Info Panel */}
-          <div className="retro-game-card p-4">
-            <h4 className="font-bold mb-3 flex items-center gap-2 text-cyan-400 retro-pixel-text">
-              <Zap className="w-4 h-4" />
-              HOW IT WORKS
+          <div
+            className="rounded-xl p-4 border border-stone-200/50"
+            style={{
+              background: 'linear-gradient(180deg, hsl(40 20% 98%), hsl(40 15% 96%))',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)',
+            }}
+          >
+            <h4 className="font-semibold text-stone-700 mb-3 flex items-center gap-2 text-[13px]">
+              <div className="w-5 h-5 rounded-md bg-sky-500/10 flex items-center justify-center">
+                <Zap className="w-3 h-3 text-sky-500" strokeWidth={2.5} />
+              </div>
+              How It Works
             </h4>
-            <ul className="text-sm text-purple-300/80 space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-yellow-400">►</span>
+            <ul className="text-sm text-stone-500 space-y-2.5">
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0 mt-1.5" />
                 Complete focus sessions to earn XP and level up
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400">►</span>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0 mt-1.5" />
                 Keep your streak going for bonus rewards
               </li>
-              <li className="flex items-start gap-2">
-                <span className="text-purple-400">►</span>
+              <li className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-violet-400 flex-shrink-0 mt-1.5" />
                 Unlock achievements for extra coins and badges
               </li>
             </ul>

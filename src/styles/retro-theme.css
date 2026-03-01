@@ -1,681 +1,324 @@
-  /* Retro Arcade Container */
+  /* ═══════════════════════════════════════════════════════════════════════════
+     RETRO THEME → ATELIER OVERRIDES
+     These classes were originally dark arcade-themed. Now they render as warm
+     Atelier cards, buttons, and text to match the unified design language.
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* Retro Arcade Container → Atelier warm canvas */
   .retro-arcade-container {
-    background: linear-gradient(180deg,
-      hsl(260 30% 12%) 0%,
-      hsl(280 25% 8%) 100%
-    );
+    background: #FAFAF9;
     position: relative;
     overflow: hidden;
-    /* Force dark-theme text/semantic colors — this container is always dark
-       regardless of system light/dark mode, so Tailwind utilities like
-       text-foreground and text-muted-foreground must resolve to light values. */
-    color: hsl(45 25% 85%);
-    --foreground: 45 25% 85%;
-    --muted-foreground: 45 15% 60%;
-    --card-foreground: 45 25% 85%;
-    --border: 220 15% 25%;
+    color: hsl(var(--foreground));
   }
 
   .retro-arcade-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 2px,
-      hsl(0 0% 0% / 0.03) 2px,
-      hsl(0 0% 0% / 0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
 
-  /* Pixel Border Box */
-  .retro-pixel-box {
-    position: relative;
-    background: linear-gradient(180deg,
-      hsl(260 20% 18%) 0%,
-      hsl(260 25% 14%) 100%
-    );
-    border: 3px solid hsl(280 60% 50%);
-    box-shadow:
-      inset 0 0 0 2px hsl(260 40% 25%),
-      0 4px 0 hsl(280 60% 30%),
-      0 0 20px hsl(280 80% 50% / 0.3);
-  }
-
-  /* Neon Glow Text */
-  .retro-neon-text {
-    color: hsl(180 100% 70%);
-    text-shadow:
-      0 0 5px hsl(180 100% 70%),
-      0 0 10px hsl(180 100% 60%),
-      0 0 20px hsl(180 100% 50%),
-      0 0 40px hsl(180 100% 40%);
-  }
-
-  .retro-neon-pink {
-    color: hsl(320 100% 70%);
-    text-shadow:
-      0 0 5px hsl(320 100% 70%),
-      0 0 10px hsl(320 100% 60%),
-      0 0 20px hsl(320 100% 50%);
-  }
-
-  .retro-neon-yellow {
-    color: hsl(50 100% 60%);
-    text-shadow:
-      0 0 5px hsl(50 100% 60%),
-      0 0 10px hsl(50 100% 50%),
-      0 0 20px hsl(50 100% 40%);
-  }
-
-  .retro-neon-green {
-    color: hsl(120 100% 60%);
-    text-shadow:
-      0 0 5px hsl(120 100% 60%),
-      0 0 10px hsl(120 100% 50%),
-      0 0 15px hsl(120 100% 40%);
-  }
-
-  .retro-neon-orange {
-    color: hsl(30 100% 60%);
-    text-shadow:
-      0 0 5px hsl(30 100% 60%),
-      0 0 10px hsl(30 100% 50%),
-      0 0 15px hsl(30 100% 40%);
-  }
-
-  /* Retro Arcade Button */
-  .retro-arcade-btn {
-    position: relative;
-    background: linear-gradient(180deg,
-      hsl(350 80% 55%) 0%,
-      hsl(350 85% 45%) 50%,
-      hsl(350 90% 35%) 100%
-    );
-    border: 3px solid hsl(350 70% 65%);
-    border-radius: 8px;
-    box-shadow:
-      0 6px 0 hsl(350 90% 25%),
-      inset 0 2px 0 hsl(350 60% 70%),
-      0 0 15px hsl(350 100% 50% / 0.4);
-    text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: white;
-    text-shadow: 0 2px 0 hsl(350 100% 20%);
-    transition: all 0.1s ease;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Only apply hover on devices that support real hover (not touch) */
-  @media (hover: hover) {
-    .retro-arcade-btn:hover {
-      transform: translateY(-2px);
-      box-shadow:
-        0 8px 0 hsl(350 90% 25%),
-        inset 0 2px 0 hsl(350 60% 70%),
-        0 0 25px hsl(350 100% 50% / 0.6);
-    }
-    .retro-arcade-btn-green:hover {
-      box-shadow:
-        0 8px 0 hsl(120 80% 18%),
-        inset 0 2px 0 hsl(120 50% 60%),
-        0 0 25px hsl(120 100% 40% / 0.6);
-    }
-    .retro-arcade-btn-yellow:hover {
-      box-shadow:
-        0 8px 0 hsl(45 100% 25%),
-        inset 0 2px 0 hsl(45 70% 70%),
-        0 0 25px hsl(45 100% 50% / 0.6);
-    }
-    .retro-arcade-btn-purple:hover {
-      box-shadow:
-        0 8px 0 hsl(280 80% 25%),
-        inset 0 2px 0 hsl(280 50% 70%),
-        0 0 25px hsl(280 100% 50% / 0.6);
-    }
-  }
-
-  .retro-arcade-btn:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 hsl(350 90% 25%),
-      inset 0 2px 0 hsl(350 60% 70%),
-      0 0 10px hsl(350 100% 50% / 0.3);
-  }
-
-  .retro-arcade-btn-green {
-    background: linear-gradient(180deg,
-      hsl(120 70% 45%) 0%,
-      hsl(120 75% 35%) 50%,
-      hsl(120 80% 25%) 100%
-    );
-    border-color: hsl(120 60% 55%);
-    text-shadow: 0 2px 0 hsl(120 100% 15%);
-    box-shadow:
-      0 6px 0 hsl(120 80% 18%),
-      inset 0 2px 0 hsl(120 50% 60%),
-      0 0 15px hsl(120 100% 40% / 0.4);
-  }
-
-  .retro-arcade-btn-green:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 hsl(120 80% 18%),
-      inset 0 2px 0 hsl(120 50% 60%),
-      0 0 10px hsl(120 100% 40% / 0.3);
-  }
-
-  .retro-arcade-btn-yellow {
-    background: linear-gradient(180deg,
-      hsl(45 90% 55%) 0%,
-      hsl(45 95% 45%) 50%,
-      hsl(45 100% 35%) 100%
-    );
-    border-color: hsl(45 80% 65%);
-    box-shadow:
-      0 6px 0 hsl(45 100% 25%),
-      inset 0 2px 0 hsl(45 70% 70%),
-      0 0 15px hsl(45 100% 50% / 0.4);
-    color: hsl(45 100% 10%);
-    text-shadow: 0 1px 0 hsl(45 100% 70%);
-  }
-
-  .retro-arcade-btn-yellow:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 hsl(45 100% 25%),
-      inset 0 2px 0 hsl(45 70% 70%),
-      0 0 10px hsl(45 100% 50% / 0.3);
-  }
-
-  .retro-arcade-btn-purple {
-    background: linear-gradient(180deg,
-      hsl(280 70% 55%) 0%,
-      hsl(280 75% 45%) 50%,
-      hsl(280 80% 35%) 100%
-    );
-    border-color: hsl(280 60% 65%);
-    box-shadow:
-      0 6px 0 hsl(280 80% 25%),
-      inset 0 2px 0 hsl(280 50% 70%),
-      0 0 15px hsl(280 100% 50% / 0.4);
-  }
-
-  .retro-arcade-btn-purple:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 hsl(280 80% 25%),
-      inset 0 2px 0 hsl(280 50% 70%),
-      0 0 10px hsl(280 100% 50% / 0.3);
-  }
-
-  /* Retro Progress Bar (Health Bar Style) */
-  .retro-health-bar {
-    position: relative;
-    height: 20px;
-    background: hsl(0 0% 10%);
-    border: 3px solid hsl(0 0% 30%);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow:
-      inset 0 2px 4px hsl(0 0% 0% / 0.5),
-      0 2px 0 hsl(0 0% 20%);
-  }
-
-  .retro-health-bar-fill {
-    height: 100%;
-    background: linear-gradient(180deg,
-      hsl(120 80% 55%) 0%,
-      hsl(120 70% 45%) 40%,
-      hsl(120 80% 35%) 100%
-    );
-    box-shadow: inset 0 -2px 4px hsl(120 100% 20%);
-    transition: width 0.3s ease;
-    position: relative;
-  }
-
-  .retro-health-bar-fill::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 4px;
-    right: 4px;
-    height: 4px;
-    background: linear-gradient(90deg,
-      hsl(120 80% 70%) 0%,
-      transparent 100%
-    );
-    border-radius: 2px;
-  }
-
-  .retro-health-bar-red .retro-health-bar-fill {
-    background: linear-gradient(180deg,
-      hsl(0 80% 55%) 0%,
-      hsl(0 70% 45%) 40%,
-      hsl(0 80% 35%) 100%
-    );
-    box-shadow: inset 0 -2px 4px hsl(0 100% 20%);
-  }
-
-  .retro-health-bar-yellow .retro-health-bar-fill {
-    background: linear-gradient(180deg,
-      hsl(45 90% 55%) 0%,
-      hsl(45 80% 45%) 40%,
-      hsl(45 90% 35%) 100%
-    );
-    box-shadow: inset 0 -2px 4px hsl(45 100% 20%);
-  }
-
-  .retro-health-bar-purple .retro-health-bar-fill {
-    background: linear-gradient(180deg,
-      hsl(280 80% 60%) 0%,
-      hsl(280 70% 50%) 40%,
-      hsl(280 80% 40%) 100%
-    );
-    box-shadow: inset 0 -2px 4px hsl(280 100% 20%);
-  }
-
-  /* Retro Card (Game Menu Item) */
+  /* Retro Game Card → Atelier white card */
   .retro-game-card {
     position: relative;
-    background: linear-gradient(180deg,
-      hsl(260 25% 20%) 0%,
-      hsl(260 30% 15%) 100%
-    );
-    border: 3px solid hsl(260 40% 40%);
-    border-radius: 8px;
-    box-shadow:
-      0 4px 0 hsl(260 50% 20%),
-      inset 0 1px 0 hsl(260 30% 35%),
-      0 0 0 1px hsl(260 60% 50% / 0.3);
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
     overflow: hidden;
     transition: all 0.2s ease;
-    /* Force dark-theme semantic colors — this card is always dark regardless
-       of system theme. Override CSS vars so Tailwind text-foreground etc. work. */
-    color: hsl(45 25% 85%);
-    --foreground: 45 25% 85%;
-    --muted-foreground: 45 15% 60%;
-    --card-foreground: 45 25% 85%;
+    color: hsl(var(--foreground));
   }
 
   .retro-game-card:hover {
-    transform: translateY(-2px);
-    border-color: hsl(180 60% 50%);
-    box-shadow:
-      0 6px 0 hsl(260 50% 20%),
-      inset 0 1px 0 hsl(260 30% 35%),
-      0 0 15px hsl(180 100% 50% / 0.3);
+    transform: none;
+    border-color: hsl(var(--border));
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
   }
 
   .retro-game-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      hsl(180 100% 70% / 0.5) 50%,
-      transparent 100%
-    );
+    display: none;
   }
 
-  /* Retro Icon Badge */
+  /* Retro Icon Badge → Atelier light badge */
   .retro-icon-badge {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg,
-      hsl(260 40% 30%) 0%,
-      hsl(280 35% 25%) 100%
-    );
-    border: 2px solid hsl(280 50% 50%);
-    border-radius: 8px;
-    box-shadow:
-      inset 0 2px 0 hsl(280 30% 40%),
-      inset 0 -2px 0 hsl(280 50% 15%),
-      0 0 10px hsl(280 80% 50% / 0.3);
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
-  /* Retro Tab Buttons */
+  /* Neon Text → Clean colored text */
+  .retro-neon-text {
+    color: hsl(var(--primary));
+    text-shadow: none;
+  }
+
+  .retro-neon-pink {
+    color: hsl(330 70% 50%);
+    text-shadow: none;
+  }
+
+  .retro-neon-yellow {
+    color: hsl(38 92% 50%);
+    text-shadow: none;
+  }
+
+  .retro-neon-green {
+    color: hsl(145 55% 42%);
+    text-shadow: none;
+  }
+
+  .retro-neon-orange {
+    color: hsl(25 85% 55%);
+    text-shadow: none;
+  }
+
+  /* Pixel Text → System font */
+  .retro-pixel-text {
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
+
+  /* Retro Arcade Buttons → Atelier buttons */
+  .retro-arcade-btn {
+    position: relative;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+    text-transform: none;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: white;
+    text-shadow: none;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (hover: hover) {
+    .retro-arcade-btn:hover {
+      transform: none;
+      box-shadow: 0 3px 12px hsl(var(--primary) / 0.35);
+    }
+    .retro-arcade-btn-green:hover {
+      box-shadow: 0 3px 12px rgba(34,197,94,0.35);
+    }
+    .retro-arcade-btn-yellow:hover {
+      box-shadow: 0 3px 12px rgba(245,158,11,0.35);
+    }
+    .retro-arcade-btn-purple:hover {
+      box-shadow: 0 3px 12px rgba(139,92,246,0.35);
+    }
+  }
+
+  .retro-arcade-btn:active {
+    transform: scale(0.97);
+  }
+
+  .retro-arcade-btn-green {
+    background: linear-gradient(180deg, hsl(145 55% 48%) 0%, hsl(145 55% 42%) 100%);
+    border: none;
+    color: white;
+    text-shadow: none;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+  }
+
+  .retro-arcade-btn-green:active {
+    transform: scale(0.97);
+  }
+
+  .retro-arcade-btn-yellow {
+    background: linear-gradient(180deg, hsl(38 85% 55%) 0%, hsl(35 80% 48%) 100%);
+    border: none;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+    color: white;
+    text-shadow: none;
+  }
+
+  .retro-arcade-btn-yellow:active {
+    transform: scale(0.97);
+  }
+
+  .retro-arcade-btn-purple {
+    background: linear-gradient(180deg, hsl(262 60% 55%) 0%, hsl(262 60% 48%) 100%);
+    border: none;
+    box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+    color: white;
+    text-shadow: none;
+  }
+
+  .retro-arcade-btn-purple:active {
+    transform: scale(0.97);
+  }
+
+  /* Retro Health Bar → Atelier progress bar */
+  .retro-health-bar {
+    position: relative;
+    height: 8px;
+    background: hsl(var(--muted));
+    border: none;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .retro-health-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(199 89% 55%));
+    box-shadow: none;
+    transition: width 0.3s ease;
+    position: relative;
+    border-radius: 4px;
+  }
+
+  .retro-health-bar-fill::after {
+    display: none;
+  }
+
+  .retro-health-bar-red .retro-health-bar-fill {
+    background: linear-gradient(90deg, hsl(0 72% 50%), hsl(0 72% 55%));
+  }
+
+  .retro-health-bar-yellow .retro-health-bar-fill {
+    background: linear-gradient(90deg, hsl(38 85% 50%), hsl(45 85% 55%));
+  }
+
+  .retro-health-bar-purple .retro-health-bar-fill {
+    background: linear-gradient(90deg, hsl(262 60% 50%), hsl(262 60% 55%));
+  }
+
+  /* Retro Tab → Atelier pill tab */
   .retro-tab {
     position: relative;
     padding: 8px 16px;
-    background: linear-gradient(180deg,
-      hsl(260 30% 25%) 0%,
-      hsl(260 35% 18%) 100%
-    );
-    border: 2px solid hsl(260 40% 35%);
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
     border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    color: hsl(260 20% 60%);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
+    border-radius: 8px 8px 0 0;
+    color: hsl(var(--muted-foreground));
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.01em;
     transition: all 0.2s ease;
   }
 
   .retro-tab:hover {
-    background: linear-gradient(180deg,
-      hsl(260 35% 30%) 0%,
-      hsl(260 40% 22%) 100%
-    );
-    color: hsl(260 30% 75%);
+    background: white;
+    color: hsl(var(--foreground));
   }
 
   .retro-tab.active {
-    background: linear-gradient(180deg,
-      hsl(180 50% 40%) 0%,
-      hsl(180 55% 30%) 100%
-    );
-    border-color: hsl(180 60% 50%);
-    color: hsl(180 100% 90%);
-    box-shadow:
-      0 0 10px hsl(180 100% 50% / 0.4),
-      inset 0 1px 0 hsl(180 40% 60%);
+    background: hsl(var(--primary));
+    border-color: hsl(var(--primary));
+    color: white;
+    box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
   }
 
-  /* Retro Score Display */
+  /* Retro Score Display → Clean number */
   .retro-score-display {
-    font-family: 'Courier New', monospace;
+    font-family: inherit;
     font-weight: 800;
     font-size: 24px;
-    color: hsl(50 100% 60%);
-    text-shadow:
-      0 0 5px hsl(50 100% 50%),
-      0 0 10px hsl(50 100% 40%),
-      2px 2px 0 hsl(50 100% 20%);
-    letter-spacing: 2px;
+    color: hsl(var(--primary));
+    text-shadow: none;
+    letter-spacing: -0.01em;
   }
 
-  /* Retro Difficulty Badge */
+  /* Retro Difficulty Badge → Atelier badges */
   .retro-difficulty-badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     padding: 4px 10px;
-    border-radius: 4px;
-    font-weight: 800;
+    border-radius: 6px;
+    font-weight: 600;
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
 
   .retro-difficulty-normal {
-    background: linear-gradient(180deg, hsl(120 60% 45%) 0%, hsl(120 65% 35%) 100%);
-    border: 2px solid hsl(120 50% 55%);
-    color: white;
-    box-shadow: 0 2px 0 hsl(120 70% 25%);
+    background: hsl(145 45% 92%);
+    border: 1px solid hsl(145 35% 78%);
+    color: hsl(145 50% 32%);
+    box-shadow: none;
   }
 
   .retro-difficulty-hard {
-    background: linear-gradient(180deg, hsl(30 80% 50%) 0%, hsl(30 85% 40%) 100%);
-    border: 2px solid hsl(30 70% 60%);
-    color: white;
-    box-shadow: 0 2px 0 hsl(30 90% 30%);
+    background: hsl(25 60% 93%);
+    border: 1px solid hsl(25 50% 78%);
+    color: hsl(25 65% 38%);
+    box-shadow: none;
   }
 
   .retro-difficulty-extreme {
-    background: linear-gradient(180deg, hsl(350 80% 50%) 0%, hsl(350 85% 40%) 100%);
-    border: 2px solid hsl(350 70% 60%);
-    color: white;
-    box-shadow: 0 2px 0 hsl(350 90% 30%);
+    background: hsl(350 55% 93%);
+    border: 1px solid hsl(350 45% 80%);
+    color: hsl(350 60% 40%);
+    box-shadow: none;
   }
 
   .retro-difficulty-legendary {
-    background: linear-gradient(180deg, hsl(280 70% 55%) 0%, hsl(280 75% 45%) 100%);
-    border: 2px solid hsl(280 60% 65%);
-    color: white;
-    box-shadow: 0 2px 0 hsl(280 80% 35%);
-    animation: legendary-pulse 2s ease-in-out infinite;
+    background: linear-gradient(180deg, hsl(262 50% 93%) 0%, hsl(262 50% 90%) 100%);
+    border: 1px solid hsl(262 40% 78%);
+    color: hsl(262 55% 42%);
+    box-shadow: none;
+    animation: none;
   }
 
-  @keyframes legendary-pulse {
-    0%, 100% {
-      box-shadow: 0 2px 0 hsl(280 80% 35%), 0 0 10px hsl(280 100% 50% / 0.5);
-    }
-    50% {
-      box-shadow: 0 2px 0 hsl(280 80% 35%), 0 0 20px hsl(280 100% 50% / 0.8);
-    }
-  }
-
-  /* Retro Wheel */
-  .retro-wheel {
-    border: 5px solid hsl(45 100% 55%);
-    border-radius: 50%;
-    box-shadow:
-      0 0 0 3px hsl(30 80% 30%),
-      0 0 0 6px hsl(35 70% 45%),
-      0 0 25px hsl(50 100% 50% / 0.4),
-      0 0 50px hsl(50 100% 50% / 0.15),
-      inset 0 0 20px hsl(0 0% 0% / 0.4);
-    transition: box-shadow 0.5s ease;
-  }
-
-  /* Retro Combo Counter */
-  .retro-combo-counter {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(180deg,
-      hsl(30 90% 50%) 0%,
-      hsl(25 95% 40%) 50%,
-      hsl(20 100% 30%) 100%
-    );
-    border: 4px solid hsl(45 100% 55%);
-    border-radius: 12px;
-    box-shadow:
-      0 4px 0 hsl(20 100% 20%),
-      0 0 20px hsl(30 100% 50% / 0.5),
-      inset 0 2px 0 hsl(45 100% 70%);
-  }
-
-  .retro-combo-number {
-    font-family: 'Courier New', monospace;
-    font-weight: 900;
-    font-size: 32px;
-    color: white;
-    text-shadow:
-      0 0 10px hsl(50 100% 70%),
-      0 0 20px hsl(50 100% 50%),
-      3px 3px 0 hsl(20 100% 25%);
-  }
-
-  .retro-combo-label {
-    font-weight: 800;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: hsl(50 100% 85%);
-  }
-
-  /* Retro Guild Banner */
-  .retro-guild-banner {
-    position: relative;
-    background: linear-gradient(180deg,
-      hsl(260 50% 35%) 0%,
-      hsl(280 45% 25%) 100%
-    );
-    border: 3px solid hsl(280 60% 50%);
-    border-radius: 8px;
-    box-shadow:
-      0 4px 0 hsl(280 70% 20%),
-      0 0 20px hsl(280 80% 50% / 0.3),
-      inset 0 2px 0 hsl(280 40% 50%);
-    overflow: hidden;
-  }
-
-  .retro-guild-banner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      hsl(0 0% 100% / 0.1) 50%,
-      transparent 100%
-    );
-    animation: shine-sweep 3s ease-in-out infinite;
-  }
-
-  @keyframes shine-sweep {
-    0% { left: -100%; }
-    50%, 100% { left: 200%; }
-  }
-
-  /* Retro Battle Pass Tier */
-  .retro-tier-node {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(180deg,
-      hsl(260 30% 25%) 0%,
-      hsl(260 35% 18%) 100%
-    );
-    border: 3px solid hsl(260 40% 35%);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-  }
-
-  .retro-tier-node.unlocked {
-    background: linear-gradient(180deg,
-      hsl(120 50% 40%) 0%,
-      hsl(120 55% 30%) 100%
-    );
-    border-color: hsl(120 60% 50%);
-    box-shadow: 0 0 15px hsl(120 100% 40% / 0.5);
-  }
-
-  .retro-tier-node.current {
-    background: linear-gradient(180deg,
-      hsl(50 80% 50%) 0%,
-      hsl(45 85% 40%) 100%
-    );
-    border-color: hsl(50 100% 60%);
-    box-shadow: 0 0 20px hsl(50 100% 50% / 0.6);
-    animation: current-tier-pulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes current-tier-pulse {
-    0%, 100% {
-      transform: scale(1);
-      box-shadow: 0 0 15px hsl(50 100% 50% / 0.5);
-    }
-    50% {
-      transform: scale(1.05);
-      box-shadow: 0 0 25px hsl(50 100% 50% / 0.8);
-    }
-  }
-
-  .retro-tier-connector {
-    height: 4px;
-    background: hsl(260 40% 30%);
-    border-radius: 2px;
-  }
-
-  .retro-tier-connector.filled {
-    background: linear-gradient(90deg,
-      hsl(120 60% 45%) 0%,
-      hsl(120 65% 40%) 100%
-    );
-    box-shadow: 0 0 8px hsl(120 100% 40% / 0.5);
-  }
-
-  /* Retro Modal */
+  /* Retro Modal → Atelier glass modal */
   .retro-modal {
-    background: linear-gradient(180deg,
-      hsl(260 30% 15%) 0%,
-      hsl(280 25% 10%) 100%
-    );
-    border: 4px solid hsl(280 50% 45%);
-    border-radius: 12px;
-    box-shadow:
-      0 0 0 2px hsl(260 40% 25%),
-      0 8px 0 hsl(280 60% 20%),
-      0 0 40px hsl(280 80% 40% / 0.4);
-    /* Force dark-theme semantic colors — retro modals are always dark */
-    color: hsl(45 25% 85%);
-    --foreground: 45 25% 85%;
-    --muted-foreground: 45 15% 60%;
-    --card-foreground: 45 25% 85%;
-    --background: 260 30% 15%;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    color: hsl(var(--foreground));
   }
 
   .retro-modal-header {
-    background: linear-gradient(180deg,
-      hsl(280 50% 40%) 0%,
-      hsl(280 55% 30%) 100%
-    );
-    border-bottom: 3px solid hsl(280 60% 25%);
+    background: hsl(var(--muted));
+    border-bottom: 1px solid hsl(var(--border));
     padding: 16px;
+    border-radius: 20px 20px 0 0;
   }
 
-  /* Scanline Overlay */
+  /* Scanline Overlay → Disabled */
   .retro-scanlines {
     position: relative;
   }
 
   .retro-scanlines::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 1px,
-      hsl(0 0% 0% / 0.05) 1px,
-      hsl(0 0% 0% / 0.05) 2px
-    );
-    pointer-events: none;
-    z-index: 10;
+    display: none;
   }
 
-  /* Retro Reward Item */
+  /* Retro Reward Item → Atelier reward item */
   .retro-reward-item {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: linear-gradient(180deg,
-      hsl(260 25% 22%) 0%,
-      hsl(260 30% 16%) 100%
-    );
-    border: 2px solid hsl(260 35% 35%);
-    border-radius: 6px;
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
     font-size: 12px;
-    color: hsl(260 20% 80%);
+    color: hsl(var(--foreground));
   }
 
   .retro-reward-item.legendary {
-    border-color: hsl(50 100% 50%);
-    background: linear-gradient(180deg,
-      hsl(50 40% 25%) 0%,
-      hsl(45 35% 18%) 100%
-    );
-    box-shadow: 0 0 10px hsl(50 100% 50% / 0.3);
+    border-color: hsl(38 50% 70%);
+    background: hsl(45 50% 97%);
+    box-shadow: 0 1px 4px rgba(245,158,11,0.1);
   }
 
   .retro-reward-item.epic {
-    border-color: hsl(280 80% 55%);
-    background: linear-gradient(180deg,
-      hsl(280 35% 25%) 0%,
-      hsl(280 30% 18%) 100%
-    );
-    box-shadow: 0 0 10px hsl(280 100% 50% / 0.3);
+    border-color: hsl(262 40% 75%);
+    background: hsl(262 40% 97%);
+    box-shadow: 0 1px 4px rgba(139,92,246,0.1);
   }
 
   .retro-reward-item.compact {
@@ -683,28 +326,12 @@
     gap: 4px;
   }
 
-  /* CRT Flicker Effect */
-  @keyframes crt-flicker {
-    0% { opacity: 0.97; }
-    5% { opacity: 1; }
-    10% { opacity: 0.98; }
-    15% { opacity: 1; }
-    100% { opacity: 1; }
-  }
-
+  /* CRT Flicker → Disabled */
   .retro-crt-flicker {
-    animation: crt-flicker 0.15s infinite;
+    animation: none;
   }
 
-  /* Retro Font Style — monospace with toned-down arcade feel */
-  .retro-pixel-text {
-    font-family: 'Courier New', 'Monaco', monospace;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  /* Retro Stats Grid */
+  /* Retro Stats Grid → Clean grid */
   .retro-stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -712,49 +339,133 @@
   }
 
   .retro-stat-box {
-    background: linear-gradient(180deg,
-      hsl(260 25% 18%) 0%,
-      hsl(260 30% 12%) 100%
-    );
-    border: 2px solid hsl(260 40% 35%);
-    border-radius: 6px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
     padding: 12px;
     text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
 
   .retro-stat-value {
-    font-family: 'Courier New', monospace;
-    font-weight: 900;
+    font-family: inherit;
+    font-weight: 800;
     font-size: 24px;
-    color: hsl(180 100% 70%);
-    text-shadow: 0 0 10px hsl(180 100% 50% / 0.5);
+    color: hsl(var(--primary));
+    text-shadow: none;
   }
 
   .retro-stat-label {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: hsl(260 20% 55%);
+    letter-spacing: 0.5px;
+    color: hsl(var(--muted-foreground));
     margin-top: 4px;
   }
 
-  /* Active Challenge Glow */
-  @keyframes active-challenge-glow {
-    0%, 100% {
-      box-shadow: 0 0 15px hsl(30 100% 50% / 0.5), 0 4px 0 hsl(30 100% 25%);
-    }
-    50% {
-      box-shadow: 0 0 30px hsl(30 100% 50% / 0.8), 0 4px 0 hsl(30 100% 25%);
-    }
-  }
-
+  /* Active Challenge Glow → Subtle accent border */
   .retro-active-challenge {
-    animation: active-challenge-glow 2s ease-in-out infinite;
-    border-color: hsl(30 100% 50%) !important;
+    animation: none;
+    border-color: hsl(38 80% 60%) !important;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.1);
   }
 
-  /* ═══════════════════════════════════════════════════════════════════════════
-     SHOP V2 STYLES – Game-depth aesthetic (thick borders, offset shadows,
-     inset glossy highlights, gradient backgrounds, scanline-ready)
-     ═══════════════════════════════════════════════════════════════════════════ */
+  /* Retro Wheel — keep golden styling for the reward wheel */
+  .retro-wheel {
+    border: 4px solid hsl(45 80% 55%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 2px hsl(35 60% 40%),
+      0 0 20px hsl(45 80% 50% / 0.2),
+      inset 0 0 12px rgba(0,0,0,0.15);
+    transition: box-shadow 0.5s ease;
+  }
 
+  /* Retro Combo Counter — warm accent */
+  .retro-combo-counter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, hsl(38 85% 55%) 0%, hsl(35 80% 48%) 100%);
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.25);
+  }
+
+  .retro-combo-number {
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 32px;
+    color: white;
+    text-shadow: none;
+  }
+
+  .retro-combo-label {
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Retro Guild Banner → Atelier card */
+  .retro-guild-banner {
+    position: relative;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .retro-guild-banner::before {
+    display: none;
+  }
+
+  /* Retro Battle Pass Tier → Atelier nodes */
+  .retro-tier-node {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .retro-tier-node.unlocked {
+    background: hsl(145 40% 96%);
+    border-color: hsl(145 40% 65%);
+    box-shadow: 0 1px 4px rgba(34,197,94,0.15);
+  }
+
+  .retro-tier-node.current {
+    background: hsl(45 60% 96%);
+    border-color: hsl(38 70% 55%);
+    box-shadow: 0 1px 6px rgba(245,158,11,0.2);
+    animation: none;
+  }
+
+  .retro-tier-connector {
+    height: 3px;
+    background: hsl(var(--border));
+    border-radius: 2px;
+  }
+
+  .retro-tier-connector.filled {
+    background: hsl(145 45% 52%);
+    box-shadow: none;
+  }
+
+  /* Retro Pixel Box → Clean card */
+  .retro-pixel-box {
+    position: relative;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
