@@ -1,0 +1,146 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Pixel Village — Sprite animations & pixel rendering utilities
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Pixel-perfect image rendering */
+.pixel-render {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ── Walk cycle keyframes ────────────────────────────────────────── */
+/* Sprite sheet layout: 4 walk frames (0-3) + 2 idle frames (4-5)
+   Each frame is 32px wide. Rows: down=0, left=1, right=2, up=3 */
+
+/* Walk Down (row 0) */
+.pixel-char-walk-down {
+  animation: sprite-walk 0.5s steps(4) infinite;
+  background-position-y: 0px;
+}
+
+/* Walk Left (row 1) */
+.pixel-char-walk-left {
+  animation: sprite-walk 0.5s steps(4) infinite;
+  background-position-y: -32px;
+}
+
+/* Walk Right (row 2) */
+.pixel-char-walk-right {
+  animation: sprite-walk 0.5s steps(4) infinite;
+  background-position-y: -64px;
+}
+
+/* Walk Up (row 3) */
+.pixel-char-walk-up {
+  animation: sprite-walk 0.5s steps(4) infinite;
+  background-position-y: -96px;
+}
+
+@keyframes sprite-walk {
+  from { background-position-x: 0px; }
+  to { background-position-x: -128px; } /* 4 frames × 32px */
+}
+
+/* ── Idle keyframes ──────────────────────────────────────────────── */
+
+.pixel-char-idle-down {
+  animation: sprite-idle 1s steps(2) infinite;
+  background-position-y: 0px;
+}
+
+.pixel-char-idle-left {
+  animation: sprite-idle 1s steps(2) infinite;
+  background-position-y: -32px;
+}
+
+.pixel-char-idle-right {
+  animation: sprite-idle 1s steps(2) infinite;
+  background-position-y: -64px;
+}
+
+.pixel-char-idle-up {
+  animation: sprite-idle 1s steps(2) infinite;
+  background-position-y: -96px;
+}
+
+@keyframes sprite-idle {
+  from { background-position-x: -128px; } /* idle starts at frame 4 */
+  to { background-position-x: -192px; }   /* 2 idle frames × 32px */
+}
+
+/* ── Building appear animation ───────────────────────────────────── */
+
+@keyframes building-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.building-enter {
+  animation: building-appear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Character spawn animation ───────────────────────────────────── */
+
+@keyframes char-spawn {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--char-x, 0px), var(--char-y, 0px), 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(var(--char-x, 0px), var(--char-y, 0px), 0) scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(var(--char-x, 0px), var(--char-y, 0px), 0) scale(1);
+  }
+}
+
+/* ── Character shadow ────────────────────────────────────────────── */
+
+.pixel-char-shadow {
+  position: absolute;
+  width: 20px;
+  height: 6px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.25) 0%, transparent 70%);
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-char-walk-down,
+  .pixel-char-walk-left,
+  .pixel-char-walk-right,
+  .pixel-char-walk-up {
+    animation: none;
+    background-position-x: 0px;
+  }
+
+  .pixel-char-idle-down,
+  .pixel-char-idle-left,
+  .pixel-char-idle-right,
+  .pixel-char-idle-up {
+    animation: none;
+    background-position-x: -128px;
+  }
+
+  .building-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

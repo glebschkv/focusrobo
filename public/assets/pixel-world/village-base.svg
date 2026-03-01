@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 600" shape-rendering="crispEdges">
+  <!-- Sky -->
+  <rect width="390" height="200" fill="#87CEEB"/>
+  <rect y="140" width="390" height="60" fill="#9DD8F0"/>
+
+  <!-- Clouds -->
+  <rect x="40" y="30" width="60" height="16" rx="4" fill="#ffffff" opacity="0.7"/>
+  <rect x="30" y="34" width="80" height="12" rx="4" fill="#ffffff" opacity="0.5"/>
+  <rect x="220" y="60" width="50" height="14" rx="4" fill="#ffffff" opacity="0.6"/>
+  <rect x="300" y="20" width="40" height="12" rx="4" fill="#ffffff" opacity="0.5"/>
+
+  <!-- Hills -->
+  <ellipse cx="100" cy="200" rx="120" ry="40" fill="#6DAE4F"/>
+  <ellipse cx="300" cy="200" rx="130" ry="45" fill="#5FA043"/>
+
+  <!-- Main grass -->
+  <rect y="200" width="390" height="400" fill="#5B8C3E"/>
+
+  <!-- Lighter grass patches -->
+  <rect x="20" y="220" width="80" height="60" fill="#68A344" rx="4"/>
+  <rect x="200" y="280" width="100" height="50" fill="#68A344" rx="4"/>
+  <rect x="300" y="400" width="70" height="80" fill="#68A344" rx="4"/>
+
+  <!-- Dirt path (winding) -->
+  <rect x="170" y="200" width="50" height="100" fill="#C4A574"/>
+  <rect x="140" y="280" width="110" height="40" fill="#C4A574"/>
+  <rect x="130" y="300" width="40" height="120" fill="#C4A574"/>
+  <rect x="130" y="400" width="130" height="40" fill="#C4A574"/>
+  <rect x="230" y="420" width="40" height="100" fill="#C4A574"/>
+  <rect x="160" y="500" width="110" height="40" fill="#C4A574"/>
+
+  <!-- Path edges (darker dirt) -->
+  <rect x="168" y="200" width="2" height="100" fill="#B09560"/>
+  <rect x="222" y="200" width="2" height="100" fill="#B09560"/>
+
+  <!-- Pond -->
+  <ellipse cx="60" cy="420" rx="45" ry="30" fill="#4A9BD9"/>
+  <ellipse cx="55" cy="416" rx="35" ry="22" fill="#5AABE9"/>
+  <ellipse cx="50" cy="412" rx="20" ry="12" fill="#6BBBE9" opacity="0.6"/>
+
+  <!-- Trees -->
+  <!-- Tree 1 -->
+  <rect x="14" y="250" width="8" height="20" fill="#6B4226"/>
+  <circle cx="18" cy="245" r="16" fill="#3D7A2A"/>
+  <circle cx="10" cy="250" r="12" fill="#4A8C35"/>
+  <circle cx="26" cy="248" r="10" fill="#4A8C35"/>
+
+  <!-- Tree 2 -->
+  <rect x="340" y="300" width="8" height="22" fill="#6B4226"/>
+  <circle cx="344" cy="294" r="18" fill="#3D7A2A"/>
+  <circle cx="334" cy="298" r="12" fill="#4A8C35"/>
+  <circle cx="354" cy="296" r="11" fill="#4A8C35"/>
+
+  <!-- Tree 3 -->
+  <rect x="290" y="210" width="6" height="16" fill="#6B4226"/>
+  <circle cx="293" cy="206" r="12" fill="#3D7A2A"/>
+  <circle cx="286" cy="210" r="9" fill="#4A8C35"/>
+
+  <!-- Tree 4 -->
+  <rect x="80" y="520" width="8" height="20" fill="#6B4226"/>
+  <circle cx="84" cy="514" r="15" fill="#3D7A2A"/>
+  <circle cx="74" cy="518" r="10" fill="#4A8C35"/>
+
+  <!-- Flowers -->
+  <circle cx="110" cy="340" r="3" fill="#FF6B9D"/>
+  <circle cx="118" cy="346" r="3" fill="#FFD93D"/>
+  <circle cx="280" cy="460" r="3" fill="#FF6B9D"/>
+  <circle cx="290" cy="454" r="3" fill="#B088F9"/>
+  <circle cx="40" cy="480" r="3" fill="#FFD93D"/>
+  <circle cx="330" cy="350" r="3" fill="#FF6B9D"/>
+  <circle cx="200" cy="240" r="3" fill="#FFD93D"/>
+
+  <!-- Fence posts near cottage area -->
+  <rect x="130" y="175" width="4" height="12" fill="#8B6914"/>
+  <rect x="150" y="175" width="4" height="12" fill="#8B6914"/>
+  <rect x="170" y="175" width="4" height="12" fill="#8B6914"/>
+  <rect x="130" y="179" width="44" height="3" fill="#A07A1E"/>
+
+  <!-- Small rocks -->
+  <rect x="310" y="380" width="8" height="6" rx="2" fill="#9E9E9E"/>
+  <rect x="150" y="460" width="6" height="5" rx="2" fill="#8E8E8E"/>
+</svg>
