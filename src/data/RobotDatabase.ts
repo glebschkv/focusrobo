@@ -42,7 +42,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Quick Charge', 'Bolt Shield', 'Spark Jolt'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/bolt-bot.svg',
+      imagePath: '/robots/bolt-bot.png',
       glowColor: '#3b82f6',
     },
   },
@@ -56,7 +56,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Gear Spin', 'Pup Dash', 'Tail Whirl'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/gear-pup.svg',
+      imagePath: '/robots/gear-pup.png',
       glowColor: '#3b82f6',
     },
   },
@@ -70,7 +70,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Iron Grip', 'Focus Lock', 'Rivet Burst'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/rivet.svg',
+      imagePath: '/robots/rivet.png',
       glowColor: '#3b82f6',
     },
   },
@@ -84,7 +84,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Arc Weld', 'Spark Shower', 'Heat Focus'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/spark-welder.svg',
+      imagePath: '/robots/spark-welder.png',
       glowColor: '#3b82f6',
     },
   },
@@ -348,7 +348,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Turbo Charge', 'Armor Up', 'Tank Rush'],
     zone: 'Assembly Line',
     imageConfig: {
-      imagePath: '/assets/robots/assembly-line/turbo-tank.svg',
+      imagePath: '/robots/turbo-tank.png',
       glowColor: '#3b82f6',
     },
   },
@@ -399,7 +399,7 @@ export const ROBOT_DATABASE: RobotData[] = [
     abilities: ['Knowledge Beam', 'Study Shield', 'Iron Will'],
     zone: 'Workshop',
     imageConfig: {
-      imagePath: '/assets/robots/workshop/iron-scholar.svg',
+      imagePath: '/robots/iron-scholar.png',
       glowColor: '#22c55e',
     },
   },
