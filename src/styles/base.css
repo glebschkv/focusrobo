@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iOS app hardening: prevent zoom, text selection, and tap delay */
+html, body {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+
+/* Allow text selection in inputs/textareas where users actually type */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Atelier — White Surrealist Design System */
+
+@layer base {
+  :root {
+    /* iOS Safe Area Variables */
+    --safe-area-inset-top: env(safe-area-inset-top);
+    --safe-area-inset-right: env(safe-area-inset-right);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left: env(safe-area-inset-left);
+
+    /* Atelier White Surrealist Palette */
+    --background: 40 20% 98%;     /* Warm white canvas #FAFAF9 */
+    --foreground: 24 10% 10%;     /* Near-black text #1C1917 */
+    --card: 0 0% 100%;            /* Pure white cards */
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 199 89% 48%;       /* Sky-500 accent #0EA5E9 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 6% 83%;       /* Stone-300 */
+    --secondary-foreground: 24 10% 10%;
+    --muted: 40 6% 90%;           /* Warm stone muted */
+    --muted-foreground: 24 6% 46%;  /* Stone-500 #78716C */
+    --accent: 199 89% 48%;        /* Sky-500 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;     /* Red-500 */
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;       /* Green-500 */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;        /* Amber-500 */
+    --warning-foreground: 24 10% 10%;
+    --border: 24 6% 90%;          /* Stone-200 #E7E5E4 — thin 1px lines */
+    --input: 24 6% 90%;
+    --ring: 199 89% 48%;
+
+    /* Premium Gradients — rich depth */
+    --gradient-hero: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 96%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 95%) 100%);
+    --gradient-platform: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 10% 94%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0 0% 100% / 0.88), hsla(0 0% 100% / 0.68));
+    --gradient-accent: linear-gradient(135deg, hsl(199 89% 52%), hsl(199 89% 42%));
+    --gradient-gold: linear-gradient(135deg, hsl(38 92% 55%), hsl(38 92% 45%));
+    --gradient-premium: linear-gradient(135deg, hsl(258 90% 66%), hsl(258 90% 56%));
+
+    /* Premium Shadows — layered depth with warm tones */
+    --shadow-xs: 0 1px 2px hsla(24 10% 10% / 0.05);
+    --shadow-sm: 0 1px 3px hsla(24 10% 10% / 0.06), 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-md: 0 4px 16px hsla(24 10% 10% / 0.07), 0 2px 4px hsla(24 10% 10% / 0.04);
+    --shadow-lg: 0 12px 32px hsla(24 10% 10% / 0.09), 0 4px 8px hsla(24 10% 10% / 0.04), 0 1px 0 hsla(0 0% 100% / 0.6) inset;
+    --shadow-xl: 0 24px 56px hsla(24 10% 10% / 0.1), 0 8px 16px hsla(24 10% 10% / 0.05);
+    --shadow-floating-soft: 0 8px 32px hsla(24 10% 10% / 0.08), 0 2px 8px hsla(24 10% 10% / 0.03), inset 0 1px 0 hsla(0 0% 100% / 0.4);
+    --shadow-tab-bar: 0 -1px 0 hsla(24 10% 10% / 0.06), 0 -8px 32px hsla(24 10% 10% / 0.05);
+    --shadow-inner: inset 0 1px 3px hsla(24 10% 10% / 0.06);
+    /* Premium layered shadow with subtle accent */
+    --shadow-surreal: 4px 8px 24px hsla(24 10% 10% / 0.08), -2px -2px 12px hsla(199 89% 48% / 0.04), 0 0 0 1px hsla(0 0% 100% / 0.3) inset;
+
+    /* iOS Transitions */
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-ios: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    --radius: 1rem; /* 16px — slightly rounder for the gallery feel */
+
+    /* Rarity Colors */
+    --rarity-common: 24 6% 64%;       /* Stone-400 #A8A29E */
+    --rarity-rare: 217 91% 60%;       /* Blue-500 #3B82F6 */
+    --rarity-epic: 258 90% 66%;       /* Violet-500 #8B5CF6 */
+    --rarity-legendary: 38 92% 50%;   /* Amber-500 #F59E0B */
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* No separate dark theme — Atelier is always light.
+     We keep the class for compatibility but map to the same values. */
+  .dark {
+    --background: 40 20% 98%;
+    --foreground: 24 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 10%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 6% 83%;
+    --secondary-foreground: 24 10% 10%;
+    --muted: 40 6% 90%;
+    --muted-foreground: 24 6% 46%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 24 10% 10%;
+    --border: 24 6% 90%;
+    --input: 24 6% 90%;
+    --ring: 199 89% 48%;
+    --gradient-hero: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 96%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 15% 95%) 100%);
+    --gradient-platform: linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(40 10% 94%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0 0% 100% / 0.85), hsla(0 0% 100% / 0.65));
+    --gradient-accent: linear-gradient(135deg, hsl(199 89% 48%), hsl(199 89% 42%));
+    --shadow-xs: 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-sm: 0 1px 3px hsla(24 10% 10% / 0.06), 0 1px 2px hsla(24 10% 10% / 0.04);
+    --shadow-md: 0 4px 12px hsla(24 10% 10% / 0.06), 0 2px 4px hsla(24 10% 10% / 0.03);
+    --shadow-lg: 0 12px 24px hsla(24 10% 10% / 0.08), 0 4px 8px hsla(24 10% 10% / 0.04);
+    --shadow-xl: 0 24px 48px hsla(24 10% 10% / 0.08), 0 8px 16px hsla(24 10% 10% / 0.04);
+    --shadow-floating-soft: 0 8px 32px hsla(24 10% 10% / 0.06), 0 2px 8px hsla(24 10% 10% / 0.02);
+    --shadow-tab-bar: 0 -1px 0 hsla(24 10% 10% / 0.06), 0 -8px 32px hsla(24 10% 10% / 0.04);
+    --shadow-inner: inset 0 1px 2px hsla(24 10% 10% / 0.04);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* iOS-style smooth font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Disable text size adjustment on mobile */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Optimize touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent zoom on double tap */
+    touch-action: manipulation;
+  }
+}

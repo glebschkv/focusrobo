@@ -11,8 +11,8 @@ import { PageErrorBoundary } from '@/components/PageErrorBoundary';
 import { checkRateLimit, recordRateLimitAttempt, clearRateLimit, RATE_LIMIT_CONFIGS } from '@/lib/security';
 import { Capacitor } from '@capacitor/core';
 
-const AUTH_BG = 'linear-gradient(180deg, hsl(260 30% 15%) 0%, hsl(280 25% 10%) 50%, hsl(220 25% 8%) 100%)';
-const INPUT_CLASS = 'h-12 rounded-xl bg-[hsl(260_25%_18%/0.8)] border-[hsl(260_35%_35%)] text-white placeholder:text-purple-500 focus:border-[hsl(280_50%_55%)] focus:ring-[hsl(280_50%_55%)]';
+const AUTH_BG = 'linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(38 15% 95%) 50%, hsl(36 12% 93%) 100%)';
+const INPUT_CLASS = 'h-12 rounded-xl bg-white border-stone-200 text-stone-900 placeholder:text-stone-400 focus:border-sky-500 focus:ring-sky-500';
 
 // Apple logo SVG component
 const AppleIcon = ({ className }: { className?: string }) => (
@@ -509,8 +509,8 @@ export default function Auth() {
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex items-center justify-center pt-safe pb-safe" style={{ background: AUTH_BG }}>
           <div className="text-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-2 border-purple-700 border-t-purple-400 mx-auto mb-4"></div>
-            <p className="text-sm text-purple-400 animate-pulse">Loading...</p>
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-stone-200 border-t-sky-500 mx-auto mb-4"></div>
+            <p className="text-sm text-stone-400 animate-pulse">Loading...</p>
           </div>
         </div>
       </PageErrorBoundary>
@@ -531,34 +531,26 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          {/* Scanlines overlay */}
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          {/* Subtle center spotlight */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
 
           <div className="w-full max-w-sm space-y-8 relative z-[1]">
           {/* Logo/Title */}
           <div className="text-center space-y-2 relative">
             <div className="relative inline-block mb-3">
-              <div
-                className="absolute inset-0 rounded-full blur-xl scale-[2.5]"
-                style={{ background: 'hsl(280 80% 50% / 0.15)' }}
-              />
               <img
                 src="/app-icon.png"
                 alt="BotBlock"
                 className="relative w-20 h-20 mx-auto rounded-2xl"
                 style={{
-                  border: '3px solid hsl(280 50% 45%)',
-                  boxShadow: '0 0 20px hsl(280 80% 40% / 0.3), 0 4px 12px rgba(0,0,0,0.4)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)',
                 }}
               />
             </div>
-            <h1
-              className="text-3xl font-black uppercase tracking-tight text-white"
-              style={{ textShadow: '0 0 20px hsl(280 80% 60% / 0.5), 0 0 40px hsl(280 80% 60% / 0.2)' }}
-            >
+            <h1 className="text-3xl font-black tracking-tight text-stone-800" style={{ letterSpacing: '-0.01em' }}>
               BotBlock
             </h1>
-            <p className="text-sm text-purple-300/70">Focus, grow, and collect pets!</p>
+            <p className="text-sm text-stone-400">Focus, grow, and collect bots!</p>
           </div>
 
           {/* Auth Options */}
@@ -588,71 +580,57 @@ export default function Auth() {
 
             <button
               onClick={() => { resetForm(); setMode('magic-link'); }}
-              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98]"
-              style={{
-                background: 'linear-gradient(180deg, hsl(260 25% 22%) 0%, hsl(260 30% 16%) 100%)',
-                border: '2px solid hsl(260 35% 35%)',
-                boxShadow: '0 2px 0 hsl(260 30% 12%)',
-              }}
+              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98] bg-white border border-stone-200"
+              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
-              >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-sky-50 border border-sky-100">
                 <PixelIcon name="sparkles" size={24} />
               </div>
               <div className="text-left flex-1">
-                <p className="font-bold text-sm text-white">Continue with Email</p>
-                <p className="text-xs text-purple-300/60">Passwordless magic link</p>
+                <p className="font-bold text-sm text-stone-800">Continue with Email</p>
+                <p className="text-xs text-stone-400">Passwordless magic link</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-purple-400/50" />
+              <ArrowRight className="w-4 h-4 text-stone-300" />
             </button>
 
             <button
               onClick={() => { resetForm(); setMode('email-password'); }}
-              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98]"
-              style={{
-                background: 'linear-gradient(180deg, hsl(260 25% 22%) 0%, hsl(260 30% 16%) 100%)',
-                border: '2px solid hsl(260 35% 35%)',
-                boxShadow: '0 2px 0 hsl(260 30% 12%)',
-              }}
+              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98] bg-white border border-stone-200"
+              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
-              >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-stone-50 border border-stone-200">
                 <PixelIcon name="sword" size={24} />
               </div>
               <div className="text-left flex-1">
-                <p className="font-bold text-sm text-white">Sign in with Password</p>
-                <p className="text-xs text-purple-300/60">Use email and password</p>
+                <p className="font-bold text-sm text-stone-800">Sign in with Password</p>
+                <p className="text-xs text-stone-400">Use email and password</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-purple-400/50" />
+              <ArrowRight className="w-4 h-4 text-stone-300" />
             </button>
 
             <div className="flex items-center gap-3 py-4">
-              <div className="flex-1 h-px bg-purple-700/50" />
-              <span className="text-xs text-purple-500 uppercase tracking-widest">or</span>
-              <div className="flex-1 h-px bg-purple-700/50" />
+              <div className="flex-1 h-px bg-stone-200" />
+              <span className="text-xs text-stone-400 uppercase tracking-widest">or</span>
+              <div className="flex-1 h-px bg-stone-200" />
             </div>
 
             <button
               onClick={handleGuestMode}
-              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98] border-2 border-dashed border-purple-700/50 hover:border-purple-500/40"
+              className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98] border border-dashed border-stone-300 hover:border-stone-400"
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: 'hsl(260 20% 18%)', border: '2px solid hsl(260 25% 30%)' }}
-              >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-stone-50 border border-stone-200">
                 <PixelIcon name="ghost" size={24} />
               </div>
               <div className="text-left flex-1">
-                <p className="font-bold text-sm text-purple-300">Continue as Guest</p>
-                <p className="text-xs text-purple-400/60">No account needed</p>
+                <p className="font-bold text-sm text-stone-600">Continue as Guest</p>
+                <p className="text-xs text-stone-400">No account needed</p>
               </div>
             </button>
           </div>
 
-          <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-900/20 border border-amber-600/30">
+          <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-50 border border-amber-200">
             <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-            <p className="text-xs text-amber-400/80">
+            <p className="text-xs text-amber-600">
               Guest progress is saved on this device only and won't sync across devices
             </p>
           </div>
@@ -667,11 +645,11 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
           <div className="w-full max-w-sm space-y-6 relative z-[1]" ref={formRef}>
           <button
             onClick={() => { resetForm(); setMode('welcome'); }}
-            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-purple-400 hover:text-white transition-colors -ml-2 px-2"
+            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-stone-400 hover:text-stone-700 transition-colors -ml-2 px-2"
           >
             ← Back
           </button>
@@ -680,30 +658,30 @@ export default function Auth() {
             /* Inline email confirmation */
             <div className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-                style={{ background: 'hsl(120 30% 18%)', border: '2px solid hsl(120 50% 35%)' }}
+                style={{ background: 'hsl(145 40% 95%)', border: '1px solid hsl(145 35% 80%)' }}
               >
                 <PixelIcon name="sparkles" size={36} />
               </div>
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-white">Check your email</h2>
-                <p className="text-sm text-purple-300/70">
+                <h2 className="text-xl font-bold text-stone-900">Check your email</h2>
+                <p className="text-sm text-stone-400">
                   We sent a magic link to
                 </p>
-                <p className="text-sm font-semibold text-cyan-400">{emailSentTo}</p>
+                <p className="text-sm font-semibold text-sky-500">{emailSentTo}</p>
               </div>
-              <p className="text-xs text-purple-400/70">
+              <p className="text-xs text-stone-400">
                 Click the link in the email to sign in. It may take a minute to arrive.
               </p>
               <div className="pt-2 space-y-3">
                 <button
-                  className="retro-arcade-btn retro-arcade-btn-purple w-full py-3 text-sm"
+                  className="w-full py-3 text-sm font-semibold rounded-xl bg-stone-100 text-stone-700 border border-stone-200 transition-all active:scale-[0.98]"
                   onClick={() => { setEmailSent(false); }}
                 >
                   Didn't receive it? Try again
                 </button>
                 <button
                   onClick={() => { resetForm(); setMode('welcome'); }}
-                  className="text-sm text-purple-400 hover:text-white transition-colors"
+                  className="text-sm text-stone-400 hover:text-stone-700 transition-colors"
                 >
                   Back to sign in options
                 </button>
@@ -713,19 +691,19 @@ export default function Auth() {
             <>
               <div className="text-center space-y-2">
                 <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
-                  style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
+                  style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
                 >
                   <PixelIcon name="sparkles" size={32} />
                 </div>
-                <h2 className="text-xl font-bold text-white">Magic Link</h2>
-                <p className="text-sm text-purple-300/70">
+                <h2 className="text-xl font-bold text-stone-900">Magic Link</h2>
+                <p className="text-sm text-stone-400">
                   We'll email you a link to sign in instantly
                 </p>
               </div>
 
               <form onSubmit={handleMagicLink} className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-purple-200">Email</label>
+                  <label htmlFor="email" className="text-sm font-medium text-stone-600">Email</label>
                   <Input
                     id="email"
                     type="email"
@@ -741,7 +719,7 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm font-bold tracking-wider disabled:opacity-60"
+                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -755,11 +733,11 @@ export default function Auth() {
                 </button>
               </form>
 
-              <p className="text-center text-xs text-purple-300/70">
+              <p className="text-center text-xs text-stone-400">
                 Don't have an account?{' '}
                 <button
                   onClick={() => { resetForm(); setMode('signup'); }}
-                  className="text-cyan-400 hover:underline font-medium"
+                  className="text-sky-500 hover:underline font-medium"
                 >
                   Sign up
                 </button>
@@ -777,30 +755,30 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
           <div className="w-full max-w-sm space-y-6 relative z-[1]">
           <button
             onClick={() => { resetForm(); setMode('welcome'); }}
-            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-purple-400 hover:text-white transition-colors -ml-2 px-2"
+            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-stone-400 hover:text-stone-700 transition-colors -ml-2 px-2"
           >
             ← Back
           </button>
 
           <div className="text-center space-y-2">
             <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
-              style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
+              style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
             >
               <PixelIcon name="sword" size={32} />
             </div>
-            <h2 className="text-xl font-bold text-white">Sign In</h2>
-            <p className="text-sm text-purple-300/70">
+            <h2 className="text-xl font-bold text-stone-900">Sign In</h2>
+            <p className="text-sm text-stone-400">
               Welcome back! Enter your credentials
             </p>
           </div>
 
           <form onSubmit={handleEmailSignIn} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-purple-200">Email</label>
+              <label htmlFor="email" className="text-sm font-medium text-stone-600">Email</label>
               <Input
                 id="email"
                 type="email"
@@ -816,11 +794,11 @@ export default function Auth() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-medium text-purple-200">Password</label>
+                <label htmlFor="password" className="text-sm font-medium text-stone-600">Password</label>
                 <button
                   type="button"
                   onClick={() => { setMode('forgot-password'); }}
-                  className="text-xs text-cyan-400 hover:underline min-h-[44px] flex items-center"
+                  className="text-xs text-sky-500 hover:underline min-h-[44px] flex items-center"
                 >
                   Forgot password?
                 </button>
@@ -839,7 +817,7 @@ export default function Auth() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-purple-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -849,7 +827,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm font-bold tracking-wider disabled:opacity-60"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -863,11 +841,11 @@ export default function Auth() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-purple-300/70">
+          <p className="text-center text-xs text-stone-400">
             Don't have an account?{' '}
             <button
               onClick={() => { resetForm(); setMode('signup'); }}
-              className="text-cyan-400 hover:underline font-medium"
+              className="text-sky-500 hover:underline font-medium"
             >
               Sign up
             </button>
@@ -891,11 +869,11 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
           <div className="w-full max-w-sm space-y-6 relative z-[1]" ref={formRef}>
           <button
             onClick={() => { resetForm(); setMode('welcome'); }}
-            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-purple-400 hover:text-white transition-colors -ml-2 px-2"
+            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-stone-400 hover:text-stone-700 transition-colors -ml-2 px-2"
           >
             ← Back
           </button>
@@ -904,30 +882,30 @@ export default function Auth() {
             /* Inline email verification confirmation */
             <div className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-                style={{ background: 'hsl(120 30% 18%)', border: '2px solid hsl(120 50% 35%)' }}
+                style={{ background: 'hsl(145 40% 95%)', border: '1px solid hsl(145 35% 80%)' }}
               >
-                <CheckCircle2 className="w-8 h-8 text-green-400" />
+                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-white">Verify your email</h2>
-                <p className="text-sm text-purple-300/70">
+                <h2 className="text-xl font-bold text-stone-900">Verify your email</h2>
+                <p className="text-sm text-stone-400">
                   We sent a confirmation link to
                 </p>
-                <p className="text-sm font-semibold text-cyan-400">{emailSentTo}</p>
+                <p className="text-sm font-semibold text-sky-500">{emailSentTo}</p>
               </div>
-              <p className="text-xs text-purple-400/70">
+              <p className="text-xs text-stone-400">
                 Click the link in the email to activate your account. Check your spam folder if you don't see it.
               </p>
               <div className="pt-2 space-y-3">
                 <button
-                  className="retro-arcade-btn retro-arcade-btn-green w-full py-3 text-sm"
+                  className="w-full py-3 text-sm font-semibold rounded-xl bg-sky-500 text-white shadow-[0_2px_8px_rgba(14,165,233,0.3)] transition-all active:scale-[0.98]"
                   onClick={() => { resetForm(); setMode('email-password'); }}
                 >
                   I've verified — Sign in
                 </button>
                 <button
                   onClick={() => { setEmailSent(false); }}
-                  className="text-sm text-purple-400 hover:text-white transition-colors"
+                  className="text-sm text-stone-400 hover:text-stone-700 transition-colors"
                 >
                   Didn't receive it? Try again
                 </button>
@@ -939,27 +917,26 @@ export default function Auth() {
                 <div className="relative inline-block mb-3">
                   <div
                     className="absolute inset-0 rounded-full blur-xl scale-[2]"
-                    style={{ background: 'hsl(280 80% 50% / 0.1)' }}
+                    style={{ background: 'hsl(199 80% 50% / 0.06)' }}
                   />
                   <img
                     src="/app-icon.png"
                     alt="BotBlock"
                     className="relative w-14 h-14 mx-auto rounded-xl"
                     style={{
-                      border: '2px solid hsl(280 50% 45%)',
-                      boxShadow: '0 0 12px hsl(280 80% 40% / 0.3)',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
                     }}
                   />
                 </div>
-                <h2 className="text-xl font-bold text-white">Create Account</h2>
-                <p className="text-sm text-purple-300/70">
+                <h2 className="text-xl font-bold text-stone-900">Create Account</h2>
+                <p className="text-sm text-stone-400">
                   Join BotBlock and sync your progress
                 </p>
               </div>
 
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-purple-200">Email</label>
+                  <label htmlFor="email" className="text-sm font-medium text-stone-600">Email</label>
                   <Input
                     id="email"
                     type="email"
@@ -974,7 +951,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="password" className="text-sm font-medium text-purple-200">Password</label>
+                  <label htmlFor="password" className="text-sm font-medium text-stone-600">Password</label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -989,7 +966,7 @@ export default function Auth() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-purple-400 hover:text-white"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -1007,11 +984,11 @@ export default function Auth() {
                       ].map(({ met, label }) => (
                         <div key={label} className="flex items-center gap-1.5">
                           {met ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
                           ) : (
-                            <Circle className="w-3.5 h-3.5 text-purple-500 flex-shrink-0" />
+                            <Circle className="w-3.5 h-3.5 text-stone-300 flex-shrink-0" />
                           )}
-                          <span className={`text-[11px] ${met ? 'text-green-400' : 'text-purple-500'}`}>
+                          <span className={`text-[11px] ${met ? 'text-emerald-500' : 'text-stone-300'}`}>
                             {label}
                           </span>
                         </div>
@@ -1022,7 +999,7 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm font-bold tracking-wider disabled:opacity-60"
+                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -1036,11 +1013,11 @@ export default function Auth() {
                 </button>
               </form>
 
-              <p className="text-center text-xs text-purple-300/70">
+              <p className="text-center text-xs text-stone-400">
                 Already have an account?{' '}
                 <button
                   onClick={() => { resetForm(); setMode('email-password'); }}
-                  className="text-cyan-400 hover:underline font-medium"
+                  className="text-sky-500 hover:underline font-medium"
                 >
                   Sign in
                 </button>
@@ -1058,30 +1035,30 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
           <div className="w-full max-w-sm space-y-6 relative z-[1]">
           <button
             onClick={() => setMode('email-password')}
-            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-purple-400 hover:text-white transition-colors -ml-2 px-2"
+            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-stone-400 hover:text-stone-700 transition-colors -ml-2 px-2"
           >
             ← Back
           </button>
 
           <div className="text-center space-y-2">
             <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
-              style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
+              style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
             >
               <PixelIcon name="ice-cube" size={32} />
             </div>
-            <h2 className="text-xl font-bold text-white">Reset Password</h2>
-            <p className="text-sm text-purple-300/70">
+            <h2 className="text-xl font-bold text-stone-900">Reset Password</h2>
+            <p className="text-sm text-stone-400">
               Enter your email and we'll send you a link to reset your password
             </p>
           </div>
 
           <form onSubmit={handleForgotPassword} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-purple-200">Email</label>
+              <label htmlFor="email" className="text-sm font-medium text-stone-600">Email</label>
               <Input
                 id="email"
                 type="email"
@@ -1097,7 +1074,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm font-bold tracking-wider disabled:opacity-60"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -1111,11 +1088,11 @@ export default function Auth() {
             </button>
           </form>
 
-          <p className="text-center text-xs text-purple-300/70">
+          <p className="text-center text-xs text-stone-400">
             Remember your password?{' '}
             <button
               onClick={() => { resetForm(); setMode('email-password'); }}
-              className="text-cyan-400 hover:underline font-medium"
+              className="text-sky-500 hover:underline font-medium"
             >
               Sign in
             </button>
@@ -1131,30 +1108,30 @@ export default function Auth() {
     return (
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-safe pb-safe relative" style={{ background: AUTH_BG }}>
-          <div className="absolute inset-0 retro-scanlines opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(14,165,233,0.04) 0%, transparent 60%)' }} />
           <div className="w-full max-w-sm space-y-6 relative z-[1]">
           <button
             onClick={() => { resetForm(); setMode('welcome'); navigate('/auth', { replace: true }); }}
-            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-purple-400 hover:text-white transition-colors -ml-2 px-2"
+            className="min-h-[44px] min-w-[44px] flex items-center text-sm text-stone-400 hover:text-stone-700 transition-colors -ml-2 px-2"
           >
             ← Back
           </button>
 
           <div className="text-center space-y-2">
             <div className="w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center"
-              style={{ background: 'hsl(260 30% 18%)', border: '2px solid hsl(260 40% 35%)' }}
+              style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}
             >
               <PixelIcon name="sword" size={32} />
             </div>
-            <h2 className="text-xl font-bold text-white">Set New Password</h2>
-            <p className="text-sm text-purple-300/70">
+            <h2 className="text-xl font-bold text-stone-900">Set New Password</h2>
+            <p className="text-sm text-stone-400">
               Enter your new password below
             </p>
           </div>
 
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-purple-200">New Password</label>
+              <label htmlFor="password" className="text-sm font-medium text-stone-600">New Password</label>
               <div className="relative">
                 <Input
                   id="password"
@@ -1169,7 +1146,7 @@ export default function Auth() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-purple-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -1178,7 +1155,7 @@ export default function Auth() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium text-purple-200">Confirm Password</label>
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-stone-600">Confirm Password</label>
               <Input
                 id="confirmPassword"
                 type={showPassword ? 'text' : 'password'}
@@ -1196,7 +1173,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm font-bold tracking-wider disabled:opacity-60"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (

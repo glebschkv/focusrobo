@@ -1,28 +1,111 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1e3a5f"/>
-      <stop offset="100%" stop-color="#0a0a1a"/>
+    <linearGradient id="body-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2563eb"/>
     </linearGradient>
+    <linearGradient id="visor-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="chest-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <!-- Background -->
-  <rect width="128" height="128" rx="12" fill="url(#bg)" stroke="#6b7280" stroke-width="3"/>
-  <!-- Robot body -->
-  <rect x="42" y="38" width="44" height="50" rx="6" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="2"/>
-  <!-- Robot head -->
-  <rect x="38" y="20" width="52" height="24" rx="8" fill="#3b82f6" opacity="0.4" stroke="#3b82f6" stroke-width="2"/>
-  <!-- Eyes -->
-  <circle cx="52" cy="32" r="4" fill="#3b82f6"/>
-  <circle cx="76" cy="32" r="4" fill="#3b82f6"/>
-  <!-- Antenna -->
-  <line x1="64" y1="20" x2="64" y2="12" stroke="#3b82f6" stroke-width="2"/>
-  <circle cx="64" cy="10" r="3" fill="#3b82f6"/>
-  <!-- Arms -->
-  <rect x="28" y="42" width="14" height="6" rx="3" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="86" y="42" width="14" height="6" rx="3" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="1.5"/>
-  <!-- Legs -->
-  <rect x="48" y="88" width="12" height="20" rx="4" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="68" y="88" width="12" height="20" rx="4" fill="#3b82f6" opacity="0.3" stroke="#3b82f6" stroke-width="1.5"/>
-  <!-- Zone label -->
-  <text x="64" y="122" text-anchor="middle" font-family="monospace" font-size="8" fill="#3b82f6" opacity="0.6">AL</text>
+
+  <!-- Antenna stem -->
+  <rect x="60" y="8" width="2" height="10" fill="#94a3b8"/>
+  <rect x="62" y="8" width="2" height="10" fill="#cbd5e1"/>
+  <!-- Antenna bulb (glowing) -->
+  <circle cx="62" cy="7" r="4" fill="#22d3ee" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="62" cy="7" r="2" fill="#a5f3fc"/>
+
+  <!-- Head - rounded dome shape -->
+  <rect x="40" y="18" width="48" height="6" rx="3" fill="#3b82f6"/>
+  <rect x="36" y="24" width="56" height="20" rx="4" fill="url(#body-grad)"/>
+  <rect x="38" y="22" width="52" height="4" fill="#60a5fa"/>
+  <!-- Head highlight -->
+  <rect x="40" y="24" width="20" height="2" fill="#93c5fd" opacity="0.6"/>
+
+  <!-- Eyes/Visor -->
+  <rect x="42" y="30" width="16" height="10" rx="3" fill="url(#visor-grad)" filter="url(#glow)"/>
+  <rect x="70" y="30" width="16" height="10" rx="3" fill="url(#visor-grad)" filter="url(#glow)"/>
+  <!-- Pupil dots -->
+  <circle cx="52" cy="35" r="2.5" fill="#0e7490"/>
+  <circle cx="78" cy="35" r="2.5" fill="#0e7490"/>
+  <!-- Eye shine -->
+  <circle cx="48" cy="33" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="74" cy="33" r="1.5" fill="white" opacity="0.8"/>
+
+  <!-- Mouth (friendly smile) -->
+  <path d="M54 40 Q64 46 74 40" stroke="#1e40af" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Neck -->
+  <rect x="54" y="44" width="20" height="4" fill="#2563eb"/>
+
+  <!-- Body / Torso -->
+  <rect x="34" y="48" width="60" height="36" rx="6" fill="url(#body-grad)"/>
+  <!-- Chest plate -->
+  <rect x="42" y="52" width="44" height="24" rx="4" fill="url(#chest-grad)"/>
+  <!-- Chest bolt details -->
+  <circle cx="48" cy="56" r="2" fill="#1e40af"/>
+  <circle cx="48" cy="56" r="1" fill="#60a5fa"/>
+  <circle cx="80" cy="56" r="2" fill="#1e40af"/>
+  <circle cx="80" cy="56" r="1" fill="#60a5fa"/>
+  <!-- Center power core -->
+  <rect x="56" y="56" width="16" height="16" rx="4" fill="#0e7490"/>
+  <rect x="58" y="58" width="12" height="12" rx="3" fill="#22d3ee" filter="url(#glow)"/>
+  <rect x="61" y="61" width="6" height="6" rx="2" fill="#a5f3fc"/>
+  <!-- Body highlight -->
+  <rect x="36" y="50" width="16" height="2" fill="#93c5fd" opacity="0.4"/>
+
+  <!-- Belt/waist -->
+  <rect x="38" y="80" width="52" height="6" rx="2" fill="#1e40af"/>
+  <circle cx="64" cy="83" r="3" fill="#f59e0b"/>
+  <circle cx="64" cy="83" r="1.5" fill="#fbbf24"/>
+
+  <!-- Left Arm -->
+  <rect x="22" y="50" width="12" height="8" rx="3" fill="#3b82f6"/>
+  <rect x="18" y="56" width="14" height="18" rx="3" fill="url(#body-grad)"/>
+  <!-- Left hand (wrench shape) -->
+  <rect x="18" y="72" width="14" height="8" rx="2" fill="#94a3b8"/>
+  <rect x="16" y="74" width="4" height="6" rx="1" fill="#64748b"/>
+  <rect x="30" y="74" width="4" height="6" rx="1" fill="#64748b"/>
+  <!-- Arm highlight -->
+  <rect x="20" y="58" width="4" height="2" fill="#93c5fd" opacity="0.4"/>
+
+  <!-- Right Arm -->
+  <rect x="94" y="50" width="12" height="8" rx="3" fill="#3b82f6"/>
+  <rect x="96" y="56" width="14" height="18" rx="3" fill="url(#body-grad)"/>
+  <!-- Right hand -->
+  <rect x="96" y="72" width="14" height="8" rx="2" fill="#94a3b8"/>
+  <rect x="94" y="74" width="4" height="6" rx="1" fill="#64748b"/>
+  <rect x="108" y="74" width="4" height="6" rx="1" fill="#64748b"/>
+  <!-- Arm highlight -->
+  <rect x="98" y="58" width="4" height="2" fill="#93c5fd" opacity="0.4"/>
+
+  <!-- Left Leg -->
+  <rect x="40" y="86" width="16" height="22" rx="3" fill="url(#body-grad)"/>
+  <!-- Left tread/foot -->
+  <rect x="36" y="106" width="22" height="10" rx="3" fill="#475569"/>
+  <rect x="38" y="108" width="18" height="2" fill="#64748b"/>
+  <rect x="38" y="112" width="18" height="2" fill="#64748b"/>
+  <!-- Knee bolt -->
+  <circle cx="48" cy="94" r="2" fill="#1e40af"/>
+  <circle cx="48" cy="94" r="1" fill="#60a5fa"/>
+
+  <!-- Right Leg -->
+  <rect x="72" y="86" width="16" height="22" rx="3" fill="url(#body-grad)"/>
+  <!-- Right tread/foot -->
+  <rect x="70" y="106" width="22" height="10" rx="3" fill="#475569"/>
+  <rect x="72" y="108" width="18" height="2" fill="#64748b"/>
+  <rect x="72" y="112" width="18" height="2" fill="#64748b"/>
+  <!-- Knee bolt -->
+  <circle cx="80" cy="94" r="2" fill="#1e40af"/>
+  <circle cx="80" cy="94" r="1" fill="#60a5fa"/>
 </svg>

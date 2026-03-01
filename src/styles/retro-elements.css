@@ -1,0 +1,140 @@
+  /* Pixel Art Cloud */
+  .pixel-cloud {
+    width: 60px;
+    height: 20px;
+    background: hsl(var(--background));
+    border: 2px solid hsl(var(--border));
+    position: relative;
+  }
+
+  .pixel-cloud::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    width: 16px;
+    height: 16px;
+    background: hsl(var(--background));
+    border: 2px solid hsl(var(--border));
+    border-bottom: none;
+  }
+
+  .pixel-cloud::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    background: hsl(var(--background));
+    border: 2px solid hsl(var(--border));
+    border-bottom: none;
+  }
+
+  /* Atelier XP Bar */
+  .retro-xp-bar {
+    position: relative;
+    height: 6px;
+    background: hsl(var(--muted));
+    border: none;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .retro-xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(199 89% 55%));
+    border-radius: 3px;
+    position: relative;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+
+  .retro-xp-fill::after {
+    display: none;
+  }
+
+  /* Pixel border → Atelier card */
+  .pixel-border {
+    position: relative;
+    background: white;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  /* Retro card → Atelier card */
+  .retro-card {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+
+  /* Retro level badge */
+  .retro-level-badge {
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+  }
+
+  /* Streak fire glow */
+  .streak-glow {
+    filter: drop-shadow(0 0 4px hsl(25 100% 50% / 0.6));
+  }
+
+  /* Atelier stat pill */
+  .retro-stat-pill {
+    background: white;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* Stat pills inside containers match Atelier */
+  .retro-arcade-container .retro-stat-pill {
+    background: white;
+    border-color: hsl(var(--border));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    color: hsl(var(--foreground));
+  }
+
+  /* Animated shine effect for XP bar */
+  @keyframes xp-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  @keyframes snowfall {
+    0% {
+      transform: translateY(-10px) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    25% {
+      transform: translateY(25vh) translateX(var(--sway, 15px)) rotate(90deg);
+    }
+    50% {
+      transform: translateY(50vh) translateX(calc(var(--sway, 15px) * -0.5)) rotate(180deg);
+      opacity: 0.9;
+    }
+    75% {
+      transform: translateY(75vh) translateX(var(--sway, 15px)) rotate(270deg);
+    }
+    90% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(105vh) translateX(0) rotate(360deg);
+      opacity: 0;
+    }
+  }

@@ -1,28 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0d2f38"/>
-      <stop offset="100%" stop-color="#0a0a1a"/>
+    <linearGradient id="op-armor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
+    <linearGradient id="op-visor" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="op-energy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="op-sword" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a5f3fc"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <filter id="op-glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="op-glow-sm">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <!-- Background -->
-  <rect width="128" height="128" rx="12" fill="url(#bg)" stroke="#fbbf24" stroke-width="3"/>
-  <!-- Robot body -->
-  <rect x="42" y="38" width="44" height="50" rx="6" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="2"/>
-  <!-- Robot head -->
-  <rect x="38" y="20" width="52" height="24" rx="8" fill="#06b6d4" opacity="0.4" stroke="#06b6d4" stroke-width="2"/>
-  <!-- Eyes -->
-  <circle cx="52" cy="32" r="4" fill="#06b6d4"/>
-  <circle cx="76" cy="32" r="4" fill="#06b6d4"/>
-  <!-- Antenna -->
-  <line x1="64" y1="20" x2="64" y2="12" stroke="#06b6d4" stroke-width="2"/>
-  <circle cx="64" cy="10" r="3" fill="#06b6d4"/>
-  <!-- Arms -->
-  <rect x="28" y="42" width="14" height="6" rx="3" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="1.5"/>
-  <rect x="86" y="42" width="14" height="6" rx="3" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="1.5"/>
-  <!-- Legs -->
-  <rect x="48" y="88" width="12" height="20" rx="4" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="1.5"/>
-  <rect x="68" y="88" width="12" height="20" rx="4" fill="#06b6d4" opacity="0.3" stroke="#06b6d4" stroke-width="1.5"/>
-  <!-- Zone label -->
-  <text x="64" y="122" text-anchor="middle" font-family="monospace" font-size="8" fill="#06b6d4" opacity="0.6">CD</text>
+
+  <!-- Energy sword (behind, on back) -->
+  <rect x="14" y="4" width="4" height="44" rx="2" fill="url(#op-sword)" filter="url(#op-glow)" opacity="0.8"/>
+  <rect x="12" y="2" width="8" height="4" rx="1" fill="#475569"/>
+  <rect x="13" y="6" width="6" height="2" fill="#a5f3fc"/>
+  <rect x="13" y="16" width="6" height="1" fill="white" opacity="0.4"/>
+  <rect x="13" y="26" width="6" height="1" fill="white" opacity="0.3"/>
+
+  <!-- Head/Helmet - angular, aggressive -->
+  <polygon points="64,10 84,20 86,36 42,36 44,20" fill="url(#op-armor)"/>
+  <!-- Helmet crest -->
+  <polygon points="64,8 68,14 60,14" fill="#475569"/>
+  <polygon points="64,6 66,12 62,12" fill="#06b6d4" filter="url(#op-glow-sm)"/>
+  <!-- Helmet side panels -->
+  <rect x="42" y="22" width="6" height="12" fill="#475569"/>
+  <rect x="80" y="22" width="6" height="12" fill="#475569"/>
+  <!-- Visor (glowing cyan slit) -->
+  <rect x="46" y="26" width="36" height="6" rx="2" fill="url(#op-visor)" filter="url(#op-glow)"/>
+  <rect x="50" y="28" width="8" height="2" fill="white" opacity="0.6"/>
+  <rect x="70" y="28" width="8" height="2" fill="white" opacity="0.6"/>
+  <!-- Chin guard -->
+  <polygon points="50,36 78,36 74,40 54,40" fill="#334155"/>
+
+  <!-- Neck -->
+  <rect x="54" y="40" width="20" height="4" fill="#1e293b"/>
+  <!-- Neck energy lines -->
+  <rect x="58" y="41" width="2" height="2" fill="#06b6d4" opacity="0.6"/>
+  <rect x="68" y="41" width="2" height="2" fill="#06b6d4" opacity="0.6"/>
+
+  <!-- Shoulder pauldrons -->
+  <!-- Left shoulder (large, layered) -->
+  <polygon points="22,42 42,42 44,56 20,56" fill="url(#op-armor)"/>
+  <rect x="22" y="44" width="20" height="2" fill="#475569"/>
+  <rect x="24" y="48" width="16" height="1" fill="#06b6d4" opacity="0.4"/>
+  <!-- Right shoulder -->
+  <polygon points="86,42 106,42 108,56 84,56" fill="url(#op-armor)"/>
+  <rect x="86" y="44" width="20" height="2" fill="#475569"/>
+  <rect x="88" y="48" width="16" height="1" fill="#06b6d4" opacity="0.4"/>
+
+  <!-- Torso / Chest armor -->
+  <rect x="38" y="44" width="52" height="34" rx="4" fill="url(#op-armor)"/>
+  <!-- Chest plate layers -->
+  <polygon points="44,46 84,46 80,58 48,58" fill="#334155"/>
+  <rect x="50" y="48" width="28" height="2" fill="#475569"/>
+  <!-- Center reactor core (big glowing) -->
+  <circle cx="64" cy="60" r="8" fill="#0e7490"/>
+  <circle cx="64" cy="60" r="6" fill="#06b6d4" filter="url(#op-glow)"/>
+  <circle cx="64" cy="60" r="3" fill="#a5f3fc"/>
+  <circle cx="64" cy="60" r="1.5" fill="white"/>
+  <!-- Energy lines from core -->
+  <rect x="48" y="59" width="8" height="2" fill="#22d3ee" opacity="0.5"/>
+  <rect x="72" y="59" width="8" height="2" fill="#22d3ee" opacity="0.5"/>
+  <rect x="63" y="50" width="2" height="4" fill="#22d3ee" opacity="0.5"/>
+  <rect x="63" y="66" width="2" height="4" fill="#22d3ee" opacity="0.5"/>
+  <!-- Abdominal armor segments -->
+  <rect x="44" y="68" width="40" height="3" fill="#334155"/>
+  <rect x="46" y="72" width="36" height="3" fill="#334155"/>
+  <rect x="52" y="69" width="2" height="2" fill="#06b6d4" opacity="0.3"/>
+  <rect x="74" y="69" width="2" height="2" fill="#06b6d4" opacity="0.3"/>
+
+  <!-- Left Arm (cannon arm) -->
+  <rect x="22" y="56" width="16" height="20" rx="2" fill="url(#op-armor)"/>
+  <rect x="24" y="62" width="12" height="1" fill="#06b6d4" opacity="0.4"/>
+  <!-- Cannon forearm -->
+  <rect x="18" y="74" width="22" height="14" rx="3" fill="#334155"/>
+  <rect x="20" y="76" width="18" height="2" fill="#475569"/>
+  <rect x="20" y="82" width="18" height="2" fill="#475569"/>
+  <!-- Cannon barrel -->
+  <rect x="20" y="86" width="16" height="8" rx="2" fill="#1e293b"/>
+  <circle cx="28" cy="90" r="4" fill="#0e7490"/>
+  <circle cx="28" cy="90" r="2.5" fill="#06b6d4" filter="url(#op-glow-sm)"/>
+
+  <!-- Right Arm (shield arm) -->
+  <rect x="90" y="56" width="16" height="20" rx="2" fill="url(#op-armor)"/>
+  <rect x="92" y="62" width="12" height="1" fill="#06b6d4" opacity="0.4"/>
+  <!-- Shield forearm -->
+  <rect x="90" y="74" width="18" height="14" rx="3" fill="#334155"/>
+  <!-- Holographic shield -->
+  <ellipse cx="106" cy="72" rx="10" ry="18" fill="#06b6d4" opacity="0.15" filter="url(#op-glow)"/>
+  <ellipse cx="106" cy="72" rx="8" ry="14" fill="none" stroke="#22d3ee" stroke-width="1" opacity="0.5"/>
+  <ellipse cx="106" cy="72" rx="5" ry="9" fill="none" stroke="#67e8f9" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Waist/Belt -->
+  <rect x="40" y="76" width="48" height="6" rx="2" fill="#0f172a"/>
+  <rect x="56" y="77" width="16" height="4" rx="1" fill="#334155"/>
+  <circle cx="64" cy="79" r="2" fill="#06b6d4" filter="url(#op-glow-sm)"/>
+
+  <!-- Left Leg -->
+  <rect x="40" y="82" width="18" height="22" rx="2" fill="url(#op-armor)"/>
+  <rect x="42" y="88" width="14" height="1" fill="#06b6d4" opacity="0.3"/>
+  <rect x="42" y="96" width="14" height="1" fill="#06b6d4" opacity="0.3"/>
+  <!-- Left shin guard -->
+  <rect x="38" y="94" width="22" height="4" fill="#475569"/>
+  <!-- Left foot -->
+  <polygon points="36,104 62,104 64,116 34,116" fill="#1e293b"/>
+  <rect x="38" y="106" width="24" height="2" fill="#334155"/>
+  <rect x="36" y="112" width="28" height="4" rx="1" fill="#0f172a"/>
+  <!-- Foot energy -->
+  <rect x="42" y="114" width="8" height="1" fill="#06b6d4" opacity="0.4"/>
+
+  <!-- Right Leg -->
+  <rect x="70" y="82" width="18" height="22" rx="2" fill="url(#op-armor)"/>
+  <rect x="72" y="88" width="14" height="1" fill="#06b6d4" opacity="0.3"/>
+  <rect x="72" y="96" width="14" height="1" fill="#06b6d4" opacity="0.3"/>
+  <!-- Right shin guard -->
+  <rect x="68" y="94" width="22" height="4" fill="#475569"/>
+  <!-- Right foot -->
+  <polygon points="66,104 92,104 94,116 64,116" fill="#1e293b"/>
+  <rect x="68" y="106" width="24" height="2" fill="#334155"/>
+  <rect x="66" y="112" width="28" height="4" rx="1" fill="#0f172a"/>
+  <!-- Foot energy -->
+  <rect x="78" y="114" width="8" height="1" fill="#06b6d4" opacity="0.4"/>
 </svg>

@@ -1,0 +1,104 @@
+/* iOS-specific utility classes */
+@layer utilities {
+  /* Safe area utilities */
+  .pt-safe {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .pl-safe {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .pr-safe {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  
+  .top-safe {
+    top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .bottom-safe {
+    bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  /* Touch optimization */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+/* Sonner toast: clear the Dynamic Island / notch on iOS.
+   Sonner uses --offset-top / --mobile-offset-top CSS vars for the
+   toaster container position.  We override them with safe-area-aware
+   values so toasts always sit below the Dynamic Island even when
+   env(safe-area-inset-top) returns 0 in WKWebView. */
+[data-sonner-toaster][data-y-position='top'] {
+  top: max(env(safe-area-inset-top, 0px), var(--sat, 0px), 54px) !important;
+}
+
+@media (max-width: 600px) {
+  [data-sonner-toaster][data-y-position='top'] {
+    top: max(env(safe-area-inset-top, 0px), var(--sat, 0px), 54px) !important;
+  }
+}
+
+@layer utilities {
+
+  /* Mobile scroll improvements for dialogs and modals */
+  [data-radix-scroll-area-viewport] {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    touch-action: pan-y;
+  }
+
+  /* Ensure scroll areas within flex modals work properly */
+  .retro-modal [data-radix-scroll-area-viewport] {
+    max-height: 100%;
+    overflow-y: auto !important;
+  }
+
+  /* Native scroll containers in modals - for flex children that need to scroll */
+  .retro-modal .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Radix Dialog handles scroll-lock via overflow:hidden + react-remove-scroll.
+     Do NOT add touch-action:none here — it kills touch responsiveness on iOS WKWebView. */
+
+  /* Better touch targets for buttons in scrollable areas */
+  .retro-game-card button,
+  .retro-arcade-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Ensure smooth momentum scrolling on iOS */
+  .scroll-touch {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Mobile-optimized backdrop blur */
+  .backdrop-blur-ios {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  /* iOS-style button press effect */
+  .active-scale {
+    transition: transform 0.15s ease-out;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .active-scale:active {
+    transform: scale(0.95);
+  }
+  
