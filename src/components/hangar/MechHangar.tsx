@@ -74,6 +74,7 @@ export const MechHangar = memo(({ unlockedRobots: _unlockedRobots, currentLevel 
                 key={bot.id}
                 robotImage={bot.imageConfig?.imagePath}
                 robotName={bot.name}
+                rarity={bot.rarity}
                 onClick={() => handleSwapBot(bot.id)}
               />
             ))}
