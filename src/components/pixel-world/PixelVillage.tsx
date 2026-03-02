@@ -38,7 +38,7 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
   const chargePercent = Math.min(100, Math.round((focusMinutesToday / 120) * 100));
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
       {/* Village background + buildings */}
       <VillageMap currentLevel={currentLevel} />
 
@@ -57,11 +57,15 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
         );
       })}
 
-      {/* Stats overlay at bottom */}
-      <div className="absolute inset-x-0 bottom-24 z-50 flex flex-col items-center gap-2 pointer-events-none">
-        <div className="pointer-events-auto px-4 py-2.5 rounded-xl backdrop-blur-sm"
+      {/* Stats overlay at bottom — z-index must exceed building/character max (~600) */}
+      <div className="absolute inset-x-0 bottom-24 flex flex-col items-center gap-2 pointer-events-none" style={{ zIndex: 700 }}>
+        <div className="pointer-events-auto px-4 py-2.5 rounded-xl"
           style={{
-            background: 'rgba(0, 0, 0, 0.35)',
+            background: 'rgba(255, 255, 255, 0.88)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(0, 0, 0, 0.06)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
           }}
         >
           <ChargeBar
@@ -71,9 +75,13 @@ export const PixelVillage = memo(({ currentLevel }: PixelVillageProps) => {
           />
         </div>
         <div className="pointer-events-auto">
-          <div className="px-3 py-1.5 rounded-xl backdrop-blur-sm"
+          <div className="px-3 py-1.5 rounded-xl"
             style={{
-              background: 'rgba(0, 0, 0, 0.3)',
+              background: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
             }}
           >
             <HangarStats
