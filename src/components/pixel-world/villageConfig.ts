@@ -53,6 +53,9 @@ export const NATIVE_HEIGHT = 300;
 
 // ── Buildings ──────────────────────────────────────────────────────
 
+/** Scale factor for buildings (match character SPRITE_SCALE for consistent pixel density) */
+const BUILDING_SCALE = 2;
+
 export const BUILDINGS: BuildingConfig[] = [
   {
     id: 'cottage',
@@ -60,8 +63,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 0,
     x: 45,   // % from left
     y: 25,   // % from top
-    width: 64,
-    height: 64,
+    width: 48 * BUILDING_SCALE,   // native 48px
+    height: 48 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/cottage.png',
   },
   {
@@ -70,48 +73,48 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 3,
     x: 15,
     y: 35,
-    width: 56,
-    height: 56,
+    width: 40 * BUILDING_SCALE,   // native 40px
+    height: 40 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/bakery.png',
   },
   {
     id: 'forge',
     name: 'Forge',
     unlockLevel: 5,
-    x: 72,
+    x: 75,
     y: 40,
-    width: 56,
-    height: 56,
+    width: 40 * BUILDING_SCALE,   // native 40px
+    height: 40 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/forge.png',
   },
   {
     id: 'fishing-dock',
     name: 'Fishing Dock',
     unlockLevel: 7,
-    x: 10,
+    x: 12,
     y: 60,
-    width: 62,
-    height: 52,
+    width: 48 * BUILDING_SCALE,   // native 48x40px
+    height: 40 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/fishing-dock.png',
   },
   {
     id: 'tower',
     name: 'Wizard Tower',
     unlockLevel: 10,
-    x: 70,
+    x: 72,
     y: 15,
-    width: 47,
-    height: 72,
+    width: 36 * BUILDING_SCALE,   // native 36x56px
+    height: 56 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/tower.png',
   },
   {
     id: 'town-square',
     name: 'Town Square',
     unlockLevel: 20,
-    x: 40,
+    x: 42,
     y: 55,
-    width: 72,
-    height: 72,
+    width: 56 * BUILDING_SCALE,   // native 56px
+    height: 56 * BUILDING_SCALE,
     imagePath: '/assets/pixel-world/buildings/town-square.png',
   },
 ];
@@ -121,49 +124,49 @@ export const BUILDINGS: BuildingConfig[] = [
 export const VILLAGE_AREAS: VillageAreaConfig[] = [
   {
     id: 'cottage',
-    walkable: { minX: 30, maxX: 60, minY: 28, maxY: 42 },
+    walkable: { minX: 28, maxX: 62, minY: 30, maxY: 44 },
     spawnPoints: [
-      { x: 42, y: 35 },
-      { x: 52, y: 33 },
+      { x: 40, y: 36 },
+      { x: 52, y: 34 },
     ],
   },
   {
     id: 'bakery',
-    walkable: { minX: 5, maxX: 30, minY: 38, maxY: 52 },
+    walkable: { minX: 5, maxX: 30, minY: 40, maxY: 52 },
     spawnPoints: [
-      { x: 15, y: 44 },
+      { x: 14, y: 45 },
       { x: 22, y: 48 },
     ],
   },
   {
     id: 'forge',
-    walkable: { minX: 62, maxX: 92, minY: 42, maxY: 56 },
+    walkable: { minX: 60, maxX: 92, minY: 44, maxY: 56 },
     spawnPoints: [
-      { x: 72, y: 48 },
-      { x: 82, y: 50 },
+      { x: 74, y: 50 },
+      { x: 84, y: 48 },
     ],
   },
   {
     id: 'fishing-dock',
-    walkable: { minX: 5, maxX: 32, minY: 62, maxY: 78 },
+    walkable: { minX: 8, maxX: 35, minY: 63, maxY: 75 },
     spawnPoints: [
-      { x: 14, y: 68 },
-      { x: 24, y: 72 },
+      { x: 16, y: 68 },
+      { x: 26, y: 70 },
     ],
   },
   {
     id: 'tower',
-    walkable: { minX: 60, maxX: 92, minY: 12, maxY: 30 },
+    walkable: { minX: 58, maxX: 90, minY: 18, maxY: 30 },
     spawnPoints: [
-      { x: 72, y: 22 },
-      { x: 80, y: 18 },
+      { x: 70, y: 24 },
+      { x: 80, y: 22 },
     ],
   },
   {
     id: 'town-square',
-    walkable: { minX: 25, maxX: 70, minY: 60, maxY: 78 },
+    walkable: { minX: 25, maxX: 65, minY: 62, maxY: 78 },
     spawnPoints: [
-      { x: 45, y: 68 },
+      { x: 42, y: 68 },
       { x: 55, y: 72 },
     ],
   },

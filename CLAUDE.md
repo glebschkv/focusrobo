@@ -1,6 +1,17 @@
 # BotBlock — Architecture Reference
 
-> Focus timer iOS app with robot-collecting gamification. Users run focus sessions to earn XP and coins, unlock collectible robots across themed zones, and progress through a leveling system. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with farming/Stardew Valley-style gamification. Users run focus sessions to earn XP and coins, grow their village, collect characters, and build up their farm. Built with React + Capacitor, deployed as a native iOS app.
+
+## Art & Theme Direction
+
+**The app uses a farming / Stardew Valley pixel art aesthetic.** New assets, characters, and environments follow a cozy farming RPG style:
+
+- **Visual style**: Stardew Valley-inspired pixel art — warm, colorful, hand-crafted feel
+- **Characters**: Villagers (Farmer, Baker, Blacksmith, Fisher, Wizard) with sprite sheet animations
+- **Environments**: Village with buildings (Cottage, Bakery, Forge, Fishing Dock, Wizard Tower, Town Square)
+- **Home screen**: PixelVillage component with wandering NPC characters on a sky+grass background
+- **Progression**: Building up a village as a metaphor for focused study time
+- **Note**: Some codebase files still reference robots/bots from the old theme. The village system (`src/components/pixel-world/`) is the active home screen.
 
 ## Quick Facts
 
@@ -168,7 +179,13 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - **Daily login**: 20 coins + 5/streak day (cap 100)
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
-### Robots & Zones
+### Village & Characters (Stardew Valley-style)
+- **Home screen**: PixelVillage with wandering NPCs on a pixel art village map
+- **Buildings** (unlock by level): Cottage (0), Bakery (3), Forge (5), Fishing Dock (7), Wizard Tower (10), Town Square (20)
+- **Village characters**: Farmer, Baker, Blacksmith, Fisher, Wizard — sprite sheet animated NPCs
+- **Assets**: `/public/assets/pixel-world/buildings/` and `/public/assets/pixel-world/sprites/`
+
+### Legacy Collectibles & Zones (robot-themed, in collection tab)
 - **Rarities**: common, rare, epic, legendary
 - **Zones** (unlock by level):
   - Assembly Line (level 0) — Bolt Bot, Gear Pup, Rivet, Spark Welder
@@ -265,9 +282,9 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - Supabase Auth with Apple Sign-In (`@capacitor-community/apple-sign-in`)
 - Guest mode supported (local-only, data stored with guest UUID)
 
-## Design System — "Atelier" Theme
+## Design System — Atelier + Farming Pixel Art
 
-The current design language is **"Atelier" — a white surrealist gallery aesthetic**:
+The current design uses the **Atelier white theme** with **Stardew Valley-style pixel art**:
 
 - **Background**: `#FAFAF9` (warm white/stone)
 - **Theme color**: `#FAFAF9` for iOS status bar

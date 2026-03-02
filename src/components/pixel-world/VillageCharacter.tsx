@@ -66,7 +66,21 @@ export const VillageCharacter = memo(function VillageCharacter({
       {/* Ground shadow */}
       <div className="pixel-char-shadow" />
 
-      {/* Name label (visible on hover/tap in future) */}
+      {/* Name label */}
+      <div
+        className="absolute left-1/2 text-center whitespace-nowrap pointer-events-none"
+        style={{
+          transform: 'translateX(-50%)',
+          bottom: -12,
+          fontSize: 8,
+          fontWeight: 700,
+          color: '#3D3D3D',
+          textShadow: '0 0 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)',
+          letterSpacing: '0.02em',
+        }}
+      >
+        {character.name}
+      </div>
     </div>
   );
 });

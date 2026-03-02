@@ -227,8 +227,8 @@ export const BotCollectionGrid = memo(() => {
             {filteredBots.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <span className="text-3xl mb-3">🔍</span>
-                <p className="text-sm font-semibold text-white mb-1">No bots found</p>
-                <p className="text-xs text-purple-300/70">Try a different search or sort option</p>
+                <p className="text-sm font-semibold text-stone-700 mb-1">No bots found</p>
+                <p className="text-xs text-stone-400">Try a different search or sort option</p>
               </div>
             ) : (
               <BotGrid
