@@ -103,16 +103,16 @@ export const ZoneGrid = memo(({
             aria-selected={isActive}
             aria-label={isUnlocked ? `${zone.name} zone${isActive ? ', currently selected' : ''}` : `${zone.name} zone, locked, unlocks at level ${zone.unlockLevel}`}
             className={cn(
-              "w-full overflow-hidden transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[hsl(180,60%,50%)] rounded-lg",
+              "w-full overflow-hidden transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-sky-400 rounded-lg",
               isActive
-                ? "ring-2 ring-[hsl(180,60%,50%)] bg-[hsl(256,38%,19%)] border border-[hsl(180,40%,35%)]"
-                : "bg-[hsl(256,35%,17%)] border border-[hsl(255,35%,28%)]",
+                ? "ring-2 ring-sky-400 bg-sky-50 border border-sky-200"
+                : "bg-white border border-stone-200",
               !isUnlocked && "opacity-40"
             )}
           >
             <div className="flex items-stretch">
               {/* Preview Image */}
-              <div className="w-20 h-16 flex-shrink-0 bg-[hsl(252,30%,13%)] overflow-hidden">
+              <div className="w-20 h-16 flex-shrink-0 bg-stone-100 overflow-hidden">
                 {zone.backgroundImage && isUnlocked ? (
                   <img
                     src={zone.backgroundImage}
@@ -124,9 +124,9 @@ export const ZoneGrid = memo(({
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     {isUnlocked ? (
-                      <Icon className="w-6 h-6 text-[hsl(255,22%,42%)]" />
+                      <Icon className="w-6 h-6 text-stone-400" />
                     ) : (
-                      <Lock className="w-5 h-5 text-[hsl(255,15%,38%)]" />
+                      <Lock className="w-5 h-5 text-stone-300" />
                     )}
                   </div>
                 )}
@@ -134,10 +134,10 @@ export const ZoneGrid = memo(({
               {/* Info */}
               <div className="flex-1 flex items-center justify-between px-3 py-2">
                 <div className="text-left">
-                  <div className="font-bold text-sm text-[hsl(45,20%,80%)]">
+                  <div className="font-bold text-sm text-stone-700">
                     {isUnlocked ? zone.name : "???"}
                   </div>
-                  <div className="text-[10px] text-[hsl(255,18%,48%)]">
+                  <div className="text-[10px] text-stone-400">
                     {isUnlocked ? (
                       isActive ? 'Currently here' : `Level ${zone.unlockLevel}+`
                     ) : (
@@ -148,12 +148,12 @@ export const ZoneGrid = memo(({
 
                 {isUnlocked && (
                   isActive ? (
-                    <div className="px-2 py-1 text-[10px] font-bold flex items-center gap-1 rounded-md bg-[hsl(180,40%,30%)] text-[hsl(180,80%,75%)] border border-[hsl(180,40%,40%)]">
+                    <div className="px-2 py-1 text-[10px] font-bold flex items-center gap-1 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200">
                       <MapPin className="w-3 h-3" />
                       Here
                     </div>
                   ) : (
-                    <div className="px-3 py-1 text-xs font-semibold rounded-md bg-[hsl(256,30%,24%)] text-[hsl(255,20%,58%)] border border-[hsl(255,30%,32%)]">
+                    <div className="px-3 py-1 text-xs font-semibold rounded-md bg-stone-50 text-stone-500 border border-stone-200">
                       Visit
                     </div>
                   )

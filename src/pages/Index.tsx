@@ -69,10 +69,10 @@ const Index = () => {
   if (!isAuthenticated) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#0a0a1a' }}>
+        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#FAFAF9' }}>
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-cyan-400">BotBlock</h1>
-            <p className="text-slate-400">Create an account to save your progress!</p>
+            <h1 className="text-4xl font-bold text-sky-500">BotBlock</h1>
+            <p className="text-stone-500">Create an account to save your progress!</p>
             <Button onClick={() => navigate('/auth')}>Get Started</Button>
           </div>
         </div>
@@ -83,7 +83,7 @@ const Index = () => {
   if (isDataLoading) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#0a0a1a' }}>
+        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#FAFAF9' }}>
           <LoadingFallback />
         </div>
       </PageErrorBoundary>
@@ -93,7 +93,7 @@ const Index = () => {
   if (!hasCompletedOnboarding) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#0a0a1a' }}>
+        <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#FAFAF9' }}>
           <Suspense fallback={<LoadingFallback />}>
             <OnboardingFlow onComplete={() => completeOnboarding()} />
           </Suspense>
@@ -104,7 +104,7 @@ const Index = () => {
 
   return (
     <PageErrorBoundary pageName="home page">
-      <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#0a0a1a' }}>
+      <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#FAFAF9' }}>
         {/* Pixel Village Home Screen */}
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>

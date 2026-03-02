@@ -50,17 +50,17 @@ export const BotDetailModal = ({
       <DialogContent
         className="max-w-xs p-0 overflow-hidden border-0"
         style={{
-          background: 'linear-gradient(180deg, hsl(260, 25%, 16%) 0%, hsl(255, 22%, 12%) 100%)',
-          border: '1.5px solid hsl(260, 25%, 25%)',
+          background: 'white',
+          border: '1px solid hsl(var(--border))',
           borderRadius: '14px',
-          boxShadow: '0 16px 48px hsl(0, 0%, 0%, 0.5), 0 0 0 1px hsl(260, 30%, 20%)',
+          boxShadow: '0 16px 48px hsl(0, 0%, 0%, 0.08), 0 0 0 1px hsl(var(--border))',
         }}
       >
         <>
           {/* Header with sprite animation */}
           <div className="p-6 text-center" style={{
-            background: 'linear-gradient(180deg, hsl(260, 20%, 20%) 0%, hsl(255, 22%, 14%) 100%)',
-            borderBottom: '1px solid hsl(260, 25%, 22%)',
+            background: 'hsl(var(--muted))',
+            borderBottom: '1px solid hsl(var(--border))',
           }}>
             {/* Show animated sprite for unlocked bots, silhouette for locked */}
             {isUnlocked && bot.spriteConfig ? (
@@ -101,13 +101,13 @@ export const BotDetailModal = ({
             </div>
 
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-[hsl(45,20%,85%)]">
+              <DialogTitle className="text-lg font-bold text-stone-800">
                 {isUnlocked ? bot.name : "???"}
               </DialogTitle>
             </DialogHeader>
 
             <div className="flex items-center justify-center gap-2 mt-1">
-              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-[hsl(260,20%,18%)] text-[hsl(260,15%,55%)] border border-[hsl(260,20%,25%)]">
+              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-stone-100 text-stone-500 border border-stone-200">
                 {bot.zone}
               </span>
             </div>
@@ -116,7 +116,7 @@ export const BotDetailModal = ({
           <div className="p-4 space-y-3">
             {isUnlocked ? (
               <>
-                <p className="text-sm text-[hsl(260,10%,55%)] text-center">
+                <p className="text-sm text-stone-500 text-center">
                   {bot.description}
                 </p>
 
@@ -126,13 +126,13 @@ export const BotDetailModal = ({
                   className={cn(
                     "w-full py-3 rounded-lg font-bold text-sm transition-all active:scale-95 border",
                     isHomeActive
-                      ? "bg-[hsl(180,30%,20%)] text-[hsl(180,70%,65%)] border-[hsl(180,40%,35%)]"
-                      : "bg-[hsl(260,20%,18%)] text-[hsl(260,15%,55%)] border-[hsl(260,20%,25%)]"
+                      ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                      : "bg-stone-50 text-stone-500 border-stone-200"
                   )}
                 >
                   <Home className={cn(
                     "w-4 h-4 inline mr-2",
-                    isHomeActive && "fill-[hsl(180,50%,45%)]/50"
+                    isHomeActive && "fill-emerald-400/50"
                   )} />
                   {isHomeActive ? "Showing on Home" : "Show on Home"}
                 </button>
@@ -143,35 +143,35 @@ export const BotDetailModal = ({
                   className={cn(
                     "w-full py-3 rounded-lg font-bold text-sm transition-all active:scale-95 border",
                     isFavorite
-                      ? "bg-[hsl(350,30%,18%)] text-[hsl(350,70%,65%)] border-[hsl(350,40%,30%)]"
-                      : "bg-[hsl(260,20%,18%)] text-[hsl(260,15%,55%)] border-[hsl(260,20%,25%)]"
+                      ? "bg-red-50 text-red-500 border-red-200"
+                      : "bg-stone-50 text-stone-500 border-stone-200"
                   )}
                 >
                   <Heart className={cn(
                     "w-4 h-4 inline mr-2",
-                    isFavorite && "fill-[hsl(350,60%,55%)]"
+                    isFavorite && "fill-red-400"
                   )} />
                   {isFavorite ? "Favorited" : "Add to Favorites"}
                 </button>
               </>
             ) : isShopExclusive ? (
               <div className="text-center py-4">
-                <p className="text-sm text-[hsl(260,10%,55%)] mb-3">
+                <p className="text-sm text-stone-500 mb-3">
                   {bot.description}
                 </p>
-                <div className="w-14 h-14 mx-auto mb-3 bg-[hsl(35,25%,18%)] rounded-full flex items-center justify-center border-2 border-[hsl(35,50%,40%)]">
-                  <ShoppingBag className="w-7 h-7 text-[hsl(35,70%,55%)]" />
+                <div className="w-14 h-14 mx-auto mb-3 bg-amber-50 rounded-full flex items-center justify-center border-2 border-amber-300">
+                  <ShoppingBag className="w-7 h-7 text-amber-500" />
                 </div>
-                <p className="text-sm text-[hsl(260,10%,50%)] mb-2">
+                <p className="text-sm text-stone-500 mb-2">
                   This bot is available in the Shop
                 </p>
-                <div className="flex items-center justify-center gap-1 mb-3 text-[hsl(35,70%,55%)]">
+                <div className="flex items-center justify-center gap-1 mb-3 text-amber-600">
                   <PixelIcon name="coin" size={16} />
                   <span className="font-bold">{bot.coinPrice?.toLocaleString()}</span>
                 </div>
                 <button
                   onClick={onNavigateToShop}
-                  className="bg-gradient-to-r from-[hsl(35,70%,45%)] to-[hsl(25,65%,40%)] text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all active:scale-95 inline-flex items-center gap-2 border border-[hsl(35,60%,55%)] shadow-[0_0_10px_hsl(35,80%,50%,0.3)]"
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all active:scale-95 inline-flex items-center gap-2 border border-amber-400 shadow-sm"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Buy from Shop
@@ -179,40 +179,40 @@ export const BotDetailModal = ({
               </div>
             ) : isStudyHoursGated && bot.requiredStudyHours ? (
               <div className="text-center py-4">
-                <p className="text-sm text-[hsl(260,10%,55%)] mb-3">
+                <p className="text-sm text-stone-500 mb-3">
                   {bot.description}
                 </p>
-                <div className="w-14 h-14 mx-auto mb-3 bg-[hsl(220,25%,16%)] rounded-full flex items-center justify-center border-2 border-[hsl(220,40%,38%)]">
-                  <Clock className="w-7 h-7 text-[hsl(220,60%,60%)]" />
+                <div className="w-14 h-14 mx-auto mb-3 bg-sky-50 rounded-full flex items-center justify-center border-2 border-sky-300">
+                  <Clock className="w-7 h-7 text-sky-500" />
                 </div>
-                <p className="text-sm text-[hsl(260,10%,50%)] mb-2">
+                <p className="text-sm text-stone-500 mb-2">
                   Unlock by studying
                 </p>
-                <div className="bg-[hsl(220,20%,16%)] border border-[hsl(220,30%,30%)] inline-block px-4 py-2 rounded-lg mb-3">
-                  <span className="text-sm font-bold text-[hsl(220,60%,65%)]">
+                <div className="bg-sky-50 border border-sky-200 inline-block px-4 py-2 rounded-lg mb-3">
+                  <span className="text-sm font-bold text-sky-600">
                     {Math.floor(totalStudyHours)}h / {bot.requiredStudyHours}h studied
                   </span>
                 </div>
                 {/* Progress bar */}
-                <div className="w-full max-w-[200px] mx-auto bg-[hsl(260,15%,15%)] rounded-full h-2.5 overflow-hidden border border-[hsl(260,20%,22%)]">
+                <div className="w-full max-w-[200px] mx-auto bg-stone-100 rounded-full h-2.5 overflow-hidden border border-stone-200">
                   <div
-                    className="bg-gradient-to-r from-[hsl(220,60%,50%)] to-[hsl(260,50%,55%)] h-full rounded-full transition-all"
+                    className="bg-gradient-to-r from-sky-400 to-sky-500 h-full rounded-full transition-all"
                     style={{ width: `${Math.min(100, (totalStudyHours / bot.requiredStudyHours) * 100)}%` }}
                   />
                 </div>
-                <p className="text-xs text-[hsl(260,10%,45%)] mt-2">
+                <p className="text-xs text-stone-400 mt-2">
                   {Math.max(0, Math.ceil(bot.requiredStudyHours - totalStudyHours))}h remaining
                 </p>
               </div>
             ) : (
               <div className="text-center py-4">
-                <div className="w-14 h-14 mx-auto mb-3 bg-[hsl(260,20%,18%)] rounded-full flex items-center justify-center border border-[hsl(260,20%,25%)]">
-                  <Lock className="w-7 h-7 text-[hsl(260,10%,40%)]" />
+                <div className="w-14 h-14 mx-auto mb-3 bg-stone-100 rounded-full flex items-center justify-center border border-stone-200">
+                  <Lock className="w-7 h-7 text-stone-400" />
                 </div>
-                <p className="text-sm text-[hsl(260,10%,50%)] mb-1">
+                <p className="text-sm text-stone-500 mb-1">
                   Keep leveling up to unlock this bot!
                 </p>
-                <div className="inline-block px-4 py-2 text-sm font-bold rounded-md bg-[hsl(35,25%,18%)] text-[hsl(35,70%,60%)] border border-[hsl(35,40%,35%)]">
+                <div className="inline-block px-4 py-2 text-sm font-bold rounded-md bg-amber-50 text-amber-600 border border-amber-200">
                   Reach Level {bot.unlockLevel}
                 </div>
               </div>

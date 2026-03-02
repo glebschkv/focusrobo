@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useClickSound } from "@/hooks/useClickSound";
 import { useHaptics } from "@/hooks/useHaptics";
 
-const DARK_TABS = new Set(["timer", "collection", "challenges", "settings"]);
+// All tabs use unified Atelier white theme
 
 interface TabBarProps {
   activeTab: string;
@@ -93,7 +93,7 @@ export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompact
 
   return (
     <div className={cn("dock-container", isCompact && "compact")}>
-      <nav className={cn("dock-bar", isCompact && "compact", DARK_TABS.has(activeTab) && "dark-context")} role="tablist" aria-label="Main navigation">
+      <nav className={cn("dock-bar", isCompact && "compact")} role="tablist" aria-label="Main navigation">
         {orderedTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
