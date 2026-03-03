@@ -4,13 +4,13 @@
  * Provides a subtle UI click sound effect for interactive elements.
  * Delegates to the centralized sound effects system so it respects
  * the global soundEnabled / soundVolume / soundTheme settings.
- * Also has its own "Button Sounds" toggle (petIsland_clickSoundEnabled).
+ * Also has its own "Button Sounds" toggle (nomo_clickSoundEnabled).
  */
 
 import { useCallback } from 'react';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 
-const CLICK_SOUND_KEY = 'petIsland_clickSoundEnabled';
+const CLICK_SOUND_KEY = 'nomo_clickSoundEnabled';
 
 /** Check if button click sounds are enabled (defaults to true) */
 const isClickSoundEnabled = (): boolean => {

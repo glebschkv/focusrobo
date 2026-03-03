@@ -44,6 +44,9 @@ export const UnifiedFocusTimer = () => {
     showLockScreen,
     showSessionNotesModal,
     showBreakTransitionModal,
+    showPetRevealModal,
+    lastPlacedPet,
+    lastPlacedCellIndex,
     lastSessionXP,
     autoBreakEnabled,
     setPreset,
@@ -54,11 +57,13 @@ export const UnifiedFocusTimer = () => {
     skipTimer,
     toggleSound,
     handleSessionNotesSave,
+    handleDismissPetReveal,
     handleStartBreak,
     handleSkipBreak,
     toggleAutoBreak,
     setShowIntentionModal,
     setShowSessionNotesModal,
+    setShowPetRevealModal,
     setShowBreakTransitionModal,
     setShowLockScreen,
   } = useTimerLogic();
@@ -67,9 +72,13 @@ export const UnifiedFocusTimer = () => {
   const handleCloseIntentionModal = useCallback(() => setShowIntentionModal(false), [setShowIntentionModal]);
   const handleCloseSessionNotes = useCallback(() => {
     setShowSessionNotesModal(false);
-    // Delay break modal to prevent Radix Dialog portal collision
-    setTimeout(() => setShowBreakTransitionModal(true), 350);
-  }, [setShowSessionNotesModal, setShowBreakTransitionModal]);
+    // Show pet reveal if a pet was placed, otherwise go to break modal
+    if (lastPlacedPet) {
+      setTimeout(() => setShowPetRevealModal(true), 350);
+    } else {
+      setTimeout(() => setShowBreakTransitionModal(true), 350);
+    }
+  }, [setShowSessionNotesModal, setShowBreakTransitionModal, setShowPetRevealModal, lastPlacedPet]);
   const handleReturnToApp = useCallback(() => setShowLockScreen(false), [setShowLockScreen]);
   const handleAbandonSession = useCallback(() => {
     setShowLockScreen(false);
@@ -125,6 +134,11 @@ export const UnifiedFocusTimer = () => {
               sessionDuration={timerState.sessionDuration}
               lastSessionXP={lastSessionXP}
               taskLabel={timerState.taskLabel}
+              // Pet reveal modal
+              showPetRevealModal={showPetRevealModal}
+              onDismissPetReveal={handleDismissPetReveal}
+              lastPlacedPet={lastPlacedPet}
+              lastPlacedCellIndex={lastPlacedCellIndex}
               // Break transition modal
               showBreakTransitionModal={showBreakTransitionModal}
               onCloseBreakModal={handleSkipBreak}

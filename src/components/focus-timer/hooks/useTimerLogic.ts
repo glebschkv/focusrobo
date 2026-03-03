@@ -33,6 +33,7 @@ import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { widgetDataService } from "@/plugins/widget-data";
 import { DeviceActivity } from "@/plugins/device-activity";
 import { markBlockingStopped } from "@/hooks/useTimerExpiryGuard";
+import { useLandStore, type PendingPet } from "@/stores/landStore";
 
 export const useTimerLogic = () => {
   const { awardXP, coinSystem, xpSystem } = useBackendAppState();
@@ -78,6 +79,9 @@ export const useTimerLogic = () => {
   const [showIntentionModal, setShowIntentionModal] = useState(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [showSessionNotesModal, setShowSessionNotesModal] = useState(false);
+  const [showPetRevealModal, setShowPetRevealModal] = useState(false);
+  const [lastPlacedPet, setLastPlacedPet] = useState<PendingPet | null>(null);
+  const [lastPlacedCellIndex, setLastPlacedCellIndex] = useState(-1);
   const [lastSessionXP, setLastSessionXP] = useState(0);
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
   // them from timerState before the notes modal opens, so we snapshot here.
@@ -319,6 +323,21 @@ export const useTimerLogic = () => {
         }
       }
 
+      // Generate and place pet on land grid for work sessions
+      if (state.timerState.sessionType !== 'break' && completedMinutes >= 25) {
+        try {
+          const playerLevel = xpSystem?.currentLevel ?? 1;
+          const pending = useLandStore.getState().generateRandomPet(completedMinutes, playerLevel);
+          const cellIndex = useLandStore.getState().placePendingPet();
+          if (cellIndex !== -1) {
+            setLastPlacedPet(pending);
+            setLastPlacedCellIndex(cellIndex);
+          }
+        } catch (e) {
+          timerLogger.error('Failed to generate/place pet:', e);
+        }
+      }
+
       // All critical async work (rewards, recording, streak) is done.
       // NOW clear persistence so the timer won't re-complete on WebView reload.
       clearPersistence();
@@ -469,15 +488,25 @@ export const useTimerLogic = () => {
     }
 
     setShowSessionNotesModal(false);
-    // Delay break modal to prevent Radix Dialog portal collision —
-    // closing one dialog and opening another in the same render batch
-    // causes a black overlay with no content on iOS/Capacitor.
-    setTimeout(() => openBreakModal(), 350);
-  }, [saveSessionNote, lastSessionXP, openBreakModal, updateSessionMeta]);
+    // Show pet reveal if a pet was placed, otherwise go straight to break modal
+    if (lastPlacedPet) {
+      setTimeout(() => setShowPetRevealModal(true), 350);
+    } else {
+      setTimeout(() => openBreakModal(), 350);
+    }
+  }, [saveSessionNote, lastSessionXP, openBreakModal, updateSessionMeta, lastPlacedPet]);
 
   // ============================================================================
   // BREAK HANDLING
   // ============================================================================
+
+  const handleDismissPetReveal = useCallback(() => {
+    setShowPetRevealModal(false);
+    setLastPlacedPet(null);
+    setLastPlacedCellIndex(-1);
+    // Proceed to break modal after pet reveal
+    setTimeout(() => openBreakModal(), 350);
+  }, [openBreakModal]);
 
   const handleStartBreak = useCallback((duration: number) => {
     closeBreakModal();
@@ -531,6 +560,9 @@ export const useTimerLogic = () => {
     showLockScreen,
     showSessionNotesModal,
     showBreakTransitionModal,
+    showPetRevealModal,
+    lastPlacedPet,
+    lastPlacedCellIndex,
     lastSessionXP,
     autoBreakEnabled,
 
@@ -543,11 +575,13 @@ export const useTimerLogic = () => {
     skipTimer,
     toggleSound,
     handleSessionNotesSave,
+    handleDismissPetReveal,
     handleStartBreak,
     handleSkipBreak,
     toggleAutoBreak,
     setShowIntentionModal,
     setShowSessionNotesModal,
+    setShowPetRevealModal,
     setShowBreakTransitionModal: (show: boolean) => { if (show) openBreakModal(); else closeBreakModal(); },
     setShowLockScreen,
   };

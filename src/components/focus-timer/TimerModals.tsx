@@ -11,11 +11,13 @@
 import { memo } from "react";
 import { TaskIntentionModal } from "./TaskIntentionModal";
 import { SessionNotesModal } from "./SessionNotesModal";
+import { PetRevealModal } from "./PetRevealModal";
 import { BreakTransitionModal } from "./BreakTransitionModal";
 import { FocusLockScreen } from "./FocusLockScreen";
 import { useSettings } from "@/hooks/useSettings";
 import type { TimerPreset } from "./constants";
 import type { FocusCategory } from "@/types/analytics";
+import type { PendingPet } from "@/stores/landStore";
 
 interface TimerModalsProps {
   // Intention modal
@@ -31,6 +33,12 @@ interface TimerModalsProps {
   sessionDuration: number;
   lastSessionXP: number;
   taskLabel?: string;
+
+  // Pet reveal modal
+  showPetRevealModal: boolean;
+  onDismissPetReveal: () => void;
+  lastPlacedPet: PendingPet | null;
+  lastPlacedCellIndex: number;
 
   // Break transition modal
   showBreakTransitionModal: boolean;
@@ -64,6 +72,12 @@ export const TimerModals = memo(({
   sessionDuration,
   lastSessionXP,
   taskLabel,
+
+  // Pet reveal modal
+  showPetRevealModal,
+  onDismissPetReveal,
+  lastPlacedPet,
+  lastPlacedCellIndex,
 
   // Break transition modal
   showBreakTransitionModal,
@@ -105,7 +119,18 @@ export const TimerModals = memo(({
         taskLabel={taskLabel}
       />
 
-      {/* Break Transition Modal - shows after session notes */}
+      {/* Pet Reveal Modal - shows after session notes, before break */}
+      <PetRevealModal
+        isOpen={showPetRevealModal}
+        onClose={onDismissPetReveal}
+        petId={lastPlacedPet?.petId ?? null}
+        size={lastPlacedPet?.size ?? null}
+        rarity={lastPlacedPet?.rarity ?? null}
+        sessionMinutes={lastPlacedPet?.sessionMinutes ?? 0}
+        cellIndex={lastPlacedCellIndex}
+      />
+
+      {/* Break Transition Modal - shows after pet reveal */}
       <BreakTransitionModal
         isOpen={showBreakTransitionModal}
         onClose={onSkipBreak}

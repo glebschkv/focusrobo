@@ -23,7 +23,7 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
   const { play } = useSoundEffects();
   const [clickSoundOn, setClickSoundOn] = useState(() => {
     try {
-      return localStorage.getItem('petIsland_clickSoundEnabled') !== 'false';
+      return localStorage.getItem('nomo_clickSoundEnabled') !== 'false';
     } catch { return true; }
   });
 

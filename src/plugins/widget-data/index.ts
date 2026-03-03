@@ -50,12 +50,12 @@ export interface WidgetData {
     totalSessions: number;
   };
 
-  // Bot info for widget display
+  // Pet info for widget display
   petInfo: {
     activePetName: string | null;
     activePetEmoji: string | null;
     totalPetsCollected: number;
-    currentBiome: string | null;
+    currentZone: string | null;
   };
 
   // Last updated timestamp
@@ -184,7 +184,7 @@ class WidgetDataService {
         activePetName: null,
         activePetEmoji: null,
         totalPetsCollected: 0,
-        currentBiome: null,
+        currentZone: null,
       },
       lastUpdated: Date.now(),
     };
@@ -469,7 +469,7 @@ class WidgetDataService {
       // Load bot info from collection and XP stores
       const collectionData = localStorage.getItem('petparadise-collection');
       const xpSystemData = storage.get<{
-        currentBiome?: string;
+        currentZone?: string;
         unlockedAnimals?: string[];
       }>(STORAGE_KEYS.XP_SYSTEM);
 
@@ -522,7 +522,7 @@ class WidgetDataService {
         activePetName,
         activePetEmoji,
         totalPetsCollected,
-        currentBiome: xpSystemData?.currentBiome ?? null,
+        currentZone: xpSystemData?.currentZone ?? null,
       });
     } catch (error) {
       widgetLogger.error('Failed to sync from app state:', error);
