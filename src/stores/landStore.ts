@@ -119,8 +119,18 @@ function createEmptyLand(number: number, theme: string): Land {
   };
 }
 
+/**
+ * Pick a random empty cell from the grid to create an organic,
+ * scattered look instead of filling left-to-right, top-to-bottom.
+ */
 function getNextEmptyCellIndex(cells: (LandCell | null)[]): number {
-  return cells.findIndex(cell => cell === null);
+  const emptyIndices: number[] = [];
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i] === null) emptyIndices.push(i);
+  }
+  if (emptyIndices.length === 0) return -1;
+  const randomIdx = Math.floor(Math.random() * emptyIndices.length);
+  return emptyIndices[randomIdx];
 }
 
 const SIZE_RANK: Record<GrowthSize, number> = {
@@ -200,11 +210,27 @@ export const useLandStore = create<LandStore>()(
       },
 
       placePendingPet: () => {
-        const { pendingPet, currentLand, speciesCatalog } = get();
+        const { pendingPet, speciesCatalog } = get();
+        let { currentLand } = get();
         if (!pendingPet) return -1;
 
-        const cellIndex = getNextEmptyCellIndex(currentLand.cells);
-        if (cellIndex === -1) return -1; // Land is full
+        let cellIndex = getNextEmptyCellIndex(currentLand.cells);
+
+        // If the current land is full, auto-archive it and start a new one
+        if (cellIndex === -1) {
+          const { completedLands, selectedNextTheme } = get();
+          const archivedLand: Land = {
+            ...currentLand,
+            completedAt: currentLand.completedAt ?? Date.now(),
+          };
+          currentLand = createEmptyLand(currentLand.number + 1, selectedNextTheme);
+          set({
+            completedLands: [...completedLands, archivedLand],
+            currentLand,
+          });
+          cellIndex = getNextEmptyCellIndex(currentLand.cells);
+          if (cellIndex === -1) return -1; // Should not happen with fresh land
+        }
 
         const newCell: LandCell = {
           petId: pendingPet.petId,

@@ -10,60 +10,84 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(180deg, #87CEEB 0%, #B8E4F0 40%, #7CB342 40%, #558B2F 100%);
+  background: linear-gradient(
+    180deg,
+    #7EC8E3 0%,
+    #A8D8EA 18%,
+    #8BC34A 18%,
+    #6DA832 100%
+  );
 }
 
 /* ── Sky ────────────────────────────────────────────────────────── */
 
 .pet-land__sky {
   position: relative;
-  flex: 0 0 25%;
+  flex: 0 0 12%;
   overflow: hidden;
+}
+
+/* Sun */
+.pet-land__sun {
+  position: absolute;
+  top: 15%;
+  right: 14%;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFE082 35%, #FFD54F 60%, transparent 72%);
+  box-shadow: 0 0 18px 6px rgba(255, 213, 79, 0.3);
+  animation: pet-land-sun-pulse 4s ease-in-out infinite;
+}
+
+@keyframes pet-land-sun-pulse {
+  0%, 100% { box-shadow: 0 0 18px 6px rgba(255, 213, 79, 0.3); }
+  50% { box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.45); }
 }
 
 .pet-land__cloud {
   position: absolute;
-  width: 60px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
+  width: 48px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
   animation: pet-land-cloud-drift linear infinite;
 }
 
 .pet-land__cloud::before {
   content: '';
   position: absolute;
-  top: -8px;
-  left: 12px;
-  width: 28px;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 14px;
+  top: -7px;
+  left: 10px;
+  width: 22px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 11px;
 }
 
 .pet-land__cloud--1 {
-  top: 20%;
+  top: 25%;
   left: -60px;
-  animation-duration: 45s;
+  animation-duration: 50s;
 }
 
 .pet-land__cloud--2 {
-  top: 45%;
+  top: 55%;
   left: -60px;
-  width: 80px;
-  height: 24px;
-  animation-duration: 60s;
-  animation-delay: -20s;
+  width: 64px;
+  height: 18px;
+  animation-duration: 65s;
+  animation-delay: -25s;
 }
 
 .pet-land__cloud--3 {
-  top: 15%;
+  top: 18%;
   left: -60px;
-  width: 50px;
-  height: 18px;
-  animation-duration: 35s;
-  animation-delay: -10s;
-  opacity: 0.6;
+  width: 40px;
+  height: 14px;
+  animation-duration: 38s;
+  animation-delay: -12s;
+  opacity: 0.5;
 }
 
 @keyframes pet-land-cloud-drift {
@@ -71,65 +95,115 @@
   to { transform: translateX(calc(100vw + 80px)); }
 }
 
-/* ── Grid ───────────────────────────────────────────────────────── */
+/* ── Island wrapper ────────────────────────────────────────────── */
 
-.pet-land__grid {
+.pet-land__island {
   position: relative;
-  z-index: 1;
   flex: 1;
-  display: grid;
-  gap: 1px;
-  padding: 4px;
-  margin: 0 4px;
-  max-height: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  min-height: 0;
 }
 
-/* ── Ground ─────────────────────────────────────────────────────── */
-
-.pet-land__ground {
-  flex: 0 0 15%;
-  background: linear-gradient(180deg, #558B2F 0%, #33691E 100%);
-  position: relative;
+/* Island shape — rounded green platform with depth */
+.pet-land__island-bg {
+  position: absolute;
+  inset: -2px 2px 4px;
+  border-radius: 20px 20px 24px 24px;
+  background: linear-gradient(
+    180deg,
+    #7CB342 0%,
+    #689F38 50%,
+    #558B2F 100%
+  );
+  box-shadow:
+    0 4px 0 #4E7C28,
+    0 7px 0 #3E6B1A,
+    0 10px 16px rgba(46, 80, 20, 0.35);
+  overflow: hidden;
 }
 
-.pet-land__ground::before {
+/* Grass texture on island top edge */
+.pet-land__island-bg::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 5px;
   background: repeating-linear-gradient(
     90deg,
-    #6D9B3A 0px,
-    #6D9B3A 8px,
-    #558B2F 8px,
-    #558B2F 16px
+    rgba(139, 195, 74, 0.5) 0px,
+    rgba(139, 195, 74, 0.5) 5px,
+    transparent 5px,
+    transparent 10px
   );
+}
+
+/* ── Grid ───────────────────────────────────────────────────────── */
+
+.pet-land__grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 1.5px;
+  padding: 6px;
+  width: 100%;
+  max-width: min(100%, calc(100vh - 180px));
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+/* ── Ground ─────────────────────────────────────────────────────── */
+
+.pet-land__ground {
+  flex: 0 0 6%;
+  position: relative;
 }
 
 /* ── Progress label ─────────────────────────────────────────────── */
 
 .pet-land__progress {
-  position: absolute;
-  bottom: env(safe-area-inset-bottom, 0px);
-  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   z-index: 10;
+  text-align: center;
+  padding: 4px 0 0;
 }
 
 .pet-land__progress-text {
-  display: inline-block;
-  padding: 4px 12px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #fff;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pet-land__progress-bar {
+  display: inline-block;
+  width: 44px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.pet-land__progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #81C784, #4CAF50);
+  transition: width 0.5s ease;
 }
 
 /* ── Cell ───────────────────────────────────────────────────────── */
@@ -140,37 +214,51 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: visible;
 }
 
 .pet-land-cell--empty {
-  background: rgba(139, 195, 74, 0.15);
-  border: 1px dashed rgba(139, 195, 74, 0.2);
+  background: rgba(100, 160, 40, 0.1);
+  border-radius: 3px;
+}
+
+/* Subtle dot in empty cells so they're visible */
+.pet-land-cell--empty::after {
+  content: '';
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(100, 160, 40, 0.18);
 }
 
 .pet-land-cell--filled {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease;
 }
 
 .pet-land-cell--filled:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 /* ── Cell entrance animation (for newly placed pets) ───────────── */
 
 .pet-land-cell--new {
-  animation: pet-land-cell-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: pet-land-cell-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes pet-land-cell-pop {
   0% {
-    transform: scale(0);
+    transform: scale(0) rotate(-8deg);
     opacity: 0;
   }
+  60% {
+    transform: scale(1.12) rotate(2deg);
+    opacity: 1;
+  }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0);
     opacity: 1;
   }
 }
@@ -178,8 +266,8 @@
 /* ── Pet image ──────────────────────────────────────────────────── */
 
 .pet-land-cell__image {
-  width: 100%;
-  height: 100%;
+  width: 88%;
+  height: 88%;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -187,21 +275,47 @@
   transform-origin: center bottom;
 }
 
+/* ── Idle bobble for pets on the grid ─────────────────────────── */
+
+.pet-land-cell--filled .pet-land-cell__image {
+  animation: pet-idle-bob 3s ease-in-out infinite;
+  animation-delay: var(--bob-delay, 0s);
+}
+
+@keyframes pet-idle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+
+/* ── Rarity border glow for cells ─────────────────────────────── */
+
+.pet-land-cell--rarity-rare {
+  box-shadow: 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+.pet-land-cell--rarity-epic {
+  box-shadow: 0 0 4px rgba(168, 85, 247, 0.4);
+}
+
+.pet-land-cell--rarity-legendary {
+  box-shadow: 0 0 5px rgba(234, 179, 8, 0.45);
+}
+
 /* ── Legendary shimmer ──────────────────────────────────────────── */
 
 .pet-land-cell__shimmer {
   position: absolute;
   inset: 0;
-  border-radius: 2px;
+  border-radius: 3px;
   background: linear-gradient(
     105deg,
     transparent 30%,
-    rgba(234, 179, 8, 0.3) 45%,
-    rgba(234, 179, 8, 0.1) 55%,
+    rgba(234, 179, 8, 0.22) 45%,
+    rgba(234, 179, 8, 0.08) 55%,
     transparent 70%
   );
   background-size: 200% 100%;
-  animation: pet-land-shimmer 2s ease-in-out infinite;
+  animation: pet-land-shimmer 2.5s ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -214,22 +328,23 @@
 
 .pet-land-cell__tooltip {
   position: absolute;
-  bottom: calc(100% + 4px);
+  bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border-radius: 6px;
+  gap: 2px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   white-space: nowrap;
   pointer-events: auto;
-  animation: pet-tooltip-in 0.15s ease-out;
+  animation: pet-tooltip-in 0.2s ease-out;
 }
 
 .pet-land-cell__tooltip::after {
@@ -238,28 +353,92 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.75);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.82);
 }
 
 .pet-land-cell__tooltip-name {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
 }
 
 .pet-land-cell__tooltip-detail {
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.pet-land-cell__tooltip-rarity {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 1px;
 }
 
 @keyframes pet-tooltip-in {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(4px);
+    transform: translateX(-50%) translateY(4px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
+}
+
+/* ── Decorative trees (pixel art style) ───────────────────────── */
+
+.pet-land__deco-tree {
+  position: absolute;
+  z-index: 3;
+  width: 18px;
+  height: 26px;
+}
+
+.pet-land__deco-tree--1 {
+  left: 3%;
+  bottom: 8%;
+}
+
+.pet-land__deco-tree--2 {
+  right: 4%;
+  bottom: 12%;
+}
+
+.pet-land__deco-tree--3 {
+  left: 8%;
+  bottom: 16%;
+  width: 14px;
+  height: 20px;
+  opacity: 0.7;
+}
+
+/* Tree trunk */
+.pet-land__deco-tree::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 9px;
+  background: #6D4C41;
+  border-radius: 1px;
+}
+
+/* Tree canopy */
+.pet-land__deco-tree::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 18px;
+  background: #43A047;
+  border-radius: 50% 50% 35% 35%;
+  box-shadow: inset -3px -2px 0 #2E7D32;
 }

@@ -71,8 +71,8 @@ export const RARITY_WEIGHTS: Record<PetRarity, number> = {
  * CSS scale values for each growth size tier.
  */
 export const GROWTH_SCALES: Record<GrowthSize, number> = {
-  baby: 0.4,
-  adolescent: 0.7,
+  baby: 0.65,
+  adolescent: 0.82,
   adult: 1.0,
 };
 
