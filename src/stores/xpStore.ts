@@ -11,7 +11,7 @@
  * import { useXPStore, useCurrentLevel } from '@/stores/xpStore';
  *
  * // In a component
- * const { addXP, currentLevel, unlockedRobots } = useXPStore();
+ * const { addXP, currentLevel, unlockedPets } = useXPStore();
  *
  * // Award XP for completing a session
  * addXP(100);
@@ -50,7 +50,7 @@ export interface XPState {
   currentLevel: number;
   xpToNextLevel: number;
   totalXPForCurrentLevel: number;
-  unlockedRobots: string[];
+  unlockedPets: string[];
   currentZone: string;
   availableZones: string[];
 }
@@ -59,8 +59,8 @@ interface XPStore extends XPState {
   setXP: (xp: number) => void;
   addXP: (amount: number) => void;
   setLevel: (level: number) => void;
-  addRobot: (robotName: string) => void;
-  addRobots: (robotNames: string[]) => void;
+  addPet: (robotName: string) => void;
+  addPets: (robotNames: string[]) => void;
   switchZone: (zoneName: string) => void;
   addZone: (zoneName: string) => void;
   updateState: (partial: Partial<XPState>) => void;
@@ -72,7 +72,7 @@ const initialState: XPState = {
   currentLevel: 0,
   xpToNextLevel: 15,
   totalXPForCurrentLevel: 0,
-  unlockedRobots: [],
+  unlockedPets: [],
   currentZone: 'Assembly Line',
   availableZones: ['Assembly Line'],
 };
@@ -89,14 +89,14 @@ export const useXPStore = create<XPStore>()(
           const nextLevelXP = level >= MAX_LEVEL ? xpRequired : calculateLevelRequirement(level + 1);
           set({ currentLevel: level, totalXPForCurrentLevel: xpRequired, xpToNextLevel: nextLevelXP - get().currentXP });
         },
-        addRobot: (name) => {
-          const { unlockedRobots } = get();
-          if (!unlockedRobots.includes(name)) set({ unlockedRobots: [...unlockedRobots, name] });
+        addPet: (name) => {
+          const { unlockedPets } = get();
+          if (!unlockedPets.includes(name)) set({ unlockedPets: [...unlockedPets, name] });
         },
-        addRobots: (names) => {
-          const { unlockedRobots } = get();
-          const newAnimals = names.filter(n => !unlockedRobots.includes(n));
-          if (newAnimals.length > 0) set({ unlockedRobots: [...unlockedRobots, ...newAnimals] });
+        addPets: (names) => {
+          const { unlockedPets } = get();
+          const newAnimals = names.filter(n => !unlockedPets.includes(n));
+          if (newAnimals.length > 0) set({ unlockedPets: [...unlockedPets, ...newAnimals] });
         },
         switchZone: (name) => { if (get().availableZones.includes(name)) set({ currentZone: name }); },
         addZone: (name) => {
@@ -155,14 +155,7 @@ export const useXPStore = create<XPStore>()(
 // Selector hooks for efficient subscriptions
 export const useCurrentXP = () => useXPStore((s) => s.currentXP);
 export const useCurrentLevel = () => useXPStore((s) => s.currentLevel);
-export const useUnlockedRobots = () => useXPStore((s) => s.unlockedRobots);
-export const useCurrentZone = () => useXPStore((s) => s.currentZone);
-export const useAvailableZones = () => useXPStore((s) => s.availableZones);
-
-// Backward compatibility aliases
-export const useUnlockedAnimals = useUnlockedRobots;
-export const useCurrentBiome = useCurrentZone;
-export const useAvailableBiomes = useAvailableZones;
+export const useUnlockedPets = () => useXPStore((s) => s.unlockedPets);
 
 // Subscribe to XP changes for cross-component communication
 // This replaces the window.dispatchEvent pattern

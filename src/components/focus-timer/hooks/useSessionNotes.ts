@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 import { timerLogger } from '@/lib/logger';
 import { STORAGE_CONFIG } from '@/lib/constants';
 
-const SESSION_NOTES_KEY = 'petIsland_sessionNotes';
+const SESSION_NOTES_KEY = 'nomo_sessionNotes';
 
 export interface SessionNote {
   id: number;

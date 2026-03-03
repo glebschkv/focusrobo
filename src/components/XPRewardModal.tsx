@@ -207,7 +207,7 @@ export const XPRewardModal = ({
                               : 'hsl(320 60% 75%)',
                           }}
                         >
-                          {unlock.type === 'zone' ? 'World' : 'Bot'}
+                          {unlock.type === 'zone' ? 'World' : 'Pet'}
                         </span>
                       </div>
                       <p className="text-[10px] text-purple-300/50">

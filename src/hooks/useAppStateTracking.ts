@@ -14,7 +14,7 @@ interface AppStateData {
   currentReward: XPReward | null;
 }
 
-const STORAGE_KEY = 'petIsland_appState';
+const STORAGE_KEY = 'nomo_appState';
 
 export const useAppStateTracking = () => {
   const xpSystem = useXPSystem();

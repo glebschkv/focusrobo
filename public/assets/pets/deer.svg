@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128" shape-rendering="crispEdges">
+  <!-- Deer pixel art -->
+  <!-- Antlers -->
+  <rect x="7" y="0" width="2" height="4" fill="#92400E"/>
+  <rect x="5" y="1" width="2" height="2" fill="#92400E"/>
+  <rect x="9" y="1" width="2" height="2" fill="#92400E"/>
+  <rect x="23" y="0" width="2" height="4" fill="#92400E"/>
+  <rect x="21" y="1" width="2" height="2" fill="#92400E"/>
+  <rect x="25" y="1" width="2" height="2" fill="#92400E"/>
+  <!-- Ears -->
+  <rect x="6" y="4" width="4" height="4" fill="#C4813D"/>
+  <rect x="22" y="4" width="4" height="4" fill="#C4813D"/>
+  <!-- Head -->
+  <rect x="8" y="6" width="16" height="12" rx="2" fill="#C4813D"/>
+  <!-- Eyes -->
+  <rect x="12" y="10" width="2" height="3" fill="#1A1A2E"/>
+  <rect x="18" y="10" width="2" height="3" fill="#1A1A2E"/>
+  <!-- Eye shine -->
+  <rect x="12" y="10" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="18" y="10" width="1" height="1" fill="#FFFFFF"/>
+  <!-- Nose -->
+  <rect x="14" y="14" width="4" height="2" rx="1" fill="#7C2D12"/>
+  <!-- Spots -->
+  <rect x="10" y="8" width="2" height="2" fill="#D4A76A" opacity="0.5"/>
+  <rect x="20" y="8" width="2" height="2" fill="#D4A76A" opacity="0.5"/>
+  <!-- Neck/Body -->
+  <rect x="10" y="18" width="12" height="8" rx="2" fill="#C4813D"/>
+  <!-- Chest -->
+  <rect x="13" y="19" width="6" height="4" fill="#D4A76A"/>
+  <!-- Legs -->
+  <rect x="10" y="26" width="3" height="4" fill="#92400E"/>
+  <rect x="19" y="26" width="3" height="4" fill="#92400E"/>
+  <!-- Hooves -->
+  <rect x="10" y="29" width="3" height="2" fill="#5C3D1E"/>
+  <rect x="19" y="29" width="3" height="2" fill="#5C3D1E"/>
+</svg>

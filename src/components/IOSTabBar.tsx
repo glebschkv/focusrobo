@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { Timer, Home, ShoppingBag, Grid3X3, Settings, ChevronUp, Trophy } from "lucide-react";
+import { Timer, Home, ShoppingBag, PawPrint, Settings, ChevronUp, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useClickSound } from "@/hooks/useClickSound";
 import { useHaptics } from "@/hooks/useHaptics";
@@ -17,7 +17,7 @@ interface TabBarProps {
 const tabs = [
   { id: "home", icon: Home, label: "Home" },
   { id: "timer", icon: Timer, label: "Focus", isCenter: true },
-  { id: "collection", icon: Grid3X3, label: "Bots" },
+  { id: "collection", icon: PawPrint, label: "Pets" },
   { id: "challenges", icon: Trophy, label: "Challenges" },
   { id: "shop", icon: ShoppingBag, label: "Shop" },
   { id: "settings", icon: Settings, label: "Settings" },

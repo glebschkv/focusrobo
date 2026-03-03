@@ -1,31 +1,5 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { RobotData, getRobotById } from "@/data/RobotDatabase";
-
-// Static robot image preview component for shop
-export const SpritePreview = ({ robot, scale = 4 }: { robot: RobotData; scale?: number }) => {
-  const imageConfig = robot.imageConfig;
-
-  if (!imageConfig) return null;
-
-  const size = imageConfig.size || 64 * Math.min(scale, 3);
-
-  return (
-    <div className="mx-auto flex items-center justify-center">
-      <img
-        src={imageConfig.imagePath}
-        alt={robot.name}
-        className="object-contain"
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          imageRendering: 'pixelated',
-        }}
-        draggable={false}
-      />
-    </div>
-  );
-};
 
 // Background preview component for shop
 export const BackgroundPreview = ({
@@ -118,48 +92,3 @@ export const BundlePreviewCarousel = ({ images }: { images: string[] }) => {
     </div>
   );
 };
-
-// Bot bundle preview carousel - shows all bots in the bundle
-export const BotBundlePreviewCarousel = ({ botIds }: { botIds: string[] }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const bots = botIds.map(id => getRobotById(id)).filter(Boolean) as RobotData[];
-
-  useEffect(() => {
-    if (bots.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % bots.length);
-    }, 1500);
-    return () => clearInterval(timer);
-  }, [bots.length]);
-
-  if (bots.length === 0) return null;
-
-  const currentBot = bots[currentIndex];
-
-  return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center">
-      <div className="flex-1 flex items-center justify-center min-h-0">
-        {currentBot?.imageConfig ? (
-          <SpritePreview robot={currentBot} scale={2.5} />
-        ) : (
-          <span className="text-4xl">{currentBot?.icon}</span>
-        )}
-      </div>
-      <div className="text-xs text-white/80 font-medium mb-1">{currentBot?.name}</div>
-      <div className="flex gap-1">
-        {bots.map((_, idx) => (
-          <div
-            key={idx}
-            className={cn(
-              "w-1.5 h-1.5 rounded-full transition-all",
-              idx === currentIndex ? "bg-white w-3" : "bg-white/50"
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-/** @deprecated Use BotBundlePreviewCarousel instead */
-export const PetBundlePreviewCarousel = BotBundlePreviewCarousel;

@@ -5,9 +5,8 @@ import { cn } from "@/lib/utils";
 import { ShopItem, COIN_PACKS, StarterBundle, CoinPack, Bundle } from "@/data/ShopData";
 import { BACKGROUND_BUNDLES, STARTER_BUNDLES } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { getCoinExclusiveRobots, RobotData } from "@/data/RobotDatabase";
 import { toast } from "sonner";
-import { SpritePreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
+import { BundlePreviewCarousel } from "../ShopPreviewComponents";
 import { BundleConfirmDialog } from "../BundleConfirmDialog";
 import type { ShopCategory } from "@/data/ShopData";
 import { useStoreKit } from "@/hooks/useStoreKit";
@@ -17,7 +16,7 @@ interface FeaturedTabProps {
   isOwned: (itemId: string, category: ShopCategory) => boolean;
   isBundleOwned: (bundleId: string) => boolean;
   setActiveCategory: (category: ShopCategory) => void;
-  setSelectedItem: (item: ShopItem | RobotData | Bundle | null) => void;
+  setSelectedItem: (item: ShopItem | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   setShowPremiumModal: (show: boolean) => void;
   isPremium: boolean;
@@ -37,7 +36,6 @@ export const FeaturedTab = ({
   currentPlan,
   canAfford,
 }: FeaturedTabProps) => {
-  const bestSellingBots = getCoinExclusiveRobots().slice(0, 2);
   const storeKit = useStoreKit();
   const bestValuePack = COIN_PACKS.find(pack => pack.isBestValue) || COIN_PACKS[COIN_PACKS.length - 1];
 
@@ -63,20 +61,13 @@ export const FeaturedTab = ({
             setShowBundleConfirm(false);
             return;
           }
-          // Bundle contents (coins, character, booster, freezes) are granted via:
-          // - Server grants coins via add_user_coins RPC
-          // - Client syncs coins via iap:coinsGranted event
-          // - Client grants character/booster/freezes via iap:bundleGranted event
-          // DO NOT call purchaseStarterBundle() - it would double-grant everything!
           const bundle = result.validationResult.bundle;
           const items: string[] = [];
           if (bundle.coinsGranted > 0) items.push(`${bundle.coinsGranted.toLocaleString()} coins`);
-          if (bundle.characterId) items.push('Exclusive bot');
           if (bundle.boosterId) items.push('Booster');
           if (bundle.streakFreezes > 0) items.push(`${bundle.streakFreezes} Streak Freeze${bundle.streakFreezes > 1 ? 's' : ''}`);
           toast.success(`${selectedBundle.name} purchased! Received: ${items.join(', ')}`);
         } else if (result.validationResult.coinPack) {
-          // For coin packs: coins are already granted server-side and synced via event
           const coinsGranted = result.validationResult.coinPack.coinsGranted;
           toast.success(`${coinsGranted.toLocaleString()} coins added to your balance!`);
         } else {
@@ -84,10 +75,9 @@ export const FeaturedTab = ({
         }
         setShowBundleConfirm(false);
       } else if (result.alreadyOwned) {
-        // Non-consumable already owned by this Apple ID
         setShowBundleConfirm(false);
       } else if (result.cancelled) {
-        // User cancelled - no action needed
+        // User cancelled
       } else if (!result.pending) {
         toast.error(result.message || "Purchase failed");
       }
@@ -113,7 +103,7 @@ export const FeaturedTab = ({
         isPurchasing={isPurchasing}
       />
 
-      {/* Premium Hero Card — dark purple stands out as special CTA */}
+      {/* Premium Hero Card */}
       {!isPremium ? (
         <button
           onClick={() => setShowPremiumModal(true)}
@@ -139,7 +129,7 @@ export const FeaturedTab = ({
                   <Sparkles className="w-2.5 h-2.5" /> All Sounds
                 </span>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/15 text-[9px] font-bold text-white/90">
-                  <Crown className="w-2.5 h-2.5" /> Exclusive Pets
+                  <Crown className="w-2.5 h-2.5" /> Exclusive Perks
                 </span>
               </div>
             </div>
@@ -169,7 +159,7 @@ export const FeaturedTab = ({
         </div>
       )}
 
-      {/* Background Bundles — hero image cards */}
+      {/* Background Bundles */}
       <div>
         <div className="shop-section-header">
           <span className="shop-section-title">Background Bundles</span>
@@ -189,7 +179,6 @@ export const FeaturedTab = ({
                 }}
                 className={cn("shop-bundle-card", owned && "green")}
               >
-                {/* Hero preview */}
                 <div className="relative w-full h-32 overflow-hidden rounded-t-[10px]">
                   {bundle.previewImages && <BundlePreviewCarousel images={bundle.previewImages} />}
                   {owned && (
@@ -207,7 +196,6 @@ export const FeaturedTab = ({
                     </div>
                   )}
                 </div>
-                {/* Info bar */}
                 <div className="px-3 py-2.5 flex items-center justify-between">
                   <div className="min-w-0">
                     <span className="font-bold text-sm block">{bundle.name}</span>
@@ -234,17 +222,13 @@ export const FeaturedTab = ({
         </div>
       </div>
 
-      {/* Special Bundles — purple list cards for IAP items */}
+      {/* Special Bundles (IAP) */}
       <div>
         <div className="shop-section-header">
           <span className="shop-section-title">Special Bundles</span>
         </div>
         <div className="space-y-2">
           {STARTER_BUNDLES.map((bundle) => {
-            // Only mark as purchased if the IAP product was actually bought.
-            // Do NOT check character ownership — the user may have obtained
-            // the character from a coin purchase or reward, which shouldn't
-            // block them from buying the full bundle via IAP.
             const alreadyPurchased = inventory.purchasedStarterBundleIds.includes(bundle.iapProductId);
 
             return (
@@ -294,7 +278,7 @@ export const FeaturedTab = ({
         </div>
       </div>
 
-      {/* Best Value Coin Pack — amber card matching PowerUpsTab */}
+      {/* Best Value Coin Pack */}
       <div>
         <div className="shop-section-header">
           <span className="shop-section-title">Best Value</span>
@@ -328,56 +312,18 @@ export const FeaturedTab = ({
         </button>
       </div>
 
-      {/* Popular Bots — matching CollectionTab bot cards */}
+      {/* Browse Backgrounds link */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <div className="shop-section-header" style={{ marginBottom: 0 }}>
-            <span className="shop-section-title">Popular Bots</span>
+            <span className="shop-section-title">Backgrounds</span>
           </div>
           <button
-            onClick={() => setActiveCategory('pets')}
+            onClick={() => setActiveCategory('customize')}
             className="text-xs text-amber-600 font-bold"
           >
             See All →
           </button>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {bestSellingBots.map((pet) => {
-            const owned = inventory.ownedCharacters.includes(pet.id);
-            return (
-              <button
-                key={pet.id}
-                onClick={() => {
-                  setSelectedItem(pet);
-                  if (!owned) setShowPurchaseConfirm(true);
-                }}
-                className={cn(
-                  "shop-bot-card",
-                  owned && "owned"
-                )}
-              >
-                <div className="h-14 mb-1 flex items-center justify-center overflow-hidden">
-                  {pet.imageConfig ? (
-                    <SpritePreview
-                      robot={pet}
-                      scale={Math.min(1.8, 56 / Math.max(pet.imageConfig?.size || 64, pet.imageConfig?.size || 64))}
-                    />
-                  ) : (
-                    <span className="text-3xl">{pet.icon}</span>
-                  )}
-                </div>
-                <span className="text-xs font-bold block">{pet.name}</span>
-                {owned ? (
-                  <span className="text-[10px] text-green-600 font-semibold">Owned</span>
-                ) : (
-                  <div className="flex items-center justify-center gap-1 mt-0.5">
-                    <PixelIcon name="coin" size={12} />
-                    <span className="text-xs font-bold text-amber-600">{pet.coinPrice?.toLocaleString()}</span>
-                  </div>
-                )}
-              </button>
-            );
-          })}
         </div>
       </div>
     </div>

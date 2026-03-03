@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 // Lazy load heavy components to reduce initial bundle size
-const PixelVillage = lazy(() => import("@/components/pixel-world/PixelVillage").then(m => ({ default: m.PixelVillage })));
 const GameUI = lazy(() => import("@/components/GameUI").then(m => ({ default: m.GameUI })));
 const OnboardingFlow = lazy(() => import("@/components/onboarding/OnboardingFlow").then(m => ({ default: m.OnboardingFlow })));
 
@@ -34,7 +33,7 @@ let _splashHidden = false;
 const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
-  const { unlockedAnimals, currentLevel, isLoading: isDataLoading } = useBackendAppState();
+  const { isLoading: isDataLoading } = useBackendAppState();
   const hasCompletedOnboarding = useOnboardingStore((s) => s.hasCompletedOnboarding);
   const completeOnboarding = useOnboardingStore((s) => s.completeOnboarding);
   usePerformanceMonitor();
@@ -105,17 +104,7 @@ const Index = () => {
   return (
     <PageErrorBoundary pageName="home page">
       <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#FAFAF9' }}>
-        {/* Pixel Village Home Screen */}
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingFallback />}>
-            <PixelVillage
-              unlockedRobots={unlockedAnimals}
-              currentLevel={currentLevel}
-            />
-          </Suspense>
-        </ErrorBoundary>
-
-        {/* Game UI Overlay */}
+        {/* Game UI Overlay (includes PetLand home screen on home tab) */}
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>
             <GameUI />

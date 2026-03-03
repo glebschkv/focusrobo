@@ -3,14 +3,13 @@ import { Lock, Sparkles, Star, Loader2 } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, Bundle } from "@/data/ShopData";
-import { RobotData } from "@/data/RobotDatabase";
-import { SpritePreview, BackgroundPreview, BundlePreviewCarousel, PetBundlePreviewCarousel } from "./ShopPreviewComponents";
+import { BackgroundPreview, BundlePreviewCarousel } from "./ShopPreviewComponents";
 import { RARITY_COLORS } from "./styles";
 
 interface PurchaseConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedItem: ShopItem | RobotData | Bundle | null;
+  selectedItem: ShopItem | Bundle | null;
   onPurchase: () => void;
   canAfford: (price: number) => boolean;
   coinBalance: number;
@@ -48,26 +47,12 @@ export const PurchaseConfirmDialog = ({
           <div className="retro-modal-header p-4 text-center">
             <div className="retro-scanlines opacity-30" />
             <div className="h-28 mb-2 flex items-center justify-center overflow-hidden">
-              {'bundleType' in selectedItem && selectedItem.bundleType === 'pets' ? (
-                // Bot bundle preview carousel
-                <PetBundlePreviewCarousel petIds={(selectedItem as Bundle).itemIds} />
-              ) : 'spriteConfig' in selectedItem && selectedItem.spriteConfig ? (
-                <SpritePreview
-                  robot={selectedItem as RobotData}
-                  scale={Math.min(2.5, 90 / Math.max((selectedItem as RobotData).spriteConfig!.frameWidth, (selectedItem as RobotData).spriteConfig!.frameHeight))}
-                />
-              ) : 'previewImages' in selectedItem && (selectedItem as Bundle).previewImages ? (
-                // Background bundle preview carousel
+              {'previewImages' in selectedItem && (selectedItem as Bundle).previewImages ? (
                 <div className="w-full">
                   <BundlePreviewCarousel images={(selectedItem as Bundle).previewImages!} />
                 </div>
               ) : 'previewImage' in selectedItem && typeof selectedItem.previewImage === 'string' && selectedItem.previewImage ? (
-                // Single background preview
                 <BackgroundPreview imagePath={selectedItem.previewImage} size="large" className="w-full" />
-              ) : 'emoji' in selectedItem ? (
-                <span className="text-5xl retro-pixel-shadow animate-bounce">
-                  {selectedItem.emoji}
-                </span>
               ) : (
                 <div className="animate-bounce">
                   <PixelIcon name={selectedItem.icon} size={48} className="retro-pixel-shadow" />
@@ -94,7 +79,7 @@ export const PurchaseConfirmDialog = ({
             )}
             {'itemIds' in selectedItem && (
               <div className="mt-1 text-xs text-muted-foreground">
-                Includes {(selectedItem as Bundle).itemIds.length} {(selectedItem as Bundle).bundleType}
+                Includes {(selectedItem as Bundle).itemIds.length} items
               </div>
             )}
           </div>

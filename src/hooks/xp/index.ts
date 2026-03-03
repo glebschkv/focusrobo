@@ -15,7 +15,7 @@ export type {
 export {
   STORAGE_KEY,
   XP_UPDATE_EVENT,
-  ANIMAL_PURCHASED_EVENT,
+  PET_PURCHASED_EVENT,
   MAX_LEVEL,
   XP_REWARDS,
   LEVEL_REQUIREMENTS,
@@ -26,7 +26,7 @@ export {
 export {
   calculateRandomBonus,
   calculateLevelRequirement,
-  normalizeAnimalList,
+  normalizePetList,
   calculateLevel,
 } from './xpUtils';
 

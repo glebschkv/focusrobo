@@ -3,13 +3,13 @@
  * Configuration values for XP rewards and level progression
  */
 
-import { ROBOT_DATABASE, ZONE_DATABASE } from '@/data/RobotDatabase';
+import { PET_DATABASE } from '@/data/PetDatabase';
 import { UnlockedReward } from './xpTypes';
 
 // Use standardized storage key - legacy 'petIsland_xpSystem' is migrated automatically
 export const STORAGE_KEY = 'nomo_xp_system';
-export const XP_UPDATE_EVENT = 'petIsland_xpUpdate';
-export const ANIMAL_PURCHASED_EVENT = 'petIsland_robotPurchased';
+export const XP_UPDATE_EVENT = 'nomo_xpUpdate';
+export const PET_PURCHASED_EVENT = 'nomo_petPurchased';
 
 export const MAX_LEVEL = 50 as const;
 
@@ -85,29 +85,16 @@ export const LEVEL_REQUIREMENTS = [
   89700,  // Level 50 (MAX) - Void zone unlock
 ];
 
-// Generate unlocks by level from the database (robots and zones)
+// Generate unlocks by level from the pet database
 export const UNLOCKS_BY_LEVEL: Record<number, UnlockedReward[]> = {};
 
-// Add robot unlocks
-ROBOT_DATABASE.forEach(robot => {
-  const level = robot.unlockLevel;
+PET_DATABASE.forEach(pet => {
+  const level = pet.unlockLevel;
   if (!UNLOCKS_BY_LEVEL[level]) UNLOCKS_BY_LEVEL[level] = [];
   UNLOCKS_BY_LEVEL[level].push({
-    type: 'robot',
-    name: robot.name,
-    description: robot.description,
-    level: level
-  });
-});
-
-// Add zone unlocks (world themes every few levels)
-ZONE_DATABASE.forEach(zone => {
-  const level = zone.unlockLevel;
-  if (!UNLOCKS_BY_LEVEL[level]) UNLOCKS_BY_LEVEL[level] = [];
-  UNLOCKS_BY_LEVEL[level].push({
-    type: 'zone',
-    name: zone.name,
-    description: zone.description,
-    level: level
+    type: 'pet',
+    name: pet.name,
+    description: pet.description,
+    level: level,
   });
 });

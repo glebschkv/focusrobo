@@ -49,7 +49,7 @@ export interface LevelUpResult {
 
 export interface LevelReward {
   /** Type of reward */
-  type: 'bot' | 'zone' | 'background' | 'badge' | 'feature';
+  type: 'pet' | 'zone' | 'background' | 'badge' | 'feature';
   /** Unique identifier */
   id: string;
   /** Display name */
@@ -77,12 +77,12 @@ export interface XPState {
   totalXPForCurrentLevel: number;
   /** Progress percentage to next level (0-100) */
   levelProgress: number;
-  /** List of unlocked robot types */
-  unlockedAnimals: string[];
+  /** List of unlocked pet species */
+  unlockedPets: string[];
   /** Current zone */
-  currentBiome: string;
-  /** Available biomes */
-  availableBiomes: string[];
+  currentZone: string;
+  /** Available zones */
+  availableZones: string[];
   /** Total XP earned all-time */
   totalXPEarned: number;
   /** XP earned today */
@@ -200,9 +200,9 @@ export interface IXPSystem {
   currentLevel: number;
   xpToNextLevel: number;
   totalXPForCurrentLevel: number;
-  unlockedAnimals: string[];
-  currentBiome: string;
-  availableBiomes: string[];
+  unlockedPets: string[];
+  currentZone: string;
+  availableZones: string[];
   isLoading: boolean;
 
   // Methods
@@ -211,7 +211,6 @@ export interface IXPSystem {
   getLevelProgress: () => number;
   getXPState: () => XPState;
   getXPProgress: () => XPProgress;
-  setCurrentZone: (biome: string) => void;
   refreshFromBackend?: () => Promise<void>;
 }
 

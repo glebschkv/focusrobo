@@ -50,12 +50,12 @@ export interface WidgetData {
     totalSessions: number;
   };
 
-  // Bot info for widget display
+  // Pet info for widget display
   petInfo: {
     activePetName: string | null;
     activePetEmoji: string | null;
     totalPetsCollected: number;
-    currentBiome: string | null;
+    currentZone: string | null;
   };
 
   // Last updated timestamp
@@ -184,7 +184,7 @@ class WidgetDataService {
         activePetName: null,
         activePetEmoji: null,
         totalPetsCollected: 0,
-        currentBiome: null,
+        currentZone: null,
       },
       lastUpdated: Date.now(),
     };
@@ -469,8 +469,8 @@ class WidgetDataService {
       // Load bot info from collection and XP stores
       const collectionData = localStorage.getItem('petparadise-collection');
       const xpSystemData = storage.get<{
-        currentBiome?: string;
-        unlockedAnimals?: string[];
+        currentZone?: string;
+        unlockedPets?: string[];
       }>(STORAGE_KEYS.XP_SYSTEM);
 
       let activePetName: string | null = null;
@@ -495,7 +495,7 @@ class WidgetDataService {
         }
       }
 
-      if (xpSystemData?.unlockedAnimals) {
+      if (xpSystemData?.unlockedPets) {
         totalPetsCollected = xpSystemData.unlockedAnimals.length;
       }
 
@@ -507,7 +507,7 @@ class WidgetDataService {
           const state = parsed?.state;
           const ownedCharacters: string[] = state?.ownedCharacters ?? [];
           // Add unique shop pets not already counted
-          const unlocked = new Set(xpSystemData?.unlockedAnimals ?? []);
+          const unlocked = new Set(xpSystemData?.unlockedPets ?? []);
           for (const id of ownedCharacters) {
             if (!unlocked.has(id)) {
               totalPetsCollected++;
@@ -522,7 +522,7 @@ class WidgetDataService {
         activePetName,
         activePetEmoji,
         totalPetsCollected,
-        currentBiome: xpSystemData?.currentBiome ?? null,
+        currentZone: xpSystemData?.currentZone ?? null,
       });
     } catch (error) {
       widgetLogger.error('Failed to sync from app state:', error);

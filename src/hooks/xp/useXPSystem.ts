@@ -1,40 +1,29 @@
 /**
  * Unified XP System Hook
  *
- * This is the consolidated XP system that replaces both useXPSystem and useBackendXPSystem.
- *
  * Architecture:
  * - localStorage is the primary storage (offline-first)
  * - When authenticated, changes sync to Supabase in the background
  * - All operations are synchronous for immediate UI response
  * - Backend sync happens asynchronously without blocking
- *
- * Features:
- * - Boosted XP rewards for satisfying progression
- * - Random bonus system (lucky/super_lucky/mega_bonus)
- * - Subscription multipliers
- * - Cross-tab synchronization
- * - Direct XP awards (for achievements, rewards, etc.)
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { ZONE_DATABASE, getUnlockableRobots } from '@/data/RobotDatabase';
+import { getAvailablePets } from '@/data/PetDatabase';
 import { xpLogger as logger } from '@/lib/logger';
 import { safeJsonParse } from '@/lib/apiUtils';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { useAuth } from '../useAuth';
 import { useSupabaseData } from '../useSupabaseData';
 import { validateXPAmount, validateLevel, validateSessionMinutes } from '@/lib/validation';
-// Supabase import removed - sync handled by useSupabaseData
 
 import { XPReward, XPSystemState } from './xpTypes';
 
 /**
  * SECURITY: Rate limiting for client-side debouncing
- * Prevents spam requests before they hit the server
  */
 let lastXPAwardTime = 0;
-const MIN_XP_AWARD_INTERVAL_MS = 2000; // 2 seconds between XP awards (more restrictive than coins)
+const MIN_XP_AWARD_INTERVAL_MS = 2000;
 
 function canAwardXP(): boolean {
   const now = Date.now();
@@ -47,17 +36,14 @@ function canAwardXP(): boolean {
 
 /**
  * SECURITY: Session tracking for duplicate prevention
- * Tracks session IDs that have been rewarded to prevent double-claiming
  */
 const rewardedSessions = new Set<string>();
 const MAX_TRACKED_SESSIONS = 100;
 
 function markSessionRewarded(sessionId: string): boolean {
   if (rewardedSessions.has(sessionId)) {
-    return false; // Already rewarded
+    return false;
   }
-
-  // Cleanup if too many sessions tracked
   if (rewardedSessions.size >= MAX_TRACKED_SESSIONS) {
     const iterator = rewardedSessions.values();
     const firstValue = iterator.next().value;
@@ -65,7 +51,6 @@ function markSessionRewarded(sessionId: string): boolean {
       rewardedSessions.delete(firstValue);
     }
   }
-
   rewardedSessions.add(sessionId);
   return true;
 }
@@ -73,7 +58,7 @@ function markSessionRewarded(sessionId: string): boolean {
 import {
   STORAGE_KEY,
   XP_UPDATE_EVENT,
-  ANIMAL_PURCHASED_EVENT,
+  PET_PURCHASED_EVENT,
   MAX_LEVEL,
   XP_REWARDS,
   UNLOCKS_BY_LEVEL,
@@ -81,55 +66,49 @@ import {
 import {
   calculateRandomBonus,
   calculateLevelRequirement,
-  normalizeRobotList,
+  normalizePetList,
   calculateLevel,
 } from './xpUtils';
 
-// Legacy storage key for migration (petIsland_xpSystem -> nomo_xp_system)
 const LEGACY_KEY = 'petIsland_xpSystem';
 
-/**
- * Attempts to extract XP data from a storage object (handles both direct and Zustand formats)
- */
-const extractXPData = (data: unknown): { xp: number; level: number; robots?: string[]; zone?: string; totalStudyMinutes?: number } | null => {
+const extractXPData = (data: unknown): { xp: number; level: number; pets?: string[]; totalStudyMinutes?: number } | null => {
   if (!data || typeof data !== 'object') return null;
 
-  // Handle Zustand's wrapped format { state: {...}, version: ... }
   const stateData = ('state' in (data as Record<string, unknown>))
     ? (data as Record<string, unknown>).state as Record<string, unknown>
     : data as Record<string, unknown>;
 
   if (!stateData || typeof stateData !== 'object') return null;
 
-  // Extract XP (try multiple field names for compatibility)
   const xp = validateXPAmount(stateData.currentXP ?? stateData.totalXP ?? 0);
   if (xp === 0) return null;
+
+  // Support both old and new field names for migration
+  const pets = Array.isArray(stateData.unlockedPets)
+    ? stateData.unlockedPets as string[]
+    : Array.isArray(stateData.unlockedRobots)
+      ? stateData.unlockedRobots as string[]
+      : undefined;
 
   return {
     xp,
     level: validateLevel(stateData.currentLevel),
-    robots: Array.isArray(stateData.unlockedRobots) ? stateData.unlockedRobots as string[] : undefined,
-    zone: typeof stateData.currentZone === 'string' ? stateData.currentZone : undefined,
+    pets,
     totalStudyMinutes: typeof stateData.totalStudyMinutes === 'number' ? stateData.totalStudyMinutes : undefined,
   };
 };
 
-/**
- * Loads and recovers XP state from localStorage with fallback logic
- */
-const loadXPState = (defaultRobots: string[]): XPSystemState => {
+const loadXPState = (defaultPets: string[]): XPSystemState => {
   const defaultState: XPSystemState = {
     currentXP: 0,
     currentLevel: 0,
     xpToNextLevel: 15,
     totalXPForCurrentLevel: 0,
-    unlockedRobots: defaultRobots,
-    currentZone: 'Snow',
-    availableZones: ['Snow'],
+    unlockedPets: defaultPets,
     totalStudyMinutes: 0,
   };
 
-  // Try primary key first, then legacy key
   const storageKeys = [STORAGE_KEY, LEGACY_KEY];
   let bestData: ReturnType<typeof extractXPData> = null;
 
@@ -141,7 +120,6 @@ const loadXPState = (defaultRobots: string[]): XPSystemState => {
       const parsed = JSON.parse(savedData);
       const extracted = extractXPData(parsed);
 
-      // Keep the data with the highest XP (most progress)
       if (extracted && (!bestData || extracted.xp > bestData.xp)) {
         bestData = extracted;
         logger.debug(`Found valid XP data in ${key}: ${extracted.xp} XP`);
@@ -156,10 +134,7 @@ const loadXPState = (defaultRobots: string[]): XPSystemState => {
     return defaultState;
   }
 
-  // Recalculate level from XP to ensure consistency
   const calculatedLevel = calculateLevel(bestData.xp);
-
-  // Use saved level if it's higher and XP supports it (within 10% tolerance)
   const level = (bestData.level > calculatedLevel &&
     bestData.xp >= calculateLevelRequirement(bestData.level) * 0.9)
     ? bestData.level
@@ -168,45 +143,30 @@ const loadXPState = (defaultRobots: string[]): XPSystemState => {
   const currentLevelXP = calculateLevelRequirement(level);
   const nextLevelXP = level >= MAX_LEVEL ? currentLevelXP : calculateLevelRequirement(level + 1);
 
-  const savedRobots = normalizeRobotList(bestData.robots);
-  const allRobots = Array.from(new Set([...defaultRobots, ...savedRobots]));
-
-  const availableZones = ZONE_DATABASE
-    .filter(zone => zone.unlockLevel <= level)
-    .map(zone => zone.name);
-
-  const currentZone = availableZones.includes(bestData.zone || '')
-    ? bestData.zone!
-    : availableZones[availableZones.length - 1] || 'Meadow';
+  const savedPets = normalizePetList(bestData.pets);
+  const allPets = Array.from(new Set([...defaultPets, ...savedPets]));
 
   const recoveredState: XPSystemState = {
     currentXP: bestData.xp,
     currentLevel: level,
     xpToNextLevel: level >= MAX_LEVEL ? 0 : Math.max(0, nextLevelXP - bestData.xp),
     totalXPForCurrentLevel: currentLevelXP,
-    unlockedRobots: allRobots,
-    currentZone,
-    availableZones,
+    unlockedPets: allPets,
     totalStudyMinutes: bestData.totalStudyMinutes ?? 0,
   };
 
-  // Save to primary key for consistency
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recoveredState));
-  logger.debug(`Restored XP state: Level ${level}, ${bestData.xp} XP, ${allRobots.length} robots`);
+  logger.debug(`Restored XP state: Level ${level}, ${bestData.xp} XP, ${allPets.length} pets`);
 
   return recoveredState;
 };
 
 export const useXPSystem = () => {
-  // Auth and backend sync
   const { isAuthenticated } = useAuth();
   const { progress, updateProgress, addFocusSession } = useSupabaseData();
 
-  // Get proper starting robots (level 0 and 1)
-  const startingRobots = getUnlockableRobots(0).map(a => a.name);
-  logger.debug('Starting robots for level 0:', startingRobots);
+  const startingPets = getAvailablePets(0).map(p => p.name);
 
-  // Use ref to track latest state for event handlers (fixes stale closure)
   const xpStateRef = useRef<XPSystemState | null>(null);
 
   const [xpState, setXPState] = useState<XPSystemState>({
@@ -214,19 +174,16 @@ export const useXPSystem = () => {
     currentLevel: 0,
     xpToNextLevel: 15,
     totalXPForCurrentLevel: 0,
-    unlockedRobots: startingRobots,
-    currentZone: 'Snow',
-    availableZones: ['Snow'],
+    unlockedPets: startingPets,
     totalStudyMinutes: 0,
   });
 
-  // Sync state from backend when authenticated and progress loads
+  // Sync state from backend when authenticated
   useEffect(() => {
     if (isAuthenticated && progress) {
       const backendLevel = progress.current_level;
       const backendXP = progress.total_xp;
 
-      // Use the higher of local or backend values to prevent regression
       const currentLocal = xpStateRef.current;
       const effectiveLevel = currentLocal
         ? Math.max(backendLevel, currentLocal.currentLevel)
@@ -242,20 +199,14 @@ export const useXPSystem = () => {
           : calculateLevelRequirement(effectiveLevel + 1);
         const xpToNextLevel = effectiveLevel >= MAX_LEVEL ? 0 : nextLevelXP - effectiveXP;
 
-        const unlockedRobots = getUnlockableRobots(effectiveLevel).map(a => a.name);
-        const availableZones = ZONE_DATABASE
-          .filter(zone => zone.unlockLevel <= effectiveLevel)
-          .map(zone => zone.name);
-        const currentZone = availableZones[availableZones.length - 1] || 'Snow';
+        const unlockedPets = getAvailablePets(effectiveLevel).map(p => p.name);
 
         const newState = {
           currentXP: effectiveXP,
           currentLevel: effectiveLevel,
           xpToNextLevel,
           totalXPForCurrentLevel: currentLevelXP,
-          unlockedRobots,
-          currentZone,
-          availableZones,
+          unlockedPets,
           totalStudyMinutes: currentLocal?.totalStudyMinutes ?? 0,
         };
 
@@ -267,18 +218,17 @@ export const useXPSystem = () => {
     }
   }, [isAuthenticated, progress]);
 
-  // Load saved state from localStorage using simplified recovery logic
+  // Load saved state from localStorage
   useEffect(() => {
-    const defaultRobots = getUnlockableRobots(0).map(a => a.name);
-    const recoveredState = loadXPState(defaultRobots);
+    const defaultPets = getAvailablePets(0).map(p => p.name);
+    const recoveredState = loadXPState(defaultPets);
     setXPState(recoveredState);
     xpStateRef.current = recoveredState;
   }, []);
 
-  // Listen for XP updates from other hook instances (cross-component sync)
+  // Cross-component sync
   useEffect(() => {
     const handleXPUpdate = (event: CustomEvent<XPSystemState>) => {
-      logger.debug('XP state updated from another component:', event.detail);
       setXPState(event.detail);
       xpStateRef.current = event.detail;
     };
@@ -288,7 +238,6 @@ export const useXPSystem = () => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === STORAGE_KEY && event.newValue) {
         const parsed = safeJsonParse<XPSystemState>(event.newValue, xpStateRef.current || xpState);
-        logger.debug('XP state updated from storage event:', parsed);
         setXPState(parsed);
         xpStateRef.current = parsed;
       }
@@ -302,20 +251,20 @@ export const useXPSystem = () => {
     };
   }, [xpState]);
 
-  // Listen for robot purchase events (from shop)
+  // Listen for pet purchase events (from shop)
   useEffect(() => {
-    const handleRobotPurchased = (event: CustomEvent<{ robotId: string; robotName: string }>) => {
-      logger.debug('Robot purchased:', event.detail);
-      const { robotName } = event.detail;
+    const handlePetPurchased = (event: CustomEvent<{ petId: string; petName: string }>) => {
+      logger.debug('Pet purchased:', event.detail);
+      const { petName } = event.detail;
 
       setXPState(prev => {
-        if (prev.unlockedRobots.includes(robotName)) {
+        if (prev.unlockedPets.includes(petName)) {
           return prev;
         }
 
         const updatedState = {
           ...prev,
-          unlockedRobots: [...prev.unlockedRobots, robotName],
+          unlockedPets: [...prev.unlockedPets, petName],
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
         xpStateRef.current = updatedState;
@@ -324,19 +273,18 @@ export const useXPSystem = () => {
       });
     };
 
-    window.addEventListener(ANIMAL_PURCHASED_EVENT, handleRobotPurchased as EventListener);
+    window.addEventListener(PET_PURCHASED_EVENT, handlePetPurchased as EventListener);
 
     return () => {
-      window.removeEventListener(ANIMAL_PURCHASED_EVENT, handleRobotPurchased as EventListener);
+      window.removeEventListener(PET_PURCHASED_EVENT, handlePetPurchased as EventListener);
     };
   }, []);
 
-  // Save state to localStorage and notify other instances
   const saveState = useCallback((newState: Partial<XPSystemState>) => {
     setXPState(prev => {
       const merged = { ...prev, ...newState };
-      const normalizedRobots = normalizeRobotList(merged.unlockedRobots);
-      const updatedState = { ...merged, unlockedRobots: normalizedRobots };
+      const normalizedPets = normalizePetList(merged.unlockedPets);
+      const updatedState = { ...merged, unlockedPets: normalizedPets };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
       xpStateRef.current = updatedState;
       window.dispatchEvent(new CustomEvent(XP_UPDATE_EVENT, { detail: updatedState }));
@@ -344,30 +292,23 @@ export const useXPSystem = () => {
     });
   }, []);
 
-  // Sync to backend (fire-and-forget, doesn't block UI)
   const syncToBackend = useCallback(async (newTotalXP: number, newLevel: number, sessionMinutes?: number, xpGained?: number) => {
     if (!isAuthenticated) return;
 
     try {
-      // If this was from a session, record it
       if (sessionMinutes && xpGained) {
         await addFocusSession(sessionMinutes, xpGained);
       }
-
-      // Update user progress
       await updateProgress({
         total_xp: newTotalXP,
         current_level: newLevel,
         last_session_date: new Date().toISOString().split('T')[0]
       });
-      logger.debug('Synced to backend:', { newTotalXP, newLevel });
     } catch (error) {
-      logger.error('Failed to sync to backend (will retry on next action):', error);
-      // Don't throw - local state is source of truth
+      logger.error('Failed to sync to backend:', error);
     }
   }, [isAuthenticated, addFocusSession, updateProgress]);
 
-  // Pre-sorted durations for performance
   const sortedDurations = useMemo(() =>
     Object.keys(XP_REWARDS)
       .map(Number)
@@ -375,12 +316,10 @@ export const useXPSystem = () => {
     []
   );
 
-  // Helper to get subscription multiplier from Zustand store
   const getSubscriptionMultiplier = useCallback((): number => {
     return usePremiumStore.getState().getXPMultiplier();
   }, []);
 
-  // Calculate XP gained from session duration
   const calculateXPFromDuration = useCallback((minutes: number): number => {
     for (const duration of sortedDurations) {
       if (minutes >= duration) {
@@ -390,55 +329,14 @@ export const useXPSystem = () => {
     return 0;
   }, [sortedDurations]);
 
-  /**
-   * SECURITY: Award XP with rate limiting and server validation
-   *
-   * This function now includes:
-   * - Client-side rate limiting to prevent spam
-   * - Session ID tracking to prevent duplicate rewards
-   * - Server validation for authenticated users
-   *
-   * @param sessionMinutes - Duration of the focus session
-   * @param sessionId - Optional unique session ID for deduplication
-   */
   const awardXP = useCallback((sessionMinutes: number, sessionId?: string): XPReward => {
-    // SECURITY: Client-side rate limiting
     if (!canAwardXP()) {
-      logger.warn('Rate limited: XP award throttled');
-      return {
-        xpGained: 0,
-        baseXP: 0,
-        bonusXP: 0,
-        bonusMultiplier: 1,
-        hasBonusXP: false,
-        bonusType: 'none',
-        oldLevel: xpState.currentLevel,
-        newLevel: xpState.currentLevel,
-        leveledUp: false,
-        unlockedRewards: [],
-        subscriptionMultiplier: 1,
-      };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
-    // SECURITY: Generate session ID if not provided
     const effectiveSessionId = sessionId || `xp_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    // SECURITY: Check if session was already rewarded
     if (!markSessionRewarded(effectiveSessionId)) {
-      logger.warn('Duplicate XP award attempt blocked:', effectiveSessionId);
-      return {
-        xpGained: 0,
-        baseXP: 0,
-        bonusXP: 0,
-        bonusMultiplier: 1,
-        hasBonusXP: false,
-        bonusType: 'none',
-        oldLevel: xpState.currentLevel,
-        newLevel: xpState.currentLevel,
-        leveledUp: false,
-        unlockedRewards: [],
-        subscriptionMultiplier: 1,
-      };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const validMinutes = validateSessionMinutes(sessionMinutes);
@@ -470,22 +368,12 @@ export const useXPSystem = () => {
       }
     }
 
-    const newRobots = [...xpState.unlockedRobots];
+    const newPets = [...xpState.unlockedPets];
     unlockedRewards.forEach(reward => {
-      if (reward.type === 'robot' && !newRobots.includes(reward.name)) {
-        newRobots.push(reward.name);
+      if (reward.type === 'pet' && !newPets.includes(reward.name)) {
+        newPets.push(reward.name);
       }
     });
-
-    const newZones = ZONE_DATABASE
-      .filter(zone => zone.unlockLevel <= newLevel)
-      .map(zone => zone.name);
-
-    const oldZones = ZONE_DATABASE
-      .filter(zone => zone.unlockLevel <= oldLevel)
-      .map(zone => zone.name);
-    const newlyUnlockedZone = newZones.find(b => !oldZones.includes(b));
-    const newCurrentZone = newlyUnlockedZone || xpState.currentZone;
 
     const newTotalStudyMinutes = (xpState.totalStudyMinutes || 0) + validMinutes;
 
@@ -494,72 +382,30 @@ export const useXPSystem = () => {
       currentLevel: newLevel,
       xpToNextLevel,
       totalXPForCurrentLevel: currentLevelXP,
-      unlockedRobots: newRobots,
-      currentZone: newCurrentZone,
-      availableZones: newZones,
+      unlockedPets: newPets,
       totalStudyMinutes: newTotalStudyMinutes,
     });
 
-    // SECURITY: Sync to backend asynchronously with server validation
-    // The server calculate-xp function validates the session and prevents duplicates
     syncToBackend(newTotalXP, newLevel, validMinutes, xpGained);
 
     return {
-      xpGained,
-      baseXP,
-      bonusXP,
+      xpGained, baseXP, bonusXP,
       bonusMultiplier: bonus.bonusMultiplier,
       hasBonusXP: bonus.hasBonusXP,
       bonusType: bonus.bonusType,
-      oldLevel,
-      newLevel,
-      leveledUp,
-      unlockedRewards,
-      subscriptionMultiplier,
+      oldLevel, newLevel, leveledUp,
+      unlockedRewards, subscriptionMultiplier,
     };
   }, [xpState, calculateXPFromDuration, saveState, getSubscriptionMultiplier, syncToBackend]);
 
-  /**
-   * SECURITY: Add direct XP with rate limiting
-   *
-   * Used for achievements, daily login, bonuses, etc.
-   * Includes rate limiting to prevent abuse.
-   */
   const addDirectXP = useCallback((xpAmount: number): XPReward => {
-    // SECURITY: Client-side rate limiting
     if (!canAwardXP()) {
-      logger.warn('Rate limited: direct XP award throttled');
-      return {
-        xpGained: 0,
-        baseXP: 0,
-        bonusXP: 0,
-        bonusMultiplier: 1,
-        hasBonusXP: false,
-        bonusType: 'none',
-        oldLevel: xpState.currentLevel,
-        newLevel: xpState.currentLevel,
-        leveledUp: false,
-        unlockedRewards: [],
-        subscriptionMultiplier: 1,
-      };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const validAmount = validateXPAmount(xpAmount);
     if (validAmount <= 0) {
-      logger.warn('Invalid XP amount:', xpAmount);
-      return {
-        xpGained: 0,
-        baseXP: 0,
-        bonusXP: 0,
-        bonusMultiplier: 1,
-        hasBonusXP: false,
-        bonusType: 'none',
-        oldLevel: xpState.currentLevel,
-        newLevel: xpState.currentLevel,
-        leveledUp: false,
-        unlockedRewards: [],
-        subscriptionMultiplier: 1,
-      };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const oldLevel = xpState.currentLevel;
@@ -582,80 +428,47 @@ export const useXPSystem = () => {
       }
     }
 
-    const newRobots = [...xpState.unlockedRobots];
+    const newPets = [...xpState.unlockedPets];
     unlockedRewards.forEach(reward => {
-      if (reward.type === 'robot' && !newRobots.includes(reward.name)) {
-        newRobots.push(reward.name);
+      if (reward.type === 'pet' && !newPets.includes(reward.name)) {
+        newPets.push(reward.name);
       }
     });
-
-    const newZones = ZONE_DATABASE
-      .filter(zone => zone.unlockLevel <= newLevel)
-      .map(zone => zone.name);
-
-    const oldZones = ZONE_DATABASE
-      .filter(zone => zone.unlockLevel <= oldLevel)
-      .map(zone => zone.name);
-    const newlyUnlockedZone = newZones.find(b => !oldZones.includes(b));
-    const newCurrentZone = newlyUnlockedZone || xpState.currentZone;
 
     saveState({
       currentXP: newTotalXP,
       currentLevel: newLevel,
       xpToNextLevel,
       totalXPForCurrentLevel: currentLevelXP,
-      unlockedRobots: newRobots,
-      currentZone: newCurrentZone,
-      availableZones: newZones,
+      unlockedPets: newPets,
     });
 
-    // Sync to backend asynchronously
     syncToBackend(newTotalXP, newLevel);
 
     return {
-      xpGained: validAmount,
-      baseXP: validAmount,
-      bonusXP: 0,
-      bonusMultiplier: 1,
-      hasBonusXP: false,
-      bonusType: 'none',
-      oldLevel,
-      newLevel,
-      leveledUp,
-      unlockedRewards,
-      subscriptionMultiplier: 1,
+      xpGained: validAmount, baseXP: validAmount, bonusXP: 0,
+      bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none',
+      oldLevel, newLevel, leveledUp, unlockedRewards, subscriptionMultiplier: 1,
     };
   }, [xpState, saveState, syncToBackend]);
 
-  // Get progress percentage for current level
   const getLevelProgress = useCallback((): number => {
     if (xpState.currentLevel >= MAX_LEVEL) return 100;
     const currentLevelXP = calculateLevelRequirement(xpState.currentLevel);
     const nextLevelXP = calculateLevelRequirement(xpState.currentLevel + 1);
     const progressXP = xpState.currentXP - currentLevelXP;
     const totalXPNeeded = Math.max(1, nextLevelXP - currentLevelXP);
-
     return Math.min(100, (progressXP / totalXPNeeded) * 100);
   }, [xpState]);
 
-  // Switch zone
-  const switchZone = useCallback((zoneName: string) => {
-    if (xpState.availableZones.includes(zoneName)) {
-      saveState({ currentZone: zoneName });
-    }
-  }, [xpState.availableZones, saveState]);
-
-  // Reset progress
   const resetProgress = useCallback(() => {
-    const startingRobots = getUnlockableRobots(0).map(a => a.name);
+    const startPets = getAvailablePets(0).map(p => p.name);
     const resetState: XPSystemState = {
       currentXP: 0,
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedRobots: startingRobots,
-      currentZone: 'Meadow',
-      availableZones: ['Meadow'],
+      unlockedPets: startPets,
       totalStudyMinutes: 0,
     };
     setXPState(resetState);
@@ -667,11 +480,9 @@ export const useXPSystem = () => {
     awardXP,
     addDirectXP,
     getLevelProgress,
-    switchZone,
     resetProgress,
     calculateXPFromDuration,
     getSubscriptionMultiplier,
-    // For compatibility with old useBackendXPSystem consumers
     isLoading: false,
   };
 };

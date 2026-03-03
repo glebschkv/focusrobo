@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128" shape-rendering="crispEdges">
+  <!-- Fox pixel art -->
+  <!-- Ears -->
+  <rect x="7" y="2" width="5" height="6" fill="#F97316"/>
+  <rect x="20" y="2" width="5" height="6" fill="#F97316"/>
+  <rect x="8" y="3" width="3" height="4" fill="#FFD4A8"/>
+  <rect x="21" y="3" width="3" height="4" fill="#FFD4A8"/>
+  <!-- Head -->
+  <rect x="7" y="7" width="18" height="12" rx="2" fill="#F97316"/>
+  <!-- Face -->
+  <rect x="11" y="10" width="10" height="7" rx="1" fill="#FFFFFF"/>
+  <!-- Eyes -->
+  <rect x="11" y="10" width="2" height="3" fill="#1A1A2E"/>
+  <rect x="19" y="10" width="2" height="3" fill="#1A1A2E"/>
+  <!-- Nose -->
+  <rect x="14" y="14" width="4" height="2" fill="#1A1A2E"/>
+  <!-- Body -->
+  <rect x="9" y="19" width="14" height="8" rx="2" fill="#F97316"/>
+  <!-- Chest -->
+  <rect x="12" y="19" width="8" height="5" fill="#FFFFFF"/>
+  <!-- Feet -->
+  <rect x="9" y="27" width="4" height="2" fill="#7C2D12"/>
+  <rect x="19" y="27" width="4" height="2" fill="#7C2D12"/>
+  <!-- Tail -->
+  <rect x="23" y="21" width="5" height="3" rx="1" fill="#F97316"/>
+  <rect x="26" y="21" width="3" height="3" rx="1" fill="#FFFFFF"/>
+</svg>

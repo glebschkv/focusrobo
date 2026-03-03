@@ -7,9 +7,6 @@ export type { ShopInventory } from './shopStore';
 // Theme Store
 export { useThemeStore, useHomeBackground } from './themeStore';
 
-// Collection Store
-export { useCollectionStore, useActiveHomeBots, useActiveHomePets, useFavorites } from './collectionStore';
-
 // Navigation Store
 export {
   useNavigationStore,
@@ -25,7 +22,7 @@ export {
 export type { MainTab, ModalType } from './navigationStore';
 
 // XP Store
-export { useXPStore, useCurrentXP, useCurrentLevel, useUnlockedRobots, useUnlockedAnimals, useCurrentZone, useCurrentBiome, useAvailableZones, useAvailableBiomes, MAX_LEVEL, calculateLevelRequirement } from './xpStore';
+export { useXPStore, useCurrentXP, useCurrentLevel, useUnlockedPets, MAX_LEVEL, calculateLevelRequirement } from './xpStore';
 export type { XPState } from './xpStore';
 
 // Coin Store
@@ -59,3 +56,8 @@ export type { Quest, QuestObjective, QuestReward } from './questStore';
 // Onboarding Store
 export { useOnboardingStore, useHasCompletedOnboarding, useOnboardingSteps, useCurrentStepIndex } from './onboardingStore';
 export type { OnboardingStep } from './onboardingStore';
+
+// Land Store (Pet Collection Grid)
+export { useLandStore, useCurrentLand, useCompletedLands, useSpeciesCatalog, usePendingPet, useOwnedThemes } from './landStore';
+export type { LandCell, Land, PendingPet, SpeciesCatalogEntry } from './landStore';
+export { LAND_SIZE, LAND_COLS, LAND_ROWS, LAND_COMPLETE_BONUS_COINS } from './landStore';

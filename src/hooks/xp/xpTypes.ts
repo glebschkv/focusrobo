@@ -18,7 +18,7 @@ export interface XPReward {
 }
 
 export interface UnlockedReward {
-  type: 'robot' | 'zone';
+  type: 'pet' | 'zone';
   name: string;
   description: string;
   level: number;
@@ -29,9 +29,7 @@ export interface XPSystemState {
   currentLevel: number;
   xpToNextLevel: number;
   totalXPForCurrentLevel: number;
-  unlockedAnimals: string[];
-  currentBiome: string;
-  availableBiomes: string[];
+  unlockedPets: string[];
   totalStudyMinutes: number;
 }
 

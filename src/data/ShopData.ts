@@ -1,5 +1,4 @@
 import { BOOSTER_TYPES } from '@/hooks/useCoinBooster';
-import { getCoinExclusiveRobots } from './RobotDatabase';
 import type {
   ShopCategory,
   ShopItem,
@@ -400,78 +399,7 @@ export const BACKGROUND_BUNDLES: Bundle[] = [
   },
 ];
 
-export const BOT_BUNDLES: Bundle[] = [
-  {
-    id: 'bundle-mystical-spirits',
-    name: 'Quantum Spirits Bundle',
-    description: 'Harness the power of the elements! Includes Kitsune Spirit and Storm Spirit.',
-    category: 'bundles',
-    coinPrice: 24800,
-    icon: 'sparkles',
-    rarity: 'legendary',
-    bundleType: 'bots',
-    itemIds: ['kitsune-spirit', 'storm-spirit'],
-    totalValue: 31000, // 16000+15000
-    savings: '20%',
-  },
-  {
-    id: 'bundle-night-creatures',
-    name: 'Shadow Ops Bundle',
-    description: 'Embrace the darkness! Includes Cute Ghost and Golden Moth.',
-    category: 'bundles',
-    coinPrice: 12800,
-    icon: 'moon',
-    rarity: 'epic',
-    bundleType: 'bots',
-    itemIds: ['cute-ghost', 'golden-moth'],
-    totalValue: 16000, // 7500+8500
-    savings: '20%',
-  },
-  {
-    id: 'bundle-costume-kids',
-    name: 'Mech Mashup Bundle',
-    description: 'Adorable costume characters! Includes Cat Hood and Robot Buddy.',
-    category: 'bundles',
-    coinPrice: 10400,
-    icon: 'masks',
-    rarity: 'epic',
-    bundleType: 'bots',
-    itemIds: ['cat-hood', 'robot-buddy'],
-    totalValue: 13000, // 3500+9500
-    savings: '20%',
-  },
-  {
-    id: 'bundle-meadow-friends',
-    name: 'Workshop Starter Bundle',
-    description: 'Cheerful meadow companions! Includes Clover Cat and Slime King.',
-    category: 'bundles',
-    coinPrice: 6800,
-    icon: 'leaf',
-    rarity: 'rare',
-    bundleType: 'bots',
-    itemIds: ['clover-cat', 'slime-king'],
-    totalValue: 8500, // 2500+6000
-    savings: '20%',
-  },
-  {
-    id: 'bundle-complete-collection',
-    name: 'Complete Bot Collection',
-    description: 'All 8 exclusive bots in one legendary bundle! The ultimate collector\'s dream.',
-    category: 'bundles',
-    coinPrice: 54800,
-    icon: 'crown',
-    rarity: 'legendary',
-    bundleType: 'bots',
-    itemIds: ['clover-cat', 'slime-king', 'cute-ghost', 'kitsune-spirit', 'golden-moth', 'storm-spirit', 'cat-hood', 'robot-buddy'],
-    totalValue: 68500, // 2500+6000+7500+16000+8500+15000+3500+9500
-    savings: '20%',
-  },
-];
-
-/** All bundles (both bot and background) */
-/** @deprecated Use BOT_BUNDLES */
-export const PET_BUNDLES = BOT_BUNDLES;
-export const ALL_BUNDLES: Bundle[] = [...BOT_BUNDLES, ...BACKGROUND_BUNDLES];
+export const ALL_BUNDLES: Bundle[] = [...BACKGROUND_BUNDLES];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SHOP HELPER FUNCTIONS
@@ -498,23 +426,10 @@ export const getBackgroundsInBundle = (bundleId: string): PremiumBackground[] =>
 export const getShopItemsByCategory = (category: ShopCategory): ShopItem[] => {
   switch (category) {
     case 'featured':
-      // Featured tab shows bundles, bot bundles and limited time items
-      return [...STARTER_BUNDLES, ...BOT_BUNDLES.slice(0, 4), ...getLimitedTimeItems()];
-    case 'bots':
-    case 'pets': // backward-compat
-      return getCoinExclusiveRobots().map(bot => ({
-        id: bot.id,
-        name: bot.name,
-        description: bot.description,
-        category: 'bots' as ShopCategory,
-        coinPrice: bot.coinPrice,
-        icon: bot.icon,
-        rarity: bot.rarity,
-      }));
+      return [...STARTER_BUNDLES, ...BACKGROUND_BUNDLES, ...getLimitedTimeItems()];
     case 'customize':
       return [...PREMIUM_BACKGROUNDS];
     case 'powerups': {
-      // Combine boosters, utility items, and coins
       const boosters = BOOSTER_TYPES.map(booster => ({
         id: booster.id,
         name: booster.name,
@@ -554,9 +469,9 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
   return getAllShopItems().filter(item => item.rarity === rarity);
 };
 
-// Shop categories for UI - 3 tabs: Featured highlights, Collection (bots+bundles), Power-Ups
+// Shop categories for UI - 3 tabs: Featured, Backgrounds, Power-Ups
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'featured', name: 'Featured', icon: 'star' },
-  { id: 'bots', name: 'Collection', icon: 'bot' },
+  { id: 'customize', name: 'Backgrounds', icon: 'palette' },
   { id: 'powerups', name: 'Power-Ups', icon: 'lightning' },
 ];
