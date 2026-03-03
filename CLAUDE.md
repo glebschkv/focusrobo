@@ -1,17 +1,178 @@
 # BotBlock — Architecture Reference
 
-> Focus timer iOS app with farming/Stardew Valley-style gamification. Users run focus sessions to earn XP and coins, grow their village, collect characters, and build up their farm. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with creature-collection gamification. Users run focus sessions to earn XP, coins, and discover pixel art creatures that populate their personal habitat. Built with React + Capacitor, deployed as a native iOS app.
 
 ## Art & Theme Direction
 
-**The app uses a farming / Stardew Valley pixel art aesthetic.** New assets, characters, and environments follow a cozy farming RPG style:
+**The app uses a cozy pixel art aesthetic with a creature collection theme.**
 
-- **Visual style**: Stardew Valley-inspired pixel art — warm, colorful, hand-crafted feel
-- **Characters**: Villagers (Farmer, Baker, Blacksmith, Fisher, Wizard) with sprite sheet animations
-- **Environments**: Village with buildings (Cottage, Bakery, Forge, Fishing Dock, Wizard Tower, Town Square)
-- **Home screen**: PixelVillage component with wandering NPC characters on a sky+grass background
-- **Progression**: Building up a village as a metaphor for focused study time
-- **Note**: Some codebase files still reference robots/bots from the old theme. The village system (`src/components/pixel-world/`) is the active home screen.
+- **Visual style**: Clean, colorful pixel art — cute creatures, natural biome backgrounds
+- **Home screen concept**: "Focus Habitat" — a living diorama/terrarium that fills with creatures you discover through focus sessions
+- **Creatures**: Static pixel art sprites (not animated walking — just idle/breathing micro-animations). Generated via PixelLab API
+- **Habitats/Biomes**: Forest, Ocean, Sky, Cave, etc. — each with unique creature sets and themed backgrounds
+- **Progression**: Empty habitat → full collection over time. The home screen IS the reward
+- **Note**: Legacy code references robots/bots/villages from old themes. The current home screen uses `src/components/pixel-world/` (village system) which is being replaced with the habitat system
+
+## Home Screen Redesign: Focus Habitat
+
+> **STATUS: PLANNED — not yet implemented. This section is the design spec.**
+
+### Concept
+
+The home screen is a **single habitat scene** (terrarium/diorama style). Pixel art creatures populate it as you earn them through focus sessions. Creatures are static sprites — sitting, perching, sleeping in fixed positions. No fake AI walking. Clean and honest.
+
+The focus timer is **integrated directly into the home screen** — no separate tab for the core action. The home screen IS the game.
+
+### Core Loop
+
+```
+Focus session → Creature discovery roll → Reveal animation → Creature placed in habitat
+                                                                      ↓
+                                              Habitat fills up → New biome unlocks → More creatures to find
+```
+
+1. User taps "Start Focus" on the home screen
+2. Timer runs (optionally showing the habitat in the background)
+3. Session completes → rarity roll based on duration:
+   - 25min: 80% common, 15% rare, 4% epic, 1% legendary
+   - 45min: 60% common, 25% rare, 12% epic, 3% legendary
+   - 90min: 40% common, 30% rare, 22% epic, 8% legendary
+   - 120min+: 30% common, 30% rare, 25% epic, 15% legendary
+4. "New creature discovered!" reveal animation (egg crack / sparkle / fade-in)
+5. Creature appears in the habitat at a designated slot
+6. Duplicate discoveries → bonus coins + "bond level" increase for that creature
+
+### Visual Layout
+
+```
+┌─────────────────────────────┐
+│  [Lv.12]  [🪙 340]  [🔥 7] │  ← TopStatusBar (existing, keep as-is)
+│                             │
+│  ╭─── Habitat Scene ──────╮ │
+│  │  🌳    🦊  🐸          │ │
+│  │ 🍄  🦉      🐛  🌺    │ │  ← Scrollable habitat with placed creatures
+│  │   🐿️    🦋    🌿      │ │     Tap creature → info card (name, rarity, discovery date)
+│  │ 🪨  🐞  🍃  ???  ???   │ │     ??? = silhouette slots for undiscovered creatures
+│  ╰─────────────────────────╯ │
+│                             │
+│    ╭───────────────────╮    │
+│    │   Start Focus 🎯   │    │  ← Big CTA button, always visible
+│    ╰───────────────────╯    │
+│                             │
+│  [🏠] [📦] [⏱] [🏆] [🛒]  │  ← IOSTabBar (existing)
+└─────────────────────────────┘
+```
+
+### Creature System
+
+**Rarity tiers:**
+| Rarity | Drop glow | Frequency | Example types |
+|--------|-----------|-----------|---------------|
+| Common | None | ~50% | Ladybug, Frog, Sparrow, Bunny, Squirrel |
+| Rare | Blue shimmer | ~25% | Fox, Owl, Deer, Hedgehog, Turtle |
+| Epic | Purple glow | ~18% | Phoenix chick, Crystal butterfly, Moon rabbit |
+| Legendary | Gold sparkle | ~7% | Dragon, Unicorn, Celestial whale, etc. |
+
+**Creature data model:**
+```typescript
+interface Creature {
+  id: string;
+  name: string;
+  biome: BiomeId;            // 'forest' | 'ocean' | 'sky' | 'cave' | ...
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  spritePath: string;        // path to static pixel art PNG
+  spriteWidth: number;
+  spriteHeight: number;
+  description: string;       // fun one-liner
+  discoveredAt?: string;     // ISO date when user first found it
+  bondLevel?: number;        // increases with duplicate discoveries
+}
+```
+
+**Biomes** (unlock by level):
+| Biome | Unlock Level | Creatures | Theme |
+|-------|-------------|-----------|-------|
+| Forest | 0 | ~8-10 | Woodland animals, mushrooms, insects |
+| Meadow | 5 | ~8-10 | Farm animals, butterflies, flowers |
+| Ocean | 10 | ~8-10 | Sea creatures, shells, coral critters |
+| Sky | 15 | ~6-8 | Birds, cloud creatures, wind spirits |
+| Cave | 20 | ~6-8 | Crystal creatures, bats, glow worms |
+| Mythic | 30 | ~4-6 | Dragons, unicorns, phoenixes |
+
+### Habitat Scene Component
+
+**Replaces**: `src/components/pixel-world/PixelVillage.tsx`, `VillageMap.tsx`, `VillageCharacter.tsx`, `villageConfig.ts`
+
+**New components to build:**
+```
+src/components/habitat/
+├── FocusHabitat.tsx          # Main home screen component (replaces PixelVillage)
+├── HabitatScene.tsx          # Biome background + creature placement grid
+├── CreatureSprite.tsx         # Individual creature display (static sprite + idle micro-anim)
+├── CreatureInfoCard.tsx       # Tap-to-view card (name, rarity, bio, discovery date)
+├── CreatureReveal.tsx         # Discovery animation (egg crack / sparkle reveal)
+├── BiomeSelector.tsx          # Swipe/tab between unlocked biomes
+├── SilhouetteSlot.tsx         # "???" placeholder for undiscovered creatures
+├── StartFocusButton.tsx       # Integrated focus timer CTA on home screen
+└── habitatConfig.ts           # Biome definitions, creature slots, positions
+```
+
+**New store:**
+```
+src/stores/habitatStore.ts     # Zustand store for discovered creatures, active biome, slot positions
+  - key: nomo_habitat
+  - state: discoveredCreatures[], activeBiome, slotPositions, lastDiscovery
+```
+
+**New data file:**
+```
+src/data/CreatureDatabase.ts   # All creature definitions (id, name, rarity, biome, sprite path, description)
+```
+
+### Asset Generation (PixelLab)
+
+All creature sprites generated via PixelLab `create_map_object` API:
+- **Size**: 32x32 to 48x48px per creature (varies by creature type)
+- **Style**: `high top-down` view, `single color outline`, `medium shading`
+- **Background**: Transparent
+- **Storage**: `public/assets/habitat/creatures/{biome}/{creature-id}.png`
+- **Biome backgrounds**: `public/assets/habitat/biomes/{biome-id}-bg.png`
+
+Generate ~40-50 unique creatures total across all biomes. Each needs:
+1. A PixelLab `create_map_object` call with a descriptive prompt
+2. Download the PNG to the assets folder
+3. Entry in `CreatureDatabase.ts`
+
+### Integration Points
+
+**Focus session completion** (in `useXPSystem` or reward handler):
+- After XP/coin rewards, trigger creature discovery roll
+- Roll uses session duration to determine rarity odds
+- Check for duplicates → bonus coins if duplicate, else add to collection
+- Dispatch `creatureDiscovered` event for the reveal animation
+
+**Existing systems to keep:**
+- TopStatusBar (level, coins, streak) — unchanged
+- IOSTabBar — unchanged, home tab now shows habitat instead of village
+- XP/coin/streak systems — unchanged
+- Shop — can sell creature-themed items, habitat decorations
+- Collection tab — could merge with or complement the habitat view
+- Achievements — add creature-collection milestones
+
+**Existing systems to remove/replace:**
+- `src/components/pixel-world/` — entire village system replaced by habitat
+- `src/hooks/useVillageMovement.ts` — no longer needed (creatures are static)
+- `src/styles/pixel-world.css` — replace with habitat animations
+- Village-related assets in `public/assets/pixel-world/` — keep tiles/decorations that can be reused for biome backgrounds
+
+### Key Design Principles
+
+1. **The home screen reflects your behavior.** Active focuser = rich, full habitat. Inactive = sparse, empty. Visual progress is undeniable.
+2. **Every creature = something you earned.** No freebies, no decorative NPCs. Each sprite on screen cost focus time.
+3. **"What will I discover next?" drives engagement.** Silhouette slots create curiosity. Rarity system creates surprise.
+4. **The core action lives on the home screen.** "Start Focus" button is always visible. No tab-switching for the primary action.
+5. **Static sprites are intentional.** No fake wandering AI. Creatures sit/perch/rest. Honest, clean, scales well with 30+ creatures on screen.
+6. **Idle micro-animations only.** 2-3 frame breathing/blinking CSS loops. Alive but not busy.
 
 ## Quick Facts
 
@@ -133,13 +294,14 @@ src/
 
 1. `App.tsx` — wraps everything in ErrorBoundary, QueryClient, NativePluginProvider, OfflineProvider
 2. Routes: `/` (Index), `/auth`, `/privacy`, `/terms`
-3. `Index.tsx` — checks auth → shows onboarding if new → renders **MechHangar** (home) + **GameUI** (overlay)
+3. `Index.tsx` — checks auth → shows onboarding if new → renders **home screen** + **GameUI** (overlay)
 4. **GameUI** manages tab state and renders:
-   - `TopStatusBar` — XP bar, level, coins
+   - `TopStatusBar` — XP bar, level, coins (home tab only)
    - `TabContent` — lazy-loads the active tab component
    - `IOSTabBar` — bottom navigation
-   - `RewardModals` — XP/coin/milestone reward popups
-5. **Tabs**: home (MechHangar), timer, collection, challenges, shop, settings
+   - `RewardModals` — XP/coin/milestone/creature-discovery reward popups
+5. **Tabs**: home (FocusHabitat — creature collection + integrated timer), timer (detailed timer), collection, challenges, shop, settings
+6. **Home tab** (planned): FocusHabitat replaces PixelVillage. Shows habitat scene with collected creatures, "Start Focus" CTA, biome selector. Focus timer can be started directly from home screen.
 
 ## Stores (Zustand)
 
@@ -179,11 +341,13 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - **Daily login**: 20 coins + 5/streak day (cap 100)
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
-### Village & Characters (Stardew Valley-style)
-- **Home screen**: PixelVillage with wandering NPCs on a pixel art village map
-- **Buildings** (unlock by level): Cottage (0), Bakery (3), Forge (5), Fishing Dock (7), Wizard Tower (10), Town Square (20)
+### Village & Characters (LEGACY — being replaced)
+- **Status**: Being replaced by Focus Habitat system (see "Home Screen Redesign" section above)
+- **Current code**: `src/components/pixel-world/` — PixelVillage with wandering NPCs, buildings, decorations
+- **Buildings**: Cottage (0), Bakery (3), Forge (5), Fishing Dock (7), Wizard Tower (10), Town Square (20)
 - **Village characters**: Farmer, Baker, Blacksmith, Fisher, Wizard — sprite sheet animated NPCs
 - **Assets**: `/public/assets/pixel-world/buildings/` and `/public/assets/pixel-world/sprites/`
+- **Why replacing**: Village was a diorama with no meaningful interactivity. Buildings did nothing when unlocked. NPCs had no purpose beyond random quotes. No connection between focus sessions and what happened on screen.
 
 ### Legacy Collectibles & Zones (robot-themed, in collection tab)
 - **Rarities**: common, rare, epic, legendary
@@ -282,16 +446,17 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - Supabase Auth with Apple Sign-In (`@capacitor-community/apple-sign-in`)
 - Guest mode supported (local-only, data stored with guest UUID)
 
-## Design System — Atelier + Farming Pixel Art
+## Design System — Atelier + Pixel Art
 
-The current design uses the **Atelier white theme** with **Stardew Valley-style pixel art**:
+The current design uses the **Atelier white theme** with **pixel art creature collection**:
 
 - **Background**: `#FAFAF9` (warm white/stone)
 - **Theme color**: `#FAFAF9` for iOS status bar
 - **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind (`hsl(var(--primary))`)
 - **Component library**: shadcn/ui with Radix UI primitives
 - **Animations**: Framer Motion for page transitions, reward celebrations
-- **3D**: React Three Fiber for hangar scene elements
+- **Pixel art**: PixelLab API for generating creature sprites and biome assets (32-48px, transparent BG)
+- **3D**: React Three Fiber for hangar scene elements (legacy, may be removed)
 - **Fonts**: Inter (via `@fontsource/inter`)
 
 ## Build & Deploy
@@ -303,7 +468,7 @@ The current design uses the **Atelier white theme** with **Stardew Valley-style 
 
 ## Important Patterns
 
-- **Backward compatibility aliases**: The app was renamed from animals/pets/biomes to robots/bots/zones. Many deprecated aliases exist (e.g., `AnimalData = RobotData`, `BiomeData = ZoneData`, `ANIMAL_DATABASE = ROBOT_DATABASE`). Use the new names.
+- **Backward compatibility aliases**: The app was renamed from animals/pets/biomes to robots/bots/zones, and the home screen is being redesigned from village to habitat. Many deprecated aliases exist (e.g., `AnimalData = RobotData`, `BiomeData = ZoneData`, `ANIMAL_DATABASE = ROBOT_DATABASE`). Use the new names.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 - **Validated persistence**: All Zustand stores use `createValidatedStorage()` with Zod schemas — invalid persisted data falls back to defaults instead of crashing.
 - **Lazy loading**: All tab content and heavy components are lazy-loaded with `React.lazy()` and context-aware skeleton fallbacks.
@@ -336,3 +501,46 @@ Coin Packs:
 Bundles:
   co.botblock.app.bundle.welcome / starter / collector / ultimate
 ```
+
+## Market Research & Competitive Insights
+
+> Research conducted March 2026. These insights inform the Focus Habitat redesign.
+
+### Why the Village Concept Failed
+
+The old Stardew Valley village home screen was a **diorama, not a game**:
+- No agency: nothing to do on the home screen except look at it
+- No feedback: focus sessions had zero visible effect on the village
+- No stakes: nothing bad happened from inactivity
+- No ownership: NPCs weren't "yours" — they were just decoration
+- Two competing themes: village farmers on home screen, robots in collection tab
+- Core action (focus timer) lived on a separate tab — disconnected from the "game"
+
+### What Works in Competing Apps
+
+| App | Core Mechanic | Why It Retains | Key Takeaway |
+|-----|--------------|----------------|--------------|
+| **Forest** | Plant tree → grows during focus → dies if you leave | Loss aversion + visible history (dead stumps stay) | Stakes matter. Show failures too, not just successes |
+| **Finch** | Care for ONE pet bird → it grows over weeks | Emotional bond to single character, no punishment for missing days | Single focal point > collection of generic items |
+| **Duolingo** | Linear path → daily lesson → streak → weekly league | 37% DAU/MAU ratio. Streaks + leagues + variable rewards | One clear "next action." Streak as identity |
+| **Pokemon Sleep** | Sleep → Pokemon appear → helpers gather resources while idle | Home screen mirrors your behavior. Idle accumulation = reason to check in | The home screen should REFLECT your habits back at you |
+| **Habitica** | RPG character → complete real tasks → earn gear → party quests | Social accountability (party damage if you miss dailies) | Deep systems beat pretty graphics |
+| **Walkr** | Walk → fuel spaceship → discover planets → manage colonies | Passive progress + active management. 100+ collectible planets | Collection works when each item is visually unique and beautiful |
+
+### Five Principles for the Home Screen
+
+1. **The home screen must be a living mirror of behavior.** Active focuser = rich habitat. Inactive = sparse. The difference should be visible at a glance.
+2. **Create reasons to open the app beyond "start a focus session."** Idle mechanics, daily discoveries, check-in rewards. These create touchpoints that lead to focus sessions organically.
+3. **One clear next action.** The "Start Focus" button must be obvious within 1 second of opening the app. No hunting through tabs.
+4. **Variable rewards beat fixed rewards.** Sometimes a common creature, sometimes a legendary. Unpredictability maintains dopamine. Longer sessions = better odds, not guaranteed outcomes.
+5. **Collection + rarity + silhouettes = curiosity loop.** Seeing "???" shadows of undiscovered creatures is a powerful motivator. "What's that one? I need to do another session to find out."
+
+### How Focus Habitat Applies These Insights
+
+| Principle | Forest/Finch/Duolingo | Focus Habitat Implementation |
+|-----------|----------------------|------------------------------|
+| Mirror behavior | Forest: dead trees visible | Empty vs full habitat. Sparse = haven't focused. Rich = active focuser |
+| Reason to open | Pokemon Sleep: idle helpers | Daily discovery slots, biome progression, checking new creatures |
+| Clear next action | Duolingo: one "Start" button | "Start Focus" CTA directly on home screen |
+| Variable rewards | Duolingo: random XP bonuses | Rarity rolls after sessions. Duration affects odds but doesn't guarantee |
+| Curiosity loop | Pokemon Sleep: new Pokemon each morning | Silhouette slots for undiscovered creatures. "What's the shadow?" |
