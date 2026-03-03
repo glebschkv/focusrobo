@@ -1,30 +1,33 @@
 /**
  * PetLand Component
  *
- * The home screen — displays a 10×10 grid of pets placed after focus sessions.
- * Pets are sized based on session duration (baby/adolescent/adult).
- * The grid sits on a floating island with sky, clouds, and decorative elements.
+ * The home screen — displays a floating isometric island where pets are placed
+ * after focus sessions. Pets are positioned organically across the island surface
+ * with depth-based scaling and z-ordering.
  */
 
 import { useMemo } from 'react';
-import { useLandStore } from '@/stores/landStore';
-import { PetLandCell } from '@/components/PetLandCell';
-import { LAND_COLS, LAND_ROWS, LAND_SIZE } from '@/stores/landStore';
+import { useLandStore, LAND_SIZE } from '@/stores/landStore';
+import { IslandPet } from '@/components/IslandPet';
 
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  // Memoize grid rendering to avoid re-renders on unrelated state changes
-  const gridCells = useMemo(() => {
-    return currentLand.cells.map((cell, index) => (
-      <PetLandCell
-        key={`${currentLand.id}-${index}`}
-        cell={cell}
-        index={index}
-      />
-    ));
+  const pets = useMemo(() => {
+    return currentLand.cells
+      .map((cell, index) => {
+        if (!cell) return null;
+        return (
+          <IslandPet
+            key={`${currentLand.id}-${index}`}
+            cell={cell}
+            index={index}
+          />
+        );
+      })
+      .filter(Boolean);
   }, [currentLand.cells, currentLand.id]);
 
   return (
@@ -37,31 +40,32 @@ export const PetLand = () => {
         <div className="pet-land__cloud pet-land__cloud--3" />
       </div>
 
-      {/* Floating island with grid */}
-      <div className="pet-land__island">
-        <div className="pet-land__island-bg" />
+      {/* Floating island */}
+      <div className="pet-land__island-container">
+        {/* Island surface (grass top) */}
+        <div className="pet-land__island-surface">
+          <div className="pet-land__island-grass-detail" />
+        </div>
 
-        {/* Decorative trees */}
-        <div className="pet-land__deco-tree pet-land__deco-tree--1" />
-        <div className="pet-land__deco-tree pet-land__deco-tree--2" />
-        <div className="pet-land__deco-tree pet-land__deco-tree--3" />
+        {/* Island cliff sides */}
+        <div className="pet-land__island-cliff" />
 
-        {/* 10×10 Grid */}
-        <div
-          className="pet-land__grid"
-          style={{
-            gridTemplateColumns: `repeat(${LAND_COLS}, 1fr)`,
-            gridTemplateRows: `repeat(${LAND_ROWS}, 1fr)`,
-          }}
-        >
-          {gridCells}
+        {/* Soft shadow beneath floating island */}
+        <div className="pet-land__island-shadow" />
+
+        {/* Decorative elements on island edges */}
+        <div className="pet-land__deco pet-land__deco--flower-1" />
+        <div className="pet-land__deco pet-land__deco--flower-2" />
+        <div className="pet-land__deco pet-land__deco--bush-1" />
+        <div className="pet-land__deco pet-land__deco--bush-2" />
+
+        {/* Pets layer — absolutely positioned pets */}
+        <div className="pet-land__pets-layer">
+          {pets}
         </div>
       </div>
 
-      {/* Ground strip */}
-      <div className="pet-land__ground" />
-
-      {/* Land progress label with mini bar */}
+      {/* Land progress label */}
       <div className="pet-land__progress">
         <span className="pet-land__progress-text">
           Land {currentLand.number} · {filledCount}/{LAND_SIZE}

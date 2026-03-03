@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   Pet Land — 10×10 grid home screen for pet collection
+   Pet Land — Floating isometric island home screen
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── Main container ─────────────────────────────────────────────── */
@@ -9,159 +9,440 @@
   inset: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   overflow: hidden;
   background: linear-gradient(
     180deg,
-    #7EC8E3 0%,
-    #A8D8EA 18%,
-    #8BC34A 18%,
-    #6DA832 100%
+    #87CEEB 0%,
+    #B0E0F0 40%,
+    #D4ECFA 70%,
+    #E8F4FD 100%
   );
 }
 
 /* ── Sky ────────────────────────────────────────────────────────── */
 
 .pet-land__sky {
-  position: relative;
-  flex: 0 0 12%;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 /* Sun */
 .pet-land__sun {
   position: absolute;
-  top: 15%;
-  right: 14%;
-  width: 28px;
-  height: 28px;
+  top: 8%;
+  right: 15%;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFE082 35%, #FFD54F 60%, transparent 72%);
-  box-shadow: 0 0 18px 6px rgba(255, 213, 79, 0.3);
+  background: radial-gradient(circle, #FFF8E1 20%, #FFE082 45%, #FFD54F 65%, transparent 75%);
+  box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.25);
   animation: pet-land-sun-pulse 4s ease-in-out infinite;
 }
 
 @keyframes pet-land-sun-pulse {
-  0%, 100% { box-shadow: 0 0 18px 6px rgba(255, 213, 79, 0.3); }
-  50% { box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.45); }
+  0%, 100% { box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.25); }
+  50% { box-shadow: 0 0 32px 14px rgba(255, 213, 79, 0.4); }
 }
 
+/* Clouds */
 .pet-land__cloud {
   position: absolute;
-  width: 48px;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.75);
-  border-radius: 8px;
+  width: 56px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 9px;
   animation: pet-land-cloud-drift linear infinite;
 }
 
 .pet-land__cloud::before {
   content: '';
   position: absolute;
-  top: -7px;
-  left: 10px;
-  width: 22px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.75);
-  border-radius: 11px;
+  top: -8px;
+  left: 12px;
+  width: 24px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
 }
 
 .pet-land__cloud--1 {
-  top: 25%;
-  left: -60px;
-  animation-duration: 50s;
+  top: 10%;
+  left: -70px;
+  animation-duration: 55s;
 }
 
 .pet-land__cloud--2 {
-  top: 55%;
-  left: -60px;
-  width: 64px;
-  height: 18px;
-  animation-duration: 65s;
-  animation-delay: -25s;
+  top: 20%;
+  left: -70px;
+  width: 72px;
+  height: 20px;
+  animation-duration: 70s;
+  animation-delay: -30s;
 }
 
 .pet-land__cloud--3 {
-  top: 18%;
-  left: -60px;
-  width: 40px;
-  height: 14px;
-  animation-duration: 38s;
-  animation-delay: -12s;
-  opacity: 0.5;
+  top: 6%;
+  left: -70px;
+  width: 44px;
+  height: 15px;
+  animation-duration: 42s;
+  animation-delay: -15s;
+  opacity: 0.45;
 }
 
 @keyframes pet-land-cloud-drift {
-  from { transform: translateX(-80px); }
-  to { transform: translateX(calc(100vw + 80px)); }
+  from { transform: translateX(-90px); }
+  to { transform: translateX(calc(100vw + 90px)); }
 }
 
-/* ── Island wrapper ────────────────────────────────────────────── */
+/* ── Island container ──────────────────────────────────────────── */
 
-.pet-land__island {
+.pet-land__island-container {
   position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 6px;
-  min-height: 0;
+  width: 88%;
+  max-width: 400px;
+  aspect-ratio: 1 / 0.85;
+  margin-top: auto;
+  margin-bottom: auto;
+  /* Subtle isometric tilt */
+  transform: perspective(1200px) rotateX(5deg);
+  transform-style: preserve-3d;
 }
 
-/* Island shape — rounded green platform with depth */
-.pet-land__island-bg {
+/* ── Island surface (grass top) ────────────────────────────────── */
+
+.pet-land__island-surface {
   position: absolute;
-  inset: -2px 2px 4px;
-  border-radius: 20px 20px 24px 24px;
+  top: 8%;
+  left: 8%;
+  right: 8%;
+  bottom: 40%;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 40% 35%, #8FD14F 0%, transparent 60%),
+    radial-gradient(ellipse at 65% 60%, #7BC043 0%, transparent 50%),
+    linear-gradient(180deg, #8BC34A 0%, #7CB342 40%, #6DA832 100%);
+  box-shadow:
+    inset 0 -4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 2px 8px rgba(255, 255, 255, 0.15);
+  z-index: 2;
+}
+
+/* Grass detail texture */
+.pet-land__island-grass-detail {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(139, 195, 74, 0.6) 0%, transparent 8%),
+    radial-gradient(circle at 70% 25%, rgba(124, 179, 66, 0.5) 0%, transparent 6%),
+    radial-gradient(circle at 45% 65%, rgba(139, 195, 74, 0.4) 0%, transparent 10%),
+    radial-gradient(circle at 80% 55%, rgba(104, 159, 56, 0.5) 0%, transparent 7%),
+    radial-gradient(circle at 15% 60%, rgba(124, 179, 66, 0.4) 0%, transparent 9%);
+  opacity: 0.7;
+}
+
+/* ── Island cliff (earth/rock sides) ───────────────────────────── */
+
+.pet-land__island-cliff {
+  position: absolute;
+  top: 35%;
+  left: 10%;
+  right: 10%;
+  bottom: 10%;
+  border-radius: 0 0 45% 45% / 0 0 60% 60%;
   background: linear-gradient(
     180deg,
-    #7CB342 0%,
-    #689F38 50%,
-    #558B2F 100%
+    #8D6E4C 0%,
+    #7B5E3B 20%,
+    #6D4C2E 45%,
+    #5C3D22 70%,
+    #4A3118 100%
   );
   box-shadow:
-    0 4px 0 #4E7C28,
-    0 7px 0 #3E6B1A,
-    0 10px 16px rgba(46, 80, 20, 0.35);
+    inset 0 4px 0 #7CB342,
+    inset 0 6px 0 #6DA832,
+    0 4px 0 #3E2812,
+    0 8px 20px rgba(40, 26, 10, 0.35);
+  z-index: 1;
   overflow: hidden;
 }
 
-/* Grass texture on island top edge */
-.pet-land__island-bg::before {
+/* Rock/dirt texture detail on cliff */
+.pet-land__island-cliff::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 40%, rgba(139, 119, 90, 0.4) 0%, transparent 25%),
+    radial-gradient(ellipse at 75% 35%, rgba(120, 100, 72, 0.35) 0%, transparent 20%),
+    radial-gradient(ellipse at 50% 70%, rgba(100, 80, 55, 0.3) 0%, transparent 30%),
+    radial-gradient(ellipse at 30% 80%, rgba(80, 65, 45, 0.25) 0%, transparent 20%);
+}
+
+/* Grass overhang on the cliff edge */
+.pet-land__island-cliff::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: repeating-linear-gradient(
-    90deg,
-    rgba(139, 195, 74, 0.5) 0px,
-    rgba(139, 195, 74, 0.5) 5px,
-    transparent 5px,
-    transparent 10px
+  left: -2%;
+  right: -2%;
+  height: 8px;
+  background: linear-gradient(180deg, #6DA832 0%, rgba(109, 168, 50, 0) 100%);
+  border-radius: 0 0 50% 50%;
+}
+
+/* ── Floating shadow ───────────────────────────────────────────── */
+
+.pet-land__island-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.06) 40%,
+    transparent 70%
   );
+  z-index: 0;
+  filter: blur(4px);
 }
 
-/* ── Grid ───────────────────────────────────────────────────────── */
+/* ── Decorative elements ───────────────────────────────────────── */
 
-.pet-land__grid {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 1.5px;
-  padding: 6px;
-  width: 100%;
-  max-width: min(100%, calc(100vh - 180px));
-  aspect-ratio: 1;
-  margin: 0 auto;
+.pet-land__deco {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
 }
 
-/* ── Ground ─────────────────────────────────────────────────────── */
+/* Small flowers */
+.pet-land__deco--flower-1 {
+  top: 22%;
+  left: 14%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFB7C5;
+  box-shadow: 0 0 2px rgba(255, 183, 197, 0.6);
+}
 
-.pet-land__ground {
-  flex: 0 0 6%;
-  position: relative;
+.pet-land__deco--flower-2 {
+  top: 28%;
+  right: 16%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #FFD700;
+  box-shadow: 0 0 2px rgba(255, 215, 0, 0.5);
+}
+
+/* Small bushes */
+.pet-land__deco--bush-1 {
+  top: 18%;
+  left: 22%;
+  width: 12px;
+  height: 8px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 60%, #66BB6A, #43A047);
+}
+
+.pet-land__deco--bush-2 {
+  top: 24%;
+  right: 20%;
+  width: 10px;
+  height: 7px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 60%, #81C784, #4CAF50);
+}
+
+/* ── Pets layer ────────────────────────────────────────────────── */
+
+.pet-land__pets-layer {
+  position: absolute;
+  top: 8%;
+  left: 8%;
+  right: 8%;
+  bottom: 40%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ── Individual pet on island ──────────────────────────────────── */
+
+.island-pet {
+  position: absolute;
+  pointer-events: auto;
+  transform: translate(-50%, -100%) scale(var(--pet-scale, 1));
+  transform-origin: center bottom;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease;
+}
+
+.island-pet:active {
+  transform: translate(-50%, -100%) scale(calc(var(--pet-scale, 1) * 0.9));
+}
+
+/* ── Pet sprite ────────────────────────────────────────────────── */
+
+.island-pet__sprite {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  animation: island-pet-bob 3s ease-in-out infinite;
+  animation-delay: var(--bob-delay, 0s);
+}
+
+@keyframes island-pet-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* ── Pet ground shadow ─────────────────────────────────────────── */
+
+.island-pet__shadow {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Entrance animation for new pets ───────────────────────────── */
+
+.island-pet--new {
+  animation: island-pet-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes island-pet-pop {
+  0% {
+    transform: translate(-50%, -100%) scale(0) rotate(-8deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -100%) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -100%) scale(var(--pet-scale, 1)) rotate(0);
+    opacity: 1;
+  }
+}
+
+/* ── Rarity glow effects ──────────────────────────────────────── */
+
+.island-pet--rare {
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
+}
+
+.island-pet--epic {
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.5));
+}
+
+.island-pet--legendary {
+  filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.6));
+}
+
+/* ── Legendary shimmer ──────────────────────────────────────────── */
+
+.island-pet__shimmer {
+  position: absolute;
+  inset: -4px;
+  border-radius: 4px;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(234, 179, 8, 0.25) 45%,
+    rgba(234, 179, 8, 0.1) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: island-pet-shimmer 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes island-pet-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Tooltip ────────────────────────────────────────────────────── */
+
+.island-pet__tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  pointer-events: auto;
+  animation: island-tooltip-in 0.2s ease-out;
+}
+
+.island-pet__tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.82);
+}
+
+.island-pet__tooltip-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.island-pet__tooltip-detail {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.island-pet__tooltip-rarity {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 1px;
+}
+
+@keyframes island-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
 }
 
 /* ── Progress label ─────────────────────────────────────────────── */
@@ -170,7 +451,8 @@
   position: relative;
   z-index: 10;
   text-align: center;
-  padding: 4px 0 0;
+  padding: 0 0 16px;
+  margin-top: auto;
 }
 
 .pet-land__progress-text {
@@ -178,7 +460,7 @@
   align-items: center;
   gap: 6px;
   padding: 5px 14px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
@@ -204,241 +486,4 @@
   border-radius: 2px;
   background: linear-gradient(90deg, #81C784, #4CAF50);
   transition: width 0.5s ease;
-}
-
-/* ── Cell ───────────────────────────────────────────────────────── */
-
-.pet-land-cell {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
-  border-radius: 3px;
-  overflow: visible;
-}
-
-.pet-land-cell--empty {
-  background: rgba(100, 160, 40, 0.1);
-  border-radius: 3px;
-}
-
-/* Subtle dot in empty cells so they're visible */
-.pet-land-cell--empty::after {
-  content: '';
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: rgba(100, 160, 40, 0.18);
-}
-
-.pet-land-cell--filled {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.15s ease;
-}
-
-.pet-land-cell--filled:active {
-  transform: scale(0.9);
-}
-
-/* ── Cell entrance animation (for newly placed pets) ───────────── */
-
-.pet-land-cell--new {
-  animation: pet-land-cell-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes pet-land-cell-pop {
-  0% {
-    transform: scale(0) rotate(-8deg);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.12) rotate(2deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) rotate(0);
-    opacity: 1;
-  }
-}
-
-/* ── Pet image ──────────────────────────────────────────────────── */
-
-.pet-land-cell__image {
-  width: 88%;
-  height: 88%;
-  object-fit: contain;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  pointer-events: none;
-  transform-origin: center bottom;
-}
-
-/* ── Idle bobble for pets on the grid ─────────────────────────── */
-
-.pet-land-cell--filled .pet-land-cell__image {
-  animation: pet-idle-bob 3s ease-in-out infinite;
-  animation-delay: var(--bob-delay, 0s);
-}
-
-@keyframes pet-idle-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-1.5px); }
-}
-
-/* ── Rarity border glow for cells ─────────────────────────────── */
-
-.pet-land-cell--rarity-rare {
-  box-shadow: 0 0 3px rgba(59, 130, 246, 0.35);
-}
-
-.pet-land-cell--rarity-epic {
-  box-shadow: 0 0 4px rgba(168, 85, 247, 0.4);
-}
-
-.pet-land-cell--rarity-legendary {
-  box-shadow: 0 0 5px rgba(234, 179, 8, 0.45);
-}
-
-/* ── Legendary shimmer ──────────────────────────────────────────── */
-
-.pet-land-cell__shimmer {
-  position: absolute;
-  inset: 0;
-  border-radius: 3px;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(234, 179, 8, 0.22) 45%,
-    rgba(234, 179, 8, 0.08) 55%,
-    transparent 70%
-  );
-  background-size: 200% 100%;
-  animation: pet-land-shimmer 2.5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes pet-land-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ── Tooltip ────────────────────────────────────────────────────── */
-
-.pet-land-cell__tooltip {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 10px;
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  white-space: nowrap;
-  pointer-events: auto;
-  animation: pet-tooltip-in 0.2s ease-out;
-}
-
-.pet-land-cell__tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.82);
-}
-
-.pet-land-cell__tooltip-name {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.pet-land-cell__tooltip-detail {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.pet-land-cell__tooltip-rarity {
-  font-size: 8px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 1px 5px;
-  border-radius: 4px;
-  margin-top: 1px;
-}
-
-@keyframes pet-tooltip-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(4px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-
-/* ── Decorative trees (pixel art style) ───────────────────────── */
-
-.pet-land__deco-tree {
-  position: absolute;
-  z-index: 3;
-  width: 18px;
-  height: 26px;
-}
-
-.pet-land__deco-tree--1 {
-  left: 3%;
-  bottom: 8%;
-}
-
-.pet-land__deco-tree--2 {
-  right: 4%;
-  bottom: 12%;
-}
-
-.pet-land__deco-tree--3 {
-  left: 8%;
-  bottom: 16%;
-  width: 14px;
-  height: 20px;
-  opacity: 0.7;
-}
-
-/* Tree trunk */
-.pet-land__deco-tree::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 9px;
-  background: #6D4C41;
-  border-radius: 1px;
-}
-
-/* Tree canopy */
-.pet-land__deco-tree::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 18px;
-  background: #43A047;
-  border-radius: 50% 50% 35% 35%;
-  box-shadow: inset -3px -2px 0 #2E7D32;
 }
