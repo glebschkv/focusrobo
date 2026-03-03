@@ -470,7 +470,7 @@ class WidgetDataService {
       const collectionData = localStorage.getItem('petparadise-collection');
       const xpSystemData = storage.get<{
         currentZone?: string;
-        unlockedAnimals?: string[];
+        unlockedPets?: string[];
       }>(STORAGE_KEYS.XP_SYSTEM);
 
       let activePetName: string | null = null;
@@ -495,7 +495,7 @@ class WidgetDataService {
         }
       }
 
-      if (xpSystemData?.unlockedAnimals) {
+      if (xpSystemData?.unlockedPets) {
         totalPetsCollected = xpSystemData.unlockedAnimals.length;
       }
 
@@ -507,7 +507,7 @@ class WidgetDataService {
           const state = parsed?.state;
           const ownedCharacters: string[] = state?.ownedCharacters ?? [];
           // Add unique shop pets not already counted
-          const unlocked = new Set(xpSystemData?.unlockedAnimals ?? []);
+          const unlocked = new Set(xpSystemData?.unlockedPets ?? []);
           for (const id of ownedCharacters) {
             if (!unlocked.has(id)) {
               totalPetsCollected++;

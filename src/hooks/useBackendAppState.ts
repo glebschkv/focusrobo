@@ -20,7 +20,6 @@ import { useAchievementSystem } from './useAchievementSystem';
 import { useBackendQuests } from './useBackendQuests';
 import { useBackendStreaks } from './useBackendStreaks';
 import { useSupabaseData } from './useSupabaseData';
-import { useCollection } from './useCollection';
 import { useCoinSystem } from './useCoinSystem';
 import { useCoinBooster } from './useCoinBooster';
 import { useAuth } from './useAuth';
@@ -46,7 +45,6 @@ export const useBackendAppState = () => {
   const achievements = useAchievementSystem();
   const quests = useBackendQuests();
   const streaks = useBackendStreaks();
-  const collection = useCollection();
   const supabaseData = useSupabaseData();
   const coinSystem = useCoinSystem();
   const coinBooster = useCoinBooster();
@@ -249,7 +247,6 @@ export const useBackendAppState = () => {
     achievements,
     quests,
     streaks,
-    collection,
     supabaseData,
     coinSystem,
     coinBooster,

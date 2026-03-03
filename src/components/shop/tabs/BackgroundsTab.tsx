@@ -1,151 +1,136 @@
-import { Check, Palette, Star } from "lucide-react";
+/**
+ * BackgroundsTab Component
+ *
+ * Shows background bundles and individual backgrounds for purchase.
+ * Replaces the old CollectionTab which mixed robots and backgrounds.
+ */
+
+import { Check, Palette } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
-import { ShopItem, PREMIUM_BACKGROUNDS, ShopCategory } from "@/data/ShopData";
+import {
+  ShopItem,
+  Bundle,
+  PREMIUM_BACKGROUNDS,
+  BACKGROUND_BUNDLES,
+  ShopCategory,
+} from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
-import { getCoinExclusiveRobots, RobotData } from "@/data/RobotDatabase";
-import { toast } from "sonner";
-import { SpritePreview, BackgroundPreview } from "../ShopPreviewComponents";
-import { RARITY_COLORS, RARITY_BG, RARITY_BORDER, RARITY_GLOW } from "../styles";
+import { BackgroundPreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
+import { RARITY_BG } from "../styles";
 import { useThemeStore } from "@/stores";
 import { useCallback } from "react";
+import { toast } from "sonner";
 
-interface PetsTabProps {
+interface BackgroundsTabProps {
   inventory: ShopInventory;
   isOwned: (itemId: string, category: ShopCategory) => boolean;
+  isBundleOwned: (bundleId: string) => boolean;
   equipBackground: (backgroundId: string | null) => void;
-  setSelectedItem: (item: ShopItem | RobotData | null) => void;
+  setSelectedItem: (item: ShopItem | Bundle | null) => void;
   setShowPurchaseConfirm: (show: boolean) => void;
   canAfford: (price: number) => boolean;
 }
 
-export const PetsTab = ({
+export const BackgroundsTab = ({
   inventory,
   isOwned,
+  isBundleOwned,
   equipBackground,
   setSelectedItem,
   setShowPurchaseConfirm,
   canAfford,
-}: PetsTabProps) => {
-  const characters = getCoinExclusiveRobots();
+}: BackgroundsTabProps) => {
   const setHomeBackground = useThemeStore((state) => state.setHomeBackground);
-
-  // Only show backgrounds that have real preview images
   const backgroundsWithPreviews = PREMIUM_BACKGROUNDS.filter(bg => bg.previewImage);
 
   const handleEquipBackground = useCallback((bgId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (inventory.equippedBackground === bgId) {
-      // Unequip - reset to default theme
       equipBackground(null);
       toast.success("Background unequipped");
       setHomeBackground('day');
     } else {
       equipBackground(bgId);
       toast.success("Background equipped!");
-      // Find the background and get its preview image path
       const background = PREMIUM_BACKGROUNDS.find(bg => bg.id === bgId);
       const imagePath = background?.previewImage || 'day';
       setHomeBackground(imagePath);
     }
   }, [inventory.equippedBackground, equipBackground, setHomeBackground]);
 
-  const getRarityStars = (rarity: string) => {
-    const count = rarity === 'common' ? 1 : rarity === 'rare' ? 2 : rarity === 'epic' ? 3 : 4;
-    return [...Array(count)].map((_, i) => (
-      <Star
-        key={i}
-        className={cn(
-          "w-3 h-3",
-          rarity === 'legendary' ? "text-amber-400 fill-amber-400 animate-pulse" : "text-amber-400 fill-amber-400"
-        )}
-      />
-    ));
-  };
-
   return (
     <div className="space-y-4">
-      {/* Pets Section */}
-      <div>
-        <div className="shop-section-header">
-          <span className="shop-section-title">Pets</span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {characters.map((character) => {
-            const owned = inventory.ownedCharacters.includes(character.id);
-            const affordable = canAfford(character.coinPrice || 0);
+      {/* Background Bundles */}
+      {BACKGROUND_BUNDLES.length > 0 && (
+        <div>
+          <div className="shop-section-header">
+            <span className="shop-section-title">Background Bundles</span>
+          </div>
+          <div className="space-y-2">
+            {BACKGROUND_BUNDLES.map((bundle) => {
+              const owned = isBundleOwned(bundle.id);
+              const affordable = canAfford(bundle.coinPrice || 0);
 
-            return (
-              <button
-                key={character.id}
-                onClick={() => {
-                  setSelectedItem(character);
-                  if (!owned) setShowPurchaseConfirm(true);
-                }}
-                className={cn(
-                  "retro-shop-card group relative overflow-hidden",
-                  "transition-all duration-200 active:scale-95",
-                  owned && "retro-shop-card-owned",
-                  !owned && RARITY_BG[character.rarity],
-                  !owned && RARITY_BORDER[character.rarity],
-                  !owned && character.rarity !== 'common' && `shadow-lg ${RARITY_GLOW[character.rarity]}`
-                )}
-              >
-                <div className="retro-scanlines" />
-                <div className={cn(
-                  "absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r",
-                  RARITY_COLORS[character.rarity]
-                )} />
-
-                {owned && (
-                  <div className="absolute top-2 right-2 retro-badge-owned">
-                    <Check className="w-3.5 h-3.5 text-white" />
-                  </div>
-                )}
-
-                <div className="relative pt-3 pb-2 px-3 flex flex-col items-center">
-                  <div className="h-16 mb-2 flex items-center justify-center overflow-hidden">
-                    {character.spriteConfig ? (
-                      <SpritePreview
-                        robot={character}
-                        scale={Math.min(2, 64 / Math.max(character.spriteConfig.frameWidth, character.spriteConfig.frameHeight))}
-                      />
-                    ) : (
-                      <span className="text-4xl retro-pixel-shadow">{character.emoji}</span>
-                    )}
-                  </div>
-                  <div className="flex gap-0.5 mb-1.5">
-                    {getRarityStars(character.rarity)}
-                  </div>
-                  <span className="text-xs font-black text-center tracking-tight uppercase mb-2">
-                    {character.name}
-                  </span>
-
-                  {owned ? (
-                    <div className="retro-price-tag-owned">
-                      <span className="text-[10px] font-black uppercase">Owned</span>
+              return (
+                <button
+                  key={bundle.id}
+                  onClick={() => {
+                    if (!owned) {
+                      setSelectedItem(bundle);
+                      setShowPurchaseConfirm(true);
+                    }
+                  }}
+                  className={cn("shop-list-card", owned && "green")}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-20">
+                      {bundle.previewImages && <BundlePreviewCarousel images={bundle.previewImages} />}
                     </div>
-                  ) : (
-                    <div className={cn(
-                      "retro-price-tag",
-                      affordable ? "retro-price-tag-afford" : "retro-price-tag-expensive"
-                    )}>
-                      <PixelIcon name="coin" size={14} />
-                      <span className="text-xs font-black">{character.coinPrice?.toLocaleString()}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-sm">{bundle.name}</span>
+                        {owned ? (
+                          <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
+                            <Check className="w-2.5 h-2.5" /> OWNED
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
+                            SAVE {bundle.savings}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                        {bundle.description}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] text-muted-foreground line-through">
+                          {bundle.totalValue.toLocaleString()}
+                        </span>
+                        {!owned && (
+                          <div className={cn(
+                            "flex items-center gap-1 text-xs font-bold",
+                            affordable ? "text-amber-600" : "text-red-500"
+                          )}>
+                            <PixelIcon name="coin" size={12} />
+                            {bundle.coinPrice?.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Backgrounds with Previews Section */}
+      {/* Individual Backgrounds */}
       {backgroundsWithPreviews.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Sky Collection</span>
+            <span className="shop-section-title">Backgrounds</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
             {backgroundsWithPreviews.map((bg) => {
@@ -169,7 +154,6 @@ export const PetsTab = ({
                     owned && !isEquipped && "owned"
                   )}
                 >
-                  {/* Background Preview Image */}
                   <div className="relative h-20 overflow-hidden">
                     <BackgroundPreview imagePath={bg.previewImage!} size="large" className="border-0 rounded-none" />
                     {isEquipped && (
@@ -187,11 +171,6 @@ export const PetsTab = ({
                         </div>
                       </div>
                     )}
-                    {bg.bundleId && !owned && (
-                      <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-sky-500 text-white text-[8px] font-bold rounded">
-                        BUNDLE
-                      </div>
-                    )}
                     <div className={cn(
                       "absolute top-1 right-1 h-2 w-2 rounded-full",
                       bg.rarity === 'legendary' ? "bg-amber-400" :
@@ -199,7 +178,6 @@ export const PetsTab = ({
                       bg.rarity === 'rare' ? "bg-blue-400" : "bg-gray-400"
                     )} />
                   </div>
-                  {/* Info */}
                   <div className={cn(
                     "p-2",
                     isEquipped ? "bg-purple-50 dark:bg-purple-900/20" :
@@ -226,8 +204,6 @@ export const PetsTab = ({
           </div>
         </div>
       )}
-
-      {/* Other Backgrounds Section - hidden until real background assets are available */}
     </div>
   );
 };

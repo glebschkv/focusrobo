@@ -27,14 +27,14 @@ import { PetLand } from "@/components/PetLand";
 
 // Component import functions for preloading
 const importUnifiedFocusTimer = () => import("@/components/UnifiedFocusTimer").then(m => ({ default: m.UnifiedFocusTimer }));
-const importBotCollectionGrid = () => import("@/components/BotCollectionGrid").then(m => ({ default: m.BotCollectionGrid }));
+const importPetCollectionBook = () => import("@/components/PetCollectionBook").then(m => ({ default: m.PetCollectionBook }));
 const importSettings = () => import("@/components/Settings").then(m => ({ default: m.Settings }));
 const importShop = () => import("@/components/Shop").then(m => ({ default: m.Shop }));
 const importGamificationHub = () => import("@/components/gamification").then(m => ({ default: m.GamificationHub }));
 
 // Lazy load heavy tab components for better initial load performance
 const UnifiedFocusTimer = lazy(importUnifiedFocusTimer);
-const BotCollectionGrid = lazy(importBotCollectionGrid);
+const PetCollectionBook = lazy(importPetCollectionBook);
 const Settings = lazy(importSettings);
 const Shop = lazy(importShop);
 const GamificationHub = lazy(importGamificationHub);
@@ -54,7 +54,7 @@ export const preloadTabComponents = () => {
   // Preload components in order of likely use
   schedulePreload(() => {
     importUnifiedFocusTimer();
-    importBotCollectionGrid();
+    importPetCollectionBook();
   });
 
   // Preload less commonly used components with slight delay
@@ -106,7 +106,7 @@ export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentP
       case "timer":
         return <TimerErrorBoundary><UnifiedFocusTimer /></TimerErrorBoundary>;
       case "collection":
-        return <CollectionErrorBoundary><BotCollectionGrid /></CollectionErrorBoundary>;
+        return <CollectionErrorBoundary><PetCollectionBook /></CollectionErrorBoundary>;
       case "challenges":
         return <GamificationErrorBoundary><GamificationHub onXPReward={onXPReward} onCoinReward={onCoinReward} /></GamificationErrorBoundary>;
       case "shop":

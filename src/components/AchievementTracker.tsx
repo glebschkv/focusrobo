@@ -3,7 +3,6 @@ import { useAchievementTracking, ACHIEVEMENT_EVENTS } from '@/hooks/useAchieveme
 import { AchievementUnlockModal } from '@/components/gamification/AchievementUnlockModal';
 import { useXPSystem } from '@/hooks/useXPSystem';
 import { useCoinSystem } from '@/hooks/useCoinSystem';
-import { useCollection } from '@/hooks/useCollection';
 import { useStreakSystem } from '@/hooks/useStreakSystem';
 import { useShop } from '@/hooks/useShop';
 
@@ -22,9 +21,8 @@ export const AchievementTracker: React.FC<AchievementTrackerProps> = ({ children
     trackWheelSpin,
     trackBondLevel,
   } = useAchievementTracking();
-  const { addDirectXP, currentLevel } = useXPSystem();
+  const { addDirectXP, currentLevel, unlockedPets } = useXPSystem();
   const coinSystem = useCoinSystem();
-  const { unlockedAnimalsData } = useCollection();
   const streakSystem = useStreakSystem();
   const { inventory } = useShop();
   const hasInitialized = useRef(false);
@@ -74,12 +72,12 @@ export const AchievementTracker: React.FC<AchievementTrackerProps> = ({ children
 
   // Track bot collection changes - only when count changes
   useEffect(() => {
-    const petCount = unlockedAnimalsData?.length || 0;
+    const petCount = unlockedPets?.length || 0;
     if (petCount > 0 && petCount !== prevPetsRef.current) {
       prevPetsRef.current = petCount;
       trackPetUnlock(petCount, 0, 0, 0);
     }
-  }, [unlockedAnimalsData, trackPetUnlock]);
+  }, [unlockedPets, trackPetUnlock]);
 
   // Track streak changes - only when streak changes
   useEffect(() => {
@@ -177,7 +175,7 @@ export const AchievementTracker: React.FC<AchievementTrackerProps> = ({ children
     // Initialize refs with current values
     prevLevelRef.current = currentLevel;
     prevStreakRef.current = streakSystem?.streakData?.currentStreak || 0;
-    prevPetsRef.current = unlockedAnimalsData?.length || 0;
+    prevPetsRef.current = unlockedPets?.length || 0;
     prevCoinsRef.current = coinSystem?.totalEarned || 0;
     prevPurchasesRef.current =
       (inventory?.ownedCharacters?.length || 0) +

@@ -7,9 +7,6 @@ export type { ShopInventory } from './shopStore';
 // Theme Store
 export { useThemeStore, useHomeBackground } from './themeStore';
 
-// Collection Store
-export { useCollectionStore, useActiveHomeBots, useActiveHomePets, useFavorites } from './collectionStore';
-
 // Navigation Store
 export {
   useNavigationStore,
@@ -25,7 +22,7 @@ export {
 export type { MainTab, ModalType } from './navigationStore';
 
 // XP Store
-export { useXPStore, useCurrentXP, useCurrentLevel, useUnlockedRobots, useUnlockedAnimals, useCurrentZone, useCurrentBiome, useAvailableZones, useAvailableBiomes, MAX_LEVEL, calculateLevelRequirement } from './xpStore';
+export { useXPStore, useCurrentXP, useCurrentLevel, useUnlockedPets, MAX_LEVEL, calculateLevelRequirement } from './xpStore';
 export type { XPState } from './xpStore';
 
 // Coin Store

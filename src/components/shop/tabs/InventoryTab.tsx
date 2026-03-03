@@ -1,12 +1,10 @@
-import { Snowflake, Zap, Clock, Image, PawPrint, Palette } from "lucide-react";
+import { Snowflake, Zap, Clock, Image, Palette } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { useStreakFreezeCount } from "@/stores/streakStore";
-import { useOwnedBackgrounds, useOwnedCharacters, useEquippedBackground } from "@/stores/shopStore";
+import { useOwnedBackgrounds, useEquippedBackground } from "@/stores/shopStore";
 import { PREMIUM_BACKGROUNDS } from "@/data/ShopData";
-import { getCoinExclusiveRobots } from "@/data/RobotDatabase";
 import { useCoinBooster } from "@/hooks/useCoinBooster";
-
 
 interface InventoryTabProps {
   equipBackground: (backgroundId: string | null) => boolean;
@@ -15,7 +13,6 @@ interface InventoryTabProps {
 export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
   const streakFreezeCount = useStreakFreezeCount();
   const ownedBackgrounds = useOwnedBackgrounds();
-  const ownedCharacters = useOwnedCharacters();
   const equippedBackground = useEquippedBackground();
 
   const {
@@ -29,14 +26,9 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
   const boosterActive = isBoosterActive();
   const boosterInfo = activeBooster ? getBoosterType(activeBooster.boosterId) : null;
 
-  // Get owned premium backgrounds with their data
   const ownedBgData = PREMIUM_BACKGROUNDS.filter(bg => ownedBackgrounds.includes(bg.id));
 
-  // Get owned exclusive pets (shop-purchased pets)
-  const allExclusiveBots = getCoinExclusiveRobots();
-  const ownedExclusiveBots = allExclusiveBots.filter(pet => ownedCharacters.includes(pet.id));
-
-  const hasAnyItems = streakFreezeCount > 0 || boosterActive || ownedBgData.length > 0 || ownedExclusiveBots.length > 0;
+  const hasAnyItems = streakFreezeCount > 0 || boosterActive || ownedBgData.length > 0;
 
   return (
     <div className="space-y-5">
@@ -49,12 +41,9 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
           {/* Streak Freezes */}
           <div className={cn(
             "retro-shop-card relative overflow-hidden",
-            streakFreezeCount > 0
-              ? ""
-              : "opacity-50"
+            streakFreezeCount > 0 ? "" : "opacity-50"
           )}>
             <div className="retro-scanlines" />
-            {/* Colored top bar */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 to-cyan-600" />
             <div className="relative pt-3 pb-2.5 px-3">
               <div className="flex items-center gap-2 mb-1.5">
@@ -78,12 +67,9 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
           {/* Active Booster */}
           <div className={cn(
             "retro-shop-card relative overflow-hidden",
-            boosterActive
-              ? ""
-              : "opacity-50"
+            boosterActive ? "" : "opacity-50"
           )}>
             <div className="retro-scanlines" />
-            {/* Colored top bar */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-400 to-purple-600" />
             <div className="relative pt-3 pb-2.5 px-3">
               <div className="flex items-center gap-2 mb-1.5">
@@ -178,64 +164,6 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
               <Image className="w-7 h-7 text-gray-300 dark:text-gray-600 mx-auto mb-1.5" />
               <p className="text-xs font-bold text-muted-foreground">No backgrounds yet</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Buy them from the shop!</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Owned Exclusive Pets */}
-      <div>
-        <div className="shop-section-header">
-          <span className="shop-section-title">
-            Exclusive Pets
-            {ownedExclusiveBots.length > 0 && (
-              <span className="ml-1.5 text-[10px] font-bold text-amber-700/50">
-                ({ownedExclusiveBots.length}/{allExclusiveBots.length})
-              </span>
-            )}
-          </span>
-        </div>
-        {ownedExclusiveBots.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2.5">
-            {ownedExclusiveBots.map(pet => (
-              <div
-                key={pet.id}
-                className="retro-shop-card retro-shop-card-owned relative overflow-hidden"
-              >
-                <div className="retro-scanlines" />
-                {/* Rarity top bar */}
-                <div className={cn(
-                  "absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r",
-                  pet.rarity === 'legendary' ? 'from-amber-400 to-orange-500' :
-                  pet.rarity === 'epic' ? 'from-purple-400 to-purple-600' :
-                  pet.rarity === 'rare' ? 'from-blue-400 to-blue-600' : 'from-slate-400 to-slate-500'
-                )} />
-                <div className="relative pt-3 pb-2.5 px-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-2xl">{pet.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-xs font-black block truncate uppercase tracking-tight">{pet.name}</span>
-                      <span className={cn(
-                        "text-[10px] font-black uppercase tracking-wide",
-                        pet.rarity === 'legendary' ? 'text-amber-500' :
-                        pet.rarity === 'epic' ? 'text-purple-500' :
-                        pet.rarity === 'rare' ? 'text-blue-500' : 'text-gray-500'
-                      )}>
-                        {pet.rarity}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="retro-shop-card relative overflow-hidden">
-            <div className="retro-scanlines" />
-            <div className="py-5 px-4 text-center">
-              <PawPrint className="w-7 h-7 text-gray-300 dark:text-gray-600 mx-auto mb-1.5" />
-              <p className="text-xs font-bold text-muted-foreground">No exclusive pets yet</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Check out the Collection tab!</p>
             </div>
           </div>
         )}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Zap, Clock, Backpack, Star, PawPrint, Zap as ZapIcon } from "lucide-react";
+import { Zap, Clock, Backpack, Star, Palette, Zap as ZapIcon } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { useShop } from "@/hooks/useShop";
@@ -12,30 +12,27 @@ import {
   ShopItem,
   Bundle,
 } from "@/data/ShopData";
-import { RobotData } from "@/data/RobotDatabase";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 import { toast } from "sonner";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { FeaturedTab } from "@/components/shop/tabs/FeaturedTab";
-import { CollectionTab } from "@/components/shop/tabs/CollectionTab";
+import { BackgroundsTab } from "@/components/shop/tabs/BackgroundsTab";
 import { PowerUpsTab } from "@/components/shop/tabs/PowerUpsTab";
 import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
-import { CharacterUnlockModal } from "@/components/shop/CharacterUnlockModal";
 
 const CATEGORY_ICONS: Record<string, typeof Star> = {
   featured: Star,
-  pets: PawPrint,
+  customize: Palette,
   powerups: ZapIcon,
 };
 
 export const Shop = () => {
   const [activeCategory, setActiveCategory] = useState<ShopCategory>("featured");
-  const [selectedItem, setSelectedItem] = useState<ShopItem | RobotData | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [unlockedBot, setUnlockedAnimal] = useState<RobotData | null>(null);
   const [showInventory, setShowInventory] = useState(false);
 
   const {
@@ -43,7 +40,6 @@ export const Shop = () => {
     isOwned,
     isBundleOwned,
     purchaseItem,
-    purchaseCharacter,
     purchaseBundle,
     equipBackground,
     coinBalance,
@@ -59,7 +55,7 @@ export const Shop = () => {
 
   const { isPremium, currentPlan } = usePremiumStatus();
 
-  // Listen for external navigation requests (e.g. from collection "Buy from Shop")
+  // Listen for external navigation requests
   useEffect(() => {
     const handleNavigate = (event: CustomEvent<ShopCategory>) => {
       const category = event.detail;
@@ -79,10 +75,7 @@ export const Shop = () => {
     setIsPurchasing(true);
     try {
       let result;
-      if ('zone' in selectedItem) {
-        result = await purchaseCharacter(selectedItem.id);
-      } else if ('itemIds' in selectedItem) {
-        // Handle bot or background bundle purchase
+      if ('itemIds' in selectedItem) {
         result = await purchaseBundle(selectedItem.id);
       } else {
         result = await purchaseItem(selectedItem.id, activeCategory);
@@ -91,16 +84,7 @@ export const Shop = () => {
       if (result.success) {
         playSoundEffect('purchase');
         setShowPurchaseConfirm(false);
-        // Show unlock celebration for character purchases
-        if ('zone' in selectedItem) {
-          // Delay unlock modal so PurchaseConfirmDialog's close animation
-          // finishes and its portal unmounts — opening two Radix Dialogs
-          // simultaneously causes the second dialog's content to not render.
-          const bot = selectedItem as RobotData;
-          setTimeout(() => setUnlockedBot(bot), 350);
-        } else {
-          toast.success(result.message);
-        }
+        toast.success(result.message);
         setSelectedItem(null);
       } else {
         toast.error(result.message);
@@ -128,9 +112,9 @@ export const Shop = () => {
             canAfford={canAfford}
           />
         );
-      case 'pets':
+      case 'customize':
         return (
-          <CollectionTab
+          <BackgroundsTab
             inventory={inventory}
             isOwned={isOwned}
             isBundleOwned={isBundleOwned}
@@ -165,7 +149,6 @@ export const Shop = () => {
       <div className="shop-header">
         <div className="flex items-center gap-2">
           <h1 className="text-base font-black uppercase tracking-tight text-amber-900">Shop</h1>
-          {/* Active booster pill */}
           {isBoosterActive() && activeBooster && (
             <div className="shop-booster-pill">
               <Zap className="w-3 h-3 text-purple-600 animate-pulse" />
@@ -208,7 +191,7 @@ export const Shop = () => {
         </div>
       </div>
 
-      {/* Horizontal pill tabs - hidden when viewing inventory */}
+      {/* Horizontal pill tabs */}
       {!showInventory && (
         <div className="shop-tabs-bar">
           {SHOP_CATEGORIES.map((category) => {
@@ -228,7 +211,7 @@ export const Shop = () => {
         </div>
       )}
 
-      {/* Inventory header when viewing items */}
+      {/* Inventory header */}
       {showInventory && (
         <div className="px-4 pt-2 pb-1 flex items-center gap-2">
           <Backpack className="w-4 h-4 text-emerald-600" />
@@ -238,7 +221,7 @@ export const Shop = () => {
         </div>
       )}
 
-      {/* Content - Scrollable area that stops at taskbar */}
+      {/* Content */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="px-4 pt-3 pb-6">
           {showInventory ? (
@@ -253,18 +236,11 @@ export const Shop = () => {
       <PurchaseConfirmDialog
         open={showPurchaseConfirm}
         onOpenChange={setShowPurchaseConfirm}
-        selectedItem={selectedItem as ShopItem | RobotData | Bundle | null}
+        selectedItem={selectedItem as ShopItem | Bundle | null}
         onPurchase={handlePurchase}
         canAfford={canAfford}
         coinBalance={coinBalance}
         isPurchasing={isPurchasing}
-      />
-
-      {/* Character Unlock Celebration Modal */}
-      <CharacterUnlockModal
-        bot={unlockedBot}
-        open={!!unlockedBot}
-        onClose={() => setUnlockedAnimal(null)}
       />
 
       {/* Premium Subscription Modal */}

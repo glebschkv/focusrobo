@@ -58,15 +58,40 @@ export const guestChosenSchema = z.boolean();
 // XP System Schema
 // ============================================================================
 
-export const xpSystemSchema = z.object({
-  currentXP: safeNonNegativeInt.default(0),
-  currentLevel: safeNonNegativeInt.max(100).default(0),
-  xpToNextLevel: safeNonNegativeInt.default(15),
-  totalXPForCurrentLevel: safeNonNegativeInt.default(0),
-  unlockedAnimals: safeArray(safeString(100), 500).default([]),
-  currentBiome: safeString(100).default('Snow'),
-  availableBiomes: safeArray(safeString(100), 50).default(['Snow']),
-});
+export const xpSystemSchema = z.preprocess(
+  (data: unknown) => {
+    if (data && typeof data === 'object') {
+      const d = data as Record<string, unknown>;
+      // Migrate old field names to new ones
+      if ('unlockedAnimals' in d && !('unlockedPets' in d)) {
+        d.unlockedPets = d.unlockedAnimals;
+        delete d.unlockedAnimals;
+      }
+      if ('unlockedRobots' in d && !('unlockedPets' in d)) {
+        d.unlockedPets = d.unlockedRobots;
+        delete d.unlockedRobots;
+      }
+      if ('currentBiome' in d && !('currentZone' in d)) {
+        d.currentZone = d.currentBiome;
+        delete d.currentBiome;
+      }
+      if ('availableBiomes' in d && !('availableZones' in d)) {
+        d.availableZones = d.availableBiomes;
+        delete d.availableBiomes;
+      }
+    }
+    return data;
+  },
+  z.object({
+    currentXP: safeNonNegativeInt.default(0),
+    currentLevel: safeNonNegativeInt.max(100).default(0),
+    xpToNextLevel: safeNonNegativeInt.default(15),
+    totalXPForCurrentLevel: safeNonNegativeInt.default(0),
+    unlockedPets: safeArray(safeString(100), 500).default([]),
+    currentZone: safeString(100).default('Assembly Line'),
+    availableZones: safeArray(safeString(100), 50).default(['Assembly Line']),
+  }),
+);
 
 export type ValidatedXPSystem = z.infer<typeof xpSystemSchema>;
 
