@@ -1,31 +1,15 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
-import { ChevronDown, Settings } from "lucide-react";
-import { useState, useCallback } from "react";
+import { Settings } from "lucide-react";
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ZONE_DATABASE } from "@/data/RobotDatabase";
-import { useShopStore, useThemeStore } from "@/stores";
 import { PixelIcon } from "@/components/ui/PixelIcon";
-
-const ZONE_CONFIG: Record<string, { bg: string; icon: string }> = {
-  'Meadow': { bg: 'day', icon: 'meadow' },
-  'Sunset': { bg: 'sunset', icon: 'sunset' },
-  'Night': { bg: 'night', icon: 'moon' },
-  'Forest': { bg: 'forest', icon: 'leaf' },
-  'Snow': { bg: 'snow', icon: 'snowflake' },
-  'City': { bg: 'city', icon: 'city' },
-  'Deep Ocean': { bg: 'deepocean', icon: 'wave' },
-};
+import { useLandStore } from "@/stores/landStore";
+import { useSpeciesCatalog } from "@/stores/landStore";
 
 interface TopStatusBarProps {
   currentTab: string;
@@ -39,45 +23,24 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
     currentLevel,
     currentXP,
     xpToNextLevel,
-    unlockedRobots,
     getLevelProgress,
     streakData,
-    availableZones,
-    currentZone,
-    switchZone,
   } = useAppState();
   const coinSystem = useCoinSystem();
-
-  // Use Zustand stores instead of localStorage/events
-  const equippedBackground = useShopStore((state) => state.equippedBackground);
-  const setEquippedBackground = useShopStore((state) => state.setEquippedBackground);
-  const setHomeBackground = useThemeStore((state) => state.setHomeBackground);
-
-  const handleSwitchZone = useCallback((biomeName: string) => {
-    switchZone(biomeName);
-
-    // Clear any equipped premium background when switching biomes
-    if (equippedBackground) {
-      setEquippedBackground(null);
-    }
-
-    // Use the biome's background image if available, otherwise fall back to theme ID
-    const zone = ZONE_DATABASE.find(b => b.name === biomeName);
-    const backgroundTheme = zone?.backgroundImage || ZONE_CONFIG[biomeName]?.bg || 'day';
-    setHomeBackground(backgroundTheme);
-  }, [switchZone, equippedBackground, setEquippedBackground, setHomeBackground]);
+  const speciesCatalog = useSpeciesCatalog();
+  const filledCount = useLandStore((s) => s.getFilledCount)();
 
   if (currentTab !== "home") return null;
 
   const progress = getLevelProgress();
   const hasActiveStreak = streakData.currentStreak >= 3;
-  const currentZoneIcon = ZONE_CONFIG[currentZone]?.icon || 'meadow';
+  const speciesFound = Object.keys(speciesCatalog).length;
 
   return (
     <div className="status-bar-container">
       {/* Game-style unified top bar */}
       <div className="game-top-bar">
-        {/* Left section: Level + Zone */}
+        {/* Left section: Level */}
         <div className="top-bar-left">
           {/* Level Badge with Stats Popover */}
           <Popover open={statsOpen} onOpenChange={setStatsOpen}>
@@ -121,10 +84,17 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="robot" size={14} className="inline mr-1 align-middle" />
-                      Bots Collected
+                      <PixelIcon name="flame-stats" size={14} className="inline mr-1 align-middle" />
+                      Pets on Land
                     </span>
-                    <span className="stat-val">{unlockedRobots.length}</span>
+                    <span className="stat-val">{filledCount}/100</span>
+                  </div>
+                  <div className="stat-row">
+                    <span className="stat-label">
+                      <PixelIcon name="flame-stats" size={14} className="inline mr-1 align-middle" />
+                      Species Found
+                    </span>
+                    <span className="stat-val">{speciesFound}</span>
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
@@ -148,33 +118,6 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
               </div>
             </PopoverContent>
           </Popover>
-
-          {/* Zone Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="zone-btn">
-                <PixelIcon name={currentZoneIcon} size={16} className="zone-icon" />
-                <ChevronDown className="w-3 h-3 zone-chevron" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="zone-menu">
-              {availableZones.map((zoneName) => {
-                const config = ZONE_CONFIG[zoneName];
-                const isActive = zoneName === currentZone;
-                return (
-                  <DropdownMenuItem
-                    key={zoneName}
-                    onClick={() => handleSwitchZone(zoneName)}
-                    className={`zone-menu-item ${isActive ? 'selected' : ''}`}
-                  >
-                    <PixelIcon name={config?.icon || 'globe'} size={16} />
-                    <span>{zoneName}</span>
-                    {isActive && <span className="zone-check">✓</span>}
-                  </DropdownMenuItem>
-              );
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
         </div>
 
         {/* Center section: Coins - tappable to buy more */}

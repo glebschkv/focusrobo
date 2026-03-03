@@ -20,14 +20,12 @@ import { useAchievementSystem } from './useAchievementSystem';
 import { useBackendQuests } from './useBackendQuests';
 import { useBackendStreaks } from './useBackendStreaks';
 import { useSupabaseData } from './useSupabaseData';
-import { useBondSystem } from './useBondSystem';
 import { useCollection } from './useCollection';
 import { useCoinSystem } from './useCoinSystem';
 import { useCoinBooster } from './useCoinBooster';
 import { useAuth } from './useAuth';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { getUnlockableRobots } from '@/data/RobotDatabase';
 import { syncLogger as logger } from '@/lib/logger';
 
 // Type definitions for better type safety
@@ -41,15 +39,6 @@ interface XPRewardResult {
   coinReward: number;
 }
 
-interface BotInteractionResult {
-  bondLevelUp: boolean;
-  newBondLevel: number;
-  interaction: unknown;
-}
-
-/** @deprecated Use BotInteractionResult */
-type PetInteractionResult = BotInteractionResult;
-
 export const useBackendAppState = () => {
   const { isAuthenticated } = useAuth();
   // Use unified XP and Achievement systems - they handle local/backend sync internally
@@ -57,7 +46,6 @@ export const useBackendAppState = () => {
   const achievements = useAchievementSystem();
   const quests = useBackendQuests();
   const streaks = useBackendStreaks();
-  const bondSystem = useBondSystem();
   const collection = useCollection();
   const supabaseData = useSupabaseData();
   const coinSystem = useCoinSystem();
@@ -71,7 +59,6 @@ export const useBackendAppState = () => {
     streaks,
     quests,
     achievements,
-    bondSystem,
     supabaseData,
     coinSystem,
     coinBooster,
@@ -85,12 +72,11 @@ export const useBackendAppState = () => {
       streaks,
       quests,
       achievements,
-      bondSystem,
       supabaseData,
       coinSystem,
       coinBooster,
     };
-  }, [isAuthenticated, xpSystem, streaks, quests, achievements, bondSystem, supabaseData, coinSystem, coinBooster]);
+  }, [isAuthenticated, xpSystem, streaks, quests, achievements, supabaseData, coinSystem, coinBooster]);
 
   // The unified XP system now handles local/backend sync internally
   // No need to compare levels - the hook returns the effective (max) level
@@ -127,7 +113,7 @@ export const useBackendAppState = () => {
         (payload) => {
           logger.debug('Real-time achievement unlock:', payload);
           const title = payload?.new?.title;
-          toast.success('🏆 Achievement Unlocked!', {
+          toast.success('Achievement Unlocked!', {
             description: typeof title === 'string' ? title : 'New achievement earned!'
           });
           // Access via ref to avoid stale closures and dependency bloat
@@ -172,9 +158,6 @@ export const useBackendAppState = () => {
       // Update quest progress
       await systems.quests.updateQuestProgress('focus_time', sessionMinutes);
 
-      // NOTE: Bond system interactions removed — they awarded phantom XP/bond
-      // on every timer completion for every favorite bot, causing unearned rewards.
-
       return {
         xpGained: reward.xpGained,
         oldLevel: reward.oldLevel,
@@ -191,37 +174,6 @@ export const useBackendAppState = () => {
     }
   }, []); // Empty dependency array - uses refs for all subsystem access
 
-  // Get bot interaction handler
-  const interactWithBot = useCallback(async (
-    botType: string,
-    interactionType: string = 'play'
-  ): Promise<BotInteractionResult> => {
-    const systems = subsystemsRef.current;
-
-    // Get bond level before interaction to detect level ups
-    const previousBondLevel = systems.bondSystem.getBondLevel(botType);
-
-    const interaction = await systems.bondSystem.interactWithBot(botType, interactionType);
-
-    // Update quest progress for bot interactions
-    await systems.quests.updateQuestProgress('bot_interaction', 1);
-
-    // Get new bond level after interaction to detect level up
-    const newBondLevel = systems.bondSystem.getBondLevel(botType);
-    const bondLevelUp = newBondLevel > previousBondLevel;
-
-    if (bondLevelUp) {
-      toast.success(`Bond Level Up!`, {
-        description: `${botType} is now bond level ${newBondLevel}!`
-      });
-
-      // Check for bond-related achievements
-      await systems.achievements.checkAndUnlockAchievements('bond_level', newBondLevel);
-    }
-
-    return { bondLevelUp, newBondLevel, interaction };
-  }, []); // Empty dependency array - uses refs
-
   // Get level progress percentage
   const getLevelProgress = useCallback(() => {
     return xpSystem.getLevelProgress();
@@ -229,8 +181,6 @@ export const useBackendAppState = () => {
 
   // Memoized app state to prevent unnecessary recalculations
   const appState = useMemo(() => {
-    const unlockedRobots = getUnlockableRobots(effectiveLevel).map(a => a.name);
-
     return {
       // XP System
       currentXP: xpSystem.currentXP,
@@ -249,11 +199,6 @@ export const useBackendAppState = () => {
       boosterMultiplier: coinBooster.getCurrentMultiplier(),
       boosterTimeRemaining: coinBooster.getTimeRemainingFormatted(),
 
-      // Collection
-      unlockedRobots,
-      currentZone: xpSystem.currentZone,
-      availableZones: xpSystem.availableZones,
-
       // Achievements
       totalAchievements: achievements.achievements.length,
       unlockedAchievements: achievements.unlockedAchievements.length,
@@ -271,7 +216,6 @@ export const useBackendAppState = () => {
       // Backend data
       profile: supabaseData.profile,
       progress: supabaseData.progress,
-      bots: supabaseData.pets,
 
       // Loading states (subsystems handle their own loading)
       isLoading:
@@ -297,7 +241,6 @@ export const useBackendAppState = () => {
   return {
     // Main functions
     awardXP,
-    interactWithBot,
     getLevelProgress,
     getAppState,
 
@@ -306,7 +249,6 @@ export const useBackendAppState = () => {
     achievements,
     quests,
     streaks,
-    bondSystem,
     collection,
     supabaseData,
     coinSystem,

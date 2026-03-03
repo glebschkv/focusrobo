@@ -22,6 +22,8 @@ import {
   GamificationErrorBoundary,
   SettingsErrorBoundary,
 } from "@/components/FeatureErrorBoundary";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PetLand } from "@/components/PetLand";
 
 // Component import functions for preloading
 const importUnifiedFocusTimer = () => import("@/components/UnifiedFocusTimer").then(m => ({ default: m.UnifiedFocusTimer }));
@@ -90,6 +92,15 @@ interface TabContentProps {
 }
 
 export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentProps) => {
+  // Home tab renders PetLand directly (not lazy — it's the default view)
+  if (currentTab === "home") {
+    return (
+      <ErrorBoundary>
+        <PetLand />
+      </ErrorBoundary>
+    );
+  }
+
   const renderTabContent = () => {
     switch (currentTab) {
       case "timer":

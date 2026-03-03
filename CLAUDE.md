@@ -1,17 +1,26 @@
 # BotBlock — Architecture Reference
 
-> Focus timer iOS app with farming/Stardew Valley-style gamification. Users run focus sessions to earn XP and coins, grow their village, collect characters, and build up their farm. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a 10×10 land grid. Longer sessions = bigger pets (baby/adolescent/adult). Fill a land (100 pets), start a new one. Built with React + Capacitor, deployed as a native iOS app.
+
+## Core Gameplay Loop
+
+```
+Focus session completes → random pet generated (weighted by rarity)
+→ pet size based on session length (baby/adolescent/adult)
+→ pet placed on next empty cell of 10×10 land grid
+→ fill all 100 cells = land complete → archive → new land
+```
 
 ## Art & Theme Direction
 
-**The app uses a farming / Stardew Valley pixel art aesthetic.** New assets, characters, and environments follow a cozy farming RPG style:
+**Pixel art aesthetic** — cute collectible animals on a meadow:
 
-- **Visual style**: Stardew Valley-inspired pixel art — warm, colorful, hand-crafted feel
-- **Characters**: Villagers (Farmer, Baker, Blacksmith, Fisher, Wizard) with sprite sheet animations
-- **Environments**: Village with buildings (Cottage, Bakery, Forge, Fishing Dock, Wizard Tower, Town Square)
-- **Home screen**: PixelVillage component with wandering NPC characters on a sky+grass background
-- **Progression**: Building up a village as a metaphor for focused study time
-- **Note**: Some codebase files still reference robots/bots from the old theme. The village system (`src/components/pixel-world/`) is the active home screen.
+- **Visual style**: Pixel art pets (128×128 SVG), front-facing, transparent background
+- **Home screen**: `PetLand` component — 10×10 CSS grid on a sky+grass background
+- **Pets**: Bunny, Chick, Frog, Fox, Deer (5 MVP species, expanding to 25)
+- **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — CSS `scale()` within cells
+- **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow effects
+- **Land themes**: Meadow (default), Beach, Snow, Desert, Night Garden, Sakura (purchasable)
 
 ## Quick Facts
 
@@ -32,7 +41,6 @@
 | Styling | Tailwind CSS + CSS variables (HSL-based design tokens in `index.css`) |
 | UI Library | Radix UI primitives + shadcn/ui components (`src/components/ui/`) |
 | Animations | Framer Motion |
-| 3D | Three.js + React Three Fiber (hangar scene) |
 | Backend | Supabase (auth, database, edge functions) |
 | Data Fetching | TanStack React Query |
 | Routing | React Router DOM v6 |
@@ -58,25 +66,20 @@ npm run analyze      # Bundle visualization (treemap)
 src/
 ├── App.tsx                    # Root: providers, router, lazy page loading
 ├── pages/
-│   ├── Index.tsx              # Main page: auth gate → onboarding → MechHangar + GameUI
+│   ├── Index.tsx              # Main page: auth gate → onboarding → GameUI
 │   ├── Auth.tsx               # Login/signup
 │   ├── PrivacyPolicy.tsx
 │   ├── TermsOfService.tsx
 │   └── NotFound.tsx
 ├── components/
-│   ├── hangar/                # Home screen — "Mech Hangar" robot gallery
-│   │   ├── MechHangar.tsx     # Main home screen component
-│   │   ├── HangarBackground.tsx
-│   │   ├── ChargingBay.tsx    # Main featured robot display
-│   │   ├── DisplayBay.tsx     # Secondary robot slots (up to 3)
-│   │   ├── ChargeBar.tsx      # Focus progress bar
-│   │   └── HangarStats.tsx    # Level, streak, coins display
+│   ├── PetLand.tsx            # Home screen — 10×10 pet collection grid
+│   ├── PetLandCell.tsx        # Single grid cell — renders pet at scale
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
-│   ├── TopStatusBar.tsx       # XP bar, coins, level at top
+│   ├── TopStatusBar.tsx       # XP bar, coins, level, streak at top
 │   ├── UnifiedFocusTimer.tsx  # Focus timer tab
-│   ├── BotCollectionGrid.tsx  # Collection tab — robot gallery
+│   ├── BotCollectionGrid.tsx  # Collection tab (legacy, being replaced by PetCollectionBook)
 │   ├── Shop.tsx               # Shop tab
 │   ├── Settings.tsx           # Settings tab
 │   ├── focus-timer/           # Timer sub-components
@@ -95,17 +98,18 @@ src/
 │   ├── onboarding/
 │   │   └── OnboardingFlow.tsx
 │   ├── shop/                  # Shop sub-components
-│   ├── collection/            # Collection sub-components
+│   ├── collection/            # Collection sub-components (legacy robot cards)
 │   ├── settings/              # Settings sub-components
 │   └── ui/                    # shadcn/ui component library (button, card, dialog, etc.)
 ├── stores/                    # Zustand state management (see Stores section)
+│   └── landStore.ts           # Pet land grid state (current land, completed lands, species catalog)
 ├── hooks/                     # Custom React hooks (see Hooks section)
-├── data/                      # Static game data
-│   ├── RobotDatabase.ts       # All robots, zones, rarities
+├── data/
+│   ├── PetDatabase.ts         # Pet species definitions, rarity weights, growth sizes, random roll
+│   ├── RobotDatabase.ts       # Legacy robot data (still used by collection/shop tabs, being phased out)
 │   ├── ShopData.ts            # Shop items, backgrounds, bundles
 │   ├── GamificationData.ts    # Milestone definitions
-│   ├── AmbientSoundsData.ts   # Sound library
-│   └── AnimalDatabase.ts      # Legacy alias → RobotDatabase
+│   └── AmbientSoundsData.ts   # Sound library
 ├── types/                     # TypeScript type definitions
 ├── lib/                       # Utilities
 │   ├── constants.ts           # ALL game constants (XP, coins, streaks, etc.)
@@ -116,15 +120,14 @@ src/
 │   ├── utils.ts               # cn() helper (clsx + tailwind-merge)
 │   └── security.ts            # Security utilities
 ├── contexts/                  # React contexts
-│   ├── NativePluginContext.tsx # Native plugin availability
-│   ├── OfflineContext.tsx      # Offline state detection
-│   ├── AppContext.tsx
-│   └── AppStateContext.tsx
 ├── plugins/                   # Capacitor native plugins
 │   ├── device-activity/       # iOS Screen Time / DeviceActivity framework
 │   ├── store-kit/             # StoreKit 2 IAP
 │   ├── app-review/            # App Store review prompt
 │   └── widget-data/           # iOS widget data bridge
+├── styles/                    # Modular CSS
+│   ├── pet-land.css           # Pet land grid styles (sky, grid, cells, tooltips)
+│   └── ...                    # Other style modules
 └── integrations/
     └── supabase/              # Supabase client + generated types
 ```
@@ -133,13 +136,13 @@ src/
 
 1. `App.tsx` — wraps everything in ErrorBoundary, QueryClient, NativePluginProvider, OfflineProvider
 2. Routes: `/` (Index), `/auth`, `/privacy`, `/terms`
-3. `Index.tsx` — checks auth → shows onboarding if new → renders **MechHangar** (home) + **GameUI** (overlay)
+3. `Index.tsx` — checks auth → shows onboarding if new → renders **GameUI** (full overlay)
 4. **GameUI** manages tab state and renders:
-   - `TopStatusBar` — XP bar, level, coins
-   - `TabContent` — lazy-loads the active tab component
+   - `TopStatusBar` — XP bar, level, coins, streak (home tab only)
+   - `TabContent` — renders active tab (PetLand for home, lazy-loads others)
    - `IOSTabBar` — bottom navigation
    - `RewardModals` — XP/coin/milestone reward popups
-5. **Tabs**: home (MechHangar), timer, collection, challenges, shop, settings
+5. **Tabs**: home (PetLand), timer, collection (Pets), challenges, shop, settings
 
 ## Stores (Zustand)
 
@@ -147,30 +150,62 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked robots, current zone, available zones |
+| `landStore` | `nomo_land_data` | **Current land grid (100 cells), completed lands, species catalog, pending pet** |
+| `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
 | `streakStore` | `nomo_streak_data` | Current streak, longest streak, streak freezes (max 3), total sessions |
 | `focusStore` | `nomo_focus_mode` | Focus mode settings, blocked apps, strict mode |
 | `navigationStore` | (not persisted) | Active tab, modal state, navigation history |
 | `shopStore` | (persisted) | Owned characters, backgrounds, equipped background |
-| `collectionStore` | (persisted) | Active home bots, favorites |
+| `collectionStore` | (persisted) | Legacy: active home bots, favorites |
 | `soundStore` | (persisted) | Sound mixer layers, ambient sounds, volume |
 | `questStore` | (persisted) | Daily/weekly quests |
 | `onboardingStore` | (persisted) | Onboarding completion state |
 | `authStore` | (persisted) | Guest ID, guest mode flag |
 | `themeStore` | (persisted) | Home background theme |
-| `offlineSyncStore` | (persisted) | Offline operation queue |
+
+## Pet Collection System
+
+### Pet Species
+- **5 species** (MVP): Bunny, Chick, Frog, Fox, Deer
+- **Expanding to 25**: 8 common, 6 uncommon, 5 rare, 4 epic, 2 legendary
+- **Data**: `src/data/PetDatabase.ts`
+- **Assets**: `public/assets/pets/*.svg` (128×128 pixel art SVGs)
+
+### Growth Sizes (3 tiers)
+| Size | Session Duration | CSS Scale | Cell Fill |
+|------|-----------------|-----------|-----------|
+| Baby | 25-45 min | `scale(0.4)` | ~40% |
+| Adolescent | 60-90 min | `scale(0.7)` | ~70% |
+| Adult | 120+ min | `scale(1.0)` | 100% |
+
+### Rarity & Drop Weights
+| Rarity | Drop Weight | Glow Effect |
+|--------|------------|-------------|
+| Common | 45% | None |
+| Uncommon | 28% | White |
+| Rare | 17% | Blue |
+| Epic | 8% | Purple |
+| Legendary | 2% | Gold + shimmer |
+
+### Land Grid
+- **10×10 grid** = 100 cells per land
+- Fill order: left-to-right, top-to-bottom
+- Pets placed via `landStore.placePendingPet()`
+- When land is full → archive to `completedLands[]` → start new land
+- Land themes purchasable in shop (cosmetic background swap)
 
 ## Game Systems
 
 ### XP & Leveling
 - **Max level**: 50
 - **XP per minute of focus**: 1.2 base
-- **Level formula**: `15 * 1.15^(level-1)` XP per level (in xpStore), or use thresholds table in constants.ts for levels 1-20, then 700 XP/level after 20
+- **Level formula**: `15 * 1.15^(level-1)` XP per level, or thresholds table for levels 1-20, then 700 XP/level after 20
 - **Streak bonus**: +3% per day, capped at 60% (max multiplier 1.6x at 20 days)
 - **Premium multipliers**: free=1x, premium=2x, premium_plus=3x, lifetime=4x
 - **Focus bonuses**: Perfect focus (0 blocked attempts) = +25% XP + 50 coins; Good focus (1-2 attempts) = +10% XP + 25 coins
+- **Level-ups unlock new pet species** in the random drop pool
 
 ### Coins
 - **Base rate**: 2 coins/minute of focus
@@ -179,34 +214,10 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - **Daily login**: 20 coins + 5/streak day (cap 100)
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
-### Village & Characters (Stardew Valley-style)
-- **Home screen**: PixelVillage with wandering NPCs on a pixel art village map
-- **Buildings** (unlock by level): Cottage (0), Bakery (3), Forge (5), Fishing Dock (7), Wizard Tower (10), Town Square (20)
-- **Village characters**: Farmer, Baker, Blacksmith, Fisher, Wizard — sprite sheet animated NPCs
-- **Assets**: `/public/assets/pixel-world/buildings/` and `/public/assets/pixel-world/sprites/`
-
-### Legacy Collectibles & Zones (robot-themed, in collection tab)
-- **Rarities**: common, rare, epic, legendary
-- **Zones** (unlock by level):
-  - Assembly Line (level 0) — Bolt Bot, Gear Pup, Rivet, Spark Welder
-  - Workshop (level 5) — Wrench Bot, Cog Roller, Chrome Cat, Piston, Plasma Pup, Iron Scholar
-  - Stealth Lab (level 9) — Shadow Drone, Neon Phantom, Cipher, Stealth Owl
-  - Biotech Zone (level 13) — Moss Mech, Spore Bot, Vine Walker
-  - Solar Fields (level 19) — Sun Charger, Prism Bot, Nova
-  - Cyber District (level 24) — Neon Sentinel, Quantum Core, Omega Prime, Focus Titan
-- **Shop exclusives**: purchasable with coins (e.g., Turbo Tank, Plasma Pup, Iron Scholar, Stealth Owl, Focus Titan)
-- **Study hours robots**: unlock after specific focus time thresholds
-- Each robot has: id, name, icon, rarity, unlockLevel, description, abilities[], zone, imageConfig (imagePath, glowColor)
-
 ### Streaks
 - Streak rewards at milestones: 3, 7, 14, 30, 100 days
 - Streak freezes: max 3, cost 100 coins each
 - XP bonuses: 50 → 100 → 200 → 500 → 1500 at milestones
-
-### Achievements & Milestones
-- Milestone types: level, streak, sessions, focus_hours, collection
-- Celebration types: confetti, stars, fireworks, rainbow
-- Achievement categories: focus sessions, total minutes, streak days, bots collected, coins earned
 
 ### Premium Tiers
 | Tier | Coin Multi | XP Multi | Streak Freezes/mo | Sound Slots |
@@ -225,7 +236,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Hook | Purpose |
 |------|---------|
-| `useXPSystem` | XP calculations, level-ups, robot unlocks. Re-exports from `./xp/` module |
+| `useXPSystem` | XP calculations, level-ups. Re-exports from `./xp/` module |
 | `useCoinSystem` | Coin earning, spending, server validation wrapper around coinStore |
 | `useStreakSystem` | Streak tracking, freeze management |
 | `useAuth` | Supabase auth, guest mode |
@@ -238,7 +249,6 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `useMilestoneCelebrations` | Milestone detection and celebration UI |
 | `useDailyLoginRewards` | Daily login reward logic |
 | `useCoinBooster` | Temporary coin boost items |
-| `useBondSystem` | Robot bond/friendship leveling |
 | `useSoundMixer` | Ambient sound layering |
 | `useHaptics` | iOS haptic feedback |
 | `useWidgetSync` | iOS widget data synchronization |
@@ -246,16 +256,8 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `useBackendAppState` | Fetches user state from Supabase on load |
 | `useBackendStreaks` | Server-side streak sync |
 | `useBackendQuests` | Server-side quest sync |
-| `useOfflineSyncManager` | Queues operations when offline, syncs on reconnect |
-| `useOnboarding` | Onboarding flow state |
-| `usePerformanceMonitor` | Performance tracking |
-| `useReducedMotion` | Respects prefers-reduced-motion |
-| `useAnalytics` | Event analytics |
-| `useNotifications` | Push/local notification management |
-| `usePremiumStatus` | Premium tier checks |
+| `useCollection` | Collection management (legacy, uses RobotDatabase) |
 | `useShop` | Shop purchase logic |
-| `useCollection` | Collection management |
-| `useSettings` | User settings |
 
 ## Native Plugins (Capacitor)
 
@@ -282,16 +284,16 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - Supabase Auth with Apple Sign-In (`@capacitor-community/apple-sign-in`)
 - Guest mode supported (local-only, data stored with guest UUID)
 
-## Design System — Atelier + Farming Pixel Art
+## Design System
 
-The current design uses the **Atelier white theme** with **Stardew Valley-style pixel art**:
+The current design uses the **Atelier white theme** with **pixel art**:
 
-- **Background**: `#FAFAF9` (warm white/stone)
+- **Background**: `#FAFAF9` (warm white/stone) for non-home tabs
+- **Home screen**: CSS gradient sky + grass background
 - **Theme color**: `#FAFAF9` for iOS status bar
-- **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind (`hsl(var(--primary))`)
+- **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind
 - **Component library**: shadcn/ui with Radix UI primitives
 - **Animations**: Framer Motion for page transitions, reward celebrations
-- **3D**: React Three Fiber for hangar scene elements
 - **Fonts**: Inter (via `@fontsource/inter`)
 
 ## Build & Deploy
@@ -303,13 +305,13 @@ The current design uses the **Atelier white theme** with **Stardew Valley-style 
 
 ## Important Patterns
 
-- **Backward compatibility aliases**: The app was renamed from animals/pets/biomes to robots/bots/zones. Many deprecated aliases exist (e.g., `AnimalData = RobotData`, `BiomeData = ZoneData`, `ANIMAL_DATABASE = ROBOT_DATABASE`). Use the new names.
-- **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 - **Validated persistence**: All Zustand stores use `createValidatedStorage()` with Zod schemas — invalid persisted data falls back to defaults instead of crashing.
 - **Lazy loading**: All tab content and heavy components are lazy-loaded with `React.lazy()` and context-aware skeleton fallbacks.
 - **Error boundaries**: Every feature area has its own `FeatureErrorBoundary` wrapper — errors are isolated, not app-crashing.
-- **Server-authoritative coins**: Coin balance changes are cached locally but validated via the `validate-coins` edge function. Server state is authoritative.
-- **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system (`dispatchAchievementEvent`) for cross-component achievement progress.
+- **Server-authoritative coins**: Coin balance changes are cached locally but validated via the `validate-coins` edge function.
+- **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system for cross-component achievement progress.
+- **Legacy robot system**: `RobotDatabase.ts` and `useCollection` still exist for the collection/shop tabs but are being phased out in favor of the pet system.
+- **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 
 ## Path Aliases
 
@@ -336,3 +338,15 @@ Coin Packs:
 Bundles:
   co.botblock.app.bundle.welcome / starter / collector / ultimate
 ```
+
+## What's Next (TODO)
+
+- [ ] PetRevealModal — post-session pet reveal screen (replaces XPRewardModal)
+- [ ] LandCompleteModal — celebration when 100th cell filled
+- [ ] PetCollectionBook — species catalog + land history (replaces BotCollectionGrid)
+- [ ] Wire pet generation into timer completion flow (`useTimerRewards`)
+- [ ] Update XP system to use PetDatabase for level-up unlocks (remove robot unlock logic)
+- [ ] Update shop for land themes, rarity boosts, species picks
+- [ ] Generate real pet pixel art via PixelLab API (25 species)
+- [ ] Update onboarding flow for pet theme
+- [ ] Remove remaining RobotDatabase dependencies from collection/shop

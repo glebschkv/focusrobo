@@ -94,20 +94,20 @@ export const GameUI = () => {
             onSettingsClick={() => setCurrentTab("settings")}
           />
 
-          {/* Full Screen Content — unified Atelier white canvas */}
-          {currentTab !== "home" && (
-            <div
-              className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 bg-[#FAFAF9] ${
-                currentTab === "timer" ? "" : "pt-safe"
-              }`}
-            >
-              <TabContent
-                currentTab={currentTab}
-                onXPReward={handleXPReward}
-                onCoinReward={handleCoinReward}
-              />
-            </div>
-          )}
+          {/* Full Screen Content */}
+          <div
+            className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 ${
+              currentTab === "home" ? "" : "bg-[#FAFAF9]"
+            } ${
+              currentTab === "timer" || currentTab === "home" ? "" : "pt-safe"
+            }`}
+          >
+            <TabContent
+              currentTab={currentTab}
+              onXPReward={handleXPReward}
+              onCoinReward={handleCoinReward}
+            />
+          </div>
 
           {/* Global sound mini-player — shows when sounds active, hidden on timer tab */}
           <GlobalSoundToggle currentTab={currentTab} />
