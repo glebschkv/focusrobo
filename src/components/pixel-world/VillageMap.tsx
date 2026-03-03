@@ -1,75 +1,90 @@
-import { memo } from 'react';
-import { BUILDINGS, type BuildingConfig } from './villageConfig';
+import { memo, useState, useCallback } from 'react';
+import { BUILDINGS, getUnlockedBuildings, type BuildingConfig } from './villageConfig';
 
 interface VillageMapProps {
   currentLevel: number;
 }
 
-// ── PixelLab-generated 32×32 ground tiles (repeating) ────────────
+// ── Asset paths ───────────────────────────────────────────────────
 
-const GRASS_TILE = 'url("/assets/pixel-world/tiles/grass.png")';
-const DIRT_TILE = 'url("/assets/pixel-world/tiles/dirt.png")';
+const GRASS_TILE = 'url("/assets/pixel-world/tiles/grass-bright.png")';
+const DIRT_TILE = 'url("/assets/pixel-world/tiles/dirt-light.png")';
+const FLOWER_GRASS_TILE = 'url("/assets/pixel-world/tiles/grass-flowers.png")';
+
+const DECO = {
+  oakTree: '/assets/pixel-world/decorations/oak-tree.png',
+  pineTree: '/assets/pixel-world/decorations/pine-tree.png',
+  bush: '/assets/pixel-world/decorations/bush.png',
+  flowers: '/assets/pixel-world/decorations/flowers.png',
+  rock: '/assets/pixel-world/decorations/rock.png',
+  signpost: '/assets/pixel-world/decorations/signpost.png',
+  barrel: '/assets/pixel-world/decorations/barrel.png',
+} as const;
 
 // ── Floating cloud definitions ───────────────────────────────────
 
 const CLOUDS = [
-  { top: '3%', duration: 45, delay: 0, width: 80 },
-  { top: '10%', duration: 62, delay: -22, width: 56 },
-  { top: '5%', duration: 53, delay: -38, width: 70 },
-  { top: '15%', duration: 75, delay: -55, width: 44 },
+  { top: '3%', duration: 48, delay: 0, width: 72 },
+  { top: '9%', duration: 65, delay: -20, width: 52 },
+  { top: '6%', duration: 55, delay: -35, width: 64 },
+  { top: '14%', duration: 78, delay: -50, width: 40 },
 ];
 
-// ── Decorative trees ─────────────────────────────────────────────
+// ── PixelLab image decorations (positioned as % of map) ──────────
 
-const TREES: { x: number; y: number; variant: 'oak' | 'pine'; size: number }[] = [
-  { x: 3, y: 34, variant: 'oak', size: 2.5 },
-  { x: 96, y: 50, variant: 'pine', size: 2.2 },
-  { x: 52, y: 84, variant: 'oak', size: 2.0 },
-  { x: 94, y: 28, variant: 'pine', size: 2.4 },
-  { x: 5, y: 55, variant: 'oak', size: 1.8 },
-  { x: 92, y: 72, variant: 'oak', size: 2.1 },
-  { x: 35, y: 28, variant: 'pine', size: 1.6 },
-  { x: 85, y: 60, variant: 'pine', size: 1.9 },
-  { x: 58, y: 22, variant: 'oak', size: 1.5 },
+interface DecoPlacement {
+  src: string;
+  x: number;     // % from left
+  y: number;     // % from top
+  width: number;  // display px
+  height: number; // display px
+}
+
+const TREE_PLACEMENTS: DecoPlacement[] = [
+  { src: DECO.oakTree,  x: 2,  y: 30, width: 56, height: 56 },
+  { src: DECO.pineTree, x: 95, y: 26, width: 40, height: 40 },
+  { src: DECO.oakTree,  x: 50, y: 82, width: 48, height: 48 },
+  { src: DECO.pineTree, x: 93, y: 48, width: 36, height: 36 },
+  { src: DECO.oakTree,  x: 4,  y: 54, width: 44, height: 44 },
+  { src: DECO.pineTree, x: 90, y: 68, width: 38, height: 38 },
+  { src: DECO.oakTree,  x: 96, y: 80, width: 50, height: 50 },
+  { src: DECO.pineTree, x: 36, y: 26, width: 32, height: 32 },
 ];
 
-// ── Flower clusters ──────────────────────────────────────────────
-
-const FLOWERS: { x: number; y: number; colors: string[] }[] = [
-  { x: 8, y: 45, colors: ['#E74C3C', '#F39C12', '#E74C3C'] },
-  { x: 55, y: 43, colors: ['#F1C40F', '#E74C3C', '#F39C12'] },
-  { x: 88, y: 48, colors: ['#9B59B6', '#E74C3C', '#F1C40F'] },
-  { x: 20, y: 58, colors: ['#F1C40F', '#9B59B6', '#F39C12'] },
-  { x: 65, y: 62, colors: ['#E74C3C', '#F1C40F', '#E74C3C'] },
-  { x: 78, y: 32, colors: ['#F39C12', '#9B59B6', '#F1C40F'] },
-  { x: 48, y: 78, colors: ['#9B59B6', '#F39C12', '#E74C3C'] },
-  { x: 12, y: 72, colors: ['#F1C40F', '#E74C3C', '#9B59B6'] },
-  { x: 92, y: 62, colors: ['#E74C3C', '#F1C40F', '#F39C12'] },
-  { x: 32, y: 34, colors: ['#F1C40F', '#9B59B6', '#E74C3C'] },
-  { x: 82, y: 68, colors: ['#9B59B6', '#F39C12', '#F1C40F'] },
-  { x: 42, y: 90, colors: ['#E74C3C', '#F1C40F', '#9B59B6'] },
+const SMALL_DECO_PLACEMENTS: DecoPlacement[] = [
+  // Bushes
+  { src: DECO.bush, x: 8,  y: 43, width: 28, height: 28 },
+  { src: DECO.bush, x: 60, y: 46, width: 24, height: 24 },
+  { src: DECO.bush, x: 88, y: 42, width: 26, height: 26 },
+  { src: DECO.bush, x: 32, y: 74, width: 22, height: 22 },
+  // Flowers
+  { src: DECO.flowers, x: 22, y: 56, width: 36, height: 26 },
+  { src: DECO.flowers, x: 68, y: 62, width: 32, height: 22 },
+  { src: DECO.flowers, x: 48, y: 40, width: 28, height: 20 },
+  { src: DECO.flowers, x: 82, y: 34, width: 30, height: 22 },
+  { src: DECO.flowers, x: 10, y: 70, width: 34, height: 24 },
+  // Rocks
+  { src: DECO.rock, x: 30, y: 46, width: 24, height: 24 },
+  { src: DECO.rock, x: 64, y: 50, width: 20, height: 20 },
+  { src: DECO.rock, x: 86, y: 76, width: 22, height: 22 },
+  // Barrels (near buildings)
+  { src: DECO.barrel, x: 52, y: 30, width: 20, height: 20 },
+  { src: DECO.barrel, x: 22, y: 38, width: 18, height: 18 },
+  // Signpost
+  { src: DECO.signpost, x: 45, y: 44, width: 22, height: 34 },
 ];
 
 // ── Dirt paths ───────────────────────────────────────────────────
 
-const PATHS: { left: string; top: string; width: string; height: string; radius?: string }[] = [
+const PATHS: { left: string; top: string; width: string; height: string }[] = [
+  // Main horizontal road
   { left: '10%', top: '46%', width: '80%', height: '5%' },
+  // Vertical connectors
   { left: '43%', top: '30%', width: '5%', height: '18%' },
   { left: '15%', top: '50%', width: '5%', height: '18%' },
   { left: '42%', top: '50%', width: '5%', height: '15%' },
   { left: '70%', top: '35%', width: '5%', height: '13%' },
-  // Extra path branching to tower
   { left: '68%', top: '22%', width: '5%', height: '15%' },
-];
-
-// ── Rock decorations ─────────────────────────────────────────────
-
-const ROCKS: { x: number; y: number; size: number }[] = [
-  { x: 28, y: 46, size: 1 },
-  { x: 62, y: 50, size: 0.8 },
-  { x: 88, y: 44, size: 1.2 },
-  { x: 38, y: 75, size: 0.7 },
-  { x: 78, y: 76, size: 1 },
 ];
 
 // ── Buildings with chimney smoke ─────────────────────────────────
@@ -77,20 +92,21 @@ const ROCKS: { x: number; y: number; size: number }[] = [
 const SMOKE_BUILDINGS = ['cottage', 'bakery', 'forge'];
 
 /**
- * VillageMap — Rich pixel art village scene with animated environment.
- * Sky with floating clouds, textured ground, water, trees, paths, and buildings.
+ * VillageMap — Rich pixel art village scene with PixelLab-generated assets.
+ * Supports building lock/unlock states based on player level.
  */
-export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel }: VillageMapProps) {
-  const unlockedBuildings = BUILDINGS;
+export const VillageMap = memo(function VillageMap({ currentLevel }: VillageMapProps) {
+  const unlockedBuildings = getUnlockedBuildings(currentLevel);
+  const unlockedIds = new Set(unlockedBuildings.map(b => b.id));
 
   return (
     <div className="absolute inset-0">
-      {/* ── Sky gradient with depth ── */}
+      {/* ── Sky gradient ── */}
       <div
         className="absolute inset-x-0 top-0"
         style={{
           height: '32%',
-          background: 'linear-gradient(180deg, #5BA8D4 0%, #7EC8E3 30%, #A8DFF0 65%, #C8EBF7 100%)',
+          background: 'linear-gradient(180deg, #87CEEB 0%, #A8DFF0 40%, #C5EEFA 70%, #D8F3FC 100%)',
         }}
       />
 
@@ -100,11 +116,11 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
         style={{
           right: '15%',
           top: '5%',
-          width: 20,
-          height: 20,
+          width: 22,
+          height: 22,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, #FFF8DC 0%, #FFE680 50%, #FFD03B 100%)',
-          boxShadow: '0 0 16px 6px rgba(255, 220, 60, 0.35), 0 0 40px 12px rgba(255, 220, 60, 0.15)',
+          background: 'radial-gradient(circle, #FFFDE0 0%, #FFE680 45%, #FFD03B 100%)',
+          boxShadow: '0 0 18px 8px rgba(255, 220, 60, 0.3), 0 0 45px 15px rgba(255, 220, 60, 0.12)',
           zIndex: 1,
         }}
       />
@@ -125,16 +141,16 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
         </div>
       ))}
 
-      {/* ── Distant hills (3 layers for depth) ── */}
+      {/* ── Distant rolling hills ── */}
       <div
         className="absolute inset-x-0"
         style={{
           top: '20%',
           height: '14%',
           background: `
-            radial-gradient(ellipse 50% 110% at 12% 100%, #4A8030 0%, transparent 100%),
-            radial-gradient(ellipse 60% 100% at 45% 100%, #3D7025 0%, transparent 100%),
-            radial-gradient(ellipse 45% 110% at 80% 100%, #4A8030 0%, transparent 100%)
+            radial-gradient(ellipse 50% 110% at 12% 100%, #5D9840 0%, transparent 100%),
+            radial-gradient(ellipse 60% 100% at 45% 100%, #4E8835 0%, transparent 100%),
+            radial-gradient(ellipse 45% 110% at 82% 100%, #5D9840 0%, transparent 100%)
           `,
         }}
       />
@@ -144,14 +160,14 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
           top: '24%',
           height: '10%',
           background: `
-            radial-gradient(ellipse 55% 100% at 25% 100%, #5D9040 0%, transparent 100%),
-            radial-gradient(ellipse 50% 100% at 65% 100%, #5D9040 0%, transparent 100%),
-            radial-gradient(ellipse 40% 100% at 92% 100%, #528838 0%, transparent 100%)
+            radial-gradient(ellipse 55% 100% at 25% 100%, #6BA84A 0%, transparent 100%),
+            radial-gradient(ellipse 50% 100% at 65% 100%, #6BA84A 0%, transparent 100%),
+            radial-gradient(ellipse 40% 100% at 92% 100%, #60A042 0%, transparent 100%)
           `,
         }}
       />
 
-      {/* ── Main grass ground ── */}
+      {/* ── Main grass ground (bright PixelLab tile) ── */}
       <div
         className="absolute inset-x-0 bottom-0 pixel-render"
         style={{
@@ -161,13 +177,12 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
         }}
       />
 
-      {/* ── Grass color variation patches ── */}
+      {/* ── Grass color variation patches (lighter, more vibrant) ── */}
       {[
-        { left: '10%', top: '36%', width: '30%', height: '14%', color: 'rgba(107,156,78,0.5)' },
-        { left: '55%', top: '52%', width: '25%', height: '12%', color: 'rgba(107,156,78,0.4)' },
-        { left: '30%', top: '68%', width: '35%', height: '14%', color: 'rgba(91,140,62,0.35)' },
-        { left: '70%', top: '36%', width: '20%', height: '10%', color: 'rgba(80,128,50,0.3)' },
-        { left: '5%', top: '80%', width: '20%', height: '10%', color: 'rgba(75,120,48,0.35)' },
+        { left: '8%',  top: '38%', width: '28%', height: '12%', color: 'rgba(130,190,80,0.25)' },
+        { left: '55%', top: '54%', width: '24%', height: '10%', color: 'rgba(130,190,80,0.2)' },
+        { left: '28%', top: '70%', width: '30%', height: '12%', color: 'rgba(120,180,70,0.2)' },
+        { left: '72%', top: '38%', width: '18%', height: '8%',  color: 'rgba(110,170,60,0.18)' },
       ].map((patch, i) => (
         <div
           key={`grass-${i}`}
@@ -178,6 +193,28 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
             width: patch.width,
             height: patch.height,
             background: `radial-gradient(ellipse, ${patch.color} 0%, transparent 70%)`,
+          }}
+        />
+      ))}
+
+      {/* ── Flower grass patches ── */}
+      {[
+        { left: '15%', top: '56%', width: '12%', height: '8%' },
+        { left: '60%', top: '68%', width: '14%', height: '8%' },
+        { left: '75%', top: '84%', width: '10%', height: '6%' },
+      ].map((patch, i) => (
+        <div
+          key={`fgrass-${i}`}
+          className="absolute pixel-render"
+          style={{
+            left: patch.left,
+            top: patch.top,
+            width: patch.width,
+            height: patch.height,
+            backgroundImage: FLOWER_GRASS_TILE,
+            backgroundSize: '32px 32px',
+            opacity: 0.7,
+            borderRadius: '50%',
           }}
         />
       ))}
@@ -194,13 +231,13 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
             height: path.height,
             backgroundImage: DIRT_TILE,
             backgroundSize: '32px 32px',
-            borderRadius: path.radius || '4px',
+            borderRadius: '4px',
             zIndex: 3,
           }}
         />
       ))}
 
-      {/* ── Path edge softening (dirt-to-grass blending) ── */}
+      {/* ── Path edge blending ── */}
       {PATHS.map((path, i) => (
         <div
           key={`path-edge-${i}`}
@@ -211,7 +248,7 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
             width: path.width,
             height: path.height,
             borderRadius: '6px',
-            boxShadow: '0 0 4px 2px rgba(91,140,62,0.3)',
+            boxShadow: '0 0 6px 3px rgba(130,190,80,0.25)',
             zIndex: 3,
             pointerEvents: 'none',
           }}
@@ -226,7 +263,7 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
           top: '78%',
           width: '26%',
           height: '22%',
-          background: 'linear-gradient(180deg, #5AA8C8 0%, #4898B8 35%, #3888A8 70%, #2878A0 100%)',
+          background: 'linear-gradient(180deg, #6BBCE0 0%, #58ACd0 35%, #4A9CC0 70%, #3E8CB5 100%)',
           borderRadius: '0 40% 0 0',
           zIndex: 2,
           overflow: 'hidden',
@@ -247,7 +284,7 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
               left: shine.left,
               width: shine.width,
               height: '2px',
-              backgroundColor: 'rgba(255, 255, 255, 0.3)',
+              backgroundColor: 'rgba(255, 255, 255, 0.35)',
               borderRadius: '1px',
               '--shimmer-speed': `${shine.speed}s`,
               '--shimmer-delay': `${shine.delay}s`,
@@ -268,7 +305,7 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
               left: ripple.left,
               width: 8,
               height: 8,
-              border: '1px solid rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.25)',
               borderRadius: '50%',
               '--ripple-delay': `${ripple.delay}s`,
             } as React.CSSProperties}
@@ -281,48 +318,66 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
         className="absolute pixel-render"
         style={{
           left: '0%', top: '76%', width: '28%', height: '3.5%',
-          background: 'linear-gradient(90deg, #D4BC86 0%, #C8B07A 30%, #D4BC86 60%, #C8B07A 100%)',
+          background: 'linear-gradient(90deg, #E0CC96 0%, #D4C08A 30%, #E0CC96 60%, #D4C08A 100%)',
           borderRadius: '0 12px 0 0',
           zIndex: 3,
         }}
       />
-      {/* Shore detail */}
-      <div
-        className="absolute"
-        style={{
-          left: '0%', top: '77.5%', width: '27%', height: '1%',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(90,168,200,0.3) 40%, rgba(90,168,200,0.2) 100%)',
-          borderRadius: '0 8px 0 0',
-          zIndex: 4,
-        }}
-      />
 
-      {/* ── Flower clusters ── */}
-      {FLOWERS.map((cluster, i) => (
-        <FlowerCluster key={`flowers-${i}`} x={cluster.x} y={cluster.y} colors={cluster.colors} />
+      {/* ── PixelLab small decorations (flowers, bushes, rocks, barrels, signpost) ── */}
+      {SMALL_DECO_PLACEMENTS.map((deco, i) => (
+        <img
+          key={`deco-${i}`}
+          src={deco.src}
+          alt=""
+          className="absolute pointer-events-none pixel-render"
+          style={{
+            left: `${deco.x}%`,
+            top: `${deco.y}%`,
+            width: deco.width,
+            height: deco.height,
+            transform: 'translate(-50%, -50%)',
+            zIndex: Math.floor((deco.y / 100) * 600),
+            imageRendering: 'pixelated',
+          }}
+          draggable={false}
+        />
       ))}
 
-      {/* ── Rock decorations ── */}
-      {ROCKS.map((rock, i) => (
-        <PixelRock key={`rock-${i}`} x={rock.x} y={rock.y} size={rock.size} />
+      {/* ── PixelLab trees (with gentle sway) ── */}
+      {TREE_PLACEMENTS.map((tree, i) => (
+        <img
+          key={`tree-${i}`}
+          src={tree.src}
+          alt=""
+          className="absolute pointer-events-none pixel-render tree-sway"
+          style={{
+            left: `${tree.x}%`,
+            top: `${tree.y}%`,
+            width: tree.width,
+            height: tree.height,
+            transform: 'translate(-50%, -100%)',
+            zIndex: Math.floor((tree.y / 100) * 600),
+            imageRendering: 'pixelated',
+            '--sway-speed': `${5 + i * 0.8}s`,
+          } as React.CSSProperties}
+          draggable={false}
+        />
       ))}
 
-      {/* ── Pixel art trees ── */}
-      {TREES.map((tree, i) => (
-        <PixelTree key={`tree-${i}`} x={tree.x} y={tree.y} variant={tree.variant} size={tree.size} index={i} />
-      ))}
+      {/* ── Buildings (unlocked + locked) ── */}
+      {BUILDINGS.map((building) => {
+        const isUnlocked = unlockedIds.has(building.id);
+        return (
+          <BuildingSprite
+            key={building.id}
+            building={building}
+            isUnlocked={isUnlocked}
+          />
+        );
+      })}
 
-      {/* ── Pixel fences ── */}
-      <PixelFence x={8} y={44} width={5} />
-      <PixelFence x={58} y={44} width={10} />
-      <PixelFence x={88} y={44} width={4} />
-
-      {/* ── Building overlays ── */}
-      {unlockedBuildings.map((building) => (
-        <BuildingSprite key={building.id} building={building} />
-      ))}
-
-      {/* ── Chimney smoke on select buildings ── */}
+      {/* ── Chimney smoke on unlocked buildings ── */}
       {unlockedBuildings
         .filter(b => SMOKE_BUILDINGS.includes(b.id))
         .map(b => (
@@ -338,7 +393,7 @@ export const VillageMap = memo(function VillageMap({ currentLevel: _currentLevel
 
 // ── Sub-components ────────────────────────────────────────────────
 
-/** Pixel cloud using scaled SVG for authentic look */
+/** Pixel cloud using scaled SVG */
 const PixelCloud = memo(function PixelCloud({ width = 64 }: { width?: number }) {
   const scale = width / 12;
   return (
@@ -346,213 +401,148 @@ const PixelCloud = memo(function PixelCloud({ width = 64 }: { width?: number }) 
       width={width}
       height={scale * 5}
       viewBox="0 0 12 5"
-      style={{ imageRendering: 'pixelated', opacity: 0.92 }}
+      style={{ imageRendering: 'pixelated', opacity: 0.9 }}
     >
       <rect x="3" y="0" width="4" height="1" fill="white" />
       <rect x="1" y="1" width="9" height="1" fill="white" />
       <rect x="0" y="2" width="12" height="1" fill="white" />
       <rect x="0" y="3" width="11" height="1" fill="white" />
       <rect x="2" y="4" width="7" height="1" fill="white" />
-      {/* Subtle shading */}
-      <rect x="1" y="3" width="3" height="1" fill="rgba(200,220,240,0.5)" />
+      <rect x="1" y="3" width="3" height="1" fill="rgba(210,230,250,0.4)" />
     </svg>
   );
 });
 
-/** Pixel art tree with canopy, trunk, and highlight detail */
-const PixelTree = memo(function PixelTree({
-  x, y, variant, size, index,
+/** Building sprite with lock/unlock state */
+const BuildingSprite = memo(function BuildingSprite({
+  building,
+  isUnlocked,
 }: {
-  x: number; y: number; variant: 'oak' | 'pine'; size: number; index: number;
+  building: BuildingConfig;
+  isUnlocked: boolean;
 }) {
-  const isOak = variant === 'oak';
+  const [tapped, setTapped] = useState(false);
+
+  const handleTap = useCallback(() => {
+    if (!isUnlocked) {
+      setTapped(true);
+      setTimeout(() => setTapped(false), 2000);
+    }
+  }, [isUnlocked]);
+
   return (
     <div
-      className="absolute pointer-events-none tree-sway"
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        transform: 'translate(-50%, -100%)',
-        zIndex: Math.floor((y / 100) * 600),
-        '--sway-speed': `${5 + index * 0.7}s`,
-      } as React.CSSProperties}
-    >
-      {isOak ? (
-        <svg
-          width={12 * size}
-          height={18 * size}
-          viewBox="0 0 12 18"
-          style={{ imageRendering: 'pixelated' }}
-        >
-          {/* Canopy */}
-          <rect x="3" y="0" width="6" height="1" fill="#3D7E24" />
-          <rect x="2" y="1" width="8" height="1" fill="#3D7E24" />
-          <rect x="1" y="2" width="10" height="1" fill="#3D7E24" />
-          <rect x="1" y="3" width="10" height="1" fill="#3D7E24" />
-          <rect x="0" y="4" width="12" height="1" fill="#3D7E24" />
-          <rect x="0" y="5" width="12" height="1" fill="#3D7E24" />
-          <rect x="1" y="6" width="10" height="1" fill="#3D7E24" />
-          <rect x="1" y="7" width="10" height="1" fill="#3D7E24" />
-          <rect x="2" y="8" width="8" height="1" fill="#3D7E24" />
-          <rect x="3" y="9" width="6" height="1" fill="#3D7E24" />
-          {/* Highlight patches */}
-          <rect x="3" y="2" width="3" height="2" fill="#5B9C3E" />
-          <rect x="7" y="4" width="3" height="2" fill="#5B9C3E" />
-          <rect x="2" y="6" width="2" height="2" fill="#4A8E30" />
-          {/* Dark patches */}
-          <rect x="1" y="5" width="2" height="2" fill="#2D6E1E" />
-          <rect x="8" y="7" width="2" height="2" fill="#2D6E1E" />
-          {/* Trunk */}
-          <rect x="5" y="10" width="2" height="6" fill="#6B4E23" />
-          <rect x="5" y="10" width="1" height="4" fill="#8B6E3D" />
-          {/* Base roots */}
-          <rect x="4" y="16" width="4" height="1" fill="#5A3E18" />
-          <rect x="3" y="17" width="1" height="1" fill="#4A7A32" />
-          <rect x="8" y="17" width="1" height="1" fill="#4A7A32" />
-        </svg>
-      ) : (
-        <svg
-          width={8 * size}
-          height={20 * size}
-          viewBox="0 0 8 20"
-          style={{ imageRendering: 'pixelated' }}
-        >
-          {/* Pine tree - triangular shape */}
-          <rect x="3" y="0" width="2" height="1" fill="#2D6E1E" />
-          <rect x="2" y="1" width="4" height="1" fill="#2D6E1E" />
-          <rect x="2" y="2" width="4" height="1" fill="#3D7E24" />
-          <rect x="1" y="3" width="6" height="1" fill="#2D6E1E" />
-          <rect x="1" y="4" width="6" height="1" fill="#3D7E24" />
-          <rect x="0" y="5" width="8" height="1" fill="#2D6E1E" />
-          <rect x="1" y="6" width="6" height="1" fill="#2D6E1E" />
-          <rect x="1" y="7" width="6" height="1" fill="#3D7E24" />
-          <rect x="0" y="8" width="8" height="1" fill="#2D6E1E" />
-          <rect x="0" y="9" width="8" height="1" fill="#3D7E24" />
-          <rect x="1" y="10" width="6" height="1" fill="#2D6E1E" />
-          <rect x="0" y="11" width="8" height="1" fill="#2D6E1E" />
-          <rect x="1" y="12" width="6" height="1" fill="#3D7E24" />
-          <rect x="2" y="13" width="4" height="1" fill="#2D6E1E" />
-          {/* Highlight */}
-          <rect x="2" y="3" width="2" height="2" fill="#4A8E30" />
-          <rect x="2" y="8" width="2" height="2" fill="#4A8E30" />
-          {/* Trunk */}
-          <rect x="3" y="14" width="2" height="5" fill="#6B4E23" />
-          <rect x="3" y="14" width="1" height="3" fill="#8B6E3D" />
-          {/* Base */}
-          <rect x="2" y="19" width="4" height="1" fill="#5A3E18" />
-        </svg>
-      )}
-    </div>
-  );
-});
-
-/** Cluster of pixel flowers with stems */
-const FlowerCluster = memo(function FlowerCluster({
-  x, y, colors,
-}: {
-  x: number; y: number; colors: string[];
-}) {
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        zIndex: 4,
-      }}
-    >
-      {colors.map((color, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            left: i * 6 - 6,
-            top: (i % 2) * 3,
-          }}
-        >
-          {/* Stem */}
-          <div style={{
-            width: 1,
-            height: 5,
-            backgroundColor: '#3D6E24',
-            margin: '0 auto',
-          }} />
-          {/* Flower head */}
-          <div style={{
-            width: 5,
-            height: 5,
-            backgroundColor: color,
-            borderRadius: '1px',
-            marginTop: -5,
-            position: 'relative',
-          }}>
-            {/* Center dot */}
-            <div style={{
-              position: 'absolute',
-              top: 1,
-              left: 1,
-              width: 3,
-              height: 3,
-              backgroundColor: '#F1C40F',
-              borderRadius: '1px',
-            }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-});
-
-/** Pixel rock decoration */
-const PixelRock = memo(function PixelRock({ x, y, size }: { x: number; y: number; size: number }) {
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        zIndex: Math.floor((y / 100) * 600),
-      }}
-    >
-      <svg
-        width={10 * size}
-        height={7 * size}
-        viewBox="0 0 10 7"
-        style={{ imageRendering: 'pixelated' }}
-      >
-        <rect x="2" y="0" width="6" height="1" fill="#9E9E9E" />
-        <rect x="1" y="1" width="8" height="1" fill="#8E8E8E" />
-        <rect x="0" y="2" width="10" height="1" fill="#8E8E8E" />
-        <rect x="0" y="3" width="10" height="1" fill="#7E7E7E" />
-        <rect x="1" y="4" width="8" height="1" fill="#7E7E7E" />
-        <rect x="2" y="5" width="6" height="1" fill="#6E6E6E" />
-        <rect x="3" y="6" width="4" height="1" fill="#6E6E6E" />
-        {/* Highlight */}
-        <rect x="3" y="1" width="3" height="1" fill="#B0B0B0" />
-        <rect x="2" y="2" width="2" height="1" fill="#A0A0A0" />
-      </svg>
-    </div>
-  );
-});
-
-/** Building sprite with enter animation */
-const BuildingSprite = memo(function BuildingSprite({ building }: { building: BuildingConfig }) {
-  return (
-    <img
-      src={building.imagePath}
-      alt={building.name}
-      className="absolute pixel-render building-enter"
+      className="absolute"
       style={{
         left: `${building.x}%`,
         top: `${building.y}%`,
-        width: building.width,
-        height: building.height,
         transform: 'translate(-50%, -50%)',
-        imageRendering: 'pixelated',
         zIndex: Math.floor((building.y / 100) * 600),
+        cursor: isUnlocked ? 'default' : 'pointer',
       }}
-      draggable={false}
-    />
+      onClick={handleTap}
+    >
+      {/* Building image */}
+      <img
+        src={building.imagePath}
+        alt={building.name}
+        className={`pixel-render ${isUnlocked ? 'building-enter' : ''}`}
+        style={{
+          width: building.width,
+          height: building.height,
+          imageRendering: 'pixelated',
+          filter: isUnlocked ? 'none' : 'brightness(0.35) grayscale(0.8)',
+          opacity: isUnlocked ? 1 : 0.6,
+          transition: 'filter 0.5s, opacity 0.5s',
+        }}
+        draggable={false}
+      />
+
+      {/* Lock overlay for locked buildings */}
+      {!isUnlocked && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center"
+          style={{ pointerEvents: 'none' }}
+        >
+          <div
+            style={{
+              fontSize: 16,
+              lineHeight: 1,
+              marginBottom: 2,
+              textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+            }}
+          >
+            {'\uD83D\uDD12'}
+          </div>
+          <div
+            style={{
+              fontSize: 9,
+              fontWeight: 800,
+              color: '#FFF',
+              fontFamily: 'monospace',
+              textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+              letterSpacing: '0.04em',
+            }}
+          >
+            Lv.{building.unlockLevel}
+          </div>
+        </div>
+      )}
+
+      {/* Unlocked building name label */}
+      {isUnlocked && (
+        <div
+          className="absolute left-1/2 text-center whitespace-nowrap pointer-events-none"
+          style={{
+            bottom: -12,
+            transform: 'translateX(-50%)',
+            fontSize: 8,
+            fontWeight: 700,
+            color: '#3D3D3D',
+            fontFamily: 'monospace',
+            textShadow: '0 0 4px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.7)',
+            letterSpacing: '0.03em',
+          }}
+        >
+          {building.name}
+        </div>
+      )}
+
+      {/* Tap feedback for locked buildings */}
+      {!isUnlocked && tapped && (
+        <div
+          className="absolute left-1/2 speech-bubble"
+          style={{
+            bottom: building.height + 8,
+            transform: 'translateX(-50%)',
+            padding: '4px 10px',
+            background: 'rgba(0,0,0,0.8)',
+            borderRadius: 6,
+            fontSize: 10,
+            fontWeight: 700,
+            color: '#FFD700',
+            whiteSpace: 'nowrap',
+            fontFamily: 'monospace',
+            zIndex: 1000,
+          }}
+        >
+          Reach Lv.{building.unlockLevel} to unlock!
+          <div
+            style={{
+              position: 'absolute',
+              bottom: -4,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 0,
+              height: 0,
+              borderLeft: '4px solid transparent',
+              borderRight: '4px solid transparent',
+              borderTop: '4px solid rgba(0,0,0,0.8)',
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 });
 
@@ -575,37 +565,6 @@ const ChimneySmoke = memo(function ChimneySmoke({ x, y }: { x: number; y: number
             '--smoke-delay': `${i * 0.7}s`,
           } as React.CSSProperties}
         />
-      ))}
-    </div>
-  );
-});
-
-/** Pixel fence decoration */
-const PixelFence = memo(function PixelFence({ x, y, width }: { x: number; y: number; width: number }) {
-  const posts = Math.floor(width * 1.5);
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        left: `${x}%`,
-        top: `${y}%`,
-        width: `${width}%`,
-        height: 10,
-        zIndex: Math.floor((y / 100) * 600),
-        display: 'flex',
-        gap: 6,
-        alignItems: 'flex-end',
-      }}
-    >
-      {Array.from({ length: posts }, (_, i) => (
-        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          {/* Post */}
-          <div style={{ width: 2, height: 10, backgroundColor: '#A07840' }} />
-          {/* Rail top */}
-          <div style={{ width: 8, height: 2, backgroundColor: '#B08850', marginTop: -9 }} />
-          {/* Rail bottom */}
-          <div style={{ width: 8, height: 2, backgroundColor: '#A07840', marginTop: 2 }} />
-        </div>
       ))}
     </div>
   );
