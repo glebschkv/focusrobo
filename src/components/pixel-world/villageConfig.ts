@@ -53,18 +53,16 @@ export const NATIVE_HEIGHT = 300;
 
 // ── Buildings ──────────────────────────────────────────────────────
 
-/** Scale factor for buildings (match character SPRITE_SCALE for consistent pixel density) */
-const BUILDING_SCALE = 2;
-
+/** All buildings use PixelLab-generated high-detail pixel art assets. */
 export const BUILDINGS: BuildingConfig[] = [
   {
     id: 'cottage',
     name: 'Starter Cottage',
     unlockLevel: 0,
-    x: 45,   // % from left
-    y: 25,   // % from top
-    width: 48 * BUILDING_SCALE,   // native 48px
-    height: 48 * BUILDING_SCALE,
+    x: 45,
+    y: 25,
+    width: 96,    // PixelLab 96×96
+    height: 96,
     imagePath: '/assets/pixel-world/buildings/cottage.png',
   },
   {
@@ -73,8 +71,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 3,
     x: 15,
     y: 35,
-    width: 40 * BUILDING_SCALE,   // native 40px
-    height: 40 * BUILDING_SCALE,
+    width: 80,    // PixelLab 80×80
+    height: 80,
     imagePath: '/assets/pixel-world/buildings/bakery.png',
   },
   {
@@ -83,8 +81,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 5,
     x: 75,
     y: 40,
-    width: 40 * BUILDING_SCALE,   // native 40px
-    height: 40 * BUILDING_SCALE,
+    width: 80,    // PixelLab 80×96
+    height: 96,
     imagePath: '/assets/pixel-world/buildings/forge.png',
   },
   {
@@ -93,8 +91,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 7,
     x: 12,
     y: 60,
-    width: 48 * BUILDING_SCALE,   // native 48x40px
-    height: 40 * BUILDING_SCALE,
+    width: 96,    // PixelLab 96×80
+    height: 80,
     imagePath: '/assets/pixel-world/buildings/fishing-dock.png',
   },
   {
@@ -103,8 +101,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 10,
     x: 72,
     y: 15,
-    width: 36 * BUILDING_SCALE,   // native 36x56px
-    height: 56 * BUILDING_SCALE,
+    width: 64,    // PixelLab 64×112
+    height: 112,
     imagePath: '/assets/pixel-world/buildings/tower.png',
   },
   {
@@ -113,8 +111,8 @@ export const BUILDINGS: BuildingConfig[] = [
     unlockLevel: 20,
     x: 42,
     y: 55,
-    width: 56 * BUILDING_SCALE,   // native 56px
-    height: 56 * BUILDING_SCALE,
+    width: 112,   // PixelLab 112×112
+    height: 112,
     imagePath: '/assets/pixel-world/buildings/town-square.png',
   },
 ];
