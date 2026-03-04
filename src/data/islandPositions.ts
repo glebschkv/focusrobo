@@ -15,8 +15,9 @@ const CENTER_X = 50;
 const CENTER_Y = 50;
 
 // Isometric tile spacing — controls how spread out pets are
-const TILE_W = 7.8; // horizontal half-spacing per grid step
-const TILE_H = 3.9; // vertical half-spacing per grid step
+// Max deviation = 9 steps × 4.9 = 44.1% → positions span ~6% to ~94%
+const TILE_W = 4.9;
+const TILE_H = 4.9;
 
 /** Deterministic pseudo-random for consistent jitter across renders */
 function seededRandom(seed: number): number {
@@ -45,9 +46,9 @@ function computePositions(): IslandPosition[] {
     const isoX = (centeredCol - centeredRow) * TILE_W;
     const isoY = (centeredCol + centeredRow) * TILE_H;
 
-    // Small seeded jitter for organic feel (±0.8% x, ±0.5% y)
-    const jx = (seededRandom(i * 7 + 1) - 0.5) * 1.6;
-    const jy = (seededRandom(i * 13 + 2) - 0.5) * 1.0;
+    // Small seeded jitter for organic feel (±0.4% x, ±0.25% y)
+    const jx = (seededRandom(i * 7 + 1) - 0.5) * 0.8;
+    const jy = (seededRandom(i * 13 + 2) - 0.5) * 0.5;
 
     positions.push({
       x: CENTER_X + isoX + jx,

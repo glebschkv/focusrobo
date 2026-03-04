@@ -19,7 +19,7 @@
     #A8DCF4 50%,
     #C9E9F9 68%,
     #E2F2FC 82%,
-    #F0F4E8 100%
+    #F2ECDA 100%
   );
   padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
@@ -163,7 +163,7 @@
     /* Shadow near bottom */
     radial-gradient(ellipse at 50% 80%, rgba(50, 100, 25, 0.3) 0%, transparent 30%),
     /* Base grass */
-    linear-gradient(170deg, #8AD448 0%, #78C438 30%, #68B42E 60%, #5AA425 100%);
+    linear-gradient(165deg, #7ABF3E 0%, #6BAF35 25%, #5EA02C 50%, #519024 75%, #468020 100%);
   z-index: 2;
 }
 
@@ -175,40 +175,14 @@
   opacity: 0.6;
   background:
     /* Scattered lighter patches */
-    radial-gradient(circle at 25% 40%, rgba(160, 230, 70, 0.5) 0%, transparent 8%),
-    radial-gradient(circle at 65% 35%, rgba(170, 240, 80, 0.4) 0%, transparent 7%),
-    radial-gradient(circle at 40% 60%, rgba(155, 225, 65, 0.35) 0%, transparent 9%),
-    radial-gradient(circle at 75% 55%, rgba(165, 235, 75, 0.3) 0%, transparent 6%),
-    radial-gradient(circle at 35% 25%, rgba(160, 230, 70, 0.3) 0%, transparent 5%),
+    radial-gradient(circle at 25% 40%, rgba(130, 200, 60, 0.4) 0%, transparent 8%),
+    radial-gradient(circle at 65% 35%, rgba(140, 210, 70, 0.35) 0%, transparent 7%),
+    radial-gradient(circle at 40% 60%, rgba(125, 195, 55, 0.3) 0%, transparent 9%),
+    radial-gradient(circle at 75% 55%, rgba(135, 205, 65, 0.25) 0%, transparent 6%),
+    radial-gradient(circle at 35% 25%, rgba(130, 200, 60, 0.25) 0%, transparent 5%),
     /* Darker patches */
-    radial-gradient(circle at 55% 65%, rgba(55, 110, 28, 0.25) 0%, transparent 8%),
-    radial-gradient(circle at 30% 55%, rgba(50, 100, 25, 0.2) 0%, transparent 6%);
-}
-
-/* Isometric grid lines — subtle diamond grid pattern */
-.pet-land__island-grid {
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
-  opacity: 0.08;
-  /* Diagonal lines in both directions create diamond grid */
-  background:
-    repeating-linear-gradient(
-      26.57deg,
-      transparent,
-      transparent 18px,
-      rgba(0, 80, 0, 0.4) 18px,
-      rgba(0, 80, 0, 0.4) 19px
-    ),
-    repeating-linear-gradient(
-      -26.57deg,
-      transparent,
-      transparent 18px,
-      rgba(0, 80, 0, 0.4) 18px,
-      rgba(0, 80, 0, 0.4) 19px
-    );
-  z-index: 3;
-  pointer-events: none;
+    radial-gradient(circle at 55% 65%, rgba(50, 100, 25, 0.25) 0%, transparent 8%),
+    radial-gradient(circle at 30% 55%, rgba(45, 90, 22, 0.2) 0%, transparent 6%);
 }
 
 /* Grass shimmer */
@@ -238,20 +212,19 @@
 
 .pet-land__island-edge {
   position: absolute;
-  /* Slightly offset down + larger to peek out from behind the grass */
-  top: 2%;
-  left: -1%;
-  right: -1%;
-  bottom: -4%;
-  clip-path: polygon(50% 3%, 99% 48%, 50% 97%, 1% 48%);
+  top: 0;
+  left: -0.5%;
+  right: -0.5%;
+  bottom: -6%;
+  clip-path: polygon(50% 2%, 99% 50%, 50% 98%, 1% 50%);
   background:
     linear-gradient(
       180deg,
       #6B9930 0%,
-      #7A5C3B 15%,
-      #6B4D2F 40%,
-      #5C3D22 70%,
-      #4A3118 100%
+      #8B6D4A 10%,
+      #7A5C3B 40%,
+      #6B4D2F 70%,
+      #5C3D22 100%
     );
   z-index: 1;
 }
@@ -260,19 +233,19 @@
 
 .pet-land__island-shadow {
   position: absolute;
-  bottom: -12%;
-  left: 15%;
-  right: 15%;
-  height: 20px;
+  bottom: -6%;
+  left: 12%;
+  right: 12%;
+  height: 28px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgba(0, 0, 0, 0.14) 0%,
-    rgba(0, 0, 0, 0.07) 40%,
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.09) 40%,
     transparent 70%
   );
   z-index: 0;
-  filter: blur(8px);
+  filter: blur(10px);
   animation: pet-land-shadow-float 4.5s ease-in-out infinite;
 }
 
@@ -564,18 +537,6 @@
   bottom: 100%;
   border-top-color: transparent;
   border-bottom-color: rgba(0, 0, 0, 0.82);
-}
-
-/* ── Empty slot markers ───────────────────────────────────────── */
-
-.island-slot-marker {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  background: rgba(90, 150, 40, 0.15);
-  border-radius: 1px;
-  pointer-events: none;
 }
 
 /* ── Progress bar ─────────────────────────────────────────────── */

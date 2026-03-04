@@ -9,7 +9,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
-import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 
 function getGrowthStage(count: number): string {
@@ -181,19 +180,7 @@ export const PetLand = () => {
           />
         );
       }
-      const pos = ISLAND_POSITIONS[index];
-      if (!pos) return null;
-      return (
-        <div
-          key={`${currentLand.id}-empty-${index}`}
-          className="island-slot-marker"
-          style={{
-            left: `${pos.x}%`,
-            top: `${pos.y}%`,
-            zIndex: getDepthZIndex(index),
-          }}
-        />
-      );
+      return null;
     });
   }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
 
@@ -250,9 +237,6 @@ export const PetLand = () => {
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
           </div>
-
-          {/* Subtle grid overlay */}
-          <div className="pet-land__island-grid" />
 
           {/* Dirt/earth edge visible beneath grass */}
           <div className="pet-land__island-edge" />
