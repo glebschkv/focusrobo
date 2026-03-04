@@ -14,11 +14,11 @@ const GRID_SIZE = 10;
 // Pets layer center and island ellipse radii (as % of pets-layer container)
 const CENTER_X = 50;
 const CENTER_Y = 50;
-const ELLIPSE_RX = 44; // horizontal radius — slightly inset from edge
-const ELLIPSE_RY = 42; // vertical radius
+const DIAMOND_RX = 46; // horizontal half-width of diamond boundary
+const DIAMOND_RY = 44; // vertical half-height of diamond boundary
 
-const TILE_W = 5.6; // horizontal spacing between isometric columns
-const TILE_H = 4.4; // vertical spacing between isometric rows
+const TILE_W = 6.0; // horizontal spacing between isometric columns
+const TILE_H = 4.8; // vertical spacing between isometric rows
 
 /** Deterministic pseudo-random for consistent jitter across renders */
 function seededRandom(seed: number): number {
@@ -32,11 +32,12 @@ interface IslandPosition {
 }
 
 /**
- * Clamp a point to the interior of an ellipse.
+ * Clamp a point to the interior of a diamond (rhombus).
+ * Diamond boundary uses L1/Manhattan norm: |dx|/rx + |dy|/ry <= 1.
  * If the point is already inside, return it unchanged.
- * Otherwise project it onto the ellipse boundary with a small inset margin.
+ * Otherwise project it onto the diamond boundary with a small inset margin.
  */
-function clampToEllipse(
+function clampToDiamond(
   x: number,
   y: number,
   cx: number,
@@ -46,12 +47,12 @@ function clampToEllipse(
 ): { x: number; y: number } {
   const dx = x - cx;
   const dy = y - cy;
-  const dist = (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry);
+  const dist = Math.abs(dx) / rx + Math.abs(dy) / ry;
 
   if (dist <= 1) return { x, y };
 
-  // Project onto ellipse boundary, slightly inset
-  const scale = 0.92 / Math.sqrt(dist);
+  // Project onto diamond boundary, slightly inset
+  const scale = 0.90 / dist;
   return {
     x: cx + dx * scale,
     y: cy + dy * scale,
@@ -79,8 +80,8 @@ function computePositions(): IslandPosition[] {
     const rawX = CENTER_X + isoX + jx;
     const rawY = CENTER_Y + gridOffsetY + isoY + jy;
 
-    // Clamp to elliptical island boundary
-    const clamped = clampToEllipse(rawX, rawY, CENTER_X, CENTER_Y, ELLIPSE_RX, ELLIPSE_RY);
+    // Clamp to diamond island boundary
+    const clamped = clampToDiamond(rawX, rawY, CENTER_X, CENTER_Y, DIAMOND_RX, DIAMOND_RY);
     positions.push(clamped);
   }
 
@@ -109,4 +110,41 @@ export function getDepthZIndex(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
   return 10 + row + col;
+}
+
+/** Rotation step type: 0=0°, 1=90°, 2=180°, 3=270° */
+export type RotationStep = 0 | 1 | 2 | 3;
+
+/**
+ * Get depth-based scale for a cell at a given rotation step.
+ * Rotates which corner of the grid is "front" (closest to camera).
+ */
+export function getDepthScaleForRotation(index: number, rotation: RotationStep): number {
+  const row = Math.floor(index / GRID_SIZE);
+  const col = index % GRID_SIZE;
+
+  let depth: number;
+  switch (rotation) {
+    case 0: depth = (row + col) / (2 * (GRID_SIZE - 1)); break;
+    case 1: depth = ((GRID_SIZE - 1 - row) + col) / (2 * (GRID_SIZE - 1)); break;
+    case 2: depth = ((GRID_SIZE - 1 - row) + (GRID_SIZE - 1 - col)) / (2 * (GRID_SIZE - 1)); break;
+    case 3: depth = (row + (GRID_SIZE - 1 - col)) / (2 * (GRID_SIZE - 1)); break;
+  }
+
+  return 0.7 + depth * 0.3;
+}
+
+/**
+ * Get z-index for a cell at a given rotation step.
+ */
+export function getDepthZIndexForRotation(index: number, rotation: RotationStep): number {
+  const row = Math.floor(index / GRID_SIZE);
+  const col = index % GRID_SIZE;
+
+  switch (rotation) {
+    case 0: return 10 + row + col;
+    case 1: return 10 + (GRID_SIZE - 1 - row) + col;
+    case 2: return 10 + (GRID_SIZE - 1 - row) + (GRID_SIZE - 1 - col);
+    case 3: return 10 + row + (GRID_SIZE - 1 - col);
+  }
 }

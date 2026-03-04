@@ -6,10 +6,28 @@
  * with depth-based scaling and z-ordering.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
-import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
+import { ISLAND_POSITIONS, getDepthZIndexForRotation } from '@/data/islandPositions';
+import type { RotationStep } from '@/data/islandPositions';
+
+/** Get time-of-day lighting color */
+function getTimeOfDayColor(): string {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 10) return 'rgba(255, 200, 100, 0.06)'; // morning golden
+  if (hour >= 10 && hour < 16) return 'transparent'; // midday clear
+  if (hour >= 16 && hour < 20) return 'rgba(255, 150, 100, 0.08)'; // evening amber
+  return 'rgba(100, 120, 200, 0.10)'; // night blue
+}
+
+/** Get growth stage class based on fill count */
+function getGrowthStage(count: number): string {
+  if (count < 25) return 'pet-land--sparse';
+  if (count < 50) return 'pet-land--growing';
+  if (count < 75) return 'pet-land--lush';
+  return 'pet-land--paradise';
+}
 
 /** DEBUG: Award a random pet at a random session length */
 const useDebugAwardPet = () => {
@@ -34,6 +52,33 @@ export const PetLand = () => {
   const clearLastPlaced = useLandStore((s) => s.clearLastPlaced);
   const clearLandCompleted = useLandStore((s) => s.clearLandCompleted);
   const progressPct = (filledCount / LAND_SIZE) * 100;
+
+  // Island rotation — discrete 90-degree steps
+  const [rotationStep, setRotationStep] = useState<RotationStep>(0);
+  const rotationDeg = rotationStep * 90;
+
+  const rotateLeft = useCallback(() => {
+    setRotationStep((prev) => ((prev + 3) % 4) as RotationStep);
+  }, []);
+
+  const rotateRight = useCallback(() => {
+    setRotationStep((prev) => ((prev + 1) % 4) as RotationStep);
+  }, []);
+
+  // Swipe gesture detection for rotation
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) > 40) {
+      if (dx > 0) rotateRight();
+      else rotateLeft();
+    }
+  }, [rotateLeft, rotateRight]);
 
   // Single active tooltip — only one pet tooltip open at a time
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
@@ -73,6 +118,7 @@ export const PetLand = () => {
             isNew={index === lastPlacedIndex}
             showTooltip={activeTooltipIndex === index}
             onToggleTooltip={() => handleToggleTooltip(index)}
+            rotationStep={rotationStep}
           />
         );
       }
@@ -86,34 +132,83 @@ export const PetLand = () => {
           style={{
             left: `${pos.x}%`,
             top: `${pos.y}%`,
-            zIndex: getDepthZIndex(index),
+            zIndex: getDepthZIndexForRotation(index, rotationStep),
           }}
         />
       );
     });
-  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
+  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip, rotationStep]);
+
+  const growthClass = getGrowthStage(filledCount);
+  const lightingColor = useMemo(() => getTimeOfDayColor(), []);
+
+  // Ambient particles — 6 floating motes
+  const particles = useMemo(() => {
+    return Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      left: `${15 + Math.random() * 70}%`,
+      top: `${20 + Math.random() * 50}%`,
+      duration: `${6 + Math.random() * 4}s`,
+      delay: `${Math.random() * 5}s`,
+      background: i % 2 === 0
+        ? 'rgba(255, 255, 255, 0.5)'
+        : 'rgba(200, 230, 120, 0.4)',
+    }));
+  }, []);
 
   return (
-    <div className="pet-land">
+    <div className={`pet-land ${growthClass}`}>
       {/* Sky with sun and clouds */}
       <div className="pet-land__sky">
         <div className="pet-land__sun" />
         <div className="pet-land__cloud pet-land__cloud--1" />
         <div className="pet-land__cloud pet-land__cloud--2" />
         <div className="pet-land__cloud pet-land__cloud--3" />
+        <div className="pet-land__cloud pet-land__cloud--distant" />
       </div>
 
+      {/* Time-of-day lighting overlay */}
+      <div
+        className="pet-land__lighting"
+        style={{ background: lightingColor }}
+      />
+
+      {/* Ambient floating particles */}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="pet-land__particle"
+          style={{
+            left: p.left,
+            top: p.top,
+            animationDuration: p.duration,
+            animationDelay: p.delay,
+            background: p.background,
+          }}
+        />
+      ))}
+
       {/* Floating island — wrapper handles the bob animation */}
-      <div className="pet-land__island-wrapper">
+      <div
+        className="pet-land__island-wrapper"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* 3D tilted island container */}
-        <div className="pet-land__island-container">
+        <div
+          className="pet-land__island-container"
+          style={{ '--island-rotation': `${rotationDeg}deg` } as React.CSSProperties}
+        >
           {/* Island surface (grass top) */}
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
+            <div className="pet-land__island-grid-overlay" />
           </div>
 
-          {/* Island cliff sides */}
-          <div className="pet-land__island-cliff" />
+          {/* Layered cliff sides (grass edge → dirt → deep rock) */}
+          <div className="pet-land__cliff-layer pet-land__cliff-layer--grass" />
+          <div className="pet-land__cliff-layer pet-land__cliff-layer--dirt" />
+          <div className="pet-land__cliff-layer pet-land__cliff-layer--rock" />
 
           {/* Waterfall cascading from cliff */}
           <div className="pet-land__waterfall" />
@@ -151,6 +246,22 @@ export const PetLand = () => {
             )}
           </div>
         </div>
+
+        {/* Rotation arrow buttons */}
+        <button
+          className="pet-land__rotate-btn pet-land__rotate-btn--left"
+          onClick={rotateLeft}
+          aria-label="Rotate island left"
+        >
+          &#9664;
+        </button>
+        <button
+          className="pet-land__rotate-btn pet-land__rotate-btn--right"
+          onClick={rotateRight}
+          aria-label="Rotate island right"
+        >
+          &#9654;
+        </button>
       </div>
 
       {/* Land completion celebration overlay */}

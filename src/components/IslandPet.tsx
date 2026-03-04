@@ -7,7 +7,8 @@
 
 import { memo, useEffect, useState } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
-import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
+import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex, getDepthScaleForRotation, getDepthZIndexForRotation } from '@/data/islandPositions';
+import type { RotationStep } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
@@ -17,6 +18,7 @@ interface IslandPetProps {
   isNew?: boolean;
   showTooltip: boolean;
   onToggleTooltip: () => void;
+  rotationStep?: RotationStep;
 }
 
 const SIZE_LABELS: Record<string, string> = {
@@ -33,7 +35,7 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip, rotationStep = 0 }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const { haptic } = useHaptics();
 
@@ -46,9 +48,9 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   if (imageError) return null;
 
   const growthScale = GROWTH_SCALES[cell.size];
-  const depthScale = getDepthScale(index);
+  const depthScale = getDepthScaleForRotation(index, rotationStep);
   const finalScale = growthScale * depthScale;
-  const zIndex = getDepthZIndex(index);
+  const zIndex = getDepthZIndexForRotation(index, rotationStep);
   const rarityColor = RARITY_COLORS[cell.rarity];
 
   const bobDelay = ((index % 7) * 0.4).toFixed(1);
