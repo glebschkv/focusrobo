@@ -115,7 +115,7 @@
 
 @keyframes pet-land-cloud-drift {
   from { transform: translateX(-90px); }
-  to { transform: translateX(calc(100vw + 90px)); }
+  to { transform: translateX(calc(100% + 180px)); }
 }
 
 /* ── Island wrapper — centers + handles floating animation ───── */
@@ -126,12 +126,12 @@
   max-width: 400px;
   margin: auto;
   /* Gentle floating bob — sells the "floating island" feel */
-  animation: pet-land-island-float 4s ease-in-out infinite;
+  animation: pet-land-island-float 4.5s ease-in-out infinite;
 }
 
 @keyframes pet-land-island-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+  50% { transform: translateY(-6px) translateX(1px) rotate(0.3deg); }
 }
 
 /* ── Island container — 3D tilt ──────────────────────────────── */
@@ -140,12 +140,10 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 0.72;
-  /* Paper Mario diorama tilt */
-  transform: perspective(600px) rotateX(14deg) rotateY(var(--island-rotation, 0deg));
+  /* Paper Mario diorama tilt — no rotateY, rotation is handled by position remapping */
+  transform: perspective(600px) rotateX(14deg);
   transform-style: preserve-3d;
   transform-origin: center 60%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
 }
 
 /* ── Island surface (grass top) ────────────────────────────────── */
@@ -201,20 +199,22 @@
 
 /* ── Island cliff layers (layered geological strata) ────────────── */
 
+/* All cliff layers share the same container bounds as the surface for alignment */
+
 /* Grass edge layer — thin green strip at cliff top */
 .pet-land__cliff-layer--grass {
   position: absolute;
   top: 2%;
   left: 2%;
   right: 2%;
-  bottom: 20%;
+  bottom: 30%;
   clip-path: polygon(
     0% 50%,       /* left point (surface) */
     50% 100%,     /* bottom point (surface) */
     100% 50%,     /* right point (surface) */
-    100% 55%,     /* right cliff edge */
-    50% 105%,     /* bottom cliff edge */
-    0% 55%        /* left cliff edge */
+    100% 57%,     /* right cliff edge */
+    50% 107%,     /* bottom cliff edge */
+    0% 57%        /* left cliff edge */
   );
   background: linear-gradient(180deg, #5E9729 0%, #4A7A1E 100%);
   z-index: 1;
@@ -224,16 +224,16 @@
 .pet-land__cliff-layer--dirt {
   position: absolute;
   top: 2%;
-  left: 1%;
-  right: 1%;
-  bottom: 14%;
+  left: 2%;
+  right: 2%;
+  bottom: 30%;
   clip-path: polygon(
-    0% 52%,       /* left start */
-    50% 102%,     /* bottom start */
-    100% 52%,     /* right start */
-    100% 62%,     /* right cliff edge */
-    50% 112%,     /* bottom cliff edge */
-    0% 62%        /* left cliff edge */
+    0% 55%,       /* left start (overlaps grass edge) */
+    50% 105%,     /* bottom start */
+    100% 55%,     /* right start */
+    100% 68%,     /* right cliff edge */
+    50% 118%,     /* bottom cliff edge */
+    0% 68%        /* left cliff edge */
   );
   background: linear-gradient(
     180deg,
@@ -268,16 +268,16 @@
 .pet-land__cliff-layer--rock {
   position: absolute;
   top: 2%;
-  left: 0%;
-  right: 0%;
-  bottom: 6%;
+  left: 2%;
+  right: 2%;
+  bottom: 30%;
   clip-path: polygon(
-    0% 58%,       /* left start */
-    50% 108%,     /* bottom start */
-    100% 58%,     /* right start */
-    100% 68%,     /* right cliff edge */
-    50% 118%,     /* bottom cliff edge */
-    0% 68%        /* left cliff edge */
+    0% 65%,       /* left start (overlaps dirt edge) */
+    50% 115%,     /* bottom start */
+    100% 65%,     /* right start */
+    100% 78%,     /* right cliff edge */
+    50% 128%,     /* bottom cliff edge */
+    0% 78%        /* left cliff edge */
   );
   background: linear-gradient(
     180deg,
@@ -295,10 +295,11 @@
 .pet-land__island-shadow {
   position: absolute;
   bottom: -4%;
-  left: 18%;
-  right: 18%;
-  height: 24px;
-  border-radius: 50%;
+  left: 22%;
+  right: 22%;
+  height: 28px;
+  /* Diamond-shaped shadow to match island shape */
+  clip-path: polygon(50% 10%, 95% 50%, 50% 90%, 5% 50%);
   background: radial-gradient(
     ellipse,
     rgba(0, 0, 0, 0.18) 0%,
@@ -309,7 +310,7 @@
   z-index: 0;
   filter: blur(8px);
   /* Shadow bobs opposite to island for parallax */
-  animation: pet-land-shadow-float 4s ease-in-out infinite;
+  animation: pet-land-shadow-float 4.5s ease-in-out infinite;
 }
 
 @keyframes pet-land-shadow-float {
@@ -325,10 +326,10 @@
   pointer-events: none;
 }
 
-/* Flowers — positioned within diamond bounds */
+/* Flowers — positioned within diamond visible area (centered in upper half) */
 .pet-land__deco--flower-1 {
-  top: 28%;
-  left: 32%;
+  top: 20%;
+  left: 42%;
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -337,8 +338,8 @@
 }
 
 .pet-land__deco--flower-2 {
-  top: 34%;
-  right: 30%;
+  top: 26%;
+  right: 38%;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -347,8 +348,8 @@
 }
 
 .pet-land__deco--flower-3 {
-  top: 50%;
-  left: 18%;
+  top: 38%;
+  left: 28%;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -356,10 +357,10 @@
   box-shadow: 0 0 2px rgba(206, 147, 216, 0.4);
 }
 
-/* Bushes */
+/* Bushes — near diamond edges but safely inside */
 .pet-land__deco--bush-1 {
-  top: 22%;
-  left: 38%;
+  top: 16%;
+  left: 44%;
   width: 14px;
   height: 10px;
   border-radius: 50% 50% 40% 40%;
@@ -368,8 +369,8 @@
 }
 
 .pet-land__deco--bush-2 {
-  top: 30%;
-  right: 28%;
+  top: 24%;
+  right: 36%;
   width: 11px;
   height: 8px;
   border-radius: 50% 50% 40% 40%;
@@ -378,8 +379,8 @@
 }
 
 .pet-land__deco--bush-3 {
-  top: 48%;
-  right: 22%;
+  top: 38%;
+  right: 30%;
   width: 9px;
   height: 7px;
   border-radius: 50% 50% 40% 40%;
@@ -387,10 +388,10 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Small trees — layered triangle canopy for pixel-art look */
+/* Small trees — positioned near top of diamond where there's room */
 .pet-land__deco--tree-1 {
-  top: 16%;
-  left: 42%;
+  top: 10%;
+  left: 46%;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
@@ -419,8 +420,8 @@
 }
 
 .pet-land__deco--tree-2 {
-  top: 20%;
-  right: 36%;
+  top: 14%;
+  right: 42%;
   width: 0;
   height: 0;
   border-left: 7px solid transparent;
@@ -448,10 +449,10 @@
   border-radius: 0 0 1px 1px;
 }
 
-/* Small rocks */
+/* Small rocks — positioned along diamond mid-section */
 .pet-land__deco--rock-1 {
-  top: 42%;
-  left: 14%;
+  top: 34%;
+  left: 26%;
   width: 10px;
   height: 6px;
   border-radius: 40% 50% 45% 35%;
@@ -460,8 +461,8 @@
 }
 
 .pet-land__deco--rock-2 {
-  top: 44%;
-  right: 18%;
+  top: 36%;
+  right: 28%;
   width: 8px;
   height: 5px;
   border-radius: 35% 45% 50% 40%;
@@ -471,10 +472,10 @@
 
 /* Dirt path — diagonal across diamond center */
 .pet-land__deco--path {
-  top: 48%;
+  top: 34%;
   left: 50%;
   transform: translateX(-50%) rotate(-45deg);
-  width: 25%;
+  width: 20%;
   height: 3px;
   border-radius: 2px;
   background: linear-gradient(
@@ -518,16 +519,19 @@
   position: absolute;
   bottom: 8%;
   z-index: 10;
-  width: 32px;
-  height: 32px;
+  /* 44×44px tap target meets Apple HIG minimum */
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border: none;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  line-height: 32px;
+  font-size: 14px;
+  line-height: 44px;
   text-align: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -552,10 +556,10 @@
 
 .pet-land__waterfall {
   position: absolute;
-  top: 52%;
-  left: 16%;
+  top: 48%;
+  left: 24%;
   width: 12px;
-  height: 36%;
+  height: 32%;
   z-index: 1;
   overflow: hidden;
   border-radius: 3px 3px 50% 50%;
@@ -612,6 +616,8 @@
   bottom: 30%;
   z-index: 5;
   pointer-events: none;
+  /* Slightly oversized diamond clip so edge pets aren't harshly cut */
+  clip-path: polygon(50% -5%, 105% 50%, 50% 105%, -5% 50%);
 }
 
 /* ── Empty slot markers ───────────────────────────────────────── */
@@ -619,16 +625,13 @@
 .island-slot-marker {
   position: absolute;
   width: 8px;
-  height: 4px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse,
-    rgba(100, 160, 40, 0.2) 0%,
-    rgba(100, 160, 40, 0.06) 60%,
-    transparent 100%
-  );
+  height: 8px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  /* Diamond-shaped marker to match isometric theme */
+  background: rgba(100, 160, 40, 0.3);
+  border: 1px solid rgba(100, 160, 40, 0.15);
   pointer-events: none;
+  transition: left 0.4s ease, top 0.4s ease;
 }
 
 /* ── Individual pet on island ──────────────────────────────────── */
@@ -637,24 +640,22 @@
   position: absolute;
   pointer-events: auto;
   /* Paper Mario effect: counter-rotate the pet to stand upright on tilted island.
-     The island tilts 14deg forward and rotates on Y, so we counter both.
+     The island tilts 14deg forward, so we counter that axis.
      Creates "flat cardboard cutout standing on a 3D surface" look. */
   transform:
     translate(-50%, -100%)
     perspective(600px) rotateX(-14deg)
-    rotateY(calc(-1 * var(--island-rotation, 0deg)))
     scale(var(--pet-scale, 1));
   transform-origin: center bottom;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, left 0.4s ease, top 0.4s ease;
 }
 
 .island-pet:active {
   transform:
     translate(-50%, -100%)
     perspective(600px) rotateX(-14deg)
-    rotateY(calc(-1 * var(--island-rotation, 0deg)))
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
@@ -664,8 +665,9 @@
   width: 36px;
   height: 36px;
   object-fit: contain;
-  image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  image-rendering: pixelated;
   pointer-events: none;
   -webkit-user-select: none;
   user-select: none;
@@ -696,7 +698,7 @@
 
 @keyframes island-pet-bob {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+  50% { transform: translateY(calc(-2px + var(--bob-offset, 0px))); }
 }
 
 /* ── Pet ground shadow ─────────────────────────────────────────── */
@@ -705,7 +707,7 @@
   position: absolute;
   bottom: -2px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--pet-scale, 1));
   width: 20px;
   height: 6px;
   border-radius: 50%;
@@ -721,15 +723,15 @@
 
 @keyframes island-pet-pop {
   0% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) rotateY(calc(-1 * var(--island-rotation, 0deg))) scale(0) rotate(-8deg);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(0) rotate(-8deg);
     opacity: 0;
   }
   60% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) rotateY(calc(-1 * var(--island-rotation, 0deg))) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) rotateY(calc(-1 * var(--island-rotation, 0deg))) scale(var(--pet-scale, 1)) rotate(0);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(var(--pet-scale, 1)) rotate(0);
     opacity: 1;
   }
 }
@@ -885,6 +887,30 @@
   transition: width 0.5s ease;
 }
 
+/* ── Tooltip horizontal shift for edge pets ─────────────────── */
+
+.island-pet__tooltip--shift-right {
+  left: 0;
+  transform: translateX(0);
+}
+
+.island-pet__tooltip--shift-right::after {
+  left: 16px;
+  transform: none;
+}
+
+.island-pet__tooltip--shift-left {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+.island-pet__tooltip--shift-left::after {
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
 /* ── Tooltip flipped below pet (for pets near top of island) ──── */
 
 .island-pet__tooltip--below {
@@ -985,7 +1011,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 6;
+  z-index: 3;
   mix-blend-mode: soft-light;
   transition: background 2s ease;
 }
@@ -1013,28 +1039,28 @@
 
 /* ── Island growth evolution stages ───────────────────────────── */
 
-/* Sparse stage (0-25 pets): default, slightly muted */
+/* Sparse stage (0-25 pets): noticeably muted and darker */
 .pet-land--sparse .pet-land__island-surface {
-  filter: saturate(0.85);
+  filter: saturate(0.7) brightness(0.93);
 }
 
-/* Growing stage (25-50): normal colors */
+/* Growing stage (25-50): slightly improved */
 .pet-land--growing .pet-land__island-surface {
-  filter: saturate(1.0);
+  filter: saturate(0.95);
 }
 
-/* Lush stage (50-75): vibrant */
+/* Lush stage (50-75): visibly vibrant */
 .pet-land--lush .pet-land__island-surface {
-  filter: saturate(1.1) brightness(1.02);
-}
-
-/* Paradise stage (75-100): full bloom with glow */
-.pet-land--paradise .pet-land__island-surface {
   filter: saturate(1.15) brightness(1.05);
 }
 
+/* Paradise stage (75-100): obviously lush with strong glow */
+.pet-land--paradise .pet-land__island-surface {
+  filter: saturate(1.3) brightness(1.1);
+}
+
 .pet-land--paradise .pet-land__island-wrapper {
-  filter: drop-shadow(0 0 12px rgba(144, 212, 80, 0.2));
+  filter: drop-shadow(0 0 18px rgba(144, 212, 80, 0.35));
 }
 
 /* ── Reduced motion ──────────────────────────────────────────── */

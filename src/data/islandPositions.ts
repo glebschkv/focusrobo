@@ -5,8 +5,8 @@
  * Positions form an isometric diamond pattern with seeded jitter for organic placement.
  * All values are percentages relative to the pets-layer container.
  *
- * Positions are clamped to an elliptical boundary so no pet falls off the
- * visible grass surface.
+ * Positions are clamped to a diamond (L1/Manhattan) boundary so no pet falls
+ * off the visible grass surface.
  */
 
 const GRID_SIZE = 10;
@@ -93,13 +93,13 @@ export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
 /**
  * Get depth-based scale for a cell index.
- * Back of island (low isoDepth) = 0.7, front (high isoDepth) = 1.0.
+ * Back of island (low isoDepth) = 0.55, front (high isoDepth) = 1.0.
  */
 export function getDepthScale(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
   const isoDepth = (row + col) / (2 * (GRID_SIZE - 1));
-  return 0.7 + isoDepth * 0.3;
+  return 0.55 + isoDepth * 0.45;
 }
 
 /**
@@ -131,7 +131,7 @@ export function getDepthScaleForRotation(index: number, rotation: RotationStep):
     case 3: depth = (row + (GRID_SIZE - 1 - col)) / (2 * (GRID_SIZE - 1)); break;
   }
 
-  return 0.7 + depth * 0.3;
+  return 0.55 + depth * 0.45;
 }
 
 /**
@@ -147,4 +147,28 @@ export function getDepthZIndexForRotation(index: number, rotation: RotationStep)
     case 2: return 10 + (GRID_SIZE - 1 - row) + (GRID_SIZE - 1 - col);
     case 3: return 10 + row + (GRID_SIZE - 1 - col);
   }
+}
+
+/**
+ * Get the visual position for a cell at a given rotation step.
+ * Instead of CSS rotateY (which makes the flat island invisible at 90/270°),
+ * we remap the grid coordinates so "rotation" swaps which cells appear where.
+ */
+export function getPositionForRotation(index: number, rotation: RotationStep): IslandPosition {
+  if (rotation === 0) return ISLAND_POSITIONS[index];
+
+  const row = Math.floor(index / GRID_SIZE);
+  const col = index % GRID_SIZE;
+
+  // Remap row/col based on rotation step
+  let newRow: number, newCol: number;
+  switch (rotation) {
+    case 1: newRow = GRID_SIZE - 1 - col; newCol = row; break;
+    case 2: newRow = GRID_SIZE - 1 - row; newCol = GRID_SIZE - 1 - col; break;
+    case 3: newRow = col; newCol = GRID_SIZE - 1 - row; break;
+    default: newRow = row; newCol = col;
+  }
+
+  const remappedIndex = newRow * GRID_SIZE + newCol;
+  return ISLAND_POSITIONS[remappedIndex] ?? ISLAND_POSITIONS[index];
 }

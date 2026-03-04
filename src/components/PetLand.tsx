@@ -9,8 +9,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
-import { ISLAND_POSITIONS, getDepthZIndexForRotation } from '@/data/islandPositions';
+import { ISLAND_POSITIONS, getDepthZIndexForRotation, getPositionForRotation } from '@/data/islandPositions';
 import type { RotationStep } from '@/data/islandPositions';
+import { useHaptics } from '@/hooks/useHaptics';
 
 /** Get time-of-day lighting color */
 function getTimeOfDayColor(): string {
@@ -51,30 +52,37 @@ export const PetLand = () => {
   const landJustCompleted = useLandStore((s) => s.landJustCompleted);
   const clearLastPlaced = useLandStore((s) => s.clearLastPlaced);
   const clearLandCompleted = useLandStore((s) => s.clearLandCompleted);
+  const { haptic } = useHaptics();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  // Island rotation — discrete 90-degree steps
+  // Island rotation — discrete 90-degree steps (position-swap, not CSS rotateY)
   const [rotationStep, setRotationStep] = useState<RotationStep>(0);
-  const rotationDeg = rotationStep * 90;
 
   const rotateLeft = useCallback(() => {
     setRotationStep((prev) => ((prev + 3) % 4) as RotationStep);
-  }, []);
+    haptic('light');
+  }, [haptic]);
 
   const rotateRight = useCallback(() => {
     setRotationStep((prev) => ((prev + 1) % 4) as RotationStep);
-  }, []);
+    haptic('light');
+  }, [haptic]);
 
-  // Swipe gesture detection for rotation
+  // Swipe gesture detection for rotation (60px threshold, must be horizontally dominant)
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   }, []);
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || touchStartY.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
     touchStartX.current = null;
-    if (Math.abs(dx) > 40) {
+    touchStartY.current = null;
+    // Only trigger if horizontal swipe is dominant and exceeds threshold
+    if (Math.abs(dx) > 60 && Math.abs(dy) < Math.abs(dx) * 0.5) {
       if (dx > 0) rotateRight();
       else rotateLeft();
     }
@@ -123,7 +131,7 @@ export const PetLand = () => {
         );
       }
       // Render subtle empty slot marker
-      const pos = ISLAND_POSITIONS[index];
+      const pos = getPositionForRotation(index, rotationStep);
       if (!pos) return null;
       return (
         <div
@@ -173,32 +181,29 @@ export const PetLand = () => {
         style={{ background: lightingColor }}
       />
 
-      {/* Ambient floating particles */}
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="pet-land__particle"
-          style={{
-            left: p.left,
-            top: p.top,
-            animationDuration: p.duration,
-            animationDelay: p.delay,
-            background: p.background,
-          }}
-        />
-      ))}
-
       {/* Floating island — wrapper handles the bob animation */}
       <div
         className="pet-land__island-wrapper"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Ambient floating particles — constrained to island area */}
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="pet-land__particle"
+            style={{
+              left: p.left,
+              top: p.top,
+              animationDuration: p.duration,
+              animationDelay: p.delay,
+              background: p.background,
+            }}
+          />
+        ))}
+
         {/* 3D tilted island container */}
-        <div
-          className="pet-land__island-container"
-          style={{ '--island-rotation': `${rotationDeg}deg` } as React.CSSProperties}
-        >
+        <div className="pet-land__island-container">
           {/* Island surface (grass top) */}
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
