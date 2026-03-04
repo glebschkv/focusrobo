@@ -11,14 +11,15 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
-  /* Richer sky with warm horizon */
+  /* Rich sky gradient with warm horizon */
   background: linear-gradient(
     180deg,
-    #6BB8E0 0%,
-    #87CEEB 20%,
-    #A8DCF4 45%,
-    #C9E9F9 65%,
-    #E2F2FC 80%,
+    #5AAED6 0%,
+    #6BB8E0 15%,
+    #87CEEB 30%,
+    #A8DCF4 50%,
+    #C9E9F9 68%,
+    #E2F2FC 82%,
     #F0F7E4 100%
   );
   /* Account for safe areas so island centers in visible space */
@@ -40,10 +41,10 @@
   position: absolute;
   top: 8%;
   right: 15%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFFDE7 15%, #FFF8E1 30%, #FFE082 55%, #FFD54F 70%, transparent 80%);
+  background: radial-gradient(circle, #FFFDE7 12%, #FFF8E1 28%, #FFE082 52%, #FFD54F 68%, transparent 78%);
   box-shadow:
     0 0 30px 12px rgba(255, 213, 79, 0.2),
     0 0 60px 20px rgba(255, 213, 79, 0.08);
@@ -115,18 +116,25 @@
 
 @keyframes pet-land-cloud-drift {
   from { transform: translateX(-90px); }
-  to { transform: translateX(calc(100% + 180px)); }
+  to { transform: translateX(calc(100vw + 100px)); }
 }
 
 /* ── Island wrapper — centers + handles floating animation ───── */
 
 .pet-land__island-wrapper {
   position: relative;
-  width: 88%;
-  max-width: 380px;
+  width: 92%;
+  max-width: 400px;
   margin: auto;
   /* Gentle floating bob — sells the "floating island" feel */
   animation: pet-land-island-float 4.5s ease-in-out infinite;
+  cursor: grab;
+  /* Allow vertical scroll but capture horizontal for rotation */
+  touch-action: pan-y;
+}
+
+.pet-land__island-wrapper:active {
+  cursor: grabbing;
 }
 
 @keyframes pet-land-island-float {
@@ -134,178 +142,173 @@
   50% { transform: translateY(-6px) translateX(1px) rotate(0.3deg); }
 }
 
-/* ── Island container — 3D tilt ──────────────────────────────── */
+/* ── Island container — 3D tilt + touch rotation ────────────── */
 
 .pet-land__island-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 0.82;
-  /* Paper Mario diorama tilt — no rotateY, rotation is handled by position remapping */
-  transform: perspective(600px) rotateX(14deg);
+  aspect-ratio: 1 / 0.6;
+  /* Paper Mario diorama tilt + continuous Y rotation from touch drag */
+  transform: perspective(800px) rotateX(18deg) rotateY(var(--island-rotate-y, 0deg));
   transform-style: preserve-3d;
-  transform-origin: center 60%;
+  transform-origin: center 55%;
 }
 
-/* ── Island surface (grass top) ────────────────────────────────── */
+/* ── Island surface (grass top) — elliptical ───────────────────── */
 
 .pet-land__island-surface {
   position: absolute;
-  top: 2%;
-  left: 2%;
-  right: 2%;
-  bottom: 30%;
-  /* Diamond shape — isometric rhombus */
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  top: 5%;
+  left: 3%;
+  right: 3%;
+  bottom: 35%;
+  /* Soft ellipse — organic island shape */
+  clip-path: ellipse(49% 46% at 50% 50%);
   background:
     /* Sunlight highlight top-right quadrant */
-    radial-gradient(ellipse at 65% 30%, rgba(190, 240, 90, 0.55) 0%, transparent 35%),
-    /* Mid-tone variation center */
-    radial-gradient(ellipse at 45% 55%, rgba(120, 195, 60, 0.5) 0%, transparent 40%),
-    /* Shadow near bottom point */
-    radial-gradient(ellipse at 50% 88%, rgba(70, 120, 35, 0.55) 0%, transparent 30%),
-    /* Shadow left point */
-    radial-gradient(ellipse at 10% 50%, rgba(75, 130, 38, 0.4) 0%, transparent 25%),
-    /* Shadow right point */
-    radial-gradient(ellipse at 90% 50%, rgba(75, 130, 38, 0.3) 0%, transparent 25%),
-    /* Base grass */
-    linear-gradient(180deg, #90D450 0%, #7CB342 30%, #6DA832 65%, #5E9729 100%);
+    radial-gradient(ellipse at 62% 28%, rgba(200, 245, 100, 0.5) 0%, transparent 30%),
+    /* Mid-tone center patch */
+    radial-gradient(ellipse at 45% 55%, rgba(130, 205, 65, 0.45) 0%, transparent 35%),
+    /* Shadow near bottom */
+    radial-gradient(ellipse at 50% 85%, rgba(60, 110, 30, 0.5) 0%, transparent 28%),
+    /* Edge shadows for roundness */
+    radial-gradient(ellipse at 8% 50%, rgba(65, 120, 32, 0.4) 0%, transparent 22%),
+    radial-gradient(ellipse at 92% 50%, rgba(65, 120, 32, 0.35) 0%, transparent 22%),
+    /* Base grass gradient — rich greens */
+    linear-gradient(170deg, #98DC54 0%, #82C941 25%, #6FB836 50%, #5EA62B 75%, #4E9420 100%);
   z-index: 2;
 }
 
-/* Grass detail texture — scattered light/dark patches + flowers */
+/* Grass detail texture — light/dark clumps + tiny flower accents */
 .pet-land__island-grass-detail {
   position: absolute;
   inset: 0;
   clip-path: inherit;
   background:
     /* Light grass clumps */
-    radial-gradient(circle at 18% 22%, rgba(170, 230, 80, 0.6) 0%, transparent 7%),
-    radial-gradient(circle at 52% 18%, rgba(165, 225, 75, 0.5) 0%, transparent 6%),
-    radial-gradient(circle at 80% 30%, rgba(170, 230, 80, 0.45) 0%, transparent 8%),
-    radial-gradient(circle at 38% 68%, rgba(165, 225, 75, 0.4) 0%, transparent 7%),
+    radial-gradient(circle at 20% 24%, rgba(180, 240, 90, 0.55) 0%, transparent 6%),
+    radial-gradient(circle at 54% 16%, rgba(175, 235, 80, 0.45) 0%, transparent 5%),
+    radial-gradient(circle at 78% 32%, rgba(180, 240, 90, 0.4) 0%, transparent 7%),
+    radial-gradient(circle at 36% 65%, rgba(175, 235, 80, 0.35) 0%, transparent 6%),
+    radial-gradient(circle at 65% 50%, rgba(185, 245, 95, 0.3) 0%, transparent 5%),
     /* Dark grass shadows */
-    radial-gradient(circle at 33% 50%, rgba(70, 120, 35, 0.35) 0%, transparent 9%),
-    radial-gradient(circle at 68% 60%, rgba(75, 130, 40, 0.3) 0%, transparent 7%),
-    radial-gradient(circle at 12% 48%, rgba(70, 120, 35, 0.3) 0%, transparent 6%),
-    radial-gradient(circle at 85% 55%, rgba(70, 120, 35, 0.25) 0%, transparent 6%),
-    /* Tiny flower dots */
-    radial-gradient(circle at 28% 38%, rgba(255, 220, 100, 0.4) 0%, transparent 2.2%),
-    radial-gradient(circle at 74% 42%, rgba(255, 183, 197, 0.35) 0%, transparent 2.2%),
-    radial-gradient(circle at 45% 28%, rgba(200, 230, 255, 0.3) 0%, transparent 2%),
-    radial-gradient(circle at 60% 72%, rgba(255, 200, 120, 0.3) 0%, transparent 2%),
-    radial-gradient(circle at 18% 65%, rgba(220, 180, 255, 0.25) 0%, transparent 2%);
-  opacity: 0.85;
+    radial-gradient(circle at 30% 48%, rgba(60, 110, 30, 0.3) 0%, transparent 8%),
+    radial-gradient(circle at 70% 58%, rgba(65, 120, 35, 0.25) 0%, transparent 6%),
+    radial-gradient(circle at 15% 55%, rgba(60, 110, 30, 0.25) 0%, transparent 5%),
+    /* Tiny flower dots — cheerful accents */
+    radial-gradient(circle at 26% 36%, rgba(255, 220, 100, 0.45) 0%, transparent 2%),
+    radial-gradient(circle at 72% 40%, rgba(255, 180, 200, 0.4) 0%, transparent 2%),
+    radial-gradient(circle at 43% 25%, rgba(200, 230, 255, 0.35) 0%, transparent 1.8%),
+    radial-gradient(circle at 58% 70%, rgba(255, 200, 120, 0.35) 0%, transparent 1.8%),
+    radial-gradient(circle at 16% 62%, rgba(220, 180, 255, 0.3) 0%, transparent 1.8%),
+    radial-gradient(circle at 82% 45%, rgba(255, 160, 180, 0.25) 0%, transparent 1.5%);
+  opacity: 0.9;
 }
 
-/* ── Island cliff layers (layered geological strata) ────────────── */
-
-/* All cliff layers share the same container bounds as the surface for alignment */
-
-/* Grass edge layer — thin green strip at cliff top */
-.pet-land__cliff-layer--grass {
+/* Subtle wind shimmer across grass */
+.pet-land__island-surface::after {
+  content: '';
   position: absolute;
-  top: 2%;
-  left: 2%;
-  right: 2%;
-  bottom: 30%;
-  clip-path: polygon(
-    0% 50%,       /* left point (surface) */
-    50% 100%,     /* bottom point (surface) */
-    100% 50%,     /* right point (surface) */
-    100% 60%,     /* right cliff edge */
-    50% 110%,     /* bottom cliff edge */
-    0% 60%        /* left cliff edge */
-  );
-  background: linear-gradient(180deg, #5E9729 0%, #4A7A1E 100%);
-  z-index: 1;
-}
-
-/* Dirt/earth layer — brown middle band */
-.pet-land__cliff-layer--dirt {
-  position: absolute;
-  top: 2%;
-  left: 2%;
-  right: 2%;
-  bottom: 30%;
-  clip-path: polygon(
-    0% 55%,       /* left start (overlaps grass edge) */
-    50% 105%,     /* bottom start */
-    100% 55%,     /* right start */
-    100% 75%,     /* right cliff edge */
-    50% 125%,     /* bottom cliff edge */
-    0% 75%        /* left cliff edge */
-  );
+  inset: 0;
+  clip-path: inherit;
   background: linear-gradient(
-    180deg,
-    #8D6E4C 0%,
-    #7D5D3A 30%,
-    #6D4C2E 60%,
-    #5C3D22 100%
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.04) 55%,
+    transparent 70%
   );
-  z-index: 0;
+  background-size: 250% 100%;
+  animation: pet-land-grass-shimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pet-land-grass-shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -50% 0; }
+}
+
+/* ── Unified cliff side — single element with layered gradients ── */
+
+.pet-land__cliff {
+  position: absolute;
+  top: 5%;
+  left: 3%;
+  right: 3%;
+  bottom: 35%;
+  /* Slightly larger ellipse extends below the grass surface to form the cliff */
+  clip-path: ellipse(48% 80% at 50% 62%);
+  background:
+    /* Green moss transition at top */
+    linear-gradient(
+      180deg,
+      #4A8A1C 0%,
+      #3E7515 6%,
+      /* Rich brown earth */
+      #8D6E4C 8%,
+      #7A5C3B 18%,
+      #6B4D2F 32%,
+      /* Strata line */
+      #5E4228 33%,
+      #6B4D2F 34%,
+      /* Deeper earth */
+      #5C3D22 45%,
+      #4A3118 58%,
+      /* Dark rock base */
+      #3A2510 70%,
+      #2E1A0A 82%,
+      #1E0F05 100%
+    );
+  z-index: 1;
   overflow: hidden;
 }
 
-/* Dirt texture — strata lines and rock patches */
-.pet-land__cliff-layer--dirt::before {
+/* Strata texture lines on cliff */
+.pet-land__cliff::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 60%, rgba(155, 135, 105, 0.45) 0%, transparent 20%),
-    radial-gradient(ellipse at 75% 55%, rgba(145, 125, 90, 0.4) 0%, transparent 18%),
-    radial-gradient(ellipse at 50% 70%, rgba(135, 115, 85, 0.35) 0%, transparent 22%),
+    /* Horizontal strata bands */
     repeating-linear-gradient(
       180deg,
       transparent 0px,
-      transparent 10px,
-      rgba(0, 0, 0, 0.06) 10px,
-      rgba(0, 0, 0, 0.06) 12px
-    );
+      transparent 8px,
+      rgba(0, 0, 0, 0.05) 8px,
+      rgba(0, 0, 0, 0.05) 10px
+    ),
+    /* Rock patches */
+    radial-gradient(ellipse at 25% 55%, rgba(140, 120, 90, 0.35) 0%, transparent 15%),
+    radial-gradient(ellipse at 70% 50%, rgba(130, 110, 80, 0.3) 0%, transparent 13%),
+    radial-gradient(ellipse at 50% 65%, rgba(120, 100, 75, 0.25) 0%, transparent 18%);
 }
 
-/* Deep rock layer — darkest bottom band */
-.pet-land__cliff-layer--rock {
+/* Cliff edge shadow for depth */
+.pet-land__cliff::after {
+  content: '';
   position: absolute;
-  top: 2%;
-  left: 2%;
-  right: 2%;
-  bottom: 30%;
-  clip-path: polygon(
-    0% 65%,       /* left start (overlaps dirt edge) */
-    50% 115%,     /* bottom start */
-    100% 65%,     /* right start */
-    100% 88%,     /* right cliff edge */
-    50% 138%,     /* bottom cliff edge */
-    0% 88%        /* left cliff edge */
-  );
-  background: linear-gradient(
-    180deg,
-    #4A3118 0%,
-    #3A2510 40%,
-    #2E1A0A 70%,
-    #1E0F05 100%
-  );
-  z-index: -1;
-  filter: drop-shadow(0 4px 8px rgba(30, 18, 6, 0.5));
+  inset: 0;
+  clip-path: inherit;
+  box-shadow: inset 0 -8px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
 /* ── Floating shadow ───────────────────────────────────────────── */
 
 .pet-land__island-shadow {
   position: absolute;
-  bottom: -4%;
-  left: 22%;
-  right: 22%;
-  height: 28px;
-  /* Diamond-shaped shadow to match island shape */
-  clip-path: polygon(50% 10%, 95% 50%, 50% 90%, 5% 50%);
+  bottom: -8%;
+  left: 18%;
+  right: 18%;
+  height: 24px;
+  /* Elliptical shadow matches island shape */
+  border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgba(0, 0, 0, 0.18) 0%,
-    rgba(0, 0, 0, 0.1) 30%,
-    rgba(0, 0, 0, 0.04) 55%,
-    transparent 70%
+    rgba(0, 0, 0, 0.16) 0%,
+    rgba(0, 0, 0, 0.09) 35%,
+    rgba(0, 0, 0, 0.03) 60%,
+    transparent 75%
   );
   z-index: 0;
   filter: blur(8px);
@@ -315,164 +318,20 @@
 
 @keyframes pet-land-shadow-float {
   0%, 100% { transform: scale(1); opacity: 1; filter: blur(6px); }
-  50% { transform: scale(0.78) translateY(3px); opacity: 0.65; filter: blur(10px); }
-}
-
-/* ── Decorative elements — pixel art sprites ──────────────────── */
-
-.pet-land__deco {
-  position: absolute;
-  z-index: 3;
-  pointer-events: none;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
-}
-
-/* Trees — near top of diamond */
-.pet-land__deco--tree-1 { top: 8%; left: 44%; width: 28px; height: 28px; }
-.pet-land__deco--tree-2 { top: 12%; right: 40%; width: 26px; height: 26px; }
-
-/* Flowers — scattered in upper-mid diamond area */
-.pet-land__deco--flower-1 { top: 22%; left: 38%; width: 16px; height: 16px; }
-.pet-land__deco--flower-2 { top: 18%; right: 36%; width: 14px; height: 14px; }
-.pet-land__deco--flower-3 { top: 36%; left: 28%; width: 14px; height: 14px; }
-
-/* Bushes — near diamond edges */
-.pet-land__deco--bush-1 { top: 14%; left: 52%; width: 20px; height: 20px; }
-.pet-land__deco--bush-2 { top: 26%; right: 34%; width: 18px; height: 18px; }
-.pet-land__deco--bush-3 { top: 32%; right: 28%; width: 16px; height: 16px; }
-
-/* Rocks — diamond mid-section */
-.pet-land__deco--rock-1 { top: 34%; left: 24%; width: 18px; height: 18px; }
-.pet-land__deco--rock-2 { top: 38%; right: 26%; width: 14px; height: 14px; }
-
-/* Fence — along diamond edge */
-.pet-land__deco--fence { top: 28%; left: 18%; width: 28px; height: 18px; }
-
-/* Pond — center-right area */
-.pet-land__deco--pond { top: 30%; right: 38%; width: 22px; height: 22px; }
-
-/* Grass tufts — scattered small details */
-.pet-land__deco--grass-1 { top: 16%; left: 36%; width: 10px; height: 10px; }
-.pet-land__deco--grass-2 { top: 40%; left: 46%; width: 10px; height: 10px; }
-.pet-land__deco--grass-3 { top: 24%; right: 30%; width: 10px; height: 10px; }
-
-/* Dirt path — diagonal across diamond center */
-.pet-land__deco--path {
-  top: 34%;
-  left: 50%;
-  transform: translateX(-50%) rotate(-45deg);
-  width: 20%;
-  height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(160, 130, 90, 0.2) 20%,
-    rgba(160, 130, 90, 0.25) 50%,
-    rgba(160, 130, 90, 0.2) 80%,
-    transparent 100%
-  );
-}
-
-/* Responsive decoration sizing */
-@media (min-width: 390px) {
-  .pet-land__deco--tree-1 { width: 32px; height: 32px; }
-  .pet-land__deco--tree-2 { width: 30px; height: 30px; }
-  .pet-land__deco--bush-1 { width: 22px; height: 22px; }
-  .pet-land__deco--bush-2 { width: 20px; height: 20px; }
-  .pet-land__deco--bush-3 { width: 18px; height: 18px; }
-  .pet-land__deco--rock-1 { width: 20px; height: 20px; }
-  .pet-land__deco--fence { width: 32px; height: 20px; }
-  .pet-land__deco--pond { width: 24px; height: 24px; }
-}
-
-@media (min-width: 420px) {
-  .pet-land__deco--tree-1 { width: 36px; height: 36px; }
-  .pet-land__deco--tree-2 { width: 34px; height: 34px; }
-  .pet-land__deco--bush-1 { width: 26px; height: 26px; }
-  .pet-land__deco--bush-2 { width: 22px; height: 22px; }
-  .pet-land__deco--bush-3 { width: 20px; height: 20px; }
-  .pet-land__deco--rock-1 { width: 22px; height: 22px; }
-  .pet-land__deco--fence { width: 36px; height: 22px; }
-  .pet-land__deco--pond { width: 26px; height: 26px; }
-}
-
-/* ── Isometric tile grid overlay on grass surface ─────────────── */
-
-.pet-land__island-grid-overlay {
-  position: absolute;
-  inset: 0;
-  clip-path: inherit;
-  background:
-    repeating-linear-gradient(
-      60deg,
-      transparent,
-      transparent 16px,
-      rgba(80, 140, 30, 0.12) 16px,
-      rgba(80, 140, 30, 0.12) 17px
-    ),
-    repeating-linear-gradient(
-      -60deg,
-      transparent,
-      transparent 16px,
-      rgba(80, 140, 30, 0.12) 16px,
-      rgba(80, 140, 30, 0.12) 17px
-    );
-  pointer-events: none;
-  opacity: 0.45;
-}
-
-/* ── Rotation buttons ─────────────────────────────────────────── */
-
-.pet-land__rotate-btn {
-  position: absolute;
-  bottom: 8%;
-  z-index: 10;
-  /* 44×44px tap target meets Apple HIG minimum */
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  line-height: 44px;
-  text-align: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.pet-land__rotate-btn:active {
-  background: rgba(0, 0, 0, 0.5);
-  transform: scale(0.9);
-}
-
-.pet-land__rotate-btn--left {
-  left: 4%;
-}
-
-.pet-land__rotate-btn--right {
-  right: 4%;
+  50% { transform: scale(0.78) translateY(3px); opacity: 0.6; filter: blur(10px); }
 }
 
 /* ── Waterfall (hanging from cliff edge) ─────────────────────── */
 
 .pet-land__waterfall {
   position: absolute;
-  top: 48%;
-  left: 24%;
-  width: 12px;
-  height: 32%;
+  top: 52%;
+  left: 22%;
+  width: 14px;
+  height: 30%;
   z-index: 4;
   overflow: hidden;
-  border-radius: 3px 3px 50% 50%;
+  border-radius: 4px 4px 50% 50%;
   pointer-events: none;
 }
 
@@ -484,11 +343,11 @@
     /* Animated water stripes */
     repeating-linear-gradient(
       180deg,
-      rgba(150, 210, 240, 0.6) 0px,
-      rgba(180, 225, 250, 0.7) 4px,
-      rgba(130, 200, 235, 0.5) 8px,
-      rgba(110, 190, 230, 0.4) 12px,
-      rgba(150, 210, 240, 0.6) 16px
+      rgba(150, 210, 240, 0.55) 0px,
+      rgba(180, 225, 250, 0.65) 4px,
+      rgba(130, 200, 235, 0.45) 8px,
+      rgba(110, 190, 230, 0.35) 12px,
+      rgba(150, 210, 240, 0.55) 16px
     );
   background-size: 100% 16px;
   animation: pet-land-waterfall-flow 1.2s linear infinite;
@@ -498,11 +357,11 @@
   content: '';
   position: absolute;
   bottom: -6px;
-  left: -8px;
-  right: -8px;
-  height: 14px;
+  left: -10px;
+  right: -10px;
+  height: 16px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(130, 200, 235, 0.4) 0%, rgba(150, 220, 245, 0.2) 40%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(130, 200, 235, 0.35) 0%, rgba(150, 220, 245, 0.15) 40%, transparent 70%);
   animation: pet-land-waterfall-splash 1.2s ease-in-out infinite alternate;
 }
 
@@ -512,34 +371,34 @@
 }
 
 @keyframes pet-land-waterfall-splash {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  100% { transform: scale(1.2); opacity: 0.8; }
+  0% { transform: scale(0.8); opacity: 0.4; }
+  100% { transform: scale(1.3); opacity: 0.7; }
 }
 
 /* ── Pets layer ────────────────────────────────────────────────── */
 
 .pet-land__pets-layer {
   position: absolute;
-  top: 2%;
-  left: 2%;
-  right: 2%;
-  bottom: 30%;
+  top: 5%;
+  left: 3%;
+  right: 3%;
+  bottom: 35%;
   z-index: 5;
   pointer-events: none;
-  /* Slightly oversized diamond clip so edge pets aren't harshly cut */
-  clip-path: polygon(50% -5%, 105% 50%, 50% 105%, -5% 50%);
+  /* Slightly oversized ellipse clip so edge pets aren't harshly cut */
+  clip-path: ellipse(52% 50% at 50% 50%);
 }
 
 /* ── Empty slot markers ───────────────────────────────────────── */
 
 .island-slot-marker {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   transform: translate(-50%, -50%) rotate(45deg);
-  /* Diamond-shaped marker to match isometric theme */
-  background: rgba(100, 160, 40, 0.3);
-  border: 1px solid rgba(100, 160, 40, 0.15);
+  background: rgba(100, 160, 40, 0.2);
+  border: 1px solid rgba(100, 160, 40, 0.1);
+  border-radius: 1px;
   pointer-events: none;
   transition: left 0.4s ease, top 0.4s ease;
 }
@@ -550,22 +409,24 @@
   position: absolute;
   pointer-events: auto;
   /* Paper Mario effect: counter-rotate the pet to stand upright on tilted island.
-     The island tilts 14deg forward, so we counter that axis.
-     Creates "flat cardboard cutout standing on a 3D surface" look. */
+     The island tilts 18deg forward, so we counter that on X axis.
+     Also counter-rotate Y to face camera (billboard effect). */
   transform:
     translate(-50%, -100%)
-    perspective(600px) rotateX(-14deg)
+    perspective(800px) rotateX(-18deg)
+    rotateY(calc(-1 * var(--island-rotate-y, 0deg)))
     scale(var(--pet-scale, 1));
   transform-origin: center bottom;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.3s ease, left 0.4s ease, top 0.4s ease;
+  transition: transform 0.15s ease, left 0.4s ease, top 0.4s ease;
 }
 
 .island-pet:active {
   transform:
     translate(-50%, -100%)
-    perspective(600px) rotateX(-14deg)
+    perspective(800px) rotateX(-18deg)
+    rotateY(calc(-1 * var(--island-rotate-y, 0deg)))
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
@@ -586,7 +447,7 @@
   animation-delay: var(--bob-delay, 0s);
 }
 
-/* Responsive pet sizing via viewport media queries */
+/* Responsive pet sizing */
 @media (min-width: 375px) {
   .island-pet__sprite {
     width: 38px;
@@ -647,15 +508,15 @@
 
 @keyframes island-pet-pop {
   0% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(0) rotate(-8deg);
+    transform: translate(-50%, -100%) perspective(800px) rotateX(-18deg) rotateY(calc(-1 * var(--island-rotate-y, 0deg))) scale(0) rotate(-8deg);
     opacity: 0;
   }
   60% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
+    transform: translate(-50%, -100%) perspective(800px) rotateX(-18deg) rotateY(calc(-1 * var(--island-rotate-y, 0deg))) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(var(--pet-scale, 1)) rotate(0);
+    transform: translate(-50%, -100%) perspective(800px) rotateX(-18deg) rotateY(calc(-1 * var(--island-rotate-y, 0deg))) scale(var(--pet-scale, 1)) rotate(0);
     opacity: 1;
   }
 }
@@ -965,9 +826,9 @@
 
 /* ── Island growth evolution stages ───────────────────────────── */
 
-/* Sparse stage (0-25 pets): noticeably muted and darker */
+/* Sparse stage (0-25 pets): noticeably muted */
 .pet-land--sparse .pet-land__island-surface {
-  filter: saturate(0.8) brightness(0.93);
+  filter: saturate(0.82) brightness(0.94);
 }
 
 /* Growing stage (25-50): slightly improved */
@@ -1003,6 +864,10 @@
 
   .pet-land__island-container {
     transition: none;
+  }
+
+  .pet-land__island-surface::after {
+    animation: none;
   }
 
   .island-pet {
