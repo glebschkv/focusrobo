@@ -161,54 +161,70 @@
   /* Diamond shape within the grass area */
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   background:
-    /* Sunlight highlight */
-    radial-gradient(ellipse at 55% 35%, rgba(180, 235, 80, 0.4) 0%, transparent 40%),
-    /* Shadow near bottom */
-    radial-gradient(ellipse at 50% 80%, rgba(50, 100, 25, 0.3) 0%, transparent 30%),
-    /* Base grass */
-    linear-gradient(165deg, #7ABF3E 0%, #6BAF35 25%, #5EA02C 50%, #519024 75%, #468020 100%);
+    /* Warm sunlight wash on upper-right quadrant */
+    radial-gradient(ellipse 70% 60% at 62% 32%, rgba(190, 240, 90, 0.35) 0%, transparent 60%),
+    /* Soft ambient shadow on lower-left */
+    radial-gradient(ellipse 60% 50% at 35% 72%, rgba(40, 85, 20, 0.2) 0%, transparent 55%),
+    /* Gentle center highlight for volume */
+    radial-gradient(ellipse 50% 40% at 50% 45%, rgba(160, 225, 70, 0.18) 0%, transparent 70%),
+    /* Smooth base grass — warm, lush gradient */
+    linear-gradient(155deg,
+      #8CCF4A 0%,
+      #7CC240 15%,
+      #6DB536 30%,
+      #62A830 50%,
+      #579B2A 70%,
+      #4C8E24 85%,
+      #448220 100%
+    );
   z-index: 2;
 }
 
-/* Grass texture overlay — subtle pattern */
+/* Grass texture overlay — organic soft patches for depth */
 .pet-land__island-grass-detail {
   position: absolute;
   inset: 0;
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  opacity: 0.6;
   background:
-    /* Scattered lighter patches */
-    radial-gradient(circle at 25% 40%, rgba(130, 200, 60, 0.4) 0%, transparent 8%),
-    radial-gradient(circle at 65% 35%, rgba(140, 210, 70, 0.35) 0%, transparent 7%),
-    radial-gradient(circle at 40% 60%, rgba(125, 195, 55, 0.3) 0%, transparent 9%),
-    radial-gradient(circle at 75% 55%, rgba(135, 205, 65, 0.25) 0%, transparent 6%),
-    radial-gradient(circle at 35% 25%, rgba(130, 200, 60, 0.25) 0%, transparent 5%),
-    /* Darker patches */
-    radial-gradient(circle at 55% 65%, rgba(50, 100, 25, 0.25) 0%, transparent 8%),
-    radial-gradient(circle at 30% 55%, rgba(45, 90, 22, 0.2) 0%, transparent 6%);
+    /* Large soft lighter meadow patches */
+    radial-gradient(ellipse 30% 25% at 30% 38%, rgba(155, 220, 75, 0.35) 0%, transparent 100%),
+    radial-gradient(ellipse 25% 20% at 68% 32%, rgba(145, 215, 70, 0.3) 0%, transparent 100%),
+    radial-gradient(ellipse 22% 18% at 52% 58%, rgba(140, 210, 65, 0.25) 0%, transparent 100%),
+    radial-gradient(ellipse 18% 22% at 38% 65%, rgba(150, 218, 72, 0.2) 0%, transparent 100%),
+    radial-gradient(ellipse 20% 15% at 72% 55%, rgba(135, 205, 60, 0.22) 0%, transparent 100%),
+    /* Subtle darker grass tufts for organic variation */
+    radial-gradient(ellipse 15% 12% at 22% 52%, rgba(55, 110, 28, 0.18) 0%, transparent 100%),
+    radial-gradient(ellipse 18% 14% at 60% 68%, rgba(50, 100, 25, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 12% 15% at 78% 42%, rgba(48, 95, 22, 0.12) 0%, transparent 100%),
+    radial-gradient(ellipse 14% 10% at 45% 28%, rgba(52, 105, 26, 0.1) 0%, transparent 100%),
+    /* Warm golden-green sun dapples */
+    radial-gradient(ellipse 10% 8% at 58% 38%, rgba(200, 240, 100, 0.2) 0%, transparent 100%),
+    radial-gradient(ellipse 8% 10% at 35% 45%, rgba(195, 235, 95, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 12% 8% at 65% 52%, rgba(205, 245, 105, 0.12) 0%, transparent 100%);
 }
 
-/* Grass shimmer */
+/* Grass shimmer — gentle light sweep across surface */
 .pet-land__island-surface::after {
   content: '';
   position: absolute;
   inset: 0;
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   background: linear-gradient(
-    110deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.06) 45%,
-    rgba(255, 255, 255, 0.03) 55%,
-    transparent 70%
+    115deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.07) 40%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(255, 255, 255, 0.07) 60%,
+    transparent 75%
   );
-  background-size: 250% 100%;
-  animation: pet-land-grass-shimmer 8s ease-in-out infinite;
+  background-size: 300% 100%;
+  animation: pet-land-grass-shimmer 10s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes pet-land-grass-shimmer {
-  0%, 100% { background-position: 200% 0; }
-  50% { background-position: -50% 0; }
+  0%, 100% { background-position: 250% 0; }
+  50% { background-position: -100% 0; }
 }
 
 /* ── Cliff walls — left face (lit side) ───────────────────────── */
@@ -216,43 +232,49 @@
 .pet-land__island-left-wall {
   position: absolute;
   inset: 0;
-  /* Parallelogram: grass left point → grass bottom → container bottom-center → container left-60% */
   clip-path: polygon(0% 38.5%, 50% 77%, 50% 100%, 0% 61.5%);
   background:
-    /* Grass-to-dirt transition at top */
+    /* Grass lip at very top */
     linear-gradient(
       180deg,
-      #6B9930 0%,
-      #8B7355 6%,
-      #7A6345 20%,
-      #6B5235 45%,
-      #5C4228 70%,
-      #4E3620 100%
+      #5EA02C 0%,
+      #6B8E3A 3%,
+      /* Smooth earthy transition */
+      #8B7B5E 8%,
+      #7E6D4D 22%,
+      #6F5E3E 40%,
+      #624F32 58%,
+      #574428 75%,
+      #4C3A20 90%,
+      #44331A 100%
     );
   z-index: 1;
 }
 
-/* Strata lines on left wall */
+/* Subtle strata texture on left wall */
 .pet-land__island-left-wall::after {
   content: '';
   position: absolute;
   inset: 0;
   clip-path: polygon(0% 38.5%, 50% 77%, 50% 100%, 0% 61.5%);
   background:
+    /* Soft horizontal strata bands */
     linear-gradient(180deg,
-      transparent 20%,
-      rgba(0,0,0,0.06) 21%,
-      transparent 23%,
-      transparent 40%,
-      rgba(0,0,0,0.05) 41%,
-      transparent 43%,
-      transparent 65%,
-      rgba(0,0,0,0.07) 66%,
-      transparent 68%,
-      transparent 85%,
-      rgba(0,0,0,0.04) 86%,
-      transparent 88%
-    );
+      transparent 15%,
+      rgba(0,0,0,0.04) 16%,
+      transparent 18%,
+      transparent 35%,
+      rgba(0,0,0,0.03) 36%,
+      transparent 38%,
+      transparent 55%,
+      rgba(0,0,0,0.05) 56%,
+      transparent 58%,
+      transparent 78%,
+      rgba(0,0,0,0.03) 79%,
+      transparent 81%
+    ),
+    /* Warm highlight on lit face */
+    linear-gradient(250deg, transparent 40%, rgba(180, 150, 100, 0.08) 70%, transparent 90%);
   pointer-events: none;
 }
 
@@ -261,22 +283,25 @@
 .pet-land__island-right-wall {
   position: absolute;
   inset: 0;
-  /* Parallelogram: grass right point → grass bottom → container bottom-center → container right-60% */
   clip-path: polygon(100% 38.5%, 50% 77%, 50% 100%, 100% 61.5%);
   background:
     linear-gradient(
       180deg,
-      #5E8828 0%,
-      #7A5C3B 6%,
-      #6B4D2F 20%,
-      #5C3D22 45%,
-      #4A3118 70%,
-      #3A2510 100%
+      #519024 0%,
+      #5C7A32 3%,
+      /* Cooler shadow tones */
+      #74654A 8%,
+      #685A3E 22%,
+      #5B4D33 40%,
+      #504228 58%,
+      #45381F 75%,
+      #3B2E18 90%,
+      #332812 100%
     );
   z-index: 1;
 }
 
-/* Strata lines on right wall */
+/* Subtle strata texture on right wall */
 .pet-land__island-right-wall::after {
   content: '';
   position: absolute;
@@ -284,16 +309,21 @@
   clip-path: polygon(100% 38.5%, 50% 77%, 50% 100%, 100% 61.5%);
   background:
     linear-gradient(180deg,
-      transparent 25%,
-      rgba(0,0,0,0.05) 26%,
-      transparent 28%,
-      transparent 50%,
-      rgba(0,0,0,0.06) 51%,
-      transparent 53%,
-      transparent 75%,
-      rgba(0,0,0,0.04) 76%,
-      transparent 78%
-    );
+      transparent 20%,
+      rgba(0,0,0,0.03) 21%,
+      transparent 23%,
+      transparent 45%,
+      rgba(0,0,0,0.04) 46%,
+      transparent 48%,
+      transparent 68%,
+      rgba(0,0,0,0.03) 69%,
+      transparent 71%,
+      transparent 88%,
+      rgba(0,0,0,0.02) 89%,
+      transparent 91%
+    ),
+    /* Cool shadow on right face */
+    linear-gradient(290deg, transparent 40%, rgba(0, 0, 0, 0.06) 70%, transparent 90%);
   pointer-events: none;
 }
 
@@ -332,8 +362,8 @@
   height: 77%;
   z-index: 5;
   pointer-events: none;
-  /* Slightly inset diamond clip — relaxed at top to avoid cutting pets */
-  clip-path: polygon(50% 1%, 97% 50%, 50% 99%, 3% 50%);
+  /* No clip-path — let pets render freely; positions keep them on-island */
+  overflow: visible;
 }
 
 /* ── Individual pet on island ──────────────────────────────────── */
@@ -788,23 +818,23 @@
 /* ── Island growth evolution stages ───────────────────────────── */
 
 .pet-land--sparse .pet-land__island-surface {
-  filter: saturate(0.85) brightness(0.96);
+  filter: saturate(0.9) brightness(0.97);
 }
 
 .pet-land--growing .pet-land__island-surface {
-  filter: saturate(0.95);
+  filter: saturate(1.0) brightness(1.0);
 }
 
 .pet-land--lush .pet-land__island-surface {
-  filter: saturate(1.12) brightness(1.04);
+  filter: saturate(1.08) brightness(1.03);
 }
 
 .pet-land--paradise .pet-land__island-surface {
-  filter: saturate(1.25) brightness(1.08);
+  filter: saturate(1.15) brightness(1.06);
 }
 
 .pet-land--paradise .pet-land__island-wrapper {
-  filter: drop-shadow(0 0 14px rgba(144, 212, 80, 0.25));
+  filter: drop-shadow(0 0 12px rgba(120, 200, 60, 0.2));
 }
 
 /* ── Ambient floating particles ──────────────────────────────── */
