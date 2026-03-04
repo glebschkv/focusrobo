@@ -93,13 +93,16 @@ export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
 /**
  * Get depth-based scale for a cell index.
- * Back of island (low isoDepth) = 0.55, front (high isoDepth) = 1.0.
+ * Back of island (low isoDepth) = 0.68, front (high isoDepth) = 1.0.
  */
+const DEPTH_MIN = 0.68;
+const DEPTH_MAX = 1.0;
+
 export function getDepthScale(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
   const isoDepth = (row + col) / (2 * (GRID_SIZE - 1));
-  return 0.55 + isoDepth * 0.45;
+  return DEPTH_MIN + isoDepth * (DEPTH_MAX - DEPTH_MIN);
 }
 
 /**

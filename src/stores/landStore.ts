@@ -190,6 +190,8 @@ interface LandStoreState {
   lastPlacedIndex: number | null;
   /** Land number that was just completed (ephemeral, not persisted) */
   landJustCompleted: number | null;
+  /** Milestone percentage just reached (ephemeral, not persisted) */
+  milestoneReached: number | null;
 }
 
 interface LandStoreActions {
@@ -220,6 +222,9 @@ interface LandStoreActions {
   /** Clear the land completion overlay */
   clearLandCompleted: () => void;
 
+  /** Clear the milestone overlay */
+  clearMilestone: () => void;
+
   /** Reset land data (for debugging/testing) */
   resetLand: () => void;
 }
@@ -235,6 +240,7 @@ const initialState: LandStoreState = {
   selectedNextTheme: 'meadow',
   lastPlacedIndex: null,
   landJustCompleted: null,
+  milestoneReached: null,
 };
 
 export const useLandStore = create<LandStore>()(
@@ -321,11 +327,17 @@ export const useLandStore = create<LandStore>()(
           completedAt: newCells.every(c => c !== null) ? Date.now() : null,
         };
 
+        // Check for milestone (25/50/75)
+        const count = newCells.filter(Boolean).length;
+        const milestones = [25, 50, 75];
+        const hit = milestones.find(m => count === m) ?? null;
+
         set({
           currentLand: updatedLand,
           speciesCatalog: newCatalog,
           pendingPet: null,
           lastPlacedIndex: cellIndex,
+          ...(hit !== null ? { milestoneReached: hit } : {}),
         });
 
         return cellIndex;
@@ -365,6 +377,10 @@ export const useLandStore = create<LandStore>()(
 
       clearLandCompleted: () => {
         set({ landJustCompleted: null });
+      },
+
+      clearMilestone: () => {
+        set({ milestoneReached: null });
       },
 
       resetLand: () => {

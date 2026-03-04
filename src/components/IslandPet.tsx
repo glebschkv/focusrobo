@@ -44,8 +44,6 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   const pos = ISLAND_POSITIONS[index];
   if (!pos) return null;
 
-  if (imageError) return null;
-
   const growthScale = GROWTH_SCALES[cell.size];
   const depthScale = getDepthScale(index);
   const finalScale = growthScale * depthScale;
@@ -74,9 +72,29 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (isNew) {
-      haptic('light');
+      haptic('medium');
     }
   }, [isNew, haptic]);
+
+  // Show fallback placeholder for failed pet images
+  if (imageError) {
+    return (
+      <div
+        className={`island-pet ${isNew ? 'island-pet--new' : ''}`}
+        style={
+          {
+            left: `${pos.x}%`,
+            top: `${pos.y}%`,
+            zIndex,
+            '--pet-scale': finalScale,
+          } as React.CSSProperties
+        }
+      >
+        <div className="island-pet__fallback">?</div>
+        <div className="island-pet__shadow" />
+      </div>
+    );
+  }
 
   return (
     <div
