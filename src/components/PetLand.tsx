@@ -27,6 +27,13 @@ const SPRING_DAMPING = 0.78;
 const MOMENTUM_DECAY = 0.95;
 const MIN_VELOCITY = 0.1;
 
+// Zoom constants
+const ZOOM_MIN = 0.8;
+const ZOOM_MAX = 2.0;
+const ZOOM_DEFAULT = 1.0;
+const ZOOM_WHEEL_STEP = 0.06;
+const ZOOM_DOUBLE_TAP = 1.5;
+
 const useDebugAwardPet = () => {
   const generateRandomPet = useLandStore((s) => s.generateRandomPet);
   const placePendingPet = useLandStore((s) => s.placePendingPet);
@@ -40,17 +47,30 @@ const useDebugAwardPet = () => {
   }, [generateRandomPet, placePendingPet]);
 };
 
-/** Ref-based touch rotation — zero React re-renders during drag */
+/** Ref-based touch rotation + zoom — zero React re-renders during drag/pinch */
 function useIslandRotation() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const lastX = useRef(0);
   const velocity = useRef(0);
   const currentAngle = useRef(0);
   const animFrameId = useRef<number>(0);
 
+  // Zoom state
+  const currentZoom = useRef(ZOOM_DEFAULT);
+  const isPinching = useRef(false);
+  const pinchStartDist = useRef(0);
+  const pinchStartZoom = useRef(ZOOM_DEFAULT);
+  const lastTapTime = useRef(0);
+
+  const clampZoom = (z: number) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
+
   const updateCSS = useCallback(() => {
-    containerRef.current?.style.setProperty('--island-rotate-y', `${currentAngle.current}deg`);
+    const el = containerRef.current;
+    if (!el) return;
+    el.style.setProperty('--island-rotate-y', `${currentAngle.current}deg`);
+    el.style.setProperty('--island-zoom', `${currentZoom.current}`);
   }, []);
 
   const animateSpring = useCallback(() => {
@@ -78,6 +98,8 @@ function useIslandRotation() {
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    // Don't start rotation drag if pinching
+    if (isPinching.current) return;
     isDragging.current = true;
     lastX.current = e.clientX;
     velocity.current = 0;
@@ -86,7 +108,7 @@ function useIslandRotation() {
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current) return;
+    if (!isDragging.current || isPinching.current) return;
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
     velocity.current = dx * DRAG_SENSITIVITY;
@@ -102,17 +124,90 @@ function useIslandRotation() {
     animFrameId.current = requestAnimationFrame(animateSpring);
   }, [animateSpring]);
 
+  // Mouse wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -ZOOM_WHEEL_STEP : ZOOM_WHEEL_STEP;
+    currentZoom.current = clampZoom(currentZoom.current + delta);
+    updateCSS();
+  }, [updateCSS]);
+
+  // Touch pinch-to-zoom (native touch events for multi-touch)
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    function getTouchDist(e: TouchEvent): number {
+      const [a, b] = [e.touches[0], e.touches[1]];
+      return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+    }
+
+    function onTouchStart(e: TouchEvent) {
+      if (e.touches.length === 2) {
+        isPinching.current = true;
+        isDragging.current = false; // cancel rotation drag
+        pinchStartDist.current = getTouchDist(e);
+        pinchStartZoom.current = currentZoom.current;
+        e.preventDefault();
+      }
+
+      // Double-tap detection (single finger)
+      if (e.touches.length === 1) {
+        const now = Date.now();
+        if (now - lastTapTime.current < 300) {
+          // Toggle between 1.0 and ZOOM_DOUBLE_TAP
+          currentZoom.current = currentZoom.current > 1.1 ? ZOOM_DEFAULT : ZOOM_DOUBLE_TAP;
+          updateCSS();
+          lastTapTime.current = 0;
+          e.preventDefault();
+        } else {
+          lastTapTime.current = now;
+        }
+      }
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      if (isPinching.current && e.touches.length === 2) {
+        const dist = getTouchDist(e);
+        const ratio = dist / pinchStartDist.current;
+        currentZoom.current = clampZoom(pinchStartZoom.current * ratio);
+        updateCSS();
+        e.preventDefault();
+      }
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      if (isPinching.current && e.touches.length < 2) {
+        isPinching.current = false;
+      }
+    }
+
+    wrapper.addEventListener('touchstart', onTouchStart, { passive: false });
+    wrapper.addEventListener('touchmove', onTouchMove, { passive: false });
+    wrapper.addEventListener('touchend', onTouchEnd);
+    wrapper.addEventListener('touchcancel', onTouchEnd);
+
+    return () => {
+      wrapper.removeEventListener('touchstart', onTouchStart);
+      wrapper.removeEventListener('touchmove', onTouchMove);
+      wrapper.removeEventListener('touchend', onTouchEnd);
+      wrapper.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [updateCSS]);
+
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameId.current);
   }, []);
 
   return {
     containerRef,
+    wrapperRef,
     handlers: {
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerUp,
       onPointerCancel: handlePointerUp,
+      onWheel: handleWheel,
     },
   };
 }
@@ -130,7 +225,7 @@ export const PetLand = () => {
   const { haptic } = useHaptics();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  const { containerRef, handlers: rotationHandlers } = useIslandRotation();
+  const { containerRef, wrapperRef, handlers: rotationHandlers } = useIslandRotation();
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
 
   // Clear new pet glow after 8 seconds
@@ -213,6 +308,7 @@ export const PetLand = () => {
 
       {/* Floating island */}
       <div
+        ref={wrapperRef}
         className="pet-land__island-wrapper"
         {...rotationHandlers}
         style={{ touchAction: 'pan-y' }}
