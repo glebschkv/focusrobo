@@ -11,8 +11,8 @@
 
 // ─── Geometry Constants ────────────────────────────────────────────
 const VB_W = 420;
-const VB_H = 273;
-const CLIFF_DEPTH = 65; // How far down the cliff extends below the grass
+const VB_H = 258;
+const CLIFF_DEPTH = 42; // How far down the cliff extends below the grass
 
 // Grass diamond vertices — sized to encompass all pet positions with padding.
 // Pet positions span ~6%–94% of the pets-layer (420 × 210px).
@@ -480,6 +480,33 @@ function generateMossSpots(
 const leftMoss = generateMossSpots(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 111);
 const rightMoss = generateMossSpots(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 222);
 
+// ─── Rounded Cliff Clip Paths ───────────────────────────────────────
+// Round the bottom corners of each cliff wall for a polished look
+const CORNER_R = 10; // corner radius in SVG units
+
+function roundedCliffPath(tl: Pt, tr: Pt, bl: Pt, br: Pt): string {
+  // Path: tl → tr (top edge, straight), then down right side,
+  // round bottom-right corner, across bottom, round bottom-left corner, up left side
+  return [
+    `M ${p(tl)}`,
+    `L ${p(tr)}`,
+    // Right edge down to just before bottom-right corner
+    `L ${tr.x.toFixed(1)},${(br.y - CORNER_R).toFixed(1)}`,
+    // Bottom-right rounded corner
+    `Q ${p(br)} ${(br.x - (br.x - bl.x) * (CORNER_R / dist(bl, br))).toFixed(1)},${br.y.toFixed(1)}`,
+    // Bottom edge to just before bottom-left corner
+    `L ${(bl.x + (br.x - bl.x) * (CORNER_R / dist(bl, br))).toFixed(1)},${bl.y.toFixed(1)}`,
+    // Bottom-left rounded corner
+    `Q ${p(bl)} ${bl.x.toFixed(1)},${(bl.y - CORNER_R).toFixed(1)}`,
+    // Left edge back up
+    `L ${p(tl)}`,
+    'Z',
+  ].join(' ');
+}
+
+const leftCliffClip = roundedCliffPath(LW.tl, LW.tr, LW.bl, LW.br);
+const rightCliffClip = roundedCliffPath(RW.tl, RW.tr, RW.bl, RW.br);
+
 // ─── Component ─────────────────────────────────────────────────────
 export const IslandSVG = () => (
   <svg
@@ -553,95 +580,139 @@ export const IslandSVG = () => (
         <stop offset="100%" stopColor="transparent" />
       </radialGradient>
 
+      {/* Grass lip blends into dirt — gradient from green to brown */}
+      <linearGradient id="ig-ll-blend" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#72A834" />
+        <stop offset="60%" stopColor="#5E9228" />
+        <stop offset="100%" stopColor="#9A8448" />
+      </linearGradient>
+      <linearGradient id="ig-rl-blend" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#648E2C" />
+        <stop offset="60%" stopColor="#507A20" />
+        <stop offset="100%" stopColor="#8A7440" />
+      </linearGradient>
+
       {/* Clipping path for grass texture */}
       <clipPath id="ig-diamond-clip">
         <path d={DIAMOND} />
       </clipPath>
+
+      {/* Rounded cliff clip paths */}
+      <clipPath id="ig-left-cliff-clip">
+        <path d={leftCliffClip} />
+      </clipPath>
+      <clipPath id="ig-right-cliff-clip">
+        <path d={rightCliffClip} />
+      </clipPath>
     </defs>
 
-    {/* ═══ CLIFF WALLS — share exact top edges with grass diamond ═══ */}
+    {/* ═══ CLIFF WALLS — rounded corners, smooth transitions ═══ */}
 
-    {/* === STONE BAND — visible individual blocks === */}
-    {/* Background fill for stone area */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1)} fill="#5C5444" />
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1)} fill="#504840" />
+    {/* Left cliff — all layers clipped to rounded shape */}
+    <g clipPath="url(#ig-left-cliff-clip)">
+      {/* Stone band background */}
+      <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1)} fill="#5C5444" />
+      {/* Individual stone blocks */}
+      {leftStoneBlocks.map((b, i) => (
+        <g key={`lsb-${i}`}>
+          <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
+            fill={b.fill} stroke="rgba(40,35,25,0.35)" strokeWidth={0.8} />
+          <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
+            stroke={b.highlight} strokeWidth={0.7} />
+          <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
+            stroke="rgba(20,15,10,0.2)" strokeWidth={0.6} />
+        </g>
+      ))}
+      {/* Moss patches */}
+      {leftMoss.map((m, i) => (
+        <ellipse key={`lms-${i}`} cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry}
+          fill="rgba(75,115,35,0.15)" />
+      ))}
+      {/* Dirt band */}
+      <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 0.5)} fill="url(#ig-ld)" />
+      {/* Strata lines */}
+      {leftDirtStrata.map((ln, i) => (
+        <line key={`lds-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
+          stroke={`rgba(70,50,25,${ln.opacity})`} strokeWidth={0.8} />
+      ))}
+      {/* Pebbles */}
+      {leftPebbles.map((pb, i) => (
+        <ellipse key={`lpb-${i}`} cx={pb.cx} cy={pb.cy} rx={pb.rx} ry={pb.ry}
+          fill={pb.fill} stroke="rgba(50,40,30,0.15)" strokeWidth={0.4} />
+      ))}
+      {/* Root cracks */}
+      {leftRoots.map((d, i) => (
+        <path key={`lrt-${i}`} d={d} fill="none"
+          stroke="rgba(55,85,22,0.2)" strokeWidth={0.7} strokeLinecap="round" />
+      ))}
+      {/* Grass lip — blends into dirt */}
+      <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0, 0.12)} fill="url(#ig-ll-blend)" />
+      {/* Grass strands */}
+      {leftGrassStrands.map((d, i) => (
+        <path key={`lgs-${i}`} d={d} fill="none"
+          stroke="rgba(80,140,30,0.3)" strokeWidth={1} strokeLinecap="round" />
+      ))}
+      {/* Dirt-stone separator (soft, no grass-dirt hard line) */}
+      {(() => {
+        const l = lerp(LW.tl, LW.bl, 0.5);
+        const r = lerp(LW.tr, LW.br, 0.5);
+        return <line x1={l.x} y1={l.y} x2={r.x} y2={r.y}
+          stroke="rgba(25,20,10,0.2)" strokeWidth={0.8} />;
+      })()}
+    </g>
 
-    {/* Individual stone blocks — each has its own fill + outline */}
-    {leftStoneBlocks.map((b, i) => (
-      <g key={`lsb-${i}`}>
-        <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
-          fill={b.fill} stroke="rgba(40,35,25,0.35)" strokeWidth={0.8} />
-        {/* Top-edge highlight */}
-        <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
-          stroke={b.highlight} strokeWidth={0.7} />
-        {/* Bottom-edge shadow */}
-        <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
-          stroke="rgba(20,15,10,0.2)" strokeWidth={0.6} />
-      </g>
-    ))}
-    {rightStoneBlocks.map((b, i) => (
-      <g key={`rsb-${i}`}>
-        <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
-          fill={b.fill} stroke="rgba(35,30,20,0.3)" strokeWidth={0.8} />
-        <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
-          stroke={b.highlight} strokeWidth={0.7} />
-        <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
-          stroke="rgba(20,15,10,0.18)" strokeWidth={0.6} />
-      </g>
-    ))}
-
-    {/* Moss patches on top of stone band */}
-    {[...leftMoss, ...rightMoss].map((m, i) => (
-      <ellipse key={`ms-${i}`} cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry}
-        fill="rgba(75,115,35,0.15)" />
-    ))}
-
-    {/* === DIRT BAND — earthy tones with strata === */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 0.5)} fill="url(#ig-ld)" />
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 0.5)} fill="url(#ig-rd)" />
-
-    {/* Strata lines — geological layers */}
-    {[...leftDirtStrata, ...rightDirtStrata].map((ln, i) => (
-      <line key={`ds-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
-        stroke={`rgba(70,50,25,${ln.opacity})`} strokeWidth={0.8} />
-    ))}
-
-    {/* Embedded pebbles */}
-    {[...leftPebbles, ...rightPebbles].map((pb, i) => (
-      <ellipse key={`pb-${i}`} cx={pb.cx} cy={pb.cy} rx={pb.rx} ry={pb.ry}
-        fill={pb.fill} stroke="rgba(50,40,30,0.15)" strokeWidth={0.4} />
-    ))}
-
-    {/* Root/crack details from grass lip down into dirt */}
-    {[...leftRoots, ...rightRoots].map((d, i) => (
-      <path key={`rt-${i}`} d={d} fill="none"
-        stroke="rgba(55,85,22,0.2)" strokeWidth={0.7} strokeLinecap="round" />
-    ))}
-
-    {/* === GRASS LIP — thick green top edge === */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0, 0.12)} fill="url(#ig-ll)" />
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0, 0.12)} fill="url(#ig-rl)" />
-
-    {/* Grass strands hanging from lip */}
-    {[...leftGrassStrands, ...rightGrassStrands].map((d, i) => (
-      <path key={`gs-${i}`} d={d} fill="none"
-        stroke="rgba(80,140,30,0.3)" strokeWidth={1} strokeLinecap="round" />
-    ))}
-
-    {/* Band separator lines — clear transitions */}
-    {[
-      { w: LW, t: 0.12, o: 0.25 },
-      { w: LW, t: 0.5, o: 0.3 },
-      { w: RW, t: 0.12, o: 0.2 },
-      { w: RW, t: 0.5, o: 0.25 },
-    ].map(({ w, t, o }, i) => {
-      const l = lerp(w.tl, w.bl, t);
-      const r = lerp(w.tr, w.br, t);
-      return (
-        <line key={`sep-${i}`} x1={l.x} y1={l.y} x2={r.x} y2={r.y}
-          stroke={`rgba(25,20,10,${o})`} strokeWidth={1} />
-      );
-    })}
+    {/* Right cliff — all layers clipped to rounded shape */}
+    <g clipPath="url(#ig-right-cliff-clip)">
+      {/* Stone band background */}
+      <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1)} fill="#504840" />
+      {/* Individual stone blocks */}
+      {rightStoneBlocks.map((b, i) => (
+        <g key={`rsb-${i}`}>
+          <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
+            fill={b.fill} stroke="rgba(35,30,20,0.3)" strokeWidth={0.8} />
+          <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
+            stroke={b.highlight} strokeWidth={0.7} />
+          <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
+            stroke="rgba(20,15,10,0.18)" strokeWidth={0.6} />
+        </g>
+      ))}
+      {/* Moss patches */}
+      {rightMoss.map((m, i) => (
+        <ellipse key={`rms-${i}`} cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry}
+          fill="rgba(75,115,35,0.15)" />
+      ))}
+      {/* Dirt band */}
+      <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 0.5)} fill="url(#ig-rd)" />
+      {/* Strata lines */}
+      {rightDirtStrata.map((ln, i) => (
+        <line key={`rds-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
+          stroke={`rgba(70,50,25,${ln.opacity})`} strokeWidth={0.8} />
+      ))}
+      {/* Pebbles */}
+      {rightPebbles.map((pb, i) => (
+        <ellipse key={`rpb-${i}`} cx={pb.cx} cy={pb.cy} rx={pb.rx} ry={pb.ry}
+          fill={pb.fill} stroke="rgba(50,40,30,0.15)" strokeWidth={0.4} />
+      ))}
+      {/* Root cracks */}
+      {rightRoots.map((d, i) => (
+        <path key={`rrt-${i}`} d={d} fill="none"
+          stroke="rgba(55,85,22,0.2)" strokeWidth={0.7} strokeLinecap="round" />
+      ))}
+      {/* Grass lip — blends into dirt */}
+      <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0, 0.12)} fill="url(#ig-rl-blend)" />
+      {/* Grass strands */}
+      {rightGrassStrands.map((d, i) => (
+        <path key={`rgs-${i}`} d={d} fill="none"
+          stroke="rgba(80,140,30,0.3)" strokeWidth={1} strokeLinecap="round" />
+      ))}
+      {/* Dirt-stone separator */}
+      {(() => {
+        const l = lerp(RW.tl, RW.bl, 0.5);
+        const r = lerp(RW.tr, RW.br, 0.5);
+        return <line x1={l.x} y1={l.y} x2={r.x} y2={r.y}
+          stroke="rgba(25,20,10,0.18)" strokeWidth={0.8} />;
+      })()}
+    </g>
 
     {/* ═══ GRASS OVERHANG — smooth bumps on bottom edges ═══ */}
     <path d={GRASS_OVERHANG_PATH} fill="url(#ig-edge)" />
