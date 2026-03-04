@@ -1,147 +1,201 @@
-# Plan: Make the Island Look Incredible & Beat Forest
+# Plan: Make Island Look Like Forest App — Pixel Perfect
 
-## Problems Identified
+## What's Wrong Right Now (from screenshot analysis)
 
-1. **White overlay covering the island** — 15 `<img>` elements reference assets in `public/assets/island/` that **don't exist** (directory is empty). Browsers render broken images as white/blank boxes, covering the island surface. The grid overlay also washes things out.
+Looking at the current island vs the Forest app reference:
 
-2. **Can't rotate with touch** — Current "rotation" only remaps pet grid positions (swapping which pet sits where). The island itself never visually rotates. The arrow buttons and swipe gestures trigger position-remapping, not real 3D rotation.
+1. **The diamond is paper-thin** — it's a flat 2D diamond with no visible thickness/depth. Forest has a **chunky 3D slab** — you can see the dirt/earth side walls clearly, about 15-20% of the total island height. It looks like a thick piece of land floating in the air, not a flat piece of paper.
 
-3. **Island too chunky/fat** — Diamond clip-path `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)` with aspect-ratio `1/0.82` creates a bulky rhombus. Cliff layers extend to 138% of the surface, adding mass. Looks like a thick diamond, not a graceful floating island.
+2. **The aspect ratio is wrong** — current is `2:1` (too wide and flat). Forest's island is closer to `2:1.2` or `5:3` — still wider than tall, but the visible earth thickness makes it feel substantial. The grass top is a diamond but the overall container needs extra height at the bottom for the earth walls.
 
-4. **Lacks personality/polish** — Needs the level of quality that Forest has: smooth interactivity, elegant proportions, living atmosphere.
+3. **No visible earth/dirt side walls** — Forest has two clearly visible side faces of the island (the front-left face and front-right face), rendered as brown/earth colored parallelograms. This is the classic isometric cube side effect. Currently the `.pet-land__island-edge` is just a slightly offset diamond behind the grass — it doesn't create visible 3D side walls.
 
----
+4. **The grass is too flat green** — Forest's grass has more warmth and texture. It's a richer, warmer green with subtle tonal variation, not the bright lime green we have. Forest uses something like `#6BAF3D` to `#4E8C2A` range — more natural.
 
-## Phase 1: Fix the White Overlay (critical bug)
+5. **Grid lines are visible and ugly** — The diagonal grid overlay at 0.08 opacity creates an unnatural checkerboard look. Forest has NO visible grid lines. The surface is clean grass.
 
-**Files:** `src/components/PetLand.tsx`, `src/styles/pet-land.css`
+6. **Pets are not properly spread** — In your screenshot, all the pets are bunched toward the center. The current TILE_W=7.8 and TILE_H=3.9 push positions WAY outside the 0-100% range (max offset is ±9*7.8 = ±70%, meaning x ranges from -20 to 120). The clip-path cuts most off, leaving only center pets visible. Need to fix to ~4.9 each.
 
-- **Remove all 15 `<img>` decoration elements** from PetLand.tsx (lines 225-240). Assets don't exist and won't be generated in this session. Replace with clean CSS-only decorations that actually work (small, tasteful dot/shape accents — NOT the overengineered shapes from before).
-- **Remove the grid overlay** div (`pet-land__island-grid-overlay`) — it washes out the grass and adds no value. Delete the CSS too.
-- **Remove all decoration CSS** (lines 321-400) and replace with minimal, elegant CSS decorations (tiny flower dots, subtle grass tufts via box-shadow/pseudo-elements).
+7. **Empty slot markers are visible** — Those tiny green rotated squares are visual noise. Forest shows NO empty slot indicators — the empty grass is just clean.
 
----
+8. **The shadow is barely visible** — Forest has a more prominent, wider shadow beneath the island that really sells the floating effect.
 
-## Phase 2: Real 3D Touch Rotation
+9. **Sky gradient ends too cold** — The bottom of the sky is `#F0F4E8` which is a cold grey-green. Forest uses warmer tones at the horizon.
 
-**Files:** `src/components/PetLand.tsx`, `src/styles/pet-land.css`, `src/data/islandPositions.ts`, `src/components/IslandPet.tsx`
-
-### Approach: Limited-range continuous rotation (±35°) with spring physics
-
-Full 360° CSS rotateY would make the flat island invisible at 90°/270°. Instead, use **limited tilt rotation** (±35°) with spring-back — this is what polished apps like Forest use. It gives the "grab and peek around" feel without the flat-edge problem.
-
-### Implementation:
-
-**PetLand.tsx:**
-- Add `useRef` for tracking drag state: `isDragging`, `startX`, `currentRotationY`, `velocity`
-- Replace `touchStartX/touchStartY` refs with continuous drag tracking
-- On `touchmove`/`pointermove`: calculate delta X, map to rotation degrees (e.g., 1px = 0.5°), clamp to ±35°
-- On release: apply momentum (velocity decay) then spring-animate back to 0° using `requestAnimationFrame`
-- Set CSS variable `--island-rotate-y` on the island container
-- **Remove rotation arrow buttons** entirely
-- **Remove `rotationStep` state** and all position-remapping logic
-
-**pet-land.css:**
-- Update `.pet-land__island-container` transform: `perspective(600px) rotateX(14deg) rotateY(var(--island-rotate-y, 0deg))`
-- Add `will-change: transform` for GPU acceleration during drag
-- Remove rotation button CSS (`.pet-land__rotate-btn` etc.)
-
-**IslandPet.tsx:**
-- Remove `rotationStep` prop entirely
-- Use base `ISLAND_POSITIONS[index]` directly (no rotation remapping)
-- Use base `getDepthScale(index)` and `getDepthZIndex(index)`
-- Add Y-axis counter-rotation so pets always face camera: update transform to include `rotateY(calc(-1 * var(--island-rotate-y, 0deg)))` — **billboard effect**
-
-**islandPositions.ts:**
-- Keep the rotation functions for backward compatibility but they won't be called from the UI anymore
-- The base positions, depth scales, and z-indices remain unchanged
+10. **No distinct left/right island faces** — In true isometric, a raised block has 3 visible faces: top (grass), front-left wall, front-right wall. Each wall should be a different shade of brown to simulate lighting (left slightly lighter, right slightly darker).
 
 ---
 
-## Phase 3: Island Shape Overhaul — Slim & Elegant
+## The Fix: Build a Proper Isometric 3D Slab
 
-**Files:** `src/styles/pet-land.css`, `src/data/islandPositions.ts`
+### Core Concept
 
-### Shape: Rounded ellipse instead of sharp diamond
+The island is NOT just a flat diamond clip-path. It's a **3D isometric block** with:
+- **Top face**: Diamond-shaped grass surface (the play area)
+- **Left face**: Parallelogram — left dirt/earth wall (lighter brown)
+- **Right face**: Parallelogram — right dirt/earth wall (darker brown)
 
-The diamond/rhombus looks unnatural and game-y. A **soft ellipse** looks like a real floating island chunk ripped from the earth.
+All three faces are separate CSS elements, precisely positioned to form a seamless isometric cube/slab.
 
-**pet-land.css changes:**
-- **Island surface clip-path**: Change from `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)` to `ellipse(48% 44% at 50% 50%)` — wider, softer, more organic
-- **Aspect ratio**: Change from `1 / 0.82` to `1 / 0.62` — significantly flatter/wider, less chunky
-- **Island wrapper**: Increase to `width: 92%` and `max-width: 400px` to use more screen real estate
-- **Cliff layers**: Redesign completely — instead of 3 diamond polygons extending way below, use:
-  - A single cliff element with `ellipse()` clip-path slightly larger than the surface
-  - Gradient from green edge → brown dirt → dark rock (top to bottom)
-  - Much thinner: surface `bottom: 38%`, cliff extends only 15-18% below surface (not 38%+)
-  - Visible strata lines via repeating-linear-gradient
-- **Remove separate grass/dirt/rock cliff layers** — replace with one unified cliff div with layered gradients
-- **Pets layer clip-path**: Update to ellipse to match new surface shape
-- **Shadow**: Update to ellipse shape to match
+```
+        ◇  ← top point of diamond (grass)
+       / \
+      /   \
+     / GRASS\
+    /   TOP   \
+   ◇───────────◇  ← left and right points
+    \  LEFT  /  \
+     \ FACE /    \
+      \    / RIGHT\
+       \  /  FACE  \
+        ◇───────────◇  ← bottom edges of side walls
+```
 
-**islandPositions.ts changes:**
-- Update boundary from diamond (L1 norm) to **ellipse (L2 norm)**
-- Change `clampToDiamond` to `clampToEllipse`: `(dx/rx)² + (dy/ry)² <= 1`
-- Adjust RX/RY to match new wider/flatter proportions (e.g., RX=46, RY=40)
-- Possibly adjust TILE_W/TILE_H spacing for the new proportions
+In CSS terms (percentage-based clip-paths within the full container):
+- **Top face (grass)**: `clip-path: polygon(50% 0%, 100% 40%, 50% 80%, 0% 40%)` — diamond in top ~80%
+- **Left face**: `clip-path: polygon(0% 40%, 50% 80%, 50% 100%, 0% 60%)` — parallelogram from left
+- **Right face**: `clip-path: polygon(100% 40%, 50% 80%, 50% 100%, 100% 60%)` — parallelogram from right
 
----
-
-## Phase 4: Visual Polish — Make It Feel Alive
-
-**Files:** `src/styles/pet-land.css`, `src/components/PetLand.tsx`
-
-### Grass surface improvements:
-- Richer multi-stop gradient with sunlight/shadow zones
-- Subtle CSS gradient "wave" pattern for grass texture (no grid lines)
-- Edge darkening (vignette) around island perimeter for depth
-
-### Cliff improvements:
-- Single cliff div with beautiful layered gradient (green moss → rich brown → deep stone)
-- Horizontal strata lines via repeating-linear-gradient
-- Subtle moss/vine detail at the grass-cliff junction
-
-### Atmosphere:
-- **Better clouds**: Add slight vertical variation, more organic shapes, maybe a 4th foreground cloud
-- **Lens flare on sun**: Subtle radial gradient pulse
-- **Grass shimmer**: Very subtle moving highlight across grass surface (wind effect)
-- **Better floating animation**: Add very slight rotation wobble to the bob (already partly there)
-- **Edge glow**: Soft rgba glow below the island surface for the "floating magic" feel
-
-### Waterfall:
-- Position relative to new elliptical shape
-- Slightly wider, with mist/spray particles at bottom
+Container `aspect-ratio` changes from `2/1` to `2/1.25` to fit the earth walls below the grass.
 
 ---
 
-## Phase 5: Performance & Cleanup
+## Detailed Changes by File
 
-- Remove unused rotation functions from exports (keep in file for future use)
-- Ensure `will-change` is only applied during active drag (not permanently)
-- Test touch responsiveness — spring animation should be 60fps
-- Verify reduced-motion preferences still work
-- Keep debug "Award Pet" button (per user requirement)
+### 1. `src/data/islandPositions.ts`
+
+#### A. Fix pet spread — correct tile spacing
+
+The pets are bunching because TILE_W=7.8 pushes positions to ±70% offset from center — way outside the diamond. Only center pets are visible.
+
+**Math**: For a 10x10 grid with centered rows/cols, the max isometric coordinate deviation is ±9 steps (from corner `(-4.5,-4.5)` to `(4.5,4.5)`). For positions to span ~6% to ~94% of the pets-layer:
+- `9 * TILE_W = 44` → `TILE_W ≈ 4.9`
+- `9 * TILE_H = 44` → `TILE_H ≈ 4.9`
+
+```ts
+const TILE_W = 4.9;  // was 7.8
+const TILE_H = 4.9;  // was 3.9
+```
+
+#### B. Reduce jitter slightly
+```ts
+const jx = (seededRandom(i * 7 + 1) - 0.5) * 1.0;  // was 1.6
+const jy = (seededRandom(i * 13 + 2) - 0.5) * 0.6;  // was 1.0
+```
+
+---
+
+### 2. `src/styles/pet-land.css`
+
+#### A. Island container — new proportions
+```css
+.pet-land__island-container {
+  aspect-ratio: 2 / 1.25;  /* was 2/1 — taller to fit earth walls */
+  transform-origin: center 40%;  /* pivot at grass center, not container center */
+}
+```
+
+#### B. Grass surface — repositioned to top 80%
+```css
+.pet-land__island-surface {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 80%;  /* Only top portion — bottom 20% is for earth walls */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background: /* warmer grass colors */
+    linear-gradient(165deg, #7ABF3E 0%, #6BAF35 25%, #5EA02C 50%, #519024 75%, #468020 100%);
+}
+```
+
+#### C. Left earth wall — new element
+```css
+.pet-land__island-left-wall {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  clip-path: polygon(0% 40%, 50% 80%, 50% 100%, 0% 60%);
+  background: linear-gradient(180deg, #8B6D4A 0%, #7A5C3B 20%, #6B4D2F 50%, #5C3D22 80%, #4A3118 100%);
+  z-index: 1;
+}
+```
+
+#### D. Right earth wall — new element (slightly darker = shadow side)
+```css
+.pet-land__island-right-wall {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  clip-path: polygon(100% 40%, 50% 80%, 50% 100%, 100% 60%);
+  background: linear-gradient(180deg, #7A5C3B 0%, #6B4D2F 20%, #5C3D22 50%, #4A3118 80%, #3A2510 100%);
+  z-index: 1;
+}
+```
+
+#### E. Delete grid overlay (`.pet-land__island-grid`)
+#### F. Delete old edge (`.pet-land__island-edge`)
+#### G. Delete slot markers (`.island-slot-marker`)
+
+#### H. Pets layer — match new grass area
+```css
+.pet-land__pets-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 80%;  /* Match grass area */
+  clip-path: polygon(50% 3%, 97% 50%, 50% 97%, 3% 50%);
+}
+```
+
+#### I. Bigger, warmer shadow
+```css
+.pet-land__island-shadow {
+  bottom: -6%;
+  left: 12%; right: 12%;
+  height: 28px;
+  filter: blur(10px);
+}
+```
+
+#### J. Warmer sky gradient
+Bottom stops change from `#F0F4E8` → `#F2ECDA` / `#EDE4CC`
+
+#### K. Both earth walls get subtle strata lines via `::after` pseudo-elements
+
+---
+
+### 3. `src/components/PetLand.tsx`
+
+#### A. Update DOM structure
+Replace:
+```tsx
+<div className="pet-land__island-grid" />
+<div className="pet-land__island-edge" />
+```
+With:
+```tsx
+<div className="pet-land__island-left-wall" />
+<div className="pet-land__island-right-wall" />
+```
+
+#### B. Remove empty slot marker rendering
+In `slotElements`, when `cell` is null, return `null` instead of rendering `<div className="island-slot-marker" ...>`.
+
+---
+
+### 4. `src/components/IslandPet.tsx`
+
+No changes needed. The component is already clean.
 
 ---
 
 ## Files Changed Summary
 
-| File | Changes |
-|------|---------|
-| `src/components/PetLand.tsx` | Remove broken imgs, add touch-drag rotation, remove arrow buttons, remove rotationStep |
-| `src/components/IslandPet.tsx` | Remove rotationStep prop, add billboard counter-rotation |
-| `src/styles/pet-land.css` | Elliptical shape, slim cliff, remove grid overlay, visual polish, remove rotation btn CSS |
-| `src/data/islandPositions.ts` | Ellipse boundary clamping instead of diamond |
+| File | What changes |
+|------|-------------|
+| `src/data/islandPositions.ts` | Fix TILE_W/TILE_H from 7.8/3.9 → 4.9/4.9, reduce jitter |
+| `src/styles/pet-land.css` | 3D slab with left+right earth walls, grass in top 80%, warmer colors, no grid, no slot markers, bigger shadow, warmer sky |
+| `src/components/PetLand.tsx` | Add wall divs, remove grid/edge/marker divs, stop rendering slot markers |
 
----
+## Implementation Order
 
-## Expected Result
-
-A floating island that:
-- Responds to touch drag with smooth, physics-based rotation (±35° with spring-back)
-- Has an organic elliptical shape (not a sharp diamond)
-- Is slim and elegant (wider than tall, thin cliff)
-- Has rich grass textures and beautiful cliff layers
-- Floats with subtle bob animation and atmosphere effects
-- Feels alive with clouds, particles, and gentle motion
-- Matches or exceeds Forest's visual quality
+1. `islandPositions.ts` — Fix spacing math (fixes pet clustering)
+2. `pet-land.css` — Full island shape rewrite (3D slab)
+3. `PetLand.tsx` — Update DOM structure
+4. Typecheck → commit → push
