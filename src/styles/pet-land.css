@@ -32,6 +32,7 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  will-change: transform;
 }
 
 .pet-land__sun {
@@ -128,8 +129,7 @@
   animation: pet-land-island-float 4.5s ease-in-out infinite;
   cursor: grab;
   touch-action: pan-y;
-  perspective: 800px;
-  perspective-origin: center 40%;
+  overflow: visible;
 }
 
 .pet-land__island-wrapper:active {
@@ -147,10 +147,8 @@
   position: relative;
   width: 100%;
   aspect-ratio: 420 / 258;
-  transform: rotateY(var(--island-rotate-y, 0deg)) scale(var(--island-zoom, 1));
-  transform-style: preserve-3d;
-  transform-origin: center 38%;
-  transition: transform 0.05s ease-out;
+  transform-origin: center center;
+  will-change: transform;
 }
 
 /* ── Island SVG — pixel-art flat-fill island ──────────────────── */
@@ -199,8 +197,8 @@
   height: 77%;
   z-index: 5;
   pointer-events: none;
-  /* No clip-path — let pets render freely; positions keep them on-island */
   overflow: visible;
+  will-change: transform;
 }
 
 /* ── Individual pet on island ──────────────────────────────────── */
