@@ -1,9 +1,8 @@
 /**
  * IslandPet Component
  *
- * Renders a single pet absolutely positioned on the floating island surface.
+ * Renders a single pet absolutely positioned on the isometric diamond island.
  * Includes depth-based scaling, rarity glow effects, idle bobbing, and tooltips.
- * Uses billboard counter-rotation so pets always face the camera during island rotation.
  */
 
 import { memo, useEffect, useState } from 'react';
