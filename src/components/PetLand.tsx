@@ -238,8 +238,9 @@ export const PetLand = () => {
             <div className="pet-land__island-grass-detail" />
           </div>
 
-          {/* Dirt/earth edge visible beneath grass */}
-          <div className="pet-land__island-edge" />
+          {/* Cliff walls — isometric 3D block sides */}
+          <div className="pet-land__island-left-wall" />
+          <div className="pet-land__island-right-wall" />
 
           {/* Shadow beneath island */}
           <div className="pet-land__island-shadow" />
