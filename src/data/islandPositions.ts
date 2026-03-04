@@ -1,58 +1,74 @@
 /**
  * Island Position Map
  *
- * Maps 100 land cell indices to (x%, y%) coordinates on a flat isometric
- * diamond surface. The diamond is a rotated square (rhombus) — wider than
- * tall, typical of isometric game maps.
+ * Maps 100 land cell indices to (x%, y%) coordinates on the isometric diamond
+ * surface. Uses the EXACT same diamond vertices and bilinear interpolation as
+ * IslandSVG.tsx so pets sit precisely at the center of each tile.
  *
- * All values are percentages relative to the pets-layer container.
+ * All values are percentages relative to the island-container (which matches
+ * the SVG viewBox aspect ratio 420×258).
  */
 
 const GRID_SIZE = 10;
 
-// Diamond dimensions as % of container
-const CENTER_X = 50;
-const CENTER_Y = 50;
+// ─── Diamond vertices (identical to IslandSVG.tsx) ──────────────────
+// These define the grass surface shape in SVG coordinate space (viewBox 420×258)
+const VB_W = 420;
+const VB_H = 258;
 
-// Isometric tile spacing — controls how spread out pets are
-// Max deviation = 9 steps × 4.9 = 44.1% → positions span ~6% to ~94%
-const TILE_W = 4.9;
-const TILE_H = 4.9;
+interface Pt { x: number; y: number }
 
-/** Deterministic pseudo-random for consistent jitter across renders */
-function seededRandom(seed: number): number {
-  const x = Math.sin(seed * 9301 + 49297) * 233280;
-  return x - Math.floor(x);
+const TOP: Pt = { x: 210, y: 0 };
+const RIGHT: Pt = { x: 414, y: 105 };
+const BOTTOM: Pt = { x: 210, y: 210 };
+const LEFT: Pt = { x: 6, y: 105 };
+
+function lerp(a: Pt, b: Pt, t: number): Pt {
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
 }
 
+/**
+ * Bilinear interpolation on the diamond — same formula as IslandSVG's
+ * `diamondPt`. Maps normalized (r, c) in [0,1] to SVG coordinates.
+ */
+function diamondPt(r: number, c: number): Pt {
+  const p1 = lerp(
+    lerp(TOP, LEFT, r),
+    lerp(RIGHT, BOTTOM, r),
+    c,
+  );
+  const p2 = lerp(
+    lerp(TOP, RIGHT, c),
+    lerp(LEFT, BOTTOM, c),
+    r,
+  );
+  return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+}
+
+// ─── Position computation ───────────────────────────────────────────
+
 interface IslandPosition {
-  x: number; // percentage (0-100)
-  y: number; // percentage (0-100)
+  x: number; // percentage (0-100) of container width
+  y: number; // percentage (0-100) of container height
 }
 
 function computePositions(): IslandPosition[] {
   const positions: IslandPosition[] = [];
-  const half = (GRID_SIZE - 1) / 2; // 4.5 — center offset
 
   for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
     const row = Math.floor(i / GRID_SIZE);
     const col = i % GRID_SIZE;
 
-    // Center the grid around (0,0) then apply isometric projection
-    const centeredRow = row - half;
-    const centeredCol = col - half;
+    // Cell center: offset by 0.5 to hit the middle of each tile
+    const r = (row + 0.5) / GRID_SIZE;
+    const c = (col + 0.5) / GRID_SIZE;
 
-    // Standard isometric: x = (col - row), y = (col + row) / 2
-    const isoX = (centeredCol - centeredRow) * TILE_W;
-    const isoY = (centeredCol + centeredRow) * TILE_H;
+    const svgPt = diamondPt(r, c);
 
-    // Small seeded jitter for organic feel (±0.4% x, ±0.25% y)
-    const jx = (seededRandom(i * 7 + 1) - 0.5) * 0.8;
-    const jy = (seededRandom(i * 13 + 2) - 0.5) * 0.5;
-
+    // Convert SVG coordinates to container percentages
     positions.push({
-      x: CENTER_X + isoX + jx,
-      y: CENTER_Y + isoY + jy,
+      x: (svgPt.x / VB_W) * 100,
+      y: (svgPt.y / VB_H) * 100,
     });
   }
 
