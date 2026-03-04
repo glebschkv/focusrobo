@@ -1,24 +1,22 @@
 /**
  * Island Position Map
  *
- * Maps 100 land cell indices to (x%, y%) coordinates on the floating island surface.
- * Positions form an isometric pattern with seeded jitter for organic placement.
- * All values are percentages relative to the pets-layer container.
+ * Maps 100 land cell indices to (x%, y%) coordinates on a flat isometric
+ * diamond surface. The diamond is a rotated square (rhombus) — wider than
+ * tall, typical of isometric game maps.
  *
- * Positions are clamped to an elliptical boundary so no pet falls
- * off the visible grass surface.
+ * All values are percentages relative to the pets-layer container.
  */
 
 const GRID_SIZE = 10;
 
-// Pets layer center and island ellipse radii (as % of pets-layer container)
+// Diamond dimensions as % of container
 const CENTER_X = 50;
 const CENTER_Y = 50;
-const ELLIPSE_RX = 44; // horizontal half-width of ellipse boundary
-const ELLIPSE_RY = 40; // vertical half-height of ellipse boundary
 
-const TILE_W = 5.6; // horizontal spacing between isometric columns
-const TILE_H = 4.4; // vertical spacing between isometric rows
+// Isometric tile spacing — controls how spread out pets are
+const TILE_W = 7.8; // horizontal half-spacing per grid step
+const TILE_H = 3.9; // vertical half-spacing per grid step
 
 /** Deterministic pseudo-random for consistent jitter across renders */
 function seededRandom(seed: number): number {
@@ -31,58 +29,30 @@ interface IslandPosition {
   y: number; // percentage (0-100)
 }
 
-/**
- * Clamp a point to the interior of an ellipse.
- * Ellipse boundary uses L2 norm: (dx/rx)² + (dy/ry)² <= 1.
- * If the point is already inside, return it unchanged.
- * Otherwise project it onto the ellipse boundary with a small inset margin.
- */
-function clampToEllipse(
-  x: number,
-  y: number,
-  cx: number,
-  cy: number,
-  rx: number,
-  ry: number,
-): { x: number; y: number } {
-  const dx = x - cx;
-  const dy = y - cy;
-  const dist = Math.sqrt((dx / rx) ** 2 + (dy / ry) ** 2);
-
-  if (dist <= 1) return { x, y };
-
-  // Project onto ellipse boundary, slightly inset
-  const scale = 0.88 / dist;
-  return {
-    x: cx + dx * scale,
-    y: cy + dy * scale,
-  };
-}
-
 function computePositions(): IslandPosition[] {
   const positions: IslandPosition[] = [];
+  const half = (GRID_SIZE - 1) / 2; // 4.5 — center offset
 
   for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
     const row = Math.floor(i / GRID_SIZE);
     const col = i % GRID_SIZE;
 
-    // Isometric projection: diamond layout centered at (CENTER_X, CENTER_Y)
-    const isoX = (col - row) * (TILE_W / 2);
-    const isoY = (col + row) * (TILE_H / 2);
+    // Center the grid around (0,0) then apply isometric projection
+    const centeredRow = row - half;
+    const centeredCol = col - half;
 
-    // Center the grid: shift so middle of 10×10 lands at center
-    const gridOffsetY = -((GRID_SIZE - 1) * TILE_H) / 2;
+    // Standard isometric: x = (col - row), y = (col + row) / 2
+    const isoX = (centeredCol - centeredRow) * TILE_W;
+    const isoY = (centeredCol + centeredRow) * TILE_H;
 
-    // Seeded jitter for organic feel (±1% x, ±0.8% y)
-    const jx = (seededRandom(i * 7 + 1) - 0.5) * 2.0;
-    const jy = (seededRandom(i * 13 + 2) - 0.5) * 1.6;
+    // Small seeded jitter for organic feel (±0.8% x, ±0.5% y)
+    const jx = (seededRandom(i * 7 + 1) - 0.5) * 1.6;
+    const jy = (seededRandom(i * 13 + 2) - 0.5) * 1.0;
 
-    const rawX = CENTER_X + isoX + jx;
-    const rawY = CENTER_Y + gridOffsetY + isoY + jy;
-
-    // Clamp to elliptical island boundary
-    const clamped = clampToEllipse(rawX, rawY, CENTER_X, CENTER_Y, ELLIPSE_RX, ELLIPSE_RY);
-    positions.push(clamped);
+    positions.push({
+      x: CENTER_X + isoX + jx,
+      y: CENTER_Y + isoY + jy,
+    });
   }
 
   return positions;
@@ -93,14 +63,16 @@ export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
 /**
  * Get depth-based scale for a cell index.
- * Back of island (low isoDepth) = 0.68, front (high isoDepth) = 1.0.
+ * Back of island (top of diamond) = smaller, front (bottom) = larger.
+ * Range: 0.78 → 1.0 for subtle depth.
  */
-const DEPTH_MIN = 0.68;
+const DEPTH_MIN = 0.78;
 const DEPTH_MAX = 1.0;
 
 export function getDepthScale(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
+  // Isometric depth: higher row+col = closer to camera
   const isoDepth = (row + col) / (2 * (GRID_SIZE - 1));
   return DEPTH_MIN + isoDepth * (DEPTH_MAX - DEPTH_MIN);
 }
@@ -115,5 +87,5 @@ export function getDepthZIndex(index: number): number {
   return 10 + row + col;
 }
 
-/** Rotation step type: 0=0°, 1=90°, 2=180°, 3=270° (kept for backward compat) */
+/** Rotation step type (kept for backward compat) */
 export type RotationStep = 0 | 1 | 2 | 3;

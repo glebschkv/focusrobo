@@ -1,11 +1,8 @@
 /**
  * PetLand Component
  *
- * The home screen — displays a floating isometric island where pets are placed
- * after focus sessions. Pets are positioned organically across the island surface
- * with depth-based scaling and z-ordering.
- *
- * Touch-drag rotates the island in 3D (limited ±28° with spring-back physics).
+ * Home screen — flat isometric diamond island where pets are placed after
+ * focus sessions. Touch-drag rotates the island on Y axis.
  * Rotation uses direct DOM updates (ref-based) to avoid React re-renders.
  */
 
@@ -15,16 +12,6 @@ import { IslandPet } from '@/components/IslandPet';
 import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 
-/** Get time-of-day lighting color */
-function getTimeOfDayColor(): string {
-  const hour = new Date().getHours();
-  if (hour >= 6 && hour < 10) return 'rgba(255, 200, 100, 0.06)'; // morning golden
-  if (hour >= 10 && hour < 16) return 'transparent'; // midday clear
-  if (hour >= 16 && hour < 20) return 'rgba(255, 150, 100, 0.08)'; // evening amber
-  return 'rgba(100, 120, 200, 0.10)'; // night blue
-}
-
-/** Get growth stage class based on fill count */
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
   if (count < 50) return 'pet-land--growing';
@@ -32,15 +19,14 @@ function getGrowthStage(count: number): string {
   return 'pet-land--paradise';
 }
 
-// -- Touch rotation constants --
-const MAX_ROTATE_Y = 28; // degrees
-const DRAG_SENSITIVITY = 0.7; // degrees per pixel of horizontal drag
-const SPRING_STIFFNESS = 0.1; // spring return speed
-const SPRING_DAMPING = 0.78; // velocity decay per frame
-const MOMENTUM_DECAY = 0.95; // velocity decay on release
-const MIN_VELOCITY = 0.1; // stop threshold
+// Touch rotation constants
+const MAX_ROTATE_Y = 25;
+const DRAG_SENSITIVITY = 0.7;
+const SPRING_STIFFNESS = 0.1;
+const SPRING_DAMPING = 0.78;
+const MOMENTUM_DECAY = 0.95;
+const MIN_VELOCITY = 0.1;
 
-/** DEBUG: Award a random pet at a random session length */
 const useDebugAwardPet = () => {
   const generateRandomPet = useLandStore((s) => s.generateRandomPet);
   const placePendingPet = useLandStore((s) => s.placePendingPet);
@@ -54,7 +40,7 @@ const useDebugAwardPet = () => {
   }, [generateRandomPet, placePendingPet]);
 };
 
-/** Touch-drag rotation hook — ref-based DOM updates to avoid React re-renders */
+/** Ref-based touch rotation — zero React re-renders during drag */
 function useIslandRotation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -67,27 +53,19 @@ function useIslandRotation() {
     containerRef.current?.style.setProperty('--island-rotate-y', `${currentAngle.current}deg`);
   }, []);
 
-  // Spring animation — runs when not dragging to return to 0
   const animateSpring = useCallback(() => {
     if (isDragging.current) return;
 
-    const angle = currentAngle.current;
-
-    // Apply momentum decay
     velocity.current *= MOMENTUM_DECAY;
-
-    // Spring force toward 0
-    const springForce = -angle * SPRING_STIFFNESS;
+    const springForce = -currentAngle.current * SPRING_STIFFNESS;
     velocity.current += springForce;
     velocity.current *= SPRING_DAMPING;
 
     currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
-      angle + velocity.current
+      currentAngle.current + velocity.current
     ));
-
     updateCSS();
 
-    // Stop when close to 0 and slow
     if (Math.abs(currentAngle.current) < 0.3 && Math.abs(velocity.current) < MIN_VELOCITY) {
       currentAngle.current = 0;
       velocity.current = 0;
@@ -99,7 +77,6 @@ function useIslandRotation() {
   }, [updateCSS]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    // Only respond to primary pointer (touch or left mouse)
     if (e.button !== 0) return;
     isDragging.current = true;
     lastX.current = e.clientX;
@@ -112,7 +89,6 @@ function useIslandRotation() {
     if (!isDragging.current) return;
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
-
     velocity.current = dx * DRAG_SENSITIVITY;
     currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
       currentAngle.current + dx * DRAG_SENSITIVITY
@@ -123,11 +99,9 @@ function useIslandRotation() {
   const handlePointerUp = useCallback(() => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    // Start spring-back animation
     animFrameId.current = requestAnimationFrame(animateSpring);
   }, [animateSpring]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameId.current);
   }, []);
@@ -156,13 +130,10 @@ export const PetLand = () => {
   const { haptic } = useHaptics();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  // Ref-based touch-drag rotation (no React re-renders during drag)
   const { containerRef, handlers: rotationHandlers } = useIslandRotation();
-
-  // Single active tooltip — only one pet tooltip open at a time
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
 
-  // Clear the "new pet" glow after 8 seconds
+  // Clear new pet glow after 8 seconds
   useEffect(() => {
     if (lastPlacedIndex !== null) {
       const timer = setTimeout(clearLastPlaced, 8000);
@@ -170,7 +141,7 @@ export const PetLand = () => {
     }
   }, [lastPlacedIndex, clearLastPlaced]);
 
-  // Auto-dismiss land completion overlay
+  // Auto-dismiss land completion
   useEffect(() => {
     if (landJustCompleted !== null) {
       haptic('heavy');
@@ -179,7 +150,7 @@ export const PetLand = () => {
     }
   }, [landJustCompleted, clearLandCompleted, haptic]);
 
-  // Auto-dismiss milestone overlay
+  // Auto-dismiss milestone
   useEffect(() => {
     if (milestoneReached !== null) {
       haptic('success');
@@ -210,7 +181,6 @@ export const PetLand = () => {
           />
         );
       }
-      // Render subtle empty slot marker
       const pos = ISLAND_POSITIONS[index];
       if (!pos) return null;
       return (
@@ -228,57 +198,38 @@ export const PetLand = () => {
   }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
 
   const growthClass = getGrowthStage(filledCount);
-  const lightingColor = useMemo(() => getTimeOfDayColor(), []);
 
-  // Ambient particles — 6 floating motes
   const particles = useMemo(() => {
-    return Array.from({ length: 6 }, (_, i) => ({
+    return Array.from({ length: 5 }, (_, i) => ({
       id: i,
       left: `${15 + Math.random() * 70}%`,
       top: `${20 + Math.random() * 50}%`,
       duration: `${6 + Math.random() * 4}s`,
       delay: `${Math.random() * 5}s`,
       background: i % 2 === 0
-        ? 'rgba(255, 255, 255, 0.5)'
-        : 'rgba(200, 230, 120, 0.4)',
+        ? 'rgba(255, 255, 255, 0.4)'
+        : 'rgba(200, 230, 120, 0.3)',
     }));
   }, []);
 
   return (
     <div className={`pet-land ${growthClass}`}>
-      {/* SVG noise filter for grass texture */}
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
-        <filter id="grass-noise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-          <feBlend in="SourceGraphic" mode="soft-light" />
-        </filter>
-      </svg>
-
-      {/* Sky with sun and clouds */}
+      {/* Sky */}
       <div className="pet-land__sky">
         <div className="pet-land__sun" />
         <div className="pet-land__cloud pet-land__cloud--1" />
         <div className="pet-land__cloud pet-land__cloud--2" />
         <div className="pet-land__cloud pet-land__cloud--3" />
-        <div className="pet-land__cloud pet-land__cloud--distant" />
-        {/* Distant scenery — hills/mountains behind island */}
         <div className="pet-land__scenery" />
       </div>
 
-      {/* Time-of-day lighting overlay */}
-      <div
-        className="pet-land__lighting"
-        style={{ background: lightingColor }}
-      />
-
-      {/* Floating island — wrapper handles the bob animation */}
+      {/* Floating island */}
       <div
         className="pet-land__island-wrapper"
         {...rotationHandlers}
         style={{ touchAction: 'pan-y' }}
       >
-        {/* Ambient floating particles — constrained to island area */}
+        {/* Ambient particles */}
         {particles.map((p) => (
           <div
             key={p.id}
@@ -293,44 +244,26 @@ export const PetLand = () => {
           />
         ))}
 
-        {/* 3D tilted island container — rotateY driven by touch drag via CSS variable */}
-        <div
-          className="pet-land__island-container"
-          ref={containerRef}
-        >
-          {/* Island surface (grass top) */}
+        {/* Island container — rotateY driven by touch drag via CSS variable */}
+        <div className="pet-land__island-container" ref={containerRef}>
+          {/* Diamond grass surface */}
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
           </div>
 
-          {/* Unified cliff side */}
-          <div className="pet-land__cliff" />
+          {/* Subtle grid overlay */}
+          <div className="pet-land__island-grid" />
 
-          {/* CSS decorations that appear as island fills */}
-          <div className="pet-land__deco-layer">
-            <div className="pet-land__tree pet-land__tree--1" />
-            <div className="pet-land__tree pet-land__tree--2" />
-            <div className="pet-land__bush pet-land__bush--1" />
-            <div className="pet-land__bush pet-land__bush--2" />
-            <div className="pet-land__bush pet-land__bush--3" />
-            <div className="pet-land__rock pet-land__rock--1" />
-            <div className="pet-land__rock pet-land__rock--2" />
-          </div>
+          {/* Dirt/earth edge visible beneath grass */}
+          <div className="pet-land__island-edge" />
 
-          {/* Waterfall cascading from cliff */}
-          <div className="pet-land__waterfall" />
-
-          {/* Soft shadow beneath floating island */}
+          {/* Shadow beneath island */}
           <div className="pet-land__island-shadow" />
 
-          {/* Pets layer — absolutely positioned pets */}
-          <div
-            className="pet-land__pets-layer"
-            onClick={handleCloseTooltips}
-          >
+          {/* Pets layer */}
+          <div className="pet-land__pets-layer" onClick={handleCloseTooltips}>
             {slotElements}
 
-            {/* Empty state hint for new users */}
             {filledCount === 0 && (
               <div className="pet-land__empty-hint">
                 <span className="pet-land__empty-hint-text">
@@ -342,7 +275,7 @@ export const PetLand = () => {
         </div>
       </div>
 
-      {/* Land completion celebration overlay */}
+      {/* Land completion overlay */}
       {landJustCompleted !== null && (
         <div className="pet-land__land-complete" onClick={clearLandCompleted}>
           <span className="pet-land__land-complete-text">
@@ -354,7 +287,7 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* Milestone celebration */}
+      {/* Milestone */}
       {milestoneReached !== null && (
         <div className="pet-land__milestone" onClick={clearMilestone}>
           <span className="pet-land__milestone-text">{milestoneReached}% filled!</span>
@@ -362,7 +295,7 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* Land progress bar + label */}
+      {/* Progress bar */}
       <div className="pet-land__progress">
         <div className="pet-land__progress-bar-track">
           <div className="pet-land__progress-bar-fill" style={{ width: `${progressPct}%` }} />
@@ -375,7 +308,7 @@ export const PetLand = () => {
         </span>
       </div>
 
-      {/* DEBUG: Award pet button — only renders in development */}
+      {/* Debug button — dev only */}
       {import.meta.env.DEV && (
         <button
           onClick={debugAwardPet}
