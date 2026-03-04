@@ -53,7 +53,7 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   const zIndex = getDepthZIndexForRotation(index, rotationStep);
   const rarityColor = RARITY_COLORS[cell.rarity];
 
-  const bobDelay = ((index % 7) * 0.4).toFixed(1);
+  const bobDelay = ((index % 11) * 0.27).toFixed(1);
   // Per-pet bob variation: -0.5px, 0px, or +0.5px offset
   const bobOffset = ((index % 3) - 1) * 0.5;
 

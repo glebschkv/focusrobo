@@ -221,17 +221,22 @@ export const PetLand = () => {
           {/* Soft shadow beneath floating island */}
           <div className="pet-land__island-shadow" />
 
-          {/* Decorative elements */}
-          <div className="pet-land__deco pet-land__deco--tree-1" />
-          <div className="pet-land__deco pet-land__deco--tree-2" />
-          <div className="pet-land__deco pet-land__deco--flower-1" />
-          <div className="pet-land__deco pet-land__deco--flower-2" />
-          <div className="pet-land__deco pet-land__deco--flower-3" />
-          <div className="pet-land__deco pet-land__deco--bush-1" />
-          <div className="pet-land__deco pet-land__deco--bush-2" />
-          <div className="pet-land__deco pet-land__deco--bush-3" />
-          <div className="pet-land__deco pet-land__deco--rock-1" />
-          <div className="pet-land__deco pet-land__deco--rock-2" />
+          {/* Decorative elements — pixel art sprites (generated via PixelLab) */}
+          <img className="pet-land__deco pet-land__deco--tree-1" src="/assets/island/tree-pine.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--tree-2" src="/assets/island/tree-round.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--flower-1" src="/assets/island/flowers-pink.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--flower-2" src="/assets/island/flowers-yellow.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--flower-3" src="/assets/island/flowers-purple.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--bush-1" src="/assets/island/bush-green.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--bush-2" src="/assets/island/bush-flower.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--bush-3" src="/assets/island/bush-green.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--rock-1" src="/assets/island/rock-large.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--rock-2" src="/assets/island/rock-small.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--fence" src="/assets/island/fence-segment.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--pond" src="/assets/island/pond.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--grass-1" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--grass-2" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
+          <img className="pet-land__deco pet-land__deco--grass-3" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
           <div className="pet-land__deco pet-land__deco--path" />
 
           {/* Pets layer — absolutely positioned pets */}
