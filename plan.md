@@ -1,62 +1,97 @@
-# Plan: Fix Island — Proper 3D Block, Thicker Cliff, No Pet Clipping
+# Plan: Generate Polar Bear Pet Sprites via Pixel Lab API (3 Growth Stages)
 
-## Issues to Fix (from user feedback)
-1. **Looks like 2 squares on top of each other** — The current edge is just an offset diamond behind the grass. The corners don't line up seamlessly. Need proper isometric slab where the grass top and dirt walls form ONE continuous shape with seamless corner joins.
-2. **Dirt is just flat brown/green** — Needs texture, strata lines, subtle rock details to look like actual earth/cliff
-3. **Cliff too thin** — Need to make it significantly thicker so the island looks like a chunky floating block of land
-4. **Pets cut off at top** — The pets-layer `clip-path` clips too aggressively at the top (4% inset). Need to relax it so pets near the top of the diamond aren't clipped.
+## Goal
 
-## Implementation
+Create a new **polar bear** pet species with 3 separate sprite variants — **baby, adolescent, and adult** — using the Pixel Lab API. This is the first pet with per-growth-stage art (currently all pets use 1 sprite scaled by CSS). The polar bear will be the template for upgrading all 20 species to have distinct growth art.
 
-### Step 1: `pet-land.css` — Rebuild island as proper isometric block
+## Current State
 
-**Container**: `aspect-ratio: 2 / 1.3` (was `2/1`) — gives substantial space below the grass for thick cliff walls.
+- All 20 pets use a single 48x48 PNG sprite, scaled via CSS (`0.65×` baby, `0.82×` adolescent, `1.0×` adult)
+- Existing script `scripts/generate-island-decorations.ts` already calls the Pixel Lab v2 API with bitforge + pixflux fallback — we'll follow the same pattern
+- API base: `https://api.pixellab.ai/v2`, key already in use
+- Style reference: use existing `bunny.png` for consistent pixel art style
 
-**Grass surface** — occupies top ~77% of container:
-- `clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)`
-- Height: 77% of container
-- Same warm grass gradients
+## Steps
 
-**Left cliff wall** — seamless with grass bottom-left edge:
-- Clip-path forms a parallelogram from the left point of the grass diamond down to the bottom point
-- `polygon(0% 38.5%, 50% 77%, 50% 100%, 0% 61.5%)` — these numbers match exactly: grass left point is at `(0%, 38.5%)` and grass bottom is at `(50%, 77%)`
-- Lighter brown (lit side): `#8B7355` → `#6B4D2F` → `#5C3D22`
-- Subtle horizontal strata lines via pseudo-element
+### Step 1: Create `scripts/generate-pet-sprites.ts`
 
-**Right cliff wall** — seamless with grass bottom-right edge:
-- `polygon(100% 38.5%, 50% 77%, 50% 100%, 100% 61.5%)` — mirrors left wall
-- Darker brown (shadow side): `#7A5C3B` → `#5C3D22` → `#3A2510`
-- Slightly different strata for variety
+A reusable generation script following the pattern in `generate-island-decorations.ts`. It will:
 
-**Key math**: If grass is 77% tall with diamond clip `polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)`:
-- In container coords: top=0%, left-right=38.5% (77%×50%), bottom=77%
-- Wall height = 100% - 77% = 23% of container = thick cliff
+1. Define 3 growth-stage configs for polar bear:
+   - **Baby** (48x48): `"tiny cute baby polar bear cub, chibi pixel art, front-facing, sitting, very small round fluffy white body, tiny black eyes and nose, stubby paws, adorable, game collectible pet sprite"`
+   - **Adolescent** (48x48): `"cute young polar bear, chibi pixel art, front-facing, standing, medium white fluffy body, curious expression, black eyes and nose, game collectible pet sprite"`
+   - **Adult** (48x48): `"majestic polar bear, chibi pixel art, front-facing, standing tall, large white fluffy body, confident expression, black eyes and nose, strong paws, game collectible pet sprite"`
 
-**Delete**: `.pet-land__island-edge` entirely (replaced by two walls)
+2. Use bitforge with bunny.png as style reference (consistency with existing pets), pixflux as fallback
+3. Output to `public/assets/pets/polar-bear-baby.png`, `polar-bear-adolescent.png`, `polar-bear-adult.png`
+4. Also generate a default `polar-bear.png` (the adolescent variant, used as the species icon in collection UI)
 
-**Fix pets layer clip**: Relax top inset from 4% to 1% so pets at the top of the diamond aren't cut. Change `clip-path: polygon(50% 1%, 97% 50%, 50% 99%, 3% 50%)` and match to grass-area height.
+**Negative prompts**: `"humanoid, human, person, realistic, photorealistic, 3D, side view, background, text, watermark, blurry"`
 
-**Shadow**: Adjust position for taller container — move to `bottom: -4%`
+### Step 2: Run the script and iterate on prompts
 
-### Step 2: `PetLand.tsx` — Update DOM
+Generate sprites and visually verify they:
+- Look distinctly different across growth stages (baby is small/sitting, adult is tall/confident)
+- Are recognizable as polar bears at 40-58px display size
+- Have transparent backgrounds
+- Match the cute pixel art style of existing pets
+- Have clean outlines that work with rarity glow effects
 
-Replace:
-```tsx
-<div className="pet-land__island-edge" />
-```
-With:
-```tsx
-<div className="pet-land__island-left-wall" />
-<div className="pet-land__island-right-wall" />
+May need 2-3 iterations adjusting prompts, `style_strength`, and `text_guidance_scale`.
+
+### Step 3: Add polar bear to `PetDatabase.ts`
+
+Add a new entry to `PET_DATABASE`:
+```typescript
+{ id: 'polar-bear', name: 'Polar Bear', rarity: 'rare', unlockLevel: 28,
+  description: 'A mighty polar bear that thrives in long focus sessions.',
+  imagePath: '/assets/pets/polar-bear.png' }
 ```
 
-### Step 3: `islandPositions.ts` — No changes needed
-Tile spacing (4.9/4.9) and positions are already correct. The pets-layer dimensions will match the grass area so positions stay valid.
+Rarity: **rare** (fits between wolf at 25 and crane at 32).
 
-### Step 4: Typecheck + build + commit + push
+### Step 4: Update `IslandPet.tsx` to support per-growth sprite paths
+
+Currently `IslandPet.tsx` loads one image per species via `imagePath`. Update the image resolution logic:
+
+```typescript
+// Try growth-specific sprite first, fall back to base sprite
+const growthImagePath = `/assets/pets/${petId}-${size}.png`;  // e.g. polar-bear-baby.png
+const baseImagePath = pet.imagePath;                           // e.g. /assets/pets/polar-bear.png
+```
+
+Use an `<img>` with `onError` fallback — if the growth-specific file doesn't exist (for older pets that still use single sprites), it gracefully falls back to the base sprite. This way:
+- Polar bear (new): shows baby/adolescent/adult art
+- All other pets (existing): continue using their single sprite with CSS scaling
+- Future pets: just add growth PNGs and they auto-upgrade
+
+### Step 5: Update CSS scaling for growth-aware pets
+
+For pets with per-growth sprites, the CSS growth scale (0.65/0.82/1.0) should still apply but can be softened since the art itself conveys size difference. Optionally keep a gentler scale (e.g., 0.8/0.9/1.0) for growth-aware pets so babies still appear slightly smaller on the island.
+
+### Step 6: Typecheck, build, commit, push
+
+Run `npm run typecheck` and `npm run build` to verify no regressions, then commit and push.
 
 ## Files Changed
-| File | Changes |
-|------|---------|
-| `src/styles/pet-land.css` | Rebuild as 3D block: grass top 77%, left+right cliff walls 23%, strata texture, delete old edge, relax pet clip-path |
-| `src/components/PetLand.tsx` | Replace edge div with left-wall + right-wall divs |
+
+| File | Action | Description |
+|------|--------|-------------|
+| `scripts/generate-pet-sprites.ts` | **Create** | Pixel Lab API script for generating pet growth sprites |
+| `public/assets/pets/polar-bear.png` | **Create** | Default polar bear sprite (adolescent, used as icon) |
+| `public/assets/pets/polar-bear-baby.png` | **Create** | Baby polar bear sprite |
+| `public/assets/pets/polar-bear-adolescent.png` | **Create** | Adolescent polar bear sprite |
+| `public/assets/pets/polar-bear-adult.png` | **Create** | Adult polar bear sprite |
+| `src/data/PetDatabase.ts` | **Edit** | Add polar bear species entry |
+| `src/components/IslandPet.tsx` | **Edit** | Support per-growth sprite paths with fallback |
+
+## Prompt Strategy
+
+The key to cute animal sprites (not humanoid):
+- Always include "chibi pixel art" for the kawaii collectible style
+- Use animal-specific body descriptors ("fluffy white body", "stubby paws") not human traits
+- "front-facing" to match island display
+- "game collectible pet sprite" to anchor the style
+- Negative prompt excludes humanoid/realistic/3D
+- Baby should be "sitting" or "curled up" for distinct silhouette
+- Adult should be "standing tall" for clear size progression
