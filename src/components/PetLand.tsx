@@ -19,13 +19,18 @@ function getGrowthStage(count: number): string {
   return 'pet-land--paradise';
 }
 
-// Touch rotation constants
-const MAX_ROTATE_Y = 25;
-const DRAG_SENSITIVITY = 0.7;
-const SPRING_STIFFNESS = 0.1;
-const SPRING_DAMPING = 0.78;
-const MOMENTUM_DECAY = 0.95;
-const MIN_VELOCITY = 0.1;
+// Parallax tilt constants
+const MAX_OFFSET = 12; // max px shift for the deepest layer
+const DRAG_SENSITIVITY = 0.5;
+const SPRING_STIFFNESS = 0.08;
+const SPRING_DAMPING = 0.8;
+const MOMENTUM_DECAY = 0.94;
+const MIN_VELOCITY = 0.05;
+
+// Parallax layer speeds (higher = moves more)
+const LAYER_SKY = 0.15;
+const LAYER_ISLAND = 0.5;
+const LAYER_PETS = 0.85;
 
 // Zoom constants
 const ZOOM_MIN = 0.8;
@@ -47,14 +52,16 @@ const useDebugAwardPet = () => {
   }, [generateRandomPet, placePendingPet]);
 };
 
-/** Ref-based touch rotation + zoom — zero React re-renders during drag/pinch */
-function useIslandRotation() {
-  const containerRef = useRef<HTMLDivElement>(null);
+/** Ref-based parallax tilt + zoom — zero React re-renders during drag/pinch */
+function useIslandParallax() {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const skyRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const petsRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const lastX = useRef(0);
   const velocity = useRef(0);
-  const currentAngle = useRef(0);
+  const currentOffset = useRef(0); // -MAX_OFFSET to +MAX_OFFSET
   const animFrameId = useRef<number>(0);
 
   // Zoom state
@@ -67,27 +74,33 @@ function useIslandRotation() {
   const clampZoom = (z: number) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
 
   const updateCSS = useCallback(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.style.setProperty('--island-rotate-y', `${currentAngle.current}deg`);
-    el.style.setProperty('--island-zoom', `${currentZoom.current}`);
+    const offset = currentOffset.current;
+    if (skyRef.current) {
+      skyRef.current.style.transform = `translateX(${offset * LAYER_SKY}px)`;
+    }
+    if (containerRef.current) {
+      containerRef.current.style.transform = `translateX(${offset * LAYER_ISLAND}px) scale(${currentZoom.current})`;
+    }
+    if (petsRef.current) {
+      petsRef.current.style.transform = `translateX(${offset * LAYER_PETS}px)`;
+    }
   }, []);
 
   const animateSpring = useCallback(() => {
     if (isDragging.current) return;
 
     velocity.current *= MOMENTUM_DECAY;
-    const springForce = -currentAngle.current * SPRING_STIFFNESS;
+    const springForce = -currentOffset.current * SPRING_STIFFNESS;
     velocity.current += springForce;
     velocity.current *= SPRING_DAMPING;
 
-    currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
-      currentAngle.current + velocity.current
+    currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
+      currentOffset.current + velocity.current
     ));
     updateCSS();
 
-    if (Math.abs(currentAngle.current) < 0.3 && Math.abs(velocity.current) < MIN_VELOCITY) {
-      currentAngle.current = 0;
+    if (Math.abs(currentOffset.current) < 0.2 && Math.abs(velocity.current) < MIN_VELOCITY) {
+      currentOffset.current = 0;
       velocity.current = 0;
       updateCSS();
       return;
@@ -98,7 +111,6 @@ function useIslandRotation() {
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return;
-    // Don't start rotation drag if pinching
     if (isPinching.current) return;
     isDragging.current = true;
     lastX.current = e.clientX;
@@ -112,8 +124,8 @@ function useIslandRotation() {
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
     velocity.current = dx * DRAG_SENSITIVITY;
-    currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
-      currentAngle.current + dx * DRAG_SENSITIVITY
+    currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
+      currentOffset.current + dx * DRAG_SENSITIVITY
     ));
     updateCSS();
   }, [updateCSS]);
@@ -132,7 +144,7 @@ function useIslandRotation() {
     updateCSS();
   }, [updateCSS]);
 
-  // Touch pinch-to-zoom (native touch events for multi-touch)
+  // Touch pinch-to-zoom
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -145,17 +157,15 @@ function useIslandRotation() {
     function onTouchStart(e: TouchEvent) {
       if (e.touches.length === 2) {
         isPinching.current = true;
-        isDragging.current = false; // cancel rotation drag
+        isDragging.current = false;
         pinchStartDist.current = getTouchDist(e);
         pinchStartZoom.current = currentZoom.current;
         e.preventDefault();
       }
 
-      // Double-tap detection (single finger)
       if (e.touches.length === 1) {
         const now = Date.now();
         if (now - lastTapTime.current < 300) {
-          // Toggle between 1.0 and ZOOM_DOUBLE_TAP
           currentZoom.current = currentZoom.current > 1.1 ? ZOOM_DEFAULT : ZOOM_DOUBLE_TAP;
           updateCSS();
           lastTapTime.current = 0;
@@ -200,8 +210,10 @@ function useIslandRotation() {
   }, []);
 
   return {
-    containerRef,
     wrapperRef,
+    skyRef,
+    containerRef,
+    petsRef,
     handlers: {
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
@@ -225,7 +237,7 @@ export const PetLand = () => {
   const { haptic } = useHaptics();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  const { containerRef, wrapperRef, handlers: rotationHandlers } = useIslandRotation();
+  const { wrapperRef, skyRef, containerRef, petsRef, handlers: parallaxHandlers } = useIslandParallax();
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
 
   // Clear new pet glow after 8 seconds
@@ -297,8 +309,8 @@ export const PetLand = () => {
 
   return (
     <div className={`pet-land ${growthClass}`}>
-      {/* Sky */}
-      <div className="pet-land__sky">
+      {/* Sky — parallax layer (slowest) */}
+      <div className="pet-land__sky" ref={skyRef}>
         <div className="pet-land__sun" />
         <div className="pet-land__cloud pet-land__cloud--1" />
         <div className="pet-land__cloud pet-land__cloud--2" />
@@ -306,11 +318,11 @@ export const PetLand = () => {
         <div className="pet-land__scenery" />
       </div>
 
-      {/* Floating island */}
+      {/* Floating island — parallax drag handler */}
       <div
         ref={wrapperRef}
         className="pet-land__island-wrapper"
-        {...rotationHandlers}
+        {...parallaxHandlers}
         style={{ touchAction: 'pan-y' }}
       >
         {/* Ambient particles */}
@@ -328,7 +340,7 @@ export const PetLand = () => {
           />
         ))}
 
-        {/* Island container — rotateY driven by touch drag via CSS variable */}
+        {/* Island container — parallax layer (medium) */}
         <div className="pet-land__island-container" ref={containerRef}>
           {/* Pixel-art island — SVG with flat fills */}
           <IslandSVG />
@@ -336,8 +348,8 @@ export const PetLand = () => {
           {/* Shadow beneath island */}
           <div className="pet-land__island-shadow" />
 
-          {/* Pets layer */}
-          <div className="pet-land__pets-layer" onClick={handleCloseTooltips}>
+          {/* Pets layer — parallax layer (fastest) */}
+          <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips}>
             {slotElements}
 
             {filledCount === 0 && (
