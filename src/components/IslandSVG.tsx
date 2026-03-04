@@ -49,8 +49,8 @@ function seeded(seed: number): number {
   return x - Math.floor(x);
 }
 
-// ─── Tile Grid (8×8 isometric) ─────────────────────────────────────
-const GRID = 8;
+// ─── Tile Grid (10×10 isometric) — matches 100 pet slots ──────────
+const GRID = 10;
 
 function diamondPt(r: number, c: number): Pt {
   const g = GRID;

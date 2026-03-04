@@ -295,15 +295,28 @@ export const PetLand = () => {
   const growthClass = getGrowthStage(filledCount);
 
   const particles = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => ({
+    return Array.from({ length: 7 }, (_, i) => ({
       id: i,
-      left: `${15 + Math.random() * 70}%`,
-      top: `${20 + Math.random() * 50}%`,
-      duration: `${6 + Math.random() * 4}s`,
-      delay: `${Math.random() * 5}s`,
-      background: i % 2 === 0
-        ? 'rgba(255, 255, 255, 0.4)'
-        : 'rgba(200, 230, 120, 0.3)',
+      left: `${10 + Math.random() * 80}%`,
+      top: `${15 + Math.random() * 55}%`,
+      duration: `${7 + Math.random() * 5}s`,
+      delay: `${Math.random() * 6}s`,
+      background: [
+        'rgba(255, 255, 240, 0.5)',
+        'rgba(255, 240, 200, 0.4)',
+        'rgba(200, 230, 120, 0.3)',
+        'rgba(255, 255, 255, 0.45)',
+      ][i % 4],
+    }));
+  }, []);
+
+  const sparkles = useMemo(() => {
+    return Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      left: `${8 + Math.random() * 84}%`,
+      top: `${10 + Math.random() * 60}%`,
+      duration: `${3 + Math.random() * 3}s`,
+      delay: `${Math.random() * 4}s`,
     }));
   }, []);
 
@@ -311,11 +324,32 @@ export const PetLand = () => {
     <div className={`pet-land ${growthClass}`}>
       {/* Sky — parallax layer (slowest) */}
       <div className="pet-land__sky" ref={skyRef}>
+        {/* Sun with atmospheric glow */}
         <div className="pet-land__sun" />
+
+        {/* God rays from sun */}
+        <div className="pet-land__rays">
+          <div className="pet-land__ray pet-land__ray--1" />
+          <div className="pet-land__ray pet-land__ray--2" />
+          <div className="pet-land__ray pet-land__ray--3" />
+          <div className="pet-land__ray pet-land__ray--4" />
+          <div className="pet-land__ray pet-land__ray--5" />
+        </div>
+
+        {/* Clouds — 5 layers at varying depths */}
         <div className="pet-land__cloud pet-land__cloud--1" />
         <div className="pet-land__cloud pet-land__cloud--2" />
         <div className="pet-land__cloud pet-land__cloud--3" />
-        <div className="pet-land__scenery" />
+        <div className="pet-land__cloud pet-land__cloud--4" />
+        <div className="pet-land__cloud pet-land__cloud--5" />
+
+        {/* Distant landscape silhouettes */}
+        <div className="pet-land__mountains-far" />
+        <div className="pet-land__mountains-near" />
+        <div className="pet-land__treeline" />
+
+        {/* Warm horizon haze */}
+        <div className="pet-land__haze" />
       </div>
 
       {/* Floating island — parallax drag handler */}
@@ -325,7 +359,7 @@ export const PetLand = () => {
         {...parallaxHandlers}
         style={{ touchAction: 'pan-y' }}
       >
-        {/* Ambient particles */}
+        {/* Ambient dust motes */}
         {particles.map((p) => (
           <div
             key={p.id}
@@ -336,6 +370,21 @@ export const PetLand = () => {
               animationDuration: p.duration,
               animationDelay: p.delay,
               background: p.background,
+              color: p.background,
+            }}
+          />
+        ))}
+
+        {/* Glinting sparkles */}
+        {sparkles.map((s) => (
+          <div
+            key={`sparkle-${s.id}`}
+            className="pet-land__sparkle"
+            style={{
+              left: s.left,
+              top: s.top,
+              animationDuration: s.duration,
+              animationDelay: s.delay,
             }}
           />
         ))}
