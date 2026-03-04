@@ -35,10 +35,15 @@ const RARITY_LABELS: Record<string, string> = {
 
 export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
+  const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
   if (!species) return null;
+
+  // Try growth-specific sprite first (e.g. penguin-baby.png), fall back to base sprite
+  const growthSpritePath = `/assets/pets/${cell.petId}-${cell.size}.png`;
+  const spriteSrc = useGrowthSprite ? growthSpritePath : species.imagePath;
 
   const pos = ISLAND_POSITIONS[index];
   if (!pos) return null;
@@ -115,12 +120,19 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
       }}
     >
       <img
-        src={species.imagePath}
+        src={spriteSrc}
         alt={species.name}
         className="island-pet__sprite"
         draggable={false}
         loading="lazy"
-        onError={() => setImageError(true)}
+        onError={() => {
+          if (useGrowthSprite) {
+            // Growth sprite not found — fall back to base species sprite
+            setUseGrowthSprite(false);
+          } else {
+            setImageError(true);
+          }
+        }}
       />
 
       {/* Pet shadow on ground */}
