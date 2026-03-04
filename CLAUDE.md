@@ -16,8 +16,8 @@ Focus session completes → random pet generated (weighted by rarity + player le
 **Pixel art aesthetic** — cute collectible animals on a floating isometric island:
 
 - **Visual style**: Pixel art pets (PNG sprites, 36–44px responsive), front-facing, transparent background
-- **Home screen**: `PetLand` component — floating 3D-tilted island with sky, clouds, sun, waterfall
-- **Island**: Isometric elliptical grass surface with cliff sides, decorative trees/flowers/bushes/rocks
+- **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes)
+- **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
 - **Pets**: 20 species across 5 rarities (see Pet Species below)
 - **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
@@ -84,6 +84,7 @@ src/
 │   └── NotFound.tsx
 ├── components/
 │   ├── PetLand.tsx            # Home screen — floating isometric island with pets
+│   ├── IslandSVG.tsx          # Inline SVG island — grass diamond, cliff walls, tile grid, textures
 │   ├── IslandPet.tsx          # Single pet on island — positioned, scaled, animated
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
@@ -285,7 +286,7 @@ src/
 │   ├── minimalSentry.ts       # Lightweight error tracking
 │   └── spriteAnimationManager.ts # Sprite animation frame management
 ├── styles/                    # Modular CSS
-│   ├── pet-land.css           # Island sky, clouds, surface, cliff, waterfall, pets, tooltips
+│   ├── pet-land.css           # Island sky, clouds, god rays, mountains, parallax, pets, tooltips, progress bar, zoom
 │   ├── animations.css         # Shared keyframe animations
 │   ├── base.css               # Base/reset styles
 │   ├── navigation.css         # Tab bar, navigation styles
@@ -411,27 +412,29 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 The home screen renders a **floating isometric island** (not a flat grid). Key concepts:
 
-**Island Visual Structure** (`pet-land.css`):
-- **Sky**: Gradient `#6BB8E0` → `#F0F7E4` with animated sun + 3 drifting clouds
+**Island Visual Structure** (`IslandSVG.tsx` + `pet-land.css`):
+- **Sky**: Smooth 4-stop gradient (`#7EC8E3` → `#A5D8EF` → `#D0EAF5` → `#EEF4F0`) with animated sun, god rays, 5 volumetric clouds, distant mountain/hill/treeline silhouettes, warm horizon haze, dust motes, and sparkles
 - **Island wrapper**: Floating bob animation (4s, ±6px vertical)
-- **Island container**: 3D perspective tilt (`perspective(600px) rotateX(14deg)`)
-- **Surface**: Elliptical grass top with radial gradient shading (`#90D450` → `#5E9729`)
-- **Cliff**: Brown gradient cliff sides beneath the grass
-- **Waterfall**: Animated blue water cascade on left side
+- **Island container**: Multi-layer parallax tilt (ref-based, no React re-renders) — sky, island, and pets layers shift at different speeds on drag
+- **Island SVG** (`IslandSVG.tsx`): Inline SVG (viewBox 420×258) with:
+  - **Grass diamond**: Isometric diamond shape (vertices: TOP 210,0 / RIGHT 414,105 / BOTTOM 210,210 / LEFT 6,105) with checkerboard tile grid (10×10), grass texture patches, sun dapples, dirt spots
+  - **Cliff walls**: Two parallelogram cliff faces (left + right) extending 42px below grass edge, with dirt band, horizontal strata, stone blocks with mortar lines, individual stone shading
+  - **Grass overhang**: Organic bumpy edge along cliff tops simulating grass blades hanging over
+  - **Sharp cliff corners**: No rounding — clean parallelogram geometry
 - **Shadow**: Soft radial shadow below the floating island
-- **Decorations**: 2 trees, 3 flowers, 3 bushes, 2 rocks, 1 path
+- **Pinch-to-zoom**: Range 0.8×–2.0×, supports two-finger pinch, mouse wheel, and double-tap toggle (1.0↔1.5)
 
 **Pet Positioning** (`islandPositions.ts`):
-- 100 positions computed from 10×10 grid via **isometric projection**
-- Center: (50%, 50%), Ellipse radii: RX=44%, RY=42%
-- Tile spacing: 5.6% (X) × 4.4% (Y) in isometric coordinates
-- Seeded deterministic jitter: ±1% X, ±0.8% Y per slot
-- Positions clamped to elliptical boundary (0.92 scale factor)
+- 100 positions computed from 10×10 grid via **bilinear interpolation on diamond vertices**
+- Uses the exact same diamond vertices (TOP, RIGHT, BOTTOM, LEFT) and `diamondPt()` function as `IslandSVG.tsx` — pets align precisely with tile centers
+- Cell centers: `(row+0.5)/10, (col+0.5)/10` normalized, then mapped to SVG coords and converted to container percentages
+- No jitter — exact centering on each tile
+- Pet CSS transform: `translate(-50%, -50%)` centers sprite on tile position
 
 **Depth System**:
-- **Depth scale**: Back of island = 0.7, front = 1.0 (based on isometric row+col)
+- **Depth scale**: Back of island = 0.78, front = 1.0 (based on isometric row+col)
 - **Z-index**: Range 10–28 based on `row + col` for proper layering
-- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.7 = 0.455)
+- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.78 = 0.507)
 
 **Smart Placement Algorithm** (`landStore.ts`):
 - First 2 pets placed randomly
@@ -440,13 +443,12 @@ The home screen renders a **floating isometric island** (not a flat grid). Key c
 - Creates organic, even distribution instead of clustering
 
 **Pet Rendering** (`IslandPet.tsx`):
-- Counter-rotated -14° to appear upright despite island tilt ("Paper Mario" effect)
 - Sprite size: 36×44px (responsive, scales up at 390px+ and 420px+ breakpoints)
 - Image rendering: `pixelated` / `crisp-edges`
-- Bob animation: 3s, ±2px, staggered delay per pet `(index % 7) * 0.4s`
+- Bob animation: 3s, ±2px, staggered delay per pet `(index % 11) * 0.27s`, per-pet offset variation ±0.5px
 - Pop-in animation for new pets: 0.5s bounce (scale 0→1.15→1.0)
-- Tap to show tooltip card (name, rarity badge, size, session duration)
-- Haptic feedback on new pet placement
+- Tap to show tooltip card (name, rarity badge, size, session duration) — tooltip flips below for pets near top, shifts horizontally for edge pets
+- Haptic feedback on new pet placement and tap
 
 **Land State** (`landStore.ts`):
 ```typescript
@@ -596,7 +598,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
 
 ### CSS Architecture (`src/styles/`)
-- `pet-land.css` — Island sky, clouds, surface, cliff, waterfall, decorations, pets, tooltips, progress bar
+- `pet-land.css` — Island sky, clouds, god rays, mountains, parallax tilt, pets, tooltips, progress bar, zoom
 - `animations.css` — Shared keyframe animations
 - `base.css` — Base/reset styles
 - `navigation.css` — Tab bar styles
@@ -626,8 +628,9 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system for cross-component achievement progress.
 - **Offline support**: `offlineSyncStore` queues actions when offline, `useOfflineSyncManager` processes them when connectivity returns. `OfflineContext` tracks online/offline state.
 - **Native plugin fallbacks**: All Capacitor plugins have web fallbacks so the app runs in browsers. `NativePluginContext` tracks availability.
-- **Isometric depth**: Pets at the back of the island render smaller (0.7×) and with lower z-index, creating depth perspective.
-- **Counter-rotation**: Pets are rotated -14° to counteract the island's 14° forward tilt, appearing upright.
+- **Isometric depth**: Pets at the back of the island render smaller (0.78×) and with lower z-index, creating depth perspective.
+- **Parallax tilt**: Touch-drag shifts sky/island/pets layers at different speeds (0.15/0.5/0.85) using ref-based DOM updates — zero React re-renders during interaction. Spring physics for momentum and snap-back.
+- **SVG-aligned pet positions**: `islandPositions.ts` and `IslandSVG.tsx` share identical diamond vertices and bilinear interpolation math so pets sit exactly on their tile centers.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 
 ## Path Aliases
