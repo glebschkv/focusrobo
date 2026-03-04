@@ -3,12 +3,12 @@
  *
  * Renders a single pet absolutely positioned on the floating island surface.
  * Includes depth-based scaling, rarity glow effects, idle bobbing, and tooltips.
+ * Uses billboard counter-rotation so pets always face the camera during island rotation.
  */
 
 import { memo, useEffect, useState } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
-import { getDepthScaleForRotation, getDepthZIndexForRotation, getPositionForRotation } from '@/data/islandPositions';
-import type { RotationStep } from '@/data/islandPositions';
+import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
@@ -18,7 +18,6 @@ interface IslandPetProps {
   isNew?: boolean;
   showTooltip: boolean;
   onToggleTooltip: () => void;
-  rotationStep?: RotationStep;
 }
 
 const SIZE_LABELS: Record<string, string> = {
@@ -35,22 +34,22 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip, rotationStep = 0 }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
   if (!species) return null;
 
-  const pos = getPositionForRotation(index, rotationStep);
+  const pos = ISLAND_POSITIONS[index];
   if (!pos) return null;
 
   if (imageError) return null;
 
   const growthScale = GROWTH_SCALES[cell.size];
-  const depthScale = getDepthScaleForRotation(index, rotationStep);
+  const depthScale = getDepthScale(index);
   const finalScale = growthScale * depthScale;
-  const zIndex = getDepthZIndexForRotation(index, rotationStep);
+  const zIndex = getDepthZIndex(index);
   const rarityColor = RARITY_COLORS[cell.rarity];
 
   const bobDelay = ((index % 11) * 0.27).toFixed(1);
@@ -66,7 +65,7 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   // Flip tooltip below for pets near top of island
   const tooltipBelow = pos.y < 30;
 
-  // Horizontal tooltip offset for edge pets (C4)
+  // Horizontal tooltip offset for edge pets
   const tooltipShiftClass =
     pos.x < 20 ? 'island-pet__tooltip--shift-right' :
     pos.x > 80 ? 'island-pet__tooltip--shift-left' : '';

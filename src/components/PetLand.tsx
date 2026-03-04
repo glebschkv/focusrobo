@@ -4,13 +4,14 @@
  * The home screen — displays a floating isometric island where pets are placed
  * after focus sessions. Pets are positioned organically across the island surface
  * with depth-based scaling and z-ordering.
+ *
+ * Touch-drag rotates the island in 3D (limited ±35° with spring-back physics).
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
-import { ISLAND_POSITIONS, getDepthZIndexForRotation, getPositionForRotation } from '@/data/islandPositions';
-import type { RotationStep } from '@/data/islandPositions';
+import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 
 /** Get time-of-day lighting color */
@@ -30,6 +31,14 @@ function getGrowthStage(count: number): string {
   return 'pet-land--paradise';
 }
 
+// -- Touch rotation constants --
+const MAX_ROTATE_Y = 35; // degrees
+const DRAG_SENSITIVITY = 0.4; // degrees per pixel of horizontal drag
+const SPRING_STIFFNESS = 0.08; // spring return speed
+const SPRING_DAMPING = 0.82; // velocity decay per frame
+const MOMENTUM_DECAY = 0.95; // velocity decay on release
+const MIN_VELOCITY = 0.1; // stop threshold
+
 /** DEBUG: Award a random pet at a random session length */
 const useDebugAwardPet = () => {
   const generateRandomPet = useLandStore((s) => s.generateRandomPet);
@@ -44,6 +53,92 @@ const useDebugAwardPet = () => {
   }, [generateRandomPet, placePendingPet]);
 };
 
+/** Touch-drag rotation hook — continuous rotation with spring-back physics */
+function useIslandRotation() {
+  const [rotateY, setRotateY] = useState(0);
+  const isDragging = useRef(false);
+  const lastX = useRef(0);
+  const velocity = useRef(0);
+  const currentAngle = useRef(0);
+  const animFrameId = useRef<number>(0);
+
+  // Spring animation — runs when not dragging to return to 0
+  const animateSpring = useCallback(() => {
+    if (isDragging.current) return;
+
+    const angle = currentAngle.current;
+    const vel = velocity.current;
+
+    // Apply momentum decay
+    velocity.current *= MOMENTUM_DECAY;
+
+    // Spring force toward 0
+    const springForce = -angle * SPRING_STIFFNESS;
+    velocity.current += springForce;
+    velocity.current *= SPRING_DAMPING;
+
+    currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
+      angle + velocity.current
+    ));
+
+    setRotateY(currentAngle.current);
+
+    // Stop when close to 0 and slow
+    if (Math.abs(currentAngle.current) < 0.3 && Math.abs(velocity.current) < MIN_VELOCITY) {
+      currentAngle.current = 0;
+      velocity.current = 0;
+      setRotateY(0);
+      return;
+    }
+
+    animFrameId.current = requestAnimationFrame(animateSpring);
+  }, []);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    // Only respond to primary pointer (touch or left mouse)
+    if (e.button !== 0) return;
+    isDragging.current = true;
+    lastX.current = e.clientX;
+    velocity.current = 0;
+    cancelAnimationFrame(animFrameId.current);
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }, []);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    const dx = e.clientX - lastX.current;
+    lastX.current = e.clientX;
+
+    velocity.current = dx * DRAG_SENSITIVITY;
+    currentAngle.current = Math.max(-MAX_ROTATE_Y, Math.min(MAX_ROTATE_Y,
+      currentAngle.current + dx * DRAG_SENSITIVITY
+    ));
+    setRotateY(currentAngle.current);
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    // Start spring-back animation
+    animFrameId.current = requestAnimationFrame(animateSpring);
+  }, [animateSpring]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => cancelAnimationFrame(animFrameId.current);
+  }, []);
+
+  return {
+    rotateY,
+    handlers: {
+      onPointerDown: handlePointerDown,
+      onPointerMove: handlePointerMove,
+      onPointerUp: handlePointerUp,
+      onPointerCancel: handlePointerUp,
+    },
+  };
+}
+
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
@@ -55,38 +150,8 @@ export const PetLand = () => {
   const { haptic } = useHaptics();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  // Island rotation — discrete 90-degree steps (position-swap, not CSS rotateY)
-  const [rotationStep, setRotationStep] = useState<RotationStep>(0);
-
-  const rotateLeft = useCallback(() => {
-    setRotationStep((prev) => ((prev + 3) % 4) as RotationStep);
-    haptic('light');
-  }, [haptic]);
-
-  const rotateRight = useCallback(() => {
-    setRotationStep((prev) => ((prev + 1) % 4) as RotationStep);
-    haptic('light');
-  }, [haptic]);
-
-  // Swipe gesture detection for rotation (60px threshold, must be horizontally dominant)
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  }, []);
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchStartY.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    touchStartX.current = null;
-    touchStartY.current = null;
-    // Only trigger if horizontal swipe is dominant and exceeds threshold
-    if (Math.abs(dx) > 60 && Math.abs(dy) < Math.abs(dx) * 0.5) {
-      if (dx > 0) rotateRight();
-      else rotateLeft();
-    }
-  }, [rotateLeft, rotateRight]);
+  // Continuous touch-drag rotation
+  const { rotateY, handlers: rotationHandlers } = useIslandRotation();
 
   // Single active tooltip — only one pet tooltip open at a time
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
@@ -126,12 +191,11 @@ export const PetLand = () => {
             isNew={index === lastPlacedIndex}
             showTooltip={activeTooltipIndex === index}
             onToggleTooltip={() => handleToggleTooltip(index)}
-            rotationStep={rotationStep}
           />
         );
       }
       // Render subtle empty slot marker
-      const pos = getPositionForRotation(index, rotationStep);
+      const pos = ISLAND_POSITIONS[index];
       if (!pos) return null;
       return (
         <div
@@ -140,12 +204,12 @@ export const PetLand = () => {
           style={{
             left: `${pos.x}%`,
             top: `${pos.y}%`,
-            zIndex: getDepthZIndexForRotation(index, rotationStep),
+            zIndex: getDepthZIndex(index),
           }}
         />
       );
     });
-  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip, rotationStep]);
+  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
 
   const growthClass = getGrowthStage(filledCount);
   const lightingColor = useMemo(() => getTimeOfDayColor(), []);
@@ -184,8 +248,8 @@ export const PetLand = () => {
       {/* Floating island — wrapper handles the bob animation */}
       <div
         className="pet-land__island-wrapper"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        {...rotationHandlers}
+        style={{ touchAction: 'pan-y' }}
       >
         {/* Ambient floating particles — constrained to island area */}
         {particles.map((p) => (
@@ -202,42 +266,26 @@ export const PetLand = () => {
           />
         ))}
 
-        {/* 3D tilted island container */}
-        <div className="pet-land__island-container">
+        {/* 3D tilted island container — rotateY driven by touch drag */}
+        <div
+          className="pet-land__island-container"
+          style={{
+            '--island-rotate-y': `${rotateY}deg`,
+          } as React.CSSProperties}
+        >
           {/* Island surface (grass top) */}
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
-            <div className="pet-land__island-grid-overlay" />
           </div>
 
-          {/* Layered cliff sides (grass edge → dirt → deep rock) */}
-          <div className="pet-land__cliff-layer pet-land__cliff-layer--grass" />
-          <div className="pet-land__cliff-layer pet-land__cliff-layer--dirt" />
-          <div className="pet-land__cliff-layer pet-land__cliff-layer--rock" />
+          {/* Unified cliff side */}
+          <div className="pet-land__cliff" />
 
           {/* Waterfall cascading from cliff */}
           <div className="pet-land__waterfall" />
 
           {/* Soft shadow beneath floating island */}
           <div className="pet-land__island-shadow" />
-
-          {/* Decorative elements — pixel art sprites (generated via PixelLab) */}
-          <img className="pet-land__deco pet-land__deco--tree-1" src="/assets/island/tree-pine.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--tree-2" src="/assets/island/tree-round.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--flower-1" src="/assets/island/flowers-pink.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--flower-2" src="/assets/island/flowers-yellow.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--flower-3" src="/assets/island/flowers-purple.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--bush-1" src="/assets/island/bush-green.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--bush-2" src="/assets/island/bush-flower.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--bush-3" src="/assets/island/bush-green.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--rock-1" src="/assets/island/rock-large.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--rock-2" src="/assets/island/rock-small.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--fence" src="/assets/island/fence-segment.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--pond" src="/assets/island/pond.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--grass-1" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--grass-2" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
-          <img className="pet-land__deco pet-land__deco--grass-3" src="/assets/island/grass-tuft.png" alt="" draggable={false} />
-          <div className="pet-land__deco pet-land__deco--path" />
 
           {/* Pets layer — absolutely positioned pets */}
           <div
@@ -256,22 +304,6 @@ export const PetLand = () => {
             )}
           </div>
         </div>
-
-        {/* Rotation arrow buttons */}
-        <button
-          className="pet-land__rotate-btn pet-land__rotate-btn--left"
-          onClick={rotateLeft}
-          aria-label="Rotate island left"
-        >
-          &#9664;
-        </button>
-        <button
-          className="pet-land__rotate-btn pet-land__rotate-btn--right"
-          onClick={rotateRight}
-          aria-label="Rotate island right"
-        >
-          &#9654;
-        </button>
       </div>
 
       {/* Land completion celebration overlay */}
