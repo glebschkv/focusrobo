@@ -1,342 +1,376 @@
 /**
- * IslandSVG — Pixel-art isometric island rendered as inline SVG.
+ * IslandSVG — Polished isometric island rendered as inline SVG.
  *
- * Draws the grass surface (diamond with isometric tile grid), cliff walls
- * (3-band: grass lip → dirt → cobblestone), cobblestone detail shapes,
- * and grass overhang tufts. All flat fills, no gradients — pixel art style.
- *
- * Replaces the old CSS-gradient island rendering.
+ * Uses SVG linearGradient for smooth shading within each zone,
+ * subtle grid lines, clean grass edge, refined cobblestones,
+ * and gentle grass overhang bumps. Designed to look cohesive
+ * and professionally crafted.
  */
 
-// ─── ViewBox & Key Coordinates ─────────────────────────────────────
-// Container aspect-ratio: 2 / 1.3 → viewBox 420×273
+// ─── ViewBox ───────────────────────────────────────────────────────
 const VB_W = 420;
 const VB_H = 273;
 
-// Grass diamond vertices (top 77% of container = 210px area)
-const GRASS = {
+// Grass diamond vertices (top 77%)
+const G = {
   top: { x: 210, y: 4 },
   right: { x: 411, y: 103 },
   bottom: { x: 210, y: 206 },
   left: { x: 8, y: 103 },
 };
 
-// ─── Tile Grid Generation ──────────────────────────────────────────
-const GRID = 8; // 8×8 tile grid
-
-interface Point {
+interface Pt {
   x: number;
   y: number;
 }
 
-/** Linear interpolation between two points */
-function lerp(a: Point, b: Point, t: number): Point {
+function lerp(a: Pt, b: Pt, t: number): Pt {
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
 }
 
-/**
- * Compute the 4 corners of tile (row, col) in the isometric diamond grid.
- * The grid subdivides the main diamond into GRID×GRID tiles.
- */
-function tileCorners(row: number, col: number): [Point, Point, Point, Point] {
+function pts(arr: Pt[]): string {
+  return arr.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+}
+
+// ─── Tile Grid ─────────────────────────────────────────────────────
+const GRID = 8;
+
+function diamondPt(r: number, c: number): Pt {
   const g = GRID;
-  // Edges of the main diamond
-  const { top, right, bottom, left } = GRASS;
-
-  // Parametric position along each edge
-  // Top-left edge: top → left
-  // Top-right edge: top → right
-  // Bottom-left edge: left → bottom
-  // Bottom-right edge: right → bottom
-
-  // A point on the diamond at grid (r, c) can be found by:
-  // Going r/g of the way from the top-left edge toward bottom-left,
-  // and c/g of the way from the top-right edge toward bottom-right.
-  // Diamond point at (r, c) = lerp of lerp
-  function diamondPoint(r: number, c: number): Point {
-    const leftEdge = lerp(top, left, r / g);
-    const rightEdge = lerp(top, right, c / g);
-    const bottomLeft = lerp(left, bottom, c / g);
-    const bottomRight = lerp(right, bottom, r / g);
-
-    // The intersection point: go from leftEdge toward bottomRight by c/g,
-    // or equivalently from rightEdge toward bottomLeft by r/g
-    const p1 = lerp(leftEdge, bottomRight, c / g);
-    const p2 = lerp(rightEdge, bottomLeft, r / g);
-    return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-  }
-
-  return [
-    diamondPoint(row, col),         // top
-    diamondPoint(row, col + 1),     // right
-    diamondPoint(row + 1, col + 1), // bottom
-    diamondPoint(row + 1, col),     // left
-  ];
+  const le = lerp(G.top, G.left, r / g);
+  const re = lerp(G.top, G.right, c / g);
+  const bl = lerp(G.left, G.bottom, c / g);
+  const br = lerp(G.right, G.bottom, r / g);
+  const p1 = lerp(le, br, c / g);
+  const p2 = lerp(re, bl, r / g);
+  return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
 }
 
-function pointsStr(pts: Point[]): string {
-  return pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+function tileCorners(r: number, c: number): Pt[] {
+  return [diamondPt(r, c), diamondPt(r, c + 1), diamondPt(r + 1, c + 1), diamondPt(r + 1, c)];
 }
 
-// ─── Cliff Band Coordinates ────────────────────────────────────────
-// Left cliff: (0, 105) → (210, 210) → (210, 273) → (0, 168)
-// Split into 3 bands: grass lip (top 10%), dirt (10-55%), stone (55-100%)
-
-function cliffBand(
-  tl: Point, tr: Point, bl: Point, br: Point,
-  startPct: number, endPct: number,
+// ─── Cliff Band Helpers ────────────────────────────────────────────
+function cliffBandPts(
+  tl: Pt, tr: Pt, bl: Pt, br: Pt,
+  s: number, e: number,
 ): string {
-  const topL = lerp(tl, bl, startPct);
-  const topR = lerp(tr, br, startPct);
-  const botL = lerp(tl, bl, endPct);
-  const botR = lerp(tr, br, endPct);
-  return pointsStr([topL, topR, botR, botL]);
+  return pts([lerp(tl, bl, s), lerp(tr, br, s), lerp(tr, br, e), lerp(tl, bl, e)]);
 }
 
 // Left cliff corners
-const LC = {
-  tl: { x: 0, y: 105 },
-  tr: { x: 210, y: 210 },
-  bl: { x: 0, y: 168 },
-  br: { x: 210, y: 273 },
-};
-
+const LC = { tl: { x: 0, y: 105 }, tr: { x: 210, y: 210 }, bl: { x: 0, y: 168 }, br: { x: 210, y: 273 } };
 // Right cliff corners
-const RC = {
-  tl: { x: 420, y: 105 },
-  tr: { x: 210, y: 210 },
-  bl: { x: 420, y: 168 },
-  br: { x: 210, y: 273 },
-};
+const RC = { tl: { x: 420, y: 105 }, tr: { x: 210, y: 210 }, bl: { x: 420, y: 168 }, br: { x: 210, y: 273 } };
 
-// ─── Cobblestone Positions ─────────────────────────────────────────
-// Positioned in the stone band (55-100%) of each cliff wall
-interface Stone {
-  cx: number;
-  cy: number;
-  rx: number;
-  ry: number;
-}
+// ─── Cobblestones ──────────────────────────────────────────────────
+interface Stone { cx: number; cy: number; rx: number; ry: number }
 
+// Positioned carefully within the stone bands — staggered rows
 const leftStones: Stone[] = [
-  { cx: 45, cy: 162, rx: 9, ry: 5 },
-  { cx: 72, cy: 168, rx: 7, ry: 4 },
-  { cx: 28, cy: 170, rx: 8, ry: 5 },
-  { cx: 95, cy: 175, rx: 10, ry: 5 },
-  { cx: 55, cy: 174, rx: 7, ry: 4 },
-  { cx: 120, cy: 200, rx: 9, ry: 5 },
-  { cx: 80, cy: 195, rx: 8, ry: 4 },
-  { cx: 145, cy: 215, rx: 10, ry: 5 },
-  { cx: 110, cy: 210, rx: 7, ry: 4 },
-  { cx: 160, cy: 230, rx: 9, ry: 5 },
-  { cx: 130, cy: 225, rx: 8, ry: 4 },
-  { cx: 175, cy: 245, rx: 8, ry: 5 },
-  { cx: 190, cy: 255, rx: 9, ry: 5 },
-  { cx: 150, cy: 240, rx: 7, ry: 4 },
+  // Row 1 (upper stone band)
+  { cx: 30, cy: 155, rx: 8, ry: 4.5 },
+  { cx: 52, cy: 158, rx: 7, ry: 4 },
+  { cx: 75, cy: 162, rx: 9, ry: 5 },
+  { cx: 98, cy: 168, rx: 8, ry: 4.5 },
+  // Row 2
+  { cx: 40, cy: 165, rx: 7, ry: 4 },
+  { cx: 65, cy: 170, rx: 8, ry: 4.5 },
+  { cx: 90, cy: 175, rx: 9, ry: 5 },
+  { cx: 115, cy: 182, rx: 8, ry: 4 },
+  // Row 3
+  { cx: 55, cy: 180, rx: 7, ry: 4 },
+  { cx: 82, cy: 186, rx: 9, ry: 5 },
+  { cx: 110, cy: 192, rx: 8, ry: 4.5 },
+  { cx: 135, cy: 200, rx: 7, ry: 4 },
+  // Row 4 (deeper)
+  { cx: 75, cy: 196, rx: 8, ry: 4.5 },
+  { cx: 105, cy: 204, rx: 9, ry: 5 },
+  { cx: 130, cy: 212, rx: 8, ry: 4 },
+  { cx: 155, cy: 222, rx: 7, ry: 4 },
+  // Row 5 (bottom)
+  { cx: 100, cy: 218, rx: 8, ry: 4.5 },
+  { cx: 128, cy: 228, rx: 9, ry: 5 },
+  { cx: 155, cy: 238, rx: 8, ry: 4 },
+  { cx: 178, cy: 250, rx: 7, ry: 4 },
+  { cx: 195, cy: 260, rx: 8, ry: 4.5 },
 ];
 
-const rightStones: Stone[] = [
-  { cx: 375, cy: 162, rx: 9, ry: 5 },
-  { cx: 348, cy: 168, rx: 7, ry: 4 },
-  { cx: 392, cy: 170, rx: 8, ry: 5 },
-  { cx: 325, cy: 175, rx: 10, ry: 5 },
-  { cx: 365, cy: 174, rx: 7, ry: 4 },
-  { cx: 300, cy: 200, rx: 9, ry: 5 },
-  { cx: 340, cy: 195, rx: 8, ry: 4 },
-  { cx: 275, cy: 215, rx: 10, ry: 5 },
-  { cx: 310, cy: 210, rx: 7, ry: 4 },
-  { cx: 260, cy: 230, rx: 9, ry: 5 },
-  { cx: 290, cy: 225, rx: 8, ry: 4 },
-  { cx: 245, cy: 245, rx: 8, ry: 5 },
-  { cx: 230, cy: 255, rx: 9, ry: 5 },
-  { cx: 270, cy: 240, rx: 7, ry: 4 },
-];
+const rightStones: Stone[] = leftStones.map((s) => ({
+  cx: VB_W - s.cx,
+  cy: s.cy,
+  rx: s.rx,
+  ry: s.ry,
+}));
 
-// ─── Grass Overhang Tufts ──────────────────────────────────────────
-// Triangles pointing downward from diamond edges
-interface Tuft {
-  points: string; // SVG polygon points
+// ─── Grass Overhang ────────────────────────────────────────────────
+// Smooth rounded bumps along the bottom two edges (where grass meets cliff)
+// Using SVG path with quadratic curves for smooth organic feel
+
+function generateGrassEdgePath(): string {
+  // Bottom-left edge: left vertex → bottom vertex
+  const blPts: Pt[] = [];
+  for (let t = 0; t <= 1; t += 0.01) {
+    blPts.push(lerp(G.left, G.bottom, t));
+  }
+
+  // Bottom-right edge: bottom vertex → right vertex
+  const brPts: Pt[] = [];
+  for (let t = 0; t <= 1; t += 0.01) {
+    brPts.push(lerp(G.bottom, G.right, t));
+  }
+
+  // Create bumpy path along bottom-left edge
+  let path = `M ${G.left.x.toFixed(1)},${G.left.y.toFixed(1)} `;
+
+  // Bottom-left bumps
+  const blBumps = [0.08, 0.18, 0.28, 0.38, 0.5, 0.62, 0.72, 0.82, 0.92];
+  for (const t of blBumps) {
+    const p = lerp(G.left, G.bottom, t);
+    // Bump outward perpendicular to edge
+    const dx = G.bottom.x - G.left.x;
+    const dy = G.bottom.y - G.left.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const nx = -dy / len; // perpendicular (outward = toward bottom-left)
+    const ny = dx / len;
+    const bumpSize = 3 + Math.sin(t * 37) * 1.5;
+    const mid = {
+      x: p.x + nx * bumpSize,
+      y: p.y + ny * bumpSize,
+    };
+    const before = lerp(G.left, G.bottom, t - 0.04);
+    const after = lerp(G.left, G.bottom, t + 0.04);
+    path += `L ${before.x.toFixed(1)},${before.y.toFixed(1)} `;
+    path += `Q ${mid.x.toFixed(1)},${mid.y.toFixed(1)} ${after.x.toFixed(1)},${after.y.toFixed(1)} `;
+  }
+
+  path += `L ${G.bottom.x.toFixed(1)},${G.bottom.y.toFixed(1)} `;
+
+  // Bottom-right bumps
+  const brBumps = [0.08, 0.18, 0.28, 0.38, 0.5, 0.62, 0.72, 0.82, 0.92];
+  for (const t of brBumps) {
+    const p = lerp(G.bottom, G.right, t);
+    const dx = G.right.x - G.bottom.x;
+    const dy = G.right.y - G.bottom.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const nx = -dy / len;
+    const ny = dx / len;
+    const bumpSize = 3 + Math.sin(t * 41) * 1.5;
+    const mid = {
+      x: p.x + nx * bumpSize,
+      y: p.y + ny * bumpSize,
+    };
+    const before = lerp(G.bottom, G.right, t - 0.04);
+    const after = lerp(G.bottom, G.right, t + 0.04);
+    path += `L ${before.x.toFixed(1)},${before.y.toFixed(1)} `;
+    path += `Q ${mid.x.toFixed(1)},${mid.y.toFixed(1)} ${after.x.toFixed(1)},${after.y.toFixed(1)} `;
+  }
+
+  path += `L ${G.right.x.toFixed(1)},${G.right.y.toFixed(1)} `;
+
+  // Close back through the clean top edges
+  path += `L ${G.top.x.toFixed(1)},${G.top.y.toFixed(1)} `;
+  path += `L ${G.left.x.toFixed(1)},${G.left.y.toFixed(1)} Z`;
+
+  return path;
 }
 
-function makeTuft(baseX: number, baseY: number, angle: number, size: number): Tuft {
-  // Triangle pointing in the direction of `angle` (radians)
-  const tipX = baseX + Math.cos(angle) * size;
-  const tipY = baseY + Math.sin(angle) * size;
-  const perpX = Math.cos(angle + Math.PI / 2) * (size * 0.35);
-  const perpY = Math.sin(angle + Math.PI / 2) * (size * 0.35);
-  return {
-    points: pointsStr([
-      { x: baseX - perpX, y: baseY - perpY },
-      { x: baseX + perpX, y: baseY + perpY },
-      { x: tipX, y: tipY },
-    ]),
-  };
+const GRASS_EDGE_PATH = generateGrassEdgePath();
+
+// ─── Pre-compute tiles ─────────────────────────────────────────────
+const TILES: { points: string; isLight: boolean }[] = [];
+for (let r = 0; r < GRID; r++) {
+  for (let c = 0; c < GRID; c++) {
+    TILES.push({
+      points: pts(tileCorners(r, c)),
+      isLight: (r + c) % 2 === 0,
+    });
+  }
 }
 
-// Generate tufts along each diamond edge
-function generateTufts(): Tuft[] {
-  const tufts: Tuft[] = [];
-  const { top, right, bottom, left } = GRASS;
-
-  // Top-left edge (top → left): tufts point left-down
-  for (let t = 0.15; t < 0.9; t += 0.12 + Math.sin(t * 17) * 0.03) {
-    const p = lerp(top, left, t);
-    tufts.push(makeTuft(p.x - 1, p.y + 1, Math.PI * 0.75, 7 + Math.sin(t * 23) * 2));
-  }
-
-  // Top-right edge (top → right): tufts point right-down
-  for (let t = 0.15; t < 0.9; t += 0.12 + Math.sin(t * 13) * 0.03) {
-    const p = lerp(top, right, t);
-    tufts.push(makeTuft(p.x + 1, p.y + 1, Math.PI * 0.25, 7 + Math.sin(t * 19) * 2));
-  }
-
-  // Bottom-left edge (left → bottom): tufts point left-down
-  for (let t = 0.1; t < 0.9; t += 0.12 + Math.sin(t * 11) * 0.03) {
-    const p = lerp(left, bottom, t);
-    tufts.push(makeTuft(p.x - 1, p.y + 1, Math.PI * 0.65, 7 + Math.sin(t * 29) * 2));
-  }
-
-  // Bottom-right edge (right → bottom): tufts point right-down
-  for (let t = 0.1; t < 0.9; t += 0.12 + Math.sin(t * 7) * 0.03) {
-    const p = lerp(right, bottom, t);
-    tufts.push(makeTuft(p.x + 1, p.y + 1, Math.PI * 0.35, 7 + Math.sin(t * 31) * 2));
-  }
-
-  return tufts;
-}
-
-const TUFTS = generateTufts();
-
-// ─── Light grass tile color & dark grass tile color ────────────────
-const LIGHT_TILE = '#B8E06A';
-const DARK_TILE = '#9CC84E';
-const GRID_LINE = '#6B9430';
-
-// Cliff colors
-const CLIFF = {
-  left: { lip: '#6B9430', dirt: '#A08850', stone: '#585040' },
-  right: { lip: '#5E8528', dirt: '#8A7840', stone: '#4E4638' },
-  cobbleFill: '#6B6050',
-  cobbleStroke: '#3E3628',
-};
-
-const TUFT_COLORS = ['#7AA836', '#82B240', '#6B9430'];
+// Diamond outline for clean edge
+const DIAMOND_PATH = `M ${G.top.x},${G.top.y} L ${G.right.x},${G.right.y} L ${G.bottom.x},${G.bottom.y} L ${G.left.x},${G.left.y} Z`;
 
 // ─── Component ─────────────────────────────────────────────────────
 
-export const IslandSVG = () => {
-  // Pre-compute tiles
-  const tiles: { points: string; fill: string }[] = [];
-  for (let r = 0; r < GRID; r++) {
-    for (let c = 0; c < GRID; c++) {
-      const corners = tileCorners(r, c);
-      const isLight = (r + c) % 2 === 0;
-      tiles.push({
-        points: pointsStr(corners),
-        fill: isLight ? LIGHT_TILE : DARK_TILE,
-      });
-    }
-  }
+export const IslandSVG = () => (
+  <svg
+    viewBox={`0 0 ${VB_W} ${VB_H}`}
+    className="pet-land__island-svg"
+    preserveAspectRatio="xMidYMid meet"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      {/* Grass surface gradient — warm sunlit top-right to cooler bottom-left */}
+      <linearGradient id="grass-fill" x1="30%" y1="0%" x2="70%" y2="100%">
+        <stop offset="0%" stopColor="#C4E87A" />
+        <stop offset="35%" stopColor="#B0D85A" />
+        <stop offset="65%" stopColor="#9CC84E" />
+        <stop offset="100%" stopColor="#88B842" />
+      </linearGradient>
 
-  return (
-    <svg
-      viewBox={`0 0 ${VB_W} ${VB_H}`}
-      className="pet-land__island-svg"
-      preserveAspectRatio="xMidYMid meet"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* ── Layer 1: Cliff walls ── */}
+      {/* Light tile gradient */}
+      <linearGradient id="tile-light" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#C2E878" />
+        <stop offset="100%" stopColor="#AADA5C" />
+      </linearGradient>
 
-      {/* Left cliff — stone band (bottom) */}
-      <polygon
-        points={cliffBand(LC.tl, LC.tr, LC.bl, LC.br, 0.55, 1)}
-        fill={CLIFF.left.stone}
-      />
-      {/* Left cliff — dirt band (middle) */}
-      <polygon
-        points={cliffBand(LC.tl, LC.tr, LC.bl, LC.br, 0.1, 0.55)}
-        fill={CLIFF.left.dirt}
-      />
-      {/* Left cliff — grass lip (top) */}
-      <polygon
-        points={cliffBand(LC.tl, LC.tr, LC.bl, LC.br, 0, 0.1)}
-        fill={CLIFF.left.lip}
-      />
+      {/* Dark tile gradient */}
+      <linearGradient id="tile-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#A4D052" />
+        <stop offset="100%" stopColor="#90C046" />
+      </linearGradient>
 
-      {/* Right cliff — stone band (bottom) */}
-      <polygon
-        points={cliffBand(RC.tl, RC.tr, RC.bl, RC.br, 0.55, 1)}
-        fill={CLIFF.right.stone}
-      />
-      {/* Right cliff — dirt band (middle) */}
-      <polygon
-        points={cliffBand(RC.tl, RC.tr, RC.bl, RC.br, 0.1, 0.55)}
-        fill={CLIFF.right.dirt}
-      />
-      {/* Right cliff — grass lip (top) */}
-      <polygon
-        points={cliffBand(RC.tl, RC.tr, RC.bl, RC.br, 0, 0.1)}
-        fill={CLIFF.right.lip}
-      />
+      {/* Left cliff — lit side gradients */}
+      <linearGradient id="cliff-l-lip" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#72A834" />
+        <stop offset="100%" stopColor="#5E9228" />
+      </linearGradient>
+      <linearGradient id="cliff-l-dirt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#B09858" />
+        <stop offset="30%" stopColor="#A08850" />
+        <stop offset="100%" stopColor="#887440" />
+      </linearGradient>
+      <linearGradient id="cliff-l-stone" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#686050" />
+        <stop offset="50%" stopColor="#585040" />
+        <stop offset="100%" stopColor="#484038" />
+      </linearGradient>
 
-      {/* ── Layer 2: Cobblestone detail shapes ── */}
-      {leftStones.map((s, i) => (
-        <ellipse
-          key={`ls-${i}`}
-          cx={s.cx}
-          cy={s.cy}
-          rx={s.rx}
-          ry={s.ry}
-          fill={CLIFF.cobbleFill}
-          stroke={CLIFF.cobbleStroke}
-          strokeWidth={1}
-        />
-      ))}
-      {rightStones.map((s, i) => (
-        <ellipse
-          key={`rs-${i}`}
-          cx={s.cx}
-          cy={s.cy}
-          rx={s.rx}
-          ry={s.ry}
-          fill={CLIFF.cobbleFill}
-          stroke={CLIFF.cobbleStroke}
-          strokeWidth={1}
-        />
-      ))}
+      {/* Right cliff — shadow side gradients */}
+      <linearGradient id="cliff-r-lip" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#648E2C" />
+        <stop offset="100%" stopColor="#507A20" />
+      </linearGradient>
+      <linearGradient id="cliff-r-dirt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#988048" />
+        <stop offset="30%" stopColor="#8A7440" />
+        <stop offset="100%" stopColor="#746434" />
+      </linearGradient>
+      <linearGradient id="cliff-r-stone" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#585044" />
+        <stop offset="50%" stopColor="#4A4238" />
+        <stop offset="100%" stopColor="#3E3830" />
+      </linearGradient>
 
-      {/* ── Layer 3: Grass surface tiles (checkerboard) ── */}
-      {tiles.map((tile, i) => (
-        <polygon
-          key={`tile-${i}`}
-          points={tile.points}
-          fill={tile.fill}
-          stroke={GRID_LINE}
-          strokeWidth={1.2}
-        />
-      ))}
+      {/* Grass overhang fill */}
+      <linearGradient id="grass-edge" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#88B842" />
+        <stop offset="100%" stopColor="#6B9430" />
+      </linearGradient>
 
-      {/* ── Layer 4: Subtle grass highlights ── */}
-      {/* Light sun patch on upper-right */}
-      <polygon
-        points={pointsStr([
-          lerp(GRASS.top, GRASS.right, 0.3),
-          lerp(GRASS.top, GRASS.right, 0.6),
-          lerp(GRASS.right, GRASS.bottom, 0.2),
-          lerp(GRASS.top, GRASS.left, 0.15),
-        ])}
-        fill="#C8EE7A"
-        opacity={0.3}
+      {/* Depth shadow overlay on grass */}
+      <radialGradient id="grass-shadow" cx="35%" cy="65%" r="55%">
+        <stop offset="0%" stopColor="transparent" />
+        <stop offset="70%" stopColor="transparent" />
+        <stop offset="100%" stopColor="rgba(40,70,15,0.18)" />
+      </radialGradient>
+
+      {/* Sun highlight on grass */}
+      <radialGradient id="grass-sun" cx="62%" cy="30%" r="40%">
+        <stop offset="0%" stopColor="rgba(220,250,130,0.25)" />
+        <stop offset="100%" stopColor="transparent" />
+      </radialGradient>
+    </defs>
+
+    {/* ── Layer 1: Cliff walls with gradients ── */}
+
+    {/* Left cliff bands */}
+    <polygon points={cliffBandPts(LC.tl, LC.tr, LC.bl, LC.br, 0.5, 1)} fill="url(#cliff-l-stone)" />
+    <polygon points={cliffBandPts(LC.tl, LC.tr, LC.bl, LC.br, 0.08, 0.5)} fill="url(#cliff-l-dirt)" />
+    <polygon points={cliffBandPts(LC.tl, LC.tr, LC.bl, LC.br, 0, 0.08)} fill="url(#cliff-l-lip)" />
+
+    {/* Thin shadow line between dirt and stone on left */}
+    <line
+      x1={lerp(LC.tl, LC.bl, 0.5).x} y1={lerp(LC.tl, LC.bl, 0.5).y}
+      x2={lerp(LC.tr, LC.br, 0.5).x} y2={lerp(LC.tr, LC.br, 0.5).y}
+      stroke="rgba(30,25,15,0.25)" strokeWidth={1}
+    />
+    {/* Thin shadow line between lip and dirt on left */}
+    <line
+      x1={lerp(LC.tl, LC.bl, 0.08).x} y1={lerp(LC.tl, LC.bl, 0.08).y}
+      x2={lerp(LC.tr, LC.br, 0.08).x} y2={lerp(LC.tr, LC.br, 0.08).y}
+      stroke="rgba(30,25,15,0.2)" strokeWidth={0.8}
+    />
+
+    {/* Right cliff bands */}
+    <polygon points={cliffBandPts(RC.tl, RC.tr, RC.bl, RC.br, 0.5, 1)} fill="url(#cliff-r-stone)" />
+    <polygon points={cliffBandPts(RC.tl, RC.tr, RC.bl, RC.br, 0.08, 0.5)} fill="url(#cliff-r-dirt)" />
+    <polygon points={cliffBandPts(RC.tl, RC.tr, RC.bl, RC.br, 0, 0.08)} fill="url(#cliff-r-lip)" />
+
+    {/* Thin shadow lines on right */}
+    <line
+      x1={lerp(RC.tl, RC.bl, 0.5).x} y1={lerp(RC.tl, RC.bl, 0.5).y}
+      x2={lerp(RC.tr, RC.br, 0.5).x} y2={lerp(RC.tr, RC.br, 0.5).y}
+      stroke="rgba(30,25,15,0.2)" strokeWidth={1}
+    />
+    <line
+      x1={lerp(RC.tl, RC.bl, 0.08).x} y1={lerp(RC.tl, RC.bl, 0.08).y}
+      x2={lerp(RC.tr, RC.br, 0.08).x} y2={lerp(RC.tr, RC.br, 0.08).y}
+      stroke="rgba(30,25,15,0.15)" strokeWidth={0.8}
+    />
+
+    {/* ── Layer 2: Cobblestones (subtle, polished) ── */}
+    {leftStones.map((s, i) => (
+      <ellipse
+        key={`ls-${i}`}
+        cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
+        fill="rgba(100,90,72,0.3)"
+        stroke="rgba(50,42,30,0.25)"
+        strokeWidth={0.7}
       />
+    ))}
+    {rightStones.map((s, i) => (
+      <ellipse
+        key={`rs-${i}`}
+        cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
+        fill="rgba(85,78,62,0.3)"
+        stroke="rgba(40,34,24,0.22)"
+        strokeWidth={0.7}
+      />
+    ))}
 
-      {/* ── Layer 5: Grass overhang tufts ── */}
-      {TUFTS.map((tuft, i) => (
-        <polygon
-          key={`tuft-${i}`}
-          points={tuft.points}
-          fill={TUFT_COLORS[i % TUFT_COLORS.length]}
-        />
-      ))}
-    </svg>
-  );
-};
+    {/* ── Layer 3: Grass overhang (smooth bumps on bottom edges) ── */}
+    <path d={GRASS_EDGE_PATH} fill="url(#grass-edge)" />
+
+    {/* ── Layer 4: Grass surface tiles ── */}
+    {/* Base grass fill */}
+    <polygon points={pts([G.top, G.right, G.bottom, G.left])} fill="url(#grass-fill)" />
+
+    {/* Checkerboard tiles — subtle variation, not harsh */}
+    {TILES.map((tile, i) => (
+      <polygon
+        key={`t-${i}`}
+        points={tile.points}
+        fill={tile.isLight ? 'url(#tile-light)' : 'url(#tile-dark)'}
+        stroke="rgba(75,120,28,0.18)"
+        strokeWidth={0.6}
+      />
+    ))}
+
+    {/* ── Layer 5: Depth shading on grass ── */}
+    <polygon points={pts([G.top, G.right, G.bottom, G.left])} fill="url(#grass-shadow)" />
+    <polygon points={pts([G.top, G.right, G.bottom, G.left])} fill="url(#grass-sun)" />
+
+    {/* ── Layer 6: Clean diamond edge outline ── */}
+    <path
+      d={DIAMOND_PATH}
+      fill="none"
+      stroke="rgba(55,90,22,0.3)"
+      strokeWidth={1.2}
+      strokeLinejoin="round"
+    />
+
+    {/* Thin dark line where grass meets cliff (shadow under grass lip) */}
+    <line
+      x1={G.left.x} y1={G.left.y}
+      x2={G.bottom.x} y2={G.bottom.y}
+      stroke="rgba(30,50,10,0.3)" strokeWidth={1}
+    />
+    <line
+      x1={G.bottom.x} y1={G.bottom.y}
+      x2={G.right.x} y2={G.right.y}
+      stroke="rgba(30,50,10,0.25)" strokeWidth={1}
+    />
+  </svg>
+);
