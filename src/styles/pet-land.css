@@ -128,6 +128,8 @@
   animation: pet-land-island-float 4.5s ease-in-out infinite;
   cursor: grab;
   touch-action: pan-y;
+  perspective: 800px;
+  perspective-origin: center 40%;
 }
 
 .pet-land__island-wrapper:active {

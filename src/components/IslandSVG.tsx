@@ -102,61 +102,30 @@ const LW = { tl: LEFT, tr: BOTTOM, bl: LEFT_DEEP, br: BOTTOM_DEEP };
 // Right cliff: top edge = RIGHT→BOTTOM, bottom edge = RIGHT_DEEP→BOTTOM_DEEP
 const RW = { tl: RIGHT, tr: BOTTOM, bl: RIGHT_DEEP, br: BOTTOM_DEEP };
 
-// ─── Stone Texture Lines ────────────────────────────────────────────
-function stoneLines(
-  tl: Pt, tr: Pt, bl: Pt, br: Pt,
-  bandStart: number, bandEnd: number,
-  count: number,
-): { x1: number; y1: number; x2: number; y2: number }[] {
-  const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  for (let i = 1; i < count; i++) {
-    const t = bandStart + (i / count) * (bandEnd - bandStart);
-    const left = lerp(tl, bl, t);
-    const right = lerp(tr, br, t);
-    lines.push({ x1: left.x, y1: left.y, x2: right.x, y2: right.y });
-  }
-  return lines;
-}
-
-// Vertical mortar joints (staggered between rows)
-function stoneJoints(
-  tl: Pt, tr: Pt, bl: Pt, br: Pt,
-  bandStart: number, bandEnd: number,
-  rows: number, jointsPerRow: number,
-): { x1: number; y1: number; x2: number; y2: number }[] {
-  const joints: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  for (let row = 0; row < rows; row++) {
-    const t1 = bandStart + (row / rows) * (bandEnd - bandStart);
-    const t2 = bandStart + ((row + 1) / rows) * (bandEnd - bandStart);
-    const offset = row % 2 === 0 ? 0 : 0.5 / jointsPerRow;
-    for (let j = 1; j < jointsPerRow; j++) {
-      const s = (j / jointsPerRow) + offset;
-      if (s >= 1) continue;
-      const top = lerp(lerp(tl, bl, t1), lerp(tr, br, t1), s);
-      const bot = lerp(lerp(tl, bl, t2), lerp(tr, br, t2), s);
-      joints.push({ x1: top.x, y1: top.y, x2: bot.x, y2: bot.y });
-    }
-  }
-  return joints;
-}
-
-const leftStoneLines = stoneLines(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1.0, 5);
-const rightStoneLines = stoneLines(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1.0, 5);
-const leftStoneJoints = stoneJoints(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1.0, 5, 4);
-const rightStoneJoints = stoneJoints(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1.0, 5, 4);
-
-// ─── Stone Highlight/Shadow for individual blocks ───────────────────
-// Generate highlight/shadow rects for each stone block
+// ─── Visible Stone Blocks (Forest-style) ────────────────────────────
+// Each stone is a distinct filled polygon with its own color and outline
 interface StoneBlock {
   tl: Pt; tr: Pt; bl: Pt; br: Pt;
-  isDark: boolean; // occasional darker stone
+  fill: string;     // individual stone color
+  highlight: string; // top edge highlight
 }
+
+// Color palette for stone blocks (warm greys with earthy variation)
+const STONE_COLORS_LEFT = [
+  '#706858', '#7A7264', '#686050', '#746C5C', '#6E6654',
+  '#7C7466', '#626050', '#78705E', '#6A6252', '#72685A',
+];
+const STONE_COLORS_RIGHT = [
+  '#625A4C', '#6C6454', '#5A5244', '#66604E', '#5E5848',
+  '#6A6252', '#585040', '#645C4C', '#5C5646', '#625A4E',
+];
 
 function generateStoneBlocks(
   wallTl: Pt, wallTr: Pt, wallBl: Pt, wallBr: Pt,
   bandStart: number, bandEnd: number,
   rows: number, cols: number,
   seed: number,
+  colors: string[],
 ): StoneBlock[] {
   const blocks: StoneBlock[] = [];
   for (let row = 0; row < rows; row++) {
@@ -172,27 +141,29 @@ function generateStoneBlocks(
       const tr = lerp(lerp(wallTl, wallBl, t1), lerp(wallTr, wallBr, t1), clampS2);
       const bl = lerp(lerp(wallTl, wallBl, t2), lerp(wallTr, wallBr, t2), s1);
       const br = lerp(lerp(wallTl, wallBl, t2), lerp(wallTr, wallBr, t2), clampS2);
+      const colorIdx = Math.floor(seeded(seed + row * 7 + col * 13) * colors.length);
       blocks.push({
         tl, tr, bl, br,
-        isDark: seeded(seed + row * 7 + col * 13) < 0.18,
+        fill: colors[colorIdx],
+        highlight: `rgba(255,255,240,${0.08 + seeded(seed + row * 3 + col * 19) * 0.08})`,
       });
     }
   }
   return blocks;
 }
 
-const leftStoneBlocks = generateStoneBlocks(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1.0, 5, 4, 42);
-const rightStoneBlocks = generateStoneBlocks(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1.0, 5, 4, 99);
+const leftStoneBlocks = generateStoneBlocks(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1.0, 6, 5, 42, STONE_COLORS_LEFT);
+const rightStoneBlocks = generateStoneBlocks(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1.0, 6, 5, 99, STONE_COLORS_RIGHT);
 
-// ─── Dirt Band Texture ──────────────────────────────────────────────
-// Strata lines within the dirt band (horizontal geological layers)
+// ─── Dirt Band — richer texture ─────────────────────────────────────
+// Horizontal strata lines
 function dirtStrataLines(
   tl: Pt, tr: Pt, bl: Pt, br: Pt,
   bandStart: number, bandEnd: number,
 ): { x1: number; y1: number; x2: number; y2: number; opacity: number }[] {
   const lines: { x1: number; y1: number; x2: number; y2: number; opacity: number }[] = [];
-  const positions = [0.25, 0.5, 0.72, 0.9];
-  const opacities = [0.08, 0.12, 0.08, 0.06];
+  const positions = [0.15, 0.35, 0.55, 0.72, 0.88];
+  const opacities = [0.1, 0.14, 0.1, 0.08, 0.06];
   for (let i = 0; i < positions.length; i++) {
     const t = bandStart + positions[i] * (bandEnd - bandStart);
     const l = lerp(tl, bl, t);
@@ -202,31 +173,61 @@ function dirtStrataLines(
   return lines;
 }
 
-const leftDirtStrata = dirtStrataLines(LW.tl, LW.tr, LW.bl, LW.br, 0.1, 0.5);
-const rightDirtStrata = dirtStrataLines(RW.tl, RW.tr, RW.bl, RW.br, 0.1, 0.5);
+const leftDirtStrata = dirtStrataLines(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 0.5);
+const rightDirtStrata = dirtStrataLines(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 0.5);
 
-// Root/crack details near the top of dirt band (where grass lip meets dirt)
+// Small embedded pebbles in dirt
+interface Pebble {
+  cx: number; cy: number; rx: number; ry: number; fill: string;
+}
+
+function generatePebbles(
+  tl: Pt, tr: Pt, bl: Pt, br: Pt,
+  bandStart: number, bandEnd: number,
+  count: number, seed: number,
+): Pebble[] {
+  const pebbles: Pebble[] = [];
+  for (let i = 0; i < count; i++) {
+    const s = 0.1 + seeded(seed + i * 11) * 0.8;
+    const tPos = bandStart + (0.1 + seeded(seed + i * 17) * 0.8) * (bandEnd - bandStart);
+    const pt = lerp(lerp(tl, bl, tPos), lerp(tr, br, tPos), s);
+    const shade = Math.floor(80 + seeded(seed + i * 23) * 40);
+    pebbles.push({
+      cx: pt.x, cy: pt.y,
+      rx: 1.5 + seeded(seed + i * 29) * 2,
+      ry: 1 + seeded(seed + i * 31) * 1.2,
+      fill: `rgb(${shade},${shade - 10},${shade - 20})`,
+    });
+  }
+  return pebbles;
+}
+
+const leftPebbles = generatePebbles(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 0.5, 5, 55);
+const rightPebbles = generatePebbles(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 0.5, 5, 77);
+
+// Root/crack details hanging from grass lip into dirt
 function rootCracks(
   tl: Pt, tr: Pt, bl: Pt, br: Pt,
   bandStart: number,
   seed: number,
 ): string[] {
   const paths: string[] = [];
-  const count = 3;
+  const count = 4;
   for (let i = 0; i < count; i++) {
-    const s = 0.15 + seeded(seed + i * 11) * 0.7; // position along the edge
+    const s = 0.1 + seeded(seed + i * 11) * 0.8;
     const startPt = lerp(
-      lerp(tl, bl, bandStart + 0.02),
-      lerp(tr, br, bandStart + 0.02),
+      lerp(tl, bl, bandStart),
+      lerp(tr, br, bandStart),
       s,
     );
+    const depth = 0.08 + seeded(seed + i * 3) * 0.1;
     const endPt = lerp(
-      lerp(tl, bl, bandStart + 0.12 + seeded(seed + i * 3) * 0.08),
-      lerp(tr, br, bandStart + 0.12 + seeded(seed + i * 3) * 0.08),
-      s + (seeded(seed + i * 17) - 0.5) * 0.08,
+      lerp(tl, bl, bandStart + depth),
+      lerp(tr, br, bandStart + depth),
+      s + (seeded(seed + i * 17) - 0.5) * 0.06,
     );
     const midPt = {
-      x: (startPt.x + endPt.x) / 2 + (seeded(seed + i * 23) - 0.5) * 4,
+      x: (startPt.x + endPt.x) / 2 + (seeded(seed + i * 23) - 0.5) * 3,
       y: (startPt.y + endPt.y) / 2,
     };
     paths.push(`M ${p(startPt)} Q ${p(midPt)} ${p(endPt)}`);
@@ -234,8 +235,32 @@ function rootCracks(
   return paths;
 }
 
-const leftRoots = rootCracks(LW.tl, LW.tr, LW.bl, LW.br, 0.1, 55);
-const rightRoots = rootCracks(RW.tl, RW.tr, RW.bl, RW.br, 0.1, 77);
+const leftRoots = rootCracks(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 55);
+const rightRoots = rootCracks(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 77);
+
+// ─── Grass Lip Hanging Strands ──────────────────────────────────────
+// Small green grass blades hanging down from the grass lip into dirt
+function grassStrands(
+  tl: Pt, tr: Pt, bl: Pt, br: Pt,
+  lipEnd: number, seed: number, count: number,
+): string[] {
+  const strands: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const s = 0.05 + seeded(seed + i * 11) * 0.9;
+    const top = lerp(lerp(tl, bl, lipEnd * 0.5), lerp(tr, br, lipEnd * 0.5), s);
+    const hangLen = lipEnd + 0.04 + seeded(seed + i * 17) * 0.06;
+    const bottom = lerp(lerp(tl, bl, hangLen), lerp(tr, br, hangLen), s + (seeded(seed + i * 23) - 0.5) * 0.03);
+    const mid = {
+      x: (top.x + bottom.x) / 2 + (seeded(seed + i * 29) - 0.5) * 2,
+      y: (top.y + bottom.y) / 2,
+    };
+    strands.push(`M ${p(top)} Q ${p(mid)} ${p(bottom)}`);
+  }
+  return strands;
+}
+
+const leftGrassStrands = grassStrands(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 33, 6);
+const rightGrassStrands = grassStrands(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 66, 6);
 
 // ─── Grass Overhang (refined — more bumps, varied sizes) ────────────
 function bumpyEdgePath(from: Pt, to: Pt, outwardDir: 1 | -1): string {
@@ -429,7 +454,7 @@ function generateDirtPatches(count: number, seed: number): DirtPatch[] {
 
 const dirtPatches = generateDirtPatches(4, 300);
 
-// ─── Moss Hints on Stone ────────────────────────────────────────────
+// ─── Moss on Stone (top of stone band) ──────────────────────────────
 interface MossSpot {
   cx: number; cy: number; rx: number; ry: number;
 }
@@ -439,14 +464,13 @@ function generateMossSpots(
   bandStart: number, seed: number,
 ): MossSpot[] {
   const spots: MossSpot[] = [];
-  for (let i = 0; i < 2; i++) {
-    const s = 0.2 + seeded(seed + i * 13) * 0.6;
-    const t = bandStart + 0.03;
+  for (let i = 0; i < 3; i++) {
+    const s = 0.15 + seeded(seed + i * 13) * 0.7;
+    const t = bandStart + 0.02;
     const pt = lerp(lerp(tl, bl, t), lerp(tr, br, t), s);
     spots.push({
-      cx: pt.x,
-      cy: pt.y,
-      rx: 4 + seeded(seed + i * 19) * 3,
+      cx: pt.x, cy: pt.y,
+      rx: 5 + seeded(seed + i * 19) * 4,
       ry: 2 + seeded(seed + i * 23) * 1.5,
     });
   }
@@ -455,32 +479,6 @@ function generateMossSpots(
 
 const leftMoss = generateMossSpots(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 111);
 const rightMoss = generateMossSpots(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 222);
-
-// ─── Dirt Color Variation Patches ───────────────────────────────────
-interface DirtVariation {
-  cx: number; cy: number; r: number;
-}
-
-function generateDirtVariations(
-  tl: Pt, tr: Pt, bl: Pt, br: Pt,
-  bandStart: number, bandEnd: number, seed: number,
-): DirtVariation[] {
-  const vars: DirtVariation[] = [];
-  for (let i = 0; i < 3; i++) {
-    const s = 0.15 + seeded(seed + i * 11) * 0.7;
-    const tPos = bandStart + (0.2 + seeded(seed + i * 17) * 0.6) * (bandEnd - bandStart);
-    const pt = lerp(lerp(tl, bl, tPos), lerp(tr, br, tPos), s);
-    vars.push({
-      cx: pt.x,
-      cy: pt.y,
-      r: 5 + seeded(seed + i * 23) * 4,
-    });
-  }
-  return vars;
-}
-
-const leftDirtVars = generateDirtVariations(LW.tl, LW.tr, LW.bl, LW.br, 0.1, 0.5, 333);
-const rightDirtVars = generateDirtVariations(RW.tl, RW.tr, RW.bl, RW.br, 0.1, 0.5, 444);
 
 // ─── Component ─────────────────────────────────────────────────────
 export const IslandSVG = () => (
@@ -563,88 +561,87 @@ export const IslandSVG = () => (
 
     {/* ═══ CLIFF WALLS — share exact top edges with grass diamond ═══ */}
 
-    {/* Left cliff: stone band (50%–100%) */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1)} fill="url(#ig-ls)" />
-    {/* Left cliff: dirt band (10%–50%) */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.1, 0.5)} fill="url(#ig-ld)" />
-    {/* Left cliff: grass lip (0%–10%) */}
-    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0, 0.1)} fill="url(#ig-ll)" />
+    {/* === STONE BAND — visible individual blocks === */}
+    {/* Background fill for stone area */}
+    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 1)} fill="#5C5444" />
+    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1)} fill="#504840" />
 
-    {/* Right cliff: stone band */}
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 1)} fill="url(#ig-rs)" />
-    {/* Right cliff: dirt band */}
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.1, 0.5)} fill="url(#ig-rd)" />
-    {/* Right cliff: grass lip */}
-    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0, 0.1)} fill="url(#ig-rl)" />
-
-    {/* ═══ STONE BLOCK SHADING — individual block depth ═══ */}
-    {/* Darker individual stones for variety */}
-    {[...leftStoneBlocks, ...rightStoneBlocks].filter(b => b.isDark).map((b, i) => (
-      <polygon key={`sd-${i}`} points={pts([b.tl, b.tr, b.br, b.bl])}
-        fill="rgba(25,20,15,0.12)" />
+    {/* Individual stone blocks — each has its own fill + outline */}
+    {leftStoneBlocks.map((b, i) => (
+      <g key={`lsb-${i}`}>
+        <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
+          fill={b.fill} stroke="rgba(40,35,25,0.35)" strokeWidth={0.8} />
+        {/* Top-edge highlight */}
+        <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
+          stroke={b.highlight} strokeWidth={0.7} />
+        {/* Bottom-edge shadow */}
+        <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
+          stroke="rgba(20,15,10,0.2)" strokeWidth={0.6} />
+      </g>
     ))}
-    {/* Highlight on top-left edge of each stone */}
-    {[...leftStoneBlocks, ...rightStoneBlocks].map((b, i) => (
-      <line key={`sh-${i}`}
-        x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
-        stroke="rgba(200,190,170,0.12)" strokeWidth={0.5} />
-    ))}
-    {/* Shadow on bottom edge of each stone */}
-    {[...leftStoneBlocks, ...rightStoneBlocks].map((b, i) => (
-      <line key={`ss-${i}`}
-        x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
-        stroke="rgba(15,10,5,0.1)" strokeWidth={0.4} />
+    {rightStoneBlocks.map((b, i) => (
+      <g key={`rsb-${i}`}>
+        <polygon points={pts([b.tl, b.tr, b.br, b.bl])}
+          fill={b.fill} stroke="rgba(35,30,20,0.3)" strokeWidth={0.8} />
+        <line x1={b.tl.x} y1={b.tl.y} x2={b.tr.x} y2={b.tr.y}
+          stroke={b.highlight} strokeWidth={0.7} />
+        <line x1={b.bl.x} y1={b.bl.y} x2={b.br.x} y2={b.br.y}
+          stroke="rgba(20,15,10,0.18)" strokeWidth={0.6} />
+      </g>
     ))}
 
-    {/* Band separator lines */}
+    {/* Moss patches on top of stone band */}
+    {[...leftMoss, ...rightMoss].map((m, i) => (
+      <ellipse key={`ms-${i}`} cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry}
+        fill="rgba(75,115,35,0.15)" />
+    ))}
+
+    {/* === DIRT BAND — earthy tones with strata === */}
+    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0.12, 0.5)} fill="url(#ig-ld)" />
+    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0.12, 0.5)} fill="url(#ig-rd)" />
+
+    {/* Strata lines — geological layers */}
+    {[...leftDirtStrata, ...rightDirtStrata].map((ln, i) => (
+      <line key={`ds-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
+        stroke={`rgba(70,50,25,${ln.opacity})`} strokeWidth={0.8} />
+    ))}
+
+    {/* Embedded pebbles */}
+    {[...leftPebbles, ...rightPebbles].map((pb, i) => (
+      <ellipse key={`pb-${i}`} cx={pb.cx} cy={pb.cy} rx={pb.rx} ry={pb.ry}
+        fill={pb.fill} stroke="rgba(50,40,30,0.15)" strokeWidth={0.4} />
+    ))}
+
+    {/* Root/crack details from grass lip down into dirt */}
+    {[...leftRoots, ...rightRoots].map((d, i) => (
+      <path key={`rt-${i}`} d={d} fill="none"
+        stroke="rgba(55,85,22,0.2)" strokeWidth={0.7} strokeLinecap="round" />
+    ))}
+
+    {/* === GRASS LIP — thick green top edge === */}
+    <polygon points={bandPolygon(LW.tl, LW.tr, LW.bl, LW.br, 0, 0.12)} fill="url(#ig-ll)" />
+    <polygon points={bandPolygon(RW.tl, RW.tr, RW.bl, RW.br, 0, 0.12)} fill="url(#ig-rl)" />
+
+    {/* Grass strands hanging from lip */}
+    {[...leftGrassStrands, ...rightGrassStrands].map((d, i) => (
+      <path key={`gs-${i}`} d={d} fill="none"
+        stroke="rgba(80,140,30,0.3)" strokeWidth={1} strokeLinecap="round" />
+    ))}
+
+    {/* Band separator lines — clear transitions */}
     {[
-      { w: LW, t: 0.1, o: 0.2 },
-      { w: LW, t: 0.5, o: 0.25 },
-      { w: RW, t: 0.1, o: 0.15 },
-      { w: RW, t: 0.5, o: 0.2 },
+      { w: LW, t: 0.12, o: 0.25 },
+      { w: LW, t: 0.5, o: 0.3 },
+      { w: RW, t: 0.12, o: 0.2 },
+      { w: RW, t: 0.5, o: 0.25 },
     ].map(({ w, t, o }, i) => {
       const l = lerp(w.tl, w.bl, t);
       const r = lerp(w.tr, w.br, t);
       return (
         <line key={`sep-${i}`} x1={l.x} y1={l.y} x2={r.x} y2={r.y}
-          stroke={`rgba(30,25,15,${o})`} strokeWidth={0.8} />
+          stroke={`rgba(25,20,10,${o})`} strokeWidth={1} />
       );
     })}
-
-    {/* ═══ DIRT BAND TEXTURE ═══ */}
-    {/* Strata lines — geological layers */}
-    {[...leftDirtStrata, ...rightDirtStrata].map((ln, i) => (
-      <line key={`ds-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
-        stroke={`rgba(80,60,30,${ln.opacity})`} strokeWidth={0.7} />
-    ))}
-    {/* Root/crack details near grass-dirt transition */}
-    {[...leftRoots, ...rightRoots].map((d, i) => (
-      <path key={`rt-${i}`} d={d} fill="none"
-        stroke="rgba(60,90,25,0.15)" strokeWidth={0.6} strokeLinecap="round" />
-    ))}
-    {/* Dirt color variation patches */}
-    {[...leftDirtVars, ...rightDirtVars].map((v, i) => (
-      <circle key={`dv-${i}`} cx={v.cx} cy={v.cy} r={v.r}
-        fill={i % 2 === 0 ? 'rgba(140,110,60,0.06)' : 'rgba(100,85,55,0.06)'} />
-    ))}
-
-    {/* ═══ STONE TEXTURE — mortar lines ═══ */}
-    {/* Horizontal mortar lines in stone bands */}
-    {[...leftStoneLines, ...rightStoneLines].map((ln, i) => (
-      <line key={`sl-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
-        stroke="rgba(35,30,20,0.15)" strokeWidth={0.6} />
-    ))}
-    {/* Vertical mortar joints (staggered) */}
-    {[...leftStoneJoints, ...rightStoneJoints].map((ln, i) => (
-      <line key={`sj-${i}`} x1={ln.x1} y1={ln.y1} x2={ln.x2} y2={ln.y2}
-        stroke="rgba(35,30,20,0.12)" strokeWidth={0.5} />
-    ))}
-
-    {/* ═══ MOSS HINTS on stone band ═══ */}
-    {[...leftMoss, ...rightMoss].map((m, i) => (
-      <ellipse key={`ms-${i}`} cx={m.cx} cy={m.cy} rx={m.rx} ry={m.ry}
-        fill="rgba(80,120,40,0.08)" />
-    ))}
 
     {/* ═══ GRASS OVERHANG — smooth bumps on bottom edges ═══ */}
     <path d={GRASS_OVERHANG_PATH} fill="url(#ig-edge)" />
