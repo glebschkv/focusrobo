@@ -11,13 +11,19 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  /* Richer sky with warm horizon */
   background: linear-gradient(
     180deg,
-    #87CEEB 0%,
-    #B0E0F0 40%,
-    #D4ECFA 70%,
-    #E8F4FD 100%
+    #6BB8E0 0%,
+    #87CEEB 20%,
+    #A8DCF4 45%,
+    #C9E9F9 65%,
+    #E2F2FC 80%,
+    #F0F7E4 100%
   );
+  /* Account for safe areas so island centers in visible space */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
 }
 
 /* ── Sky ────────────────────────────────────────────────────────── */
@@ -34,17 +40,19 @@
   position: absolute;
   top: 8%;
   right: 15%;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: radial-gradient(circle, #FFF8E1 20%, #FFE082 45%, #FFD54F 65%, transparent 75%);
-  box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.25);
-  animation: pet-land-sun-pulse 4s ease-in-out infinite;
+  background: radial-gradient(circle, #FFFDE7 15%, #FFF8E1 30%, #FFE082 55%, #FFD54F 70%, transparent 80%);
+  box-shadow:
+    0 0 30px 12px rgba(255, 213, 79, 0.2),
+    0 0 60px 20px rgba(255, 213, 79, 0.08);
+  animation: pet-land-sun-pulse 5s ease-in-out infinite;
 }
 
 @keyframes pet-land-sun-pulse {
-  0%, 100% { box-shadow: 0 0 24px 10px rgba(255, 213, 79, 0.25); }
-  50% { box-shadow: 0 0 32px 14px rgba(255, 213, 79, 0.4); }
+  0%, 100% { box-shadow: 0 0 30px 12px rgba(255, 213, 79, 0.2), 0 0 60px 20px rgba(255, 213, 79, 0.08); }
+  50% { box-shadow: 0 0 36px 16px rgba(255, 213, 79, 0.3), 0 0 72px 24px rgba(255, 213, 79, 0.12); }
 }
 
 /* Clouds */
@@ -52,7 +60,7 @@
   position: absolute;
   width: 56px;
   height: 18px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   border-radius: 9px;
   animation: pet-land-cloud-drift linear infinite;
 }
@@ -64,7 +72,7 @@
   left: 12px;
   width: 24px;
   height: 16px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   border-radius: 12px;
 }
 
@@ -90,7 +98,7 @@
   height: 15px;
   animation-duration: 42s;
   animation-delay: -15s;
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
 @keyframes pet-land-cloud-drift {
@@ -98,116 +106,141 @@
   to { transform: translateX(calc(100vw + 90px)); }
 }
 
-/* ── Island container ──────────────────────────────────────────── */
+/* ── Island wrapper — centers + handles floating animation ───── */
+
+.pet-land__island-wrapper {
+  position: relative;
+  width: 92%;
+  max-width: 400px;
+  margin: auto;
+  /* Gentle floating bob — sells the "floating island" feel */
+  animation: pet-land-island-float 4s ease-in-out infinite;
+}
+
+@keyframes pet-land-island-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ── Island container — 3D tilt ──────────────────────────────── */
 
 .pet-land__island-container {
   position: relative;
-  width: 92%;
-  max-width: 420px;
-  aspect-ratio: 1 / 0.82;
-  margin-top: auto;
-  margin-bottom: auto;
-  /* Paper Mario diorama tilt — tilts the island surface for 3D feel */
-  transform: perspective(800px) rotateX(12deg);
+  width: 100%;
+  aspect-ratio: 1 / 0.85;
+  /* Paper Mario diorama tilt */
+  transform: perspective(600px) rotateX(14deg);
   transform-style: preserve-3d;
+  transform-origin: center 60%;
 }
 
 /* ── Island surface (grass top) ────────────────────────────────── */
 
 .pet-land__island-surface {
   position: absolute;
-  top: 6%;
-  left: 6%;
-  right: 6%;
-  bottom: 38%;
-  border-radius: 48% 48% 50% 50%;
+  top: 4%;
+  left: 5%;
+  right: 5%;
+  bottom: 36%;
+  border-radius: 50% 50% 48% 48%;
   background:
     /* Sunlight highlight top-left */
-    radial-gradient(ellipse at 30% 25%, rgba(180, 230, 80, 0.5) 0%, transparent 45%),
+    radial-gradient(ellipse at 28% 22%, rgba(190, 240, 90, 0.55) 0%, transparent 40%),
     /* Mid-tone variation */
-    radial-gradient(ellipse at 65% 55%, #7BC043 0%, transparent 50%),
-    /* Shadow near edges */
-    radial-gradient(ellipse at 50% 90%, rgba(85, 139, 47, 0.6) 0%, transparent 40%),
+    radial-gradient(ellipse at 68% 50%, rgba(120, 195, 60, 0.5) 0%, transparent 45%),
+    /* Shadow near bottom edge */
+    radial-gradient(ellipse at 50% 92%, rgba(70, 120, 35, 0.55) 0%, transparent 35%),
+    /* Shadow left/right edges */
+    radial-gradient(ellipse at 8% 50%, rgba(75, 130, 38, 0.35) 0%, transparent 25%),
+    radial-gradient(ellipse at 92% 50%, rgba(75, 130, 38, 0.35) 0%, transparent 25%),
     /* Base grass */
-    linear-gradient(180deg, #8FD14F 0%, #7CB342 35%, #6DA832 70%, #5E9729 100%);
+    linear-gradient(180deg, #90D450 0%, #7CB342 30%, #6DA832 65%, #5E9729 100%);
   box-shadow:
-    inset 0 -6px 16px rgba(0, 0, 0, 0.1),
-    inset 0 3px 10px rgba(255, 255, 255, 0.2),
-    /* Rim light on top edge */
-    inset 0 1px 0 rgba(180, 230, 80, 0.4);
+    inset 0 -8px 18px rgba(0, 0, 0, 0.12),
+    inset 0 4px 12px rgba(255, 255, 255, 0.2),
+    /* Bright rim on top edge */
+    inset 0 1px 0 rgba(190, 240, 90, 0.5);
   z-index: 2;
 }
 
-/* Grass detail texture — scattered light/dark patches */
+/* Grass detail texture — scattered light/dark patches + flowers */
 .pet-land__island-grass-detail {
   position: absolute;
   inset: 0;
-  border-radius: 48% 48% 50% 50%;
+  border-radius: inherit;
   background:
     /* Light grass clumps */
-    radial-gradient(circle at 20% 25%, rgba(160, 220, 70, 0.55) 0%, transparent 7%),
-    radial-gradient(circle at 55% 20%, rgba(155, 215, 65, 0.45) 0%, transparent 6%),
-    radial-gradient(circle at 78% 35%, rgba(160, 220, 70, 0.4) 0%, transparent 8%),
+    radial-gradient(circle at 18% 22%, rgba(170, 230, 80, 0.6) 0%, transparent 7%),
+    radial-gradient(circle at 52% 18%, rgba(165, 225, 75, 0.5) 0%, transparent 6%),
+    radial-gradient(circle at 80% 30%, rgba(170, 230, 80, 0.45) 0%, transparent 8%),
+    radial-gradient(circle at 38% 68%, rgba(165, 225, 75, 0.4) 0%, transparent 7%),
     /* Dark grass shadows */
-    radial-gradient(circle at 35% 55%, rgba(80, 130, 40, 0.35) 0%, transparent 9%),
-    radial-gradient(circle at 65% 65%, rgba(85, 139, 47, 0.3) 0%, transparent 7%),
-    radial-gradient(circle at 15% 50%, rgba(80, 130, 40, 0.3) 0%, transparent 6%),
+    radial-gradient(circle at 33% 50%, rgba(70, 120, 35, 0.35) 0%, transparent 9%),
+    radial-gradient(circle at 68% 60%, rgba(75, 130, 40, 0.3) 0%, transparent 7%),
+    radial-gradient(circle at 12% 48%, rgba(70, 120, 35, 0.3) 0%, transparent 6%),
+    radial-gradient(circle at 85% 55%, rgba(70, 120, 35, 0.25) 0%, transparent 6%),
     /* Tiny flower dots */
-    radial-gradient(circle at 30% 40%, rgba(255, 220, 100, 0.35) 0%, transparent 2%),
-    radial-gradient(circle at 72% 45%, rgba(255, 183, 197, 0.3) 0%, transparent 2%),
-    radial-gradient(circle at 48% 30%, rgba(200, 230, 255, 0.25) 0%, transparent 2%);
-  opacity: 0.8;
+    radial-gradient(circle at 28% 38%, rgba(255, 220, 100, 0.4) 0%, transparent 2.2%),
+    radial-gradient(circle at 74% 42%, rgba(255, 183, 197, 0.35) 0%, transparent 2.2%),
+    radial-gradient(circle at 45% 28%, rgba(200, 230, 255, 0.3) 0%, transparent 2%),
+    radial-gradient(circle at 60% 72%, rgba(255, 200, 120, 0.3) 0%, transparent 2%),
+    radial-gradient(circle at 18% 65%, rgba(220, 180, 255, 0.25) 0%, transparent 2%);
+  opacity: 0.85;
 }
 
 /* ── Island cliff (earth/rock sides) ───────────────────────────── */
 
 .pet-land__island-cliff {
   position: absolute;
-  top: 33%;
-  left: 8%;
-  right: 8%;
-  bottom: 8%;
-  border-radius: 0 0 42% 42% / 0 0 55% 55%;
+  top: 35%;
+  left: 7%;
+  right: 7%;
+  bottom: 4%;
+  border-radius: 6% 6% 44% 44% / 0% 0% 60% 60%;
   background: linear-gradient(
     180deg,
     #8D6E4C 0%,
-    #7B5E3B 15%,
-    #6D4C2E 35%,
-    #5C3D22 55%,
-    #4A3118 75%,
-    #3A2510 100%
+    #7D5D3A 12%,
+    #6D4C2E 28%,
+    #5C3D22 50%,
+    #4A3118 72%,
+    #3A2510 88%,
+    #2E1A0A 100%
   );
   box-shadow:
-    /* Grass-to-dirt transition */
-    inset 0 3px 0 #6DA832,
-    inset 0 5px 0 #5E9729,
-    inset 0 7px 0 rgba(94, 151, 41, 0.5),
-    /* Bottom depth shadow */
-    0 6px 0 #2E1A0A,
-    0 10px 24px rgba(30, 18, 6, 0.4);
+    /* Grass-to-dirt transition band */
+    inset 0 2px 0 #6DA832,
+    inset 0 4px 0 #5E9729,
+    inset 0 6px 0 rgba(94, 151, 41, 0.5),
+    inset 0 9px 2px rgba(94, 151, 41, 0.2),
+    /* Bottom depth edge */
+    0 4px 0 #2E1A0A,
+    0 8px 20px rgba(30, 18, 6, 0.5);
   z-index: 1;
   overflow: hidden;
 }
 
-/* Rock/dirt texture detail + subtle horizontal strata lines on cliff */
+/* Rock/dirt texture detail + strata */
 .pet-land__island-cliff::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    /* Rock patches */
-    radial-gradient(ellipse at 18% 30%, rgba(150, 130, 100, 0.45) 0%, transparent 20%),
-    radial-gradient(ellipse at 80% 25%, rgba(140, 120, 85, 0.4) 0%, transparent 18%),
-    radial-gradient(ellipse at 50% 55%, rgba(130, 110, 80, 0.35) 0%, transparent 25%),
-    radial-gradient(ellipse at 25% 70%, rgba(110, 90, 60, 0.3) 0%, transparent 18%),
-    radial-gradient(ellipse at 70% 65%, rgba(120, 100, 70, 0.3) 0%, transparent 22%),
-    /* Horizontal dirt strata lines */
+    /* Large rock patches */
+    radial-gradient(ellipse at 15% 28%, rgba(155, 135, 105, 0.5) 0%, transparent 22%),
+    radial-gradient(ellipse at 82% 22%, rgba(145, 125, 90, 0.45) 0%, transparent 20%),
+    radial-gradient(ellipse at 48% 50%, rgba(135, 115, 85, 0.4) 0%, transparent 28%),
+    /* Small rock detail */
+    radial-gradient(ellipse at 22% 65%, rgba(115, 95, 65, 0.35) 0%, transparent 16%),
+    radial-gradient(ellipse at 72% 60%, rgba(125, 105, 75, 0.35) 0%, transparent 20%),
+    radial-gradient(ellipse at 55% 80%, rgba(100, 80, 55, 0.3) 0%, transparent 18%),
+    /* Horizontal strata lines */
     repeating-linear-gradient(
       180deg,
       transparent 0px,
-      transparent 14px,
-      rgba(0, 0, 0, 0.04) 14px,
-      rgba(0, 0, 0, 0.04) 16px
+      transparent 12px,
+      rgba(0, 0, 0, 0.05) 12px,
+      rgba(0, 0, 0, 0.05) 14px
     );
 }
 
@@ -216,10 +249,16 @@
   content: '';
   position: absolute;
   top: 0;
-  left: -3%;
-  right: -3%;
-  height: 12px;
-  background: linear-gradient(180deg, #5E9729 0%, rgba(94, 151, 41, 0.4) 50%, rgba(94, 151, 41, 0) 100%);
+  left: -4%;
+  right: -4%;
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    #5E9729 0%,
+    rgba(94, 151, 41, 0.6) 35%,
+    rgba(94, 151, 41, 0.2) 65%,
+    rgba(94, 151, 41, 0) 100%
+  );
   border-radius: 0 0 50% 50%;
 }
 
@@ -227,20 +266,27 @@
 
 .pet-land__island-shadow {
   position: absolute;
-  bottom: -4%;
-  left: 18%;
-  right: 18%;
-  height: 20px;
+  bottom: -8%;
+  left: 14%;
+  right: 14%;
+  height: 28px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.08) 35%,
-    rgba(0, 0, 0, 0.03) 60%,
-    transparent 75%
+    rgba(0, 0, 0, 0.18) 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.04) 55%,
+    transparent 70%
   );
   z-index: 0;
-  filter: blur(6px);
+  filter: blur(8px);
+  /* Shadow bobs opposite to island for parallax */
+  animation: pet-land-shadow-float 4s ease-in-out infinite;
+}
+
+@keyframes pet-land-shadow-float {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.92); opacity: 0.75; }
 }
 
 /* ── Decorative elements ───────────────────────────────────────── */
@@ -251,54 +297,208 @@
   pointer-events: none;
 }
 
-/* Small flowers */
+/* Flowers */
 .pet-land__deco--flower-1 {
-  top: 22%;
-  left: 14%;
-  width: 6px;
-  height: 6px;
+  top: 20%;
+  left: 12%;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #FFB7C5;
-  box-shadow: 0 0 2px rgba(255, 183, 197, 0.6);
+  box-shadow: 0 0 3px rgba(255, 183, 197, 0.5);
 }
 
 .pet-land__deco--flower-2 {
-  top: 28%;
-  right: 16%;
+  top: 26%;
+  right: 14%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFD54F;
+  box-shadow: 0 0 3px rgba(255, 213, 79, 0.4);
+}
+
+.pet-land__deco--flower-3 {
+  top: 32%;
+  left: 28%;
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #FFD700;
-  box-shadow: 0 0 2px rgba(255, 215, 0, 0.5);
+  background: #CE93D8;
+  box-shadow: 0 0 2px rgba(206, 147, 216, 0.4);
 }
 
-/* Small bushes */
+/* Bushes */
 .pet-land__deco--bush-1 {
-  top: 18%;
-  left: 22%;
-  width: 12px;
-  height: 8px;
+  top: 16%;
+  left: 20%;
+  width: 14px;
+  height: 10px;
   border-radius: 50% 50% 40% 40%;
   background: radial-gradient(ellipse at 50% 60%, #66BB6A, #43A047);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .pet-land__deco--bush-2 {
-  top: 24%;
-  right: 20%;
-  width: 10px;
-  height: 7px;
+  top: 22%;
+  right: 18%;
+  width: 11px;
+  height: 8px;
   border-radius: 50% 50% 40% 40%;
   background: radial-gradient(ellipse at 50% 60%, #81C784, #4CAF50);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.pet-land__deco--bush-3 {
+  top: 35%;
+  right: 10%;
+  width: 9px;
+  height: 7px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 60%, #81C784, #388E3C);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Small trees (triangle + trunk) */
+.pet-land__deco--tree-1 {
+  top: 10%;
+  left: 30%;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 16px solid #4CAF50;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+.pet-land__deco--tree-1::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: -1.5px;
+  width: 3px;
+  height: 5px;
+  background: #795548;
+  border-radius: 0 0 1px 1px;
+}
+
+.pet-land__deco--tree-2 {
+  top: 14%;
+  right: 26%;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 14px solid #43A047;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+.pet-land__deco--tree-2::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: -1.5px;
+  width: 3px;
+  height: 4px;
+  background: #6D4C41;
+  border-radius: 0 0 1px 1px;
+}
+
+/* Small rocks */
+.pet-land__deco--rock-1 {
+  top: 28%;
+  left: 9%;
+  width: 10px;
+  height: 6px;
+  border-radius: 40% 50% 45% 35%;
+  background: linear-gradient(160deg, #B0A090 0%, #8D7E6E 60%, #6D5E4E 100%);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.pet-land__deco--rock-2 {
+  bottom: 42%;
+  right: 12%;
+  width: 8px;
+  height: 5px;
+  border-radius: 35% 45% 50% 40%;
+  background: linear-gradient(160deg, #A09080 0%, #7D6E5E 60%, #5D4E3E 100%);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+
+/* Dirt path hint */
+.pet-land__deco--path {
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%) rotate(-8deg);
+  width: 30%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(160, 130, 90, 0.2) 20%,
+    rgba(160, 130, 90, 0.25) 50%,
+    rgba(160, 130, 90, 0.2) 80%,
+    transparent 100%
+  );
+}
+
+/* ── Waterfall (hanging from cliff edge) ─────────────────────── */
+
+.pet-land__waterfall {
+  position: absolute;
+  top: 38%;
+  left: 18%;
+  width: 8px;
+  height: 42%;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 3px 3px 50% 50%;
+  pointer-events: none;
+}
+
+.pet-land__waterfall::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(150, 210, 240, 0.6) 0%,
+    rgba(130, 200, 235, 0.5) 30%,
+    rgba(110, 190, 230, 0.4) 60%,
+    rgba(130, 200, 235, 0.3) 100%
+  );
+  animation: pet-land-waterfall-flow 1.2s linear infinite;
+}
+
+.pet-land__waterfall::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  right: -4px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(130, 200, 235, 0.35) 0%, transparent 70%);
+  animation: pet-land-waterfall-splash 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes pet-land-waterfall-flow {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 16px; }
+}
+
+@keyframes pet-land-waterfall-splash {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.2); opacity: 0.8; }
 }
 
 /* ── Pets layer ────────────────────────────────────────────────── */
 
 .pet-land__pets-layer {
   position: absolute;
-  top: 6%;
-  left: 6%;
-  right: 6%;
-  bottom: 38%;
+  top: 4%;
+  left: 5%;
+  right: 5%;
+  bottom: 36%;
   z-index: 5;
   pointer-events: none;
 }
@@ -313,8 +513,8 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgba(100, 160, 40, 0.25) 0%,
-    rgba(100, 160, 40, 0.08) 60%,
+    rgba(100, 160, 40, 0.2) 0%,
+    rgba(100, 160, 40, 0.06) 60%,
     transparent 100%
   );
   pointer-events: none;
@@ -326,11 +526,11 @@
   position: absolute;
   pointer-events: auto;
   /* Paper Mario effect: counter-rotate the pet to stand upright on tilted island.
-     The island tilts 12deg forward, so we rotate pets -12deg back to keep them vertical.
-     This creates the "flat cardboard cutout standing on a 3D surface" look. */
+     The island tilts 14deg forward, so we rotate pets -14deg back.
+     Creates "flat cardboard cutout standing on a 3D surface" look. */
   transform:
     translate(-50%, -100%)
-    perspective(800px) rotateX(-12deg)
+    perspective(600px) rotateX(-14deg)
     scale(var(--pet-scale, 1));
   transform-origin: center bottom;
   cursor: pointer;
@@ -341,21 +541,37 @@
 .island-pet:active {
   transform:
     translate(-50%, -100%)
-    perspective(800px) rotateX(-12deg)
+    perspective(600px) rotateX(-14deg)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
 /* ── Pet sprite ────────────────────────────────────────────────── */
 
 .island-pet__sprite {
-  width: 40px;
-  height: 40px;
+  /* Scale relative to container via cqi, falling back to 36px */
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
   animation: island-pet-bob 3s ease-in-out infinite;
   animation-delay: var(--bob-delay, 0s);
+}
+
+/* Use container queries when supported for responsive pet sizing */
+@container (min-width: 360px) {
+  .island-pet__sprite {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@container (min-width: 400px) {
+  .island-pet__sprite {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 @keyframes island-pet-bob {
@@ -385,15 +601,15 @@
 
 @keyframes island-pet-pop {
   0% {
-    transform: translate(-50%, -100%) perspective(800px) rotateX(-12deg) scale(0) rotate(-8deg);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(0) rotate(-8deg);
     opacity: 0;
   }
   60% {
-    transform: translate(-50%, -100%) perspective(800px) rotateX(-12deg) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -100%) perspective(800px) rotateX(-12deg) scale(var(--pet-scale, 1)) rotate(0);
+    transform: translate(-50%, -100%) perspective(600px) rotateX(-14deg) scale(var(--pet-scale, 1)) rotate(0);
     opacity: 1;
   }
 }
@@ -451,6 +667,7 @@
   background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  color: #fff;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   white-space: nowrap;
@@ -506,8 +723,8 @@
   position: relative;
   z-index: 10;
   text-align: center;
-  padding: 0 0 16px;
-  margin-top: auto;
+  padding: 0 0 8px;
+  flex-shrink: 0;
 }
 
 .pet-land__progress-text {
@@ -515,7 +732,7 @@
   align-items: center;
   gap: 6px;
   padding: 5px 14px;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;

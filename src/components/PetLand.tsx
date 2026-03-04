@@ -54,28 +54,41 @@ export const PetLand = () => {
         <div className="pet-land__cloud pet-land__cloud--3" />
       </div>
 
-      {/* Floating island */}
-      <div className="pet-land__island-container">
-        {/* Island surface (grass top) */}
-        <div className="pet-land__island-surface">
-          <div className="pet-land__island-grass-detail" />
-        </div>
+      {/* Floating island — wrapper handles the bob animation */}
+      <div className="pet-land__island-wrapper">
+        {/* 3D tilted island container */}
+        <div className="pet-land__island-container">
+          {/* Island surface (grass top) */}
+          <div className="pet-land__island-surface">
+            <div className="pet-land__island-grass-detail" />
+          </div>
 
-        {/* Island cliff sides */}
-        <div className="pet-land__island-cliff" />
+          {/* Island cliff sides */}
+          <div className="pet-land__island-cliff" />
 
-        {/* Soft shadow beneath floating island */}
-        <div className="pet-land__island-shadow" />
+          {/* Waterfall cascading from cliff */}
+          <div className="pet-land__waterfall" />
 
-        {/* Decorative elements on island edges */}
-        <div className="pet-land__deco pet-land__deco--flower-1" />
-        <div className="pet-land__deco pet-land__deco--flower-2" />
-        <div className="pet-land__deco pet-land__deco--bush-1" />
-        <div className="pet-land__deco pet-land__deco--bush-2" />
+          {/* Soft shadow beneath floating island */}
+          <div className="pet-land__island-shadow" />
 
-        {/* Pets layer — absolutely positioned pets */}
-        <div className="pet-land__pets-layer">
-          {slotElements}
+          {/* Decorative elements */}
+          <div className="pet-land__deco pet-land__deco--tree-1" />
+          <div className="pet-land__deco pet-land__deco--tree-2" />
+          <div className="pet-land__deco pet-land__deco--flower-1" />
+          <div className="pet-land__deco pet-land__deco--flower-2" />
+          <div className="pet-land__deco pet-land__deco--flower-3" />
+          <div className="pet-land__deco pet-land__deco--bush-1" />
+          <div className="pet-land__deco pet-land__deco--bush-2" />
+          <div className="pet-land__deco pet-land__deco--bush-3" />
+          <div className="pet-land__deco pet-land__deco--rock-1" />
+          <div className="pet-land__deco pet-land__deco--rock-2" />
+          <div className="pet-land__deco pet-land__deco--path" />
+
+          {/* Pets layer — absolutely positioned pets */}
+          <div className="pet-land__pets-layer">
+            {slotElements}
+          </div>
         </div>
       </div>
 

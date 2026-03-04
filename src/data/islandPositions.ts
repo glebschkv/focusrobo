@@ -3,16 +3,22 @@
  *
  * Maps 100 land cell indices to (x%, y%) coordinates on the floating island surface.
  * Positions form an isometric diamond pattern with seeded jitter for organic placement.
- * All values are percentages relative to the island container.
+ * All values are percentages relative to the pets-layer container.
+ *
+ * Positions are clamped to an elliptical boundary so no pet falls off the
+ * visible grass surface.
  */
 
 const GRID_SIZE = 10;
 
-// Island surface occupies roughly the center 70% of the container
-const CENTER_X = 50; // % — horizontal center
-const TOP_Y = 12; // % — top of the diamond
-const TILE_W = 5.8; // % — horizontal spacing between isometric columns
-const TILE_H = 3.6; // % — vertical spacing between isometric rows
+// Pets layer center and island ellipse radii (as % of pets-layer container)
+const CENTER_X = 50;
+const CENTER_Y = 50;
+const ELLIPSE_RX = 44; // horizontal radius — slightly inset from edge
+const ELLIPSE_RY = 42; // vertical radius
+
+const TILE_W = 5.6; // horizontal spacing between isometric columns
+const TILE_H = 4.4; // vertical spacing between isometric rows
 
 /** Deterministic pseudo-random for consistent jitter across renders */
 function seededRandom(seed: number): number {
@@ -25,6 +31,33 @@ interface IslandPosition {
   y: number; // percentage (0-100)
 }
 
+/**
+ * Clamp a point to the interior of an ellipse.
+ * If the point is already inside, return it unchanged.
+ * Otherwise project it onto the ellipse boundary with a small inset margin.
+ */
+function clampToEllipse(
+  x: number,
+  y: number,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+): { x: number; y: number } {
+  const dx = x - cx;
+  const dy = y - cy;
+  const dist = (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry);
+
+  if (dist <= 1) return { x, y };
+
+  // Project onto ellipse boundary, slightly inset
+  const scale = 0.92 / Math.sqrt(dist);
+  return {
+    x: cx + dx * scale,
+    y: cy + dy * scale,
+  };
+}
+
 function computePositions(): IslandPosition[] {
   const positions: IslandPosition[] = [];
 
@@ -32,18 +65,23 @@ function computePositions(): IslandPosition[] {
     const row = Math.floor(i / GRID_SIZE);
     const col = i % GRID_SIZE;
 
-    // Isometric projection: diamond layout
+    // Isometric projection: diamond layout centered at (CENTER_X, CENTER_Y)
     const isoX = (col - row) * (TILE_W / 2);
     const isoY = (col + row) * (TILE_H / 2);
 
-    // Seeded jitter for organic feel (±1.2% x, ±0.8% y)
-    const jx = (seededRandom(i * 7 + 1) - 0.5) * 2.4;
+    // Center the grid: shift so middle of 10×10 lands at center
+    const gridOffsetY = -((GRID_SIZE - 1) * TILE_H) / 2;
+
+    // Seeded jitter for organic feel (±1% x, ±0.8% y)
+    const jx = (seededRandom(i * 7 + 1) - 0.5) * 2.0;
     const jy = (seededRandom(i * 13 + 2) - 0.5) * 1.6;
 
-    positions.push({
-      x: CENTER_X + isoX + jx,
-      y: TOP_Y + isoY + jy,
-    });
+    const rawX = CENTER_X + isoX + jx;
+    const rawY = CENTER_Y + gridOffsetY + isoY + jy;
+
+    // Clamp to elliptical island boundary
+    const clamped = clampToEllipse(rawX, rawY, CENTER_X, CENTER_Y, ELLIPSE_RX, ELLIPSE_RY);
+    positions.push(clamped);
   }
 
   return positions;
@@ -54,14 +92,13 @@ export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
 /**
  * Get depth-based scale for a cell index.
- * Back of island (row 0) = 0.7, front (row 9) = 1.0.
+ * Back of island (low isoDepth) = 0.7, front (high isoDepth) = 1.0.
  */
 export function getDepthScale(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
-  // Depth is based on isometric Y: back rows (low row+col) are far, high row+col is near
-  const isoDepth = (row + col) / (2 * (GRID_SIZE - 1)); // 0 (back) to 1 (front)
-  return 0.7 + isoDepth * 0.3; // 0.7 → 1.0
+  const isoDepth = (row + col) / (2 * (GRID_SIZE - 1));
+  return 0.7 + isoDepth * 0.3;
 }
 
 /**
@@ -71,5 +108,5 @@ export function getDepthScale(index: number): number {
 export function getDepthZIndex(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
-  return 10 + row + col; // range: 10 to 28
+  return 10 + row + col;
 }
