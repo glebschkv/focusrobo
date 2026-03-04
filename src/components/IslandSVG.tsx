@@ -480,38 +480,10 @@ function generateMossSpots(
 const leftMoss = generateMossSpots(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 111);
 const rightMoss = generateMossSpots(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 222);
 
-// ─── Rounded Cliff Clip Paths ───────────────────────────────────────
-// Round the bottom corners of each cliff wall for a polished look.
-// The cliff walls are parallelograms, so we compute corner points
-// along the actual edges using lerp, not simple X/Y offsets.
-const CORNER_T = 0.15; // how far along the edge to start the curve (0-1)
-
-function roundedCliffPath(tl: Pt, tr: Pt, bl: Pt, br: Pt): string {
-  // Points just before each bottom corner, along their respective edges
-  const leftBeforeBL = lerp(tl, bl, 1 - CORNER_T); // on left edge, near bl
-  const bottomAfterBL = lerp(bl, br, CORNER_T);      // on bottom edge, near bl
-  const bottomBeforeBR = lerp(bl, br, 1 - CORNER_T); // on bottom edge, near br
-  const rightBeforeBR = lerp(tr, br, 1 - CORNER_T);  // on right edge, near br
-
-  return [
-    `M ${p(tl)}`,
-    `L ${p(tr)}`,
-    // Right edge down to just before bottom-right corner
-    `L ${p(rightBeforeBR)}`,
-    // Round bottom-right corner
-    `Q ${p(br)} ${p(bottomBeforeBR)}`,
-    // Bottom edge
-    `L ${p(bottomAfterBL)}`,
-    // Round bottom-left corner
-    `Q ${p(bl)} ${p(leftBeforeBL)}`,
-    // Left edge back up
-    `L ${p(tl)}`,
-    'Z',
-  ].join(' ');
-}
-
-const leftCliffClip = roundedCliffPath(LW.tl, LW.tr, LW.bl, LW.br);
-const rightCliffClip = roundedCliffPath(RW.tl, RW.tr, RW.bl, RW.br);
+// ─── Cliff Clip Paths ───────────────────────────────────────────────
+// Sharp-edged parallelogram clips for clean cliff bottoms
+const leftCliffClip = `M ${p(LW.tl)} L ${p(LW.tr)} L ${p(LW.br)} L ${p(LW.bl)} Z`;
+const rightCliffClip = `M ${p(RW.tl)} L ${p(RW.tr)} L ${p(RW.br)} L ${p(RW.bl)} Z`;
 
 // ─── Component ─────────────────────────────────────────────────────
 export const IslandSVG = () => (

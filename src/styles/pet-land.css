@@ -11,22 +11,13 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
-  /* Dreamy golden-hour sky — deep cerulean zenith fading through
-     soft periwinkle into warm peach and amber near the horizon */
+  /* Peaceful sky — single smooth blue-to-soft-white sweep */
   background: linear-gradient(
     180deg,
-    #3B7CC0 0%,
-    #4E92D0 8%,
-    #6AABE0 18%,
-    #89C4EE 28%,
-    #A6D6F5 38%,
-    #C2E4F8 48%,
-    #DCEEF6 56%,
-    #F0E8D8 66%,
-    #F5DFC0 74%,
-    #F8D8AA 82%,
-    #FCEBD0 92%,
-    #FFF5E6 100%
+    #7EC8E3 0%,
+    #A5D8EF 35%,
+    #D0EAF5 65%,
+    #EEF4F0 100%
   );
   padding-top: calc(env(safe-area-inset-top, 0px) + 56px);
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
@@ -164,19 +155,18 @@
   50% { opacity: 0.4; }
 }
 
-/* Warm atmospheric haze near the horizon */
+/* Soft atmospheric haze near the horizon */
 .pet-land__haze {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 45%;
+  height: 40%;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(255, 235, 200, 0.08) 30%,
-    rgba(255, 220, 170, 0.12) 60%,
-    rgba(255, 210, 150, 0.15) 100%
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(240, 248, 245, 0.1) 100%
   );
   pointer-events: none;
 }
