@@ -9,16 +9,16 @@
 import { useMemo } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
+import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
 
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
   const progressPct = (filledCount / LAND_SIZE) * 100;
 
-  const pets = useMemo(() => {
-    return currentLand.cells
-      .map((cell, index) => {
-        if (!cell) return null;
+  const slotElements = useMemo(() => {
+    return currentLand.cells.map((cell, index) => {
+      if (cell) {
         return (
           <IslandPet
             key={`${currentLand.id}-${index}`}
@@ -26,8 +26,22 @@ export const PetLand = () => {
             index={index}
           />
         );
-      })
-      .filter(Boolean);
+      }
+      // Render subtle empty slot marker
+      const pos = ISLAND_POSITIONS[index];
+      if (!pos) return null;
+      return (
+        <div
+          key={`${currentLand.id}-empty-${index}`}
+          className="island-slot-marker"
+          style={{
+            left: `${pos.x}%`,
+            top: `${pos.y}%`,
+            zIndex: getDepthZIndex(index),
+          }}
+        />
+      );
+    });
   }, [currentLand.cells, currentLand.id]);
 
   return (
@@ -61,7 +75,7 @@ export const PetLand = () => {
 
         {/* Pets layer — absolutely positioned pets */}
         <div className="pet-land__pets-layer">
-          {pets}
+          {slotElements}
         </div>
       </div>
 

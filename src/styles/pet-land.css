@@ -274,6 +274,23 @@
   pointer-events: none;
 }
 
+/* ── Empty slot markers ───────────────────────────────────────── */
+
+.island-slot-marker {
+  position: absolute;
+  width: 8px;
+  height: 4px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(100, 160, 40, 0.25) 0%,
+    rgba(100, 160, 40, 0.08) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 /* ── Individual pet on island ──────────────────────────────────── */
 
 .island-pet {
