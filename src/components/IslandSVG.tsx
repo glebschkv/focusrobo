@@ -529,13 +529,15 @@ export const IslandSVG = () => (
         <stop offset="70%" stopColor="#9CC84E" />
         <stop offset="100%" stopColor="#88B842" />
       </linearGradient>
+      {/* Light tiles — brighter, sun-kissed */}
       <linearGradient id="ig-tl" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#C2E878" />
-        <stop offset="100%" stopColor="#AADA5C" />
+        <stop offset="0%" stopColor="#CCF080" />
+        <stop offset="100%" stopColor="#B8E468" />
       </linearGradient>
+      {/* Dark tiles — deeper green for visible contrast */}
       <linearGradient id="ig-td" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#A4D052" />
-        <stop offset="100%" stopColor="#92C248" />
+        <stop offset="0%" stopColor="#96C444" />
+        <stop offset="100%" stopColor="#84B438" />
       </linearGradient>
 
       {/* Left cliff gradients */}
@@ -735,11 +737,11 @@ export const IslandSVG = () => (
     {/* Base fill with smoothed edges */}
     <path d={DIAMOND_SMOOTH} fill="url(#ig-grass)" />
 
-    {/* Checkerboard tiles — subtle two-tone */}
+    {/* Checkerboard tiles — visible two-tone grid */}
     {TILES.map((tile, i) => (
       <polygon key={`t-${i}`} points={tile.points}
         fill={tile.isLight ? 'url(#ig-tl)' : 'url(#ig-td)'}
-        stroke="rgba(75,120,28,0.15)" strokeWidth={0.5} />
+        stroke="rgba(75,120,28,0.2)" strokeWidth={0.6} />
     ))}
 
     {/* ═══ GRASS TEXTURE DETAIL ═══ */}
