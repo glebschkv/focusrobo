@@ -88,6 +88,18 @@ export const RARITY_GLOW: Record<PetRarity, string | null> = {
 };
 
 /**
+ * Unified rarity color palette — single source of truth for tooltip colors.
+ * Glow effects are handled via CSS classes in pet-land.css.
+ */
+export const RARITY_COLORS: Record<PetRarity, { tooltip: string }> = {
+  common: { tooltip: '#9E9E9E' },
+  uncommon: { tooltip: '#66BB6A' },
+  rare: { tooltip: '#42A5F5' },
+  epic: { tooltip: '#AB47BC' },
+  legendary: { tooltip: '#FFA726' },
+};
+
+/**
  * Determine growth size from session duration in minutes.
  *
  * - Baby: 25-45 min sessions

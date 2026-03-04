@@ -14,6 +14,7 @@ import { z } from 'zod';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 import type { GrowthSize, PetRarity } from '@/data/PetDatabase';
 import { getGrowthSize, rollRandomPet } from '@/data/PetDatabase';
+import { ISLAND_POSITIONS } from '@/data/islandPositions';
 
 // ============================================================================
 // Types
@@ -120,17 +121,52 @@ function createEmptyLand(number: number, theme: string): Land {
 }
 
 /**
- * Pick a random empty cell from the grid to create an organic,
- * scattered look instead of filling left-to-right, top-to-bottom.
+ * Pick the empty cell that is farthest from any already-placed pet.
+ * This creates an even, organic spread across the island instead of
+ * random clustering. Falls back to random if only 0-1 pets are placed.
  */
 function getNextEmptyCellIndex(cells: (LandCell | null)[]): number {
   const emptyIndices: number[] = [];
+  const filledIndices: number[] = [];
   for (let i = 0; i < cells.length; i++) {
     if (cells[i] === null) emptyIndices.push(i);
+    else filledIndices.push(i);
   }
   if (emptyIndices.length === 0) return -1;
-  const randomIdx = Math.floor(Math.random() * emptyIndices.length);
-  return emptyIndices[randomIdx];
+
+  // First few pets: pick randomly (no spatial reference yet)
+  if (filledIndices.length < 2) {
+    const randomIdx = Math.floor(Math.random() * emptyIndices.length);
+    return emptyIndices[randomIdx];
+  }
+
+  // Farthest-first insertion: pick empty cell with maximum minimum distance to any placed pet
+  let bestIndex = emptyIndices[0];
+  let bestMinDist = -1;
+
+  for (const emptyIdx of emptyIndices) {
+    const emptyPos = ISLAND_POSITIONS[emptyIdx];
+    if (!emptyPos) continue;
+
+    let minDist = Infinity;
+    for (const filledIdx of filledIndices) {
+      const filledPos = ISLAND_POSITIONS[filledIdx];
+      if (!filledPos) continue;
+      const dx = emptyPos.x - filledPos.x;
+      const dy = emptyPos.y - filledPos.y;
+      const dist = dx * dx + dy * dy;
+      if (dist < minDist) minDist = dist;
+    }
+
+    // Add small random jitter to break ties and prevent patterns
+    const jitteredDist = minDist + Math.random() * 2;
+    if (jitteredDist > bestMinDist) {
+      bestMinDist = jitteredDist;
+      bestIndex = emptyIdx;
+    }
+  }
+
+  return bestIndex;
 }
 
 const SIZE_RANK: Record<GrowthSize, number> = {
@@ -150,6 +186,10 @@ interface LandStoreState {
   pendingPet: PendingPet | null;
   ownedThemes: string[];
   selectedNextTheme: string;
+  /** Index of the most recently placed pet (ephemeral, not persisted) */
+  lastPlacedIndex: number | null;
+  /** Land number that was just completed (ephemeral, not persisted) */
+  landJustCompleted: number | null;
 }
 
 interface LandStoreActions {
@@ -174,6 +214,12 @@ interface LandStoreActions {
   /** Set which theme to use for the next new land */
   setSelectedNextTheme: (themeId: string) => void;
 
+  /** Clear the lastPlacedIndex after animation plays */
+  clearLastPlaced: () => void;
+
+  /** Clear the land completion overlay */
+  clearLandCompleted: () => void;
+
   /** Reset land data (for debugging/testing) */
   resetLand: () => void;
 }
@@ -187,6 +233,8 @@ const initialState: LandStoreState = {
   pendingPet: null,
   ownedThemes: ['meadow'],
   selectedNextTheme: 'meadow',
+  lastPlacedIndex: null,
+  landJustCompleted: null,
 };
 
 export const useLandStore = create<LandStore>()(
@@ -219,6 +267,7 @@ export const useLandStore = create<LandStore>()(
         // If the current land is full, auto-archive it and start a new one
         if (cellIndex === -1) {
           const { completedLands, selectedNextTheme } = get();
+          const completedLandNumber = currentLand.number;
           const archivedLand: Land = {
             ...currentLand,
             completedAt: currentLand.completedAt ?? Date.now(),
@@ -227,6 +276,7 @@ export const useLandStore = create<LandStore>()(
           set({
             completedLands: [...completedLands, archivedLand],
             currentLand,
+            landJustCompleted: completedLandNumber,
           });
           cellIndex = getNextEmptyCellIndex(currentLand.cells);
           if (cellIndex === -1) return -1; // Should not happen with fresh land
@@ -275,6 +325,7 @@ export const useLandStore = create<LandStore>()(
           currentLand: updatedLand,
           speciesCatalog: newCatalog,
           pendingPet: null,
+          lastPlacedIndex: cellIndex,
         });
 
         return cellIndex;
@@ -308,6 +359,14 @@ export const useLandStore = create<LandStore>()(
         set({ selectedNextTheme: themeId });
       },
 
+      clearLastPlaced: () => {
+        set({ lastPlacedIndex: null });
+      },
+
+      clearLandCompleted: () => {
+        set({ landJustCompleted: null });
+      },
+
       resetLand: () => {
         set(initialState);
       },
@@ -318,6 +377,14 @@ export const useLandStore = create<LandStore>()(
         schema: landStoreSchema,
         defaultState: initialState,
         name: 'nomo_land_data',
+      }),
+      partialize: (state) => ({
+        currentLand: state.currentLand,
+        completedLands: state.completedLands,
+        speciesCatalog: state.speciesCatalog,
+        pendingPet: state.pendingPet,
+        ownedThemes: state.ownedThemes,
+        selectedNextTheme: state.selectedNextTheme,
       }),
     }
   )

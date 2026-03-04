@@ -5,15 +5,18 @@
  * Includes depth-based scaling, rarity glow effects, idle bobbing, and tooltips.
  */
 
-import { memo, useState } from 'react';
-import { getPetById, GROWTH_SCALES, RARITY_GLOW } from '@/data/PetDatabase';
+import { memo, useEffect, useState } from 'react';
+import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
 import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
+import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
 interface IslandPetProps {
   cell: LandCell;
   index: number;
   isNew?: boolean;
+  showTooltip: boolean;
+  onToggleTooltip: () => void;
 }
 
 const SIZE_LABELS: Record<string, string> = {
@@ -30,16 +33,9 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-const RARITY_TOOLTIP_COLORS: Record<string, string> = {
-  common: '#9E9E9E',
-  uncommon: '#4CAF50',
-  rare: '#2196F3',
-  epic: '#9C27B0',
-  legendary: '#FF9800',
-};
-
-export const IslandPet = memo(({ cell, index, isNew }: IslandPetProps) => {
-  const [showTooltip, setShowTooltip] = useState(false);
+export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+  const [imageError, setImageError] = useState(false);
+  const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
   if (!species) return null;
@@ -47,18 +43,32 @@ export const IslandPet = memo(({ cell, index, isNew }: IslandPetProps) => {
   const pos = ISLAND_POSITIONS[index];
   if (!pos) return null;
 
+  if (imageError) return null;
+
   const growthScale = GROWTH_SCALES[cell.size];
   const depthScale = getDepthScale(index);
   const finalScale = growthScale * depthScale;
   const zIndex = getDepthZIndex(index);
-  const glowColor = RARITY_GLOW[cell.rarity];
+  const rarityColor = RARITY_COLORS[cell.rarity];
 
   const bobDelay = ((index % 7) * 0.4).toFixed(1);
 
+  // Apply rarity glow class for uncommon+
   const rarityClass =
-    cell.rarity === 'rare' || cell.rarity === 'epic' || cell.rarity === 'legendary'
+    cell.rarity !== 'common'
       ? `island-pet--${cell.rarity}`
       : '';
+
+  // Flip tooltip below for pets near top of island
+  const tooltipBelow = pos.y < 30;
+
+  // Trigger haptic feedback for newly placed pet
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (isNew) {
+      haptic('light');
+    }
+  }, [isNew, haptic]);
 
   return (
     <div
@@ -72,17 +82,18 @@ export const IslandPet = memo(({ cell, index, isNew }: IslandPetProps) => {
           '--bob-delay': `${bobDelay}s`,
         } as React.CSSProperties
       }
-      onClick={() => setShowTooltip((prev) => !prev)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggleTooltip();
+      }}
     >
       <img
         src={species.imagePath}
         alt={species.name}
         className="island-pet__sprite"
-        style={{
-          filter: glowColor ? `drop-shadow(0 0 3px ${glowColor})` : undefined,
-        }}
         draggable={false}
         loading="lazy"
+        onError={() => setImageError(true)}
       />
 
       {/* Pet shadow on ground */}
@@ -94,18 +105,18 @@ export const IslandPet = memo(({ cell, index, isNew }: IslandPetProps) => {
       {/* Tooltip on tap */}
       {showTooltip && (
         <div
-          className="island-pet__tooltip"
+          className={`island-pet__tooltip ${tooltipBelow ? 'island-pet__tooltip--below' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
-            setShowTooltip(false);
+            onToggleTooltip();
           }}
         >
           <span className="island-pet__tooltip-name">{species.name}</span>
           <span
             className="island-pet__tooltip-rarity"
             style={{
-              background: `${RARITY_TOOLTIP_COLORS[cell.rarity]}22`,
-              color: RARITY_TOOLTIP_COLORS[cell.rarity],
+              background: `${rarityColor.tooltip}22`,
+              color: rarityColor.tooltip,
             }}
           >
             {RARITY_LABELS[cell.rarity]}

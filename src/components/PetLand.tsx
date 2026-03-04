@@ -6,7 +6,7 @@
  * with depth-based scaling and z-ordering.
  */
 
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLandStore, LAND_SIZE } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
 import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
@@ -14,7 +14,38 @@ import { ISLAND_POSITIONS, getDepthZIndex } from '@/data/islandPositions';
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
+  const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
+  const landJustCompleted = useLandStore((s) => s.landJustCompleted);
+  const clearLastPlaced = useLandStore((s) => s.clearLastPlaced);
+  const clearLandCompleted = useLandStore((s) => s.clearLandCompleted);
   const progressPct = (filledCount / LAND_SIZE) * 100;
+
+  // Single active tooltip — only one pet tooltip open at a time
+  const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
+
+  // Clear the "new pet" animation after it plays
+  useEffect(() => {
+    if (lastPlacedIndex !== null) {
+      const timer = setTimeout(clearLastPlaced, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [lastPlacedIndex, clearLastPlaced]);
+
+  // Auto-dismiss land completion overlay
+  useEffect(() => {
+    if (landJustCompleted !== null) {
+      const timer = setTimeout(clearLandCompleted, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [landJustCompleted, clearLandCompleted]);
+
+  const handleToggleTooltip = useCallback((index: number) => {
+    setActiveTooltipIndex((prev) => (prev === index ? null : index));
+  }, []);
+
+  const handleCloseTooltips = useCallback(() => {
+    setActiveTooltipIndex(null);
+  }, []);
 
   const slotElements = useMemo(() => {
     return currentLand.cells.map((cell, index) => {
@@ -24,6 +55,9 @@ export const PetLand = () => {
             key={`${currentLand.id}-${index}`}
             cell={cell}
             index={index}
+            isNew={index === lastPlacedIndex}
+            showTooltip={activeTooltipIndex === index}
+            onToggleTooltip={() => handleToggleTooltip(index)}
           />
         );
       }
@@ -42,7 +76,7 @@ export const PetLand = () => {
         />
       );
     });
-  }, [currentLand.cells, currentLand.id]);
+  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
 
   return (
     <div className="pet-land">
@@ -86,11 +120,35 @@ export const PetLand = () => {
           <div className="pet-land__deco pet-land__deco--path" />
 
           {/* Pets layer — absolutely positioned pets */}
-          <div className="pet-land__pets-layer">
+          <div
+            className="pet-land__pets-layer"
+            onClick={handleCloseTooltips}
+          >
             {slotElements}
+
+            {/* Empty state hint for new users */}
+            {filledCount === 0 && (
+              <div className="pet-land__empty-hint">
+                <span className="pet-land__empty-hint-text">
+                  Complete a focus session<br />to earn your first pet!
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Land completion celebration overlay */}
+      {landJustCompleted !== null && (
+        <div className="pet-land__land-complete" onClick={clearLandCompleted}>
+          <span className="pet-land__land-complete-text">
+            Land {landJustCompleted} Complete!
+          </span>
+          <span className="pet-land__land-complete-sub">
+            Starting a new island...
+          </span>
+        </div>
+      )}
 
       {/* Land progress label */}
       <div className="pet-land__progress">

@@ -548,30 +548,37 @@
 /* ── Pet sprite ────────────────────────────────────────────────── */
 
 .island-pet__sprite {
-  /* Scale relative to container via cqi, falling back to 36px */
   width: 36px;
   height: 36px;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
   animation: island-pet-bob 3s ease-in-out infinite;
   animation-delay: var(--bob-delay, 0s);
 }
 
-/* Use container queries when supported for responsive pet sizing */
-@container (min-width: 360px) {
+/* Responsive pet sizing via viewport media queries */
+@media (min-width: 390px) {
   .island-pet__sprite {
     width: 40px;
     height: 40px;
   }
 }
 
-@container (min-width: 400px) {
+@media (min-width: 420px) {
   .island-pet__sprite {
     width: 44px;
     height: 44px;
   }
+}
+
+/* Delay bob animation on newly placed pets so pop finishes first */
+.island-pet--new .island-pet__sprite {
+  animation-delay: 0.6s;
 }
 
 @keyframes island-pet-bob {
@@ -616,6 +623,10 @@
 
 /* ── Rarity glow effects ──────────────────────────────────────── */
 
+.island-pet--uncommon {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
 .island-pet--rare {
   filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
 }
@@ -658,7 +669,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 200;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -732,6 +743,7 @@
   align-items: center;
   gap: 6px;
   padding: 5px 14px;
+  max-width: calc(100vw - 32px);
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -758,4 +770,124 @@
   border-radius: 2px;
   background: linear-gradient(90deg, #81C784, #4CAF50);
   transition: width 0.5s ease;
+}
+
+/* ── Tooltip flipped below pet (for pets near top of island) ──── */
+
+.island-pet__tooltip--below {
+  bottom: auto;
+  top: calc(100% + 4px);
+}
+
+.island-pet__tooltip--below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.82);
+}
+
+/* ── Empty state message ──────────────────────────────────────── */
+
+.pet-land__empty-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  text-align: center;
+  pointer-events: none;
+}
+
+.pet-land__empty-hint-text {
+  display: inline-block;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: pet-land-empty-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pet-land-empty-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ── Land completion overlay ──────────────────────────────────── */
+
+.pet-land__land-complete {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: pet-land-complete-in 0.4s ease-out;
+  pointer-events: none;
+}
+
+.pet-land__land-complete-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pet-land-complete-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+.pet-land__land-complete-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 6px;
+  animation: pet-land-complete-fade 0.5s ease-out 0.5s both;
+}
+
+@keyframes pet-land-complete-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pet-land-complete-bounce {
+  from { opacity: 0; transform: scale(0.5) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pet-land-complete-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-land__island-wrapper,
+  .pet-land__island-shadow,
+  .pet-land__cloud,
+  .pet-land__sun,
+  .pet-land__waterfall::before,
+  .pet-land__waterfall::after {
+    animation: none;
+  }
+
+  .island-pet__sprite {
+    animation: none;
+  }
+
+  .island-pet__shimmer {
+    animation: none;
+  }
+
+  .island-pet--new {
+    animation: none;
+    opacity: 1;
+  }
 }
