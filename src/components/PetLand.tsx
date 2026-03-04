@@ -201,6 +201,24 @@ export const PetLand = () => {
 
   return (
     <div className={`pet-land ${growthClass}`}>
+      {/* SVG clip-path definition for rounded diamond corners */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id="island-diamond" clipPathUnits="objectBoundingBox">
+            <path d="
+              M 0.50 0.02
+              C 0.52 0.02, 0.96 0.46, 0.98 0.48
+              C 1.00 0.50, 1.00 0.50, 0.98 0.52
+              C 0.96 0.54, 0.52 0.98, 0.50 0.98
+              C 0.48 0.98, 0.04 0.54, 0.02 0.52
+              C 0.00 0.50, 0.00 0.50, 0.02 0.48
+              C 0.04 0.46, 0.48 0.02, 0.50 0.02
+              Z
+            " />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* Sky */}
       <div className="pet-land__sky">
         <div className="pet-land__sun" />
@@ -236,7 +254,11 @@ export const PetLand = () => {
           {/* Diamond grass surface */}
           <div className="pet-land__island-surface">
             <div className="pet-land__island-grass-detail" />
+            <div className="pet-land__island-grid" />
           </div>
+
+          {/* Grass overhang tufts along cliff edges */}
+          <div className="pet-land__island-grass-edge" />
 
           {/* Cliff walls — isometric 3D block sides */}
           <div className="pet-land__island-left-wall" />
