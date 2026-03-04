@@ -481,23 +481,29 @@ const leftMoss = generateMossSpots(LW.tl, LW.tr, LW.bl, LW.br, 0.5, 111);
 const rightMoss = generateMossSpots(RW.tl, RW.tr, RW.bl, RW.br, 0.5, 222);
 
 // ─── Rounded Cliff Clip Paths ───────────────────────────────────────
-// Round the bottom corners of each cliff wall for a polished look
-const CORNER_R = 10; // corner radius in SVG units
+// Round the bottom corners of each cliff wall for a polished look.
+// The cliff walls are parallelograms, so we compute corner points
+// along the actual edges using lerp, not simple X/Y offsets.
+const CORNER_T = 0.15; // how far along the edge to start the curve (0-1)
 
 function roundedCliffPath(tl: Pt, tr: Pt, bl: Pt, br: Pt): string {
-  // Path: tl → tr (top edge, straight), then down right side,
-  // round bottom-right corner, across bottom, round bottom-left corner, up left side
+  // Points just before each bottom corner, along their respective edges
+  const leftBeforeBL = lerp(tl, bl, 1 - CORNER_T); // on left edge, near bl
+  const bottomAfterBL = lerp(bl, br, CORNER_T);      // on bottom edge, near bl
+  const bottomBeforeBR = lerp(bl, br, 1 - CORNER_T); // on bottom edge, near br
+  const rightBeforeBR = lerp(tr, br, 1 - CORNER_T);  // on right edge, near br
+
   return [
     `M ${p(tl)}`,
     `L ${p(tr)}`,
     // Right edge down to just before bottom-right corner
-    `L ${tr.x.toFixed(1)},${(br.y - CORNER_R).toFixed(1)}`,
-    // Bottom-right rounded corner
-    `Q ${p(br)} ${(br.x - (br.x - bl.x) * (CORNER_R / dist(bl, br))).toFixed(1)},${br.y.toFixed(1)}`,
-    // Bottom edge to just before bottom-left corner
-    `L ${(bl.x + (br.x - bl.x) * (CORNER_R / dist(bl, br))).toFixed(1)},${bl.y.toFixed(1)}`,
-    // Bottom-left rounded corner
-    `Q ${p(bl)} ${bl.x.toFixed(1)},${(bl.y - CORNER_R).toFixed(1)}`,
+    `L ${p(rightBeforeBR)}`,
+    // Round bottom-right corner
+    `Q ${p(br)} ${p(bottomBeforeBR)}`,
+    // Bottom edge
+    `L ${p(bottomAfterBL)}`,
+    // Round bottom-left corner
+    `Q ${p(bl)} ${p(leftBeforeBL)}`,
     // Left edge back up
     `L ${p(tl)}`,
     'Z',
