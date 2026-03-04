@@ -139,24 +139,27 @@
   50% { transform: translateY(-5px); }
 }
 
-/* ── Island container — holds diamond shape ──────────────────── */
+/* ── Island container — holds diamond shape + cliff walls ───── */
 
 .pet-land__island-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 2 / 1.3;
   transform: rotateY(var(--island-rotate-y, 0deg));
   transform-style: preserve-3d;
-  transform-origin: center center;
+  transform-origin: center 38%;
 }
 
-/* ── Island surface — isometric diamond (rhombus) ──────────────── */
+/* ── Island surface — grass top face of 3D block ──────────────── */
 
 .pet-land__island-surface {
   position: absolute;
-  inset: 0;
-  /* Diamond shape: points at top, right, bottom, left */
-  clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 77%;
+  /* Diamond shape within the grass area */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   background:
     /* Sunlight highlight */
     radial-gradient(ellipse at 55% 35%, rgba(180, 235, 80, 0.4) 0%, transparent 40%),
@@ -171,7 +174,7 @@
 .pet-land__island-grass-detail {
   position: absolute;
   inset: 0;
-  clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   opacity: 0.6;
   background:
     /* Scattered lighter patches */
@@ -190,7 +193,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   background: linear-gradient(
     110deg,
     transparent 30%,
@@ -208,35 +211,100 @@
   50% { background-position: -50% 0; }
 }
 
-/* ── Diamond edge / dirt border ────────────────────────────────── */
+/* ── Cliff walls — left face (lit side) ───────────────────────── */
 
-.pet-land__island-edge {
+.pet-land__island-left-wall {
   position: absolute;
-  top: 0;
-  left: -0.5%;
-  right: -0.5%;
-  bottom: -6%;
-  clip-path: polygon(50% 2%, 99% 50%, 50% 98%, 1% 50%);
+  inset: 0;
+  /* Parallelogram: grass left point → grass bottom → container bottom-center → container left-60% */
+  clip-path: polygon(0% 38.5%, 50% 77%, 50% 100%, 0% 61.5%);
   background:
+    /* Grass-to-dirt transition at top */
     linear-gradient(
       180deg,
       #6B9930 0%,
-      #8B6D4A 10%,
-      #7A5C3B 40%,
-      #6B4D2F 70%,
-      #5C3D22 100%
+      #8B7355 6%,
+      #7A6345 20%,
+      #6B5235 45%,
+      #5C4228 70%,
+      #4E3620 100%
     );
   z-index: 1;
+}
+
+/* Strata lines on left wall */
+.pet-land__island-left-wall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0% 38.5%, 50% 77%, 50% 100%, 0% 61.5%);
+  background:
+    linear-gradient(180deg,
+      transparent 20%,
+      rgba(0,0,0,0.06) 21%,
+      transparent 23%,
+      transparent 40%,
+      rgba(0,0,0,0.05) 41%,
+      transparent 43%,
+      transparent 65%,
+      rgba(0,0,0,0.07) 66%,
+      transparent 68%,
+      transparent 85%,
+      rgba(0,0,0,0.04) 86%,
+      transparent 88%
+    );
+  pointer-events: none;
+}
+
+/* ── Cliff walls — right face (shadow side) ──────────────────── */
+
+.pet-land__island-right-wall {
+  position: absolute;
+  inset: 0;
+  /* Parallelogram: grass right point → grass bottom → container bottom-center → container right-60% */
+  clip-path: polygon(100% 38.5%, 50% 77%, 50% 100%, 100% 61.5%);
+  background:
+    linear-gradient(
+      180deg,
+      #5E8828 0%,
+      #7A5C3B 6%,
+      #6B4D2F 20%,
+      #5C3D22 45%,
+      #4A3118 70%,
+      #3A2510 100%
+    );
+  z-index: 1;
+}
+
+/* Strata lines on right wall */
+.pet-land__island-right-wall::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(100% 38.5%, 50% 77%, 50% 100%, 100% 61.5%);
+  background:
+    linear-gradient(180deg,
+      transparent 25%,
+      rgba(0,0,0,0.05) 26%,
+      transparent 28%,
+      transparent 50%,
+      rgba(0,0,0,0.06) 51%,
+      transparent 53%,
+      transparent 75%,
+      rgba(0,0,0,0.04) 76%,
+      transparent 78%
+    );
+  pointer-events: none;
 }
 
 /* ── Floating shadow ───────────────────────────────────────────── */
 
 .pet-land__island-shadow {
   position: absolute;
-  bottom: -6%;
-  left: 12%;
-  right: 12%;
-  height: 28px;
+  bottom: -4%;
+  left: 10%;
+  right: 10%;
+  height: 32px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
@@ -254,15 +322,18 @@
   50% { transform: scale(0.82) translateY(3px); opacity: 0.6; }
 }
 
-/* ── Pets layer ────────────────────────────────────────────────── */
+/* ── Pets layer — matches grass area (top 77%) ────────────────── */
 
 .pet-land__pets-layer {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 77%;
   z-index: 5;
   pointer-events: none;
-  /* Slightly inset diamond clip so pets don't overflow the grass edge */
-  clip-path: polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%);
+  /* Slightly inset diamond clip — relaxed at top to avoid cutting pets */
+  clip-path: polygon(50% 1%, 97% 50%, 50% 99%, 3% 50%);
 }
 
 /* ── Individual pet on island ──────────────────────────────────── */
