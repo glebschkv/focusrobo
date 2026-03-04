@@ -7,7 +7,8 @@
 
 import { memo, useEffect, useState } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
-import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
+import { getDepthScaleForRotation, getDepthZIndexForRotation, getPositionForRotation } from '@/data/islandPositions';
+import type { RotationStep } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
@@ -17,6 +18,7 @@ interface IslandPetProps {
   isNew?: boolean;
   showTooltip: boolean;
   onToggleTooltip: () => void;
+  rotationStep?: RotationStep;
 }
 
 const SIZE_LABELS: Record<string, string> = {
@@ -33,25 +35,27 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip, rotationStep = 0 }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
   if (!species) return null;
 
-  const pos = ISLAND_POSITIONS[index];
+  const pos = getPositionForRotation(index, rotationStep);
   if (!pos) return null;
 
   if (imageError) return null;
 
   const growthScale = GROWTH_SCALES[cell.size];
-  const depthScale = getDepthScale(index);
+  const depthScale = getDepthScaleForRotation(index, rotationStep);
   const finalScale = growthScale * depthScale;
-  const zIndex = getDepthZIndex(index);
+  const zIndex = getDepthZIndexForRotation(index, rotationStep);
   const rarityColor = RARITY_COLORS[cell.rarity];
 
-  const bobDelay = ((index % 7) * 0.4).toFixed(1);
+  const bobDelay = ((index % 11) * 0.27).toFixed(1);
+  // Per-pet bob variation: -0.5px, 0px, or +0.5px offset
+  const bobOffset = ((index % 3) - 1) * 0.5;
 
   // Apply rarity glow class for uncommon+
   const rarityClass =
@@ -61,6 +65,11 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
 
   // Flip tooltip below for pets near top of island
   const tooltipBelow = pos.y < 30;
+
+  // Horizontal tooltip offset for edge pets (C4)
+  const tooltipShiftClass =
+    pos.x < 20 ? 'island-pet__tooltip--shift-right' :
+    pos.x > 80 ? 'island-pet__tooltip--shift-left' : '';
 
   // Trigger haptic feedback for newly placed pet
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -80,10 +89,12 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
           zIndex,
           '--pet-scale': finalScale,
           '--bob-delay': `${bobDelay}s`,
+          '--bob-offset': `${bobOffset}px`,
         } as React.CSSProperties
       }
       onClick={(e) => {
         e.stopPropagation();
+        haptic('selection');
         onToggleTooltip();
       }}
     >
@@ -105,7 +116,7 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
       {/* Tooltip on tap */}
       {showTooltip && (
         <div
-          className={`island-pet__tooltip ${tooltipBelow ? 'island-pet__tooltip--below' : ''}`}
+          className={`island-pet__tooltip ${tooltipBelow ? 'island-pet__tooltip--below' : ''} ${tooltipShiftClass}`}
           onClick={(e) => {
             e.stopPropagation();
             onToggleTooltip();
