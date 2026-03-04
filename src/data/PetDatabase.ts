@@ -45,6 +45,7 @@ export const PET_DATABASE: PetSpecies[] = [
   { id: 'deer', name: 'Deer', rarity: 'rare', unlockLevel: 9, description: 'A graceful deer that appears only to the dedicated.', imagePath: '/assets/pets/deer.png' },
   { id: 'owl', name: 'Owl', rarity: 'rare', unlockLevel: 16, description: 'A wise owl that rewards late-night focus.', imagePath: '/assets/pets/owl.png' },
   { id: 'wolf', name: 'Wolf', rarity: 'rare', unlockLevel: 25, description: 'A loyal wolf drawn to focused discipline.', imagePath: '/assets/pets/wolf.png' },
+  { id: 'polar-bear', name: 'Polar Bear', rarity: 'rare', unlockLevel: 28, description: 'A mighty polar bear that thrives in long focus sessions.', imagePath: '/assets/pets/polar-bear.png' },
   { id: 'crane', name: 'Crane', rarity: 'rare', unlockLevel: 32, description: 'An elegant crane symbolizing patience.', imagePath: '/assets/pets/crane.png' },
 
   // ── Epic (2 species) ───────────────────────────────────
