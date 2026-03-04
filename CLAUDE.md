@@ -1,26 +1,28 @@
 # BotBlock — Architecture Reference
 
-> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a 10×10 land grid. Longer sessions = bigger pets (baby/adolescent/adult). Fill a land (100 pets), start a new one. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (100 pets), archive it, start a new one. Built with React + Capacitor, deployed as a native iOS app.
 
 ## Core Gameplay Loop
 
 ```
-Focus session completes → random pet generated (weighted by rarity)
+Focus session completes → random pet generated (weighted by rarity + player level)
 → pet size based on session length (baby/adolescent/adult)
-→ pet placed on next empty cell of 10×10 land grid
-→ fill all 100 cells = land complete → archive → new land
+→ pet placed on floating island using farthest-first spatial algorithm
+→ fill all 100 slots = island complete → archive → new island
 ```
 
 ## Art & Theme Direction
 
-**Pixel art aesthetic** — cute collectible animals on a meadow:
+**Pixel art aesthetic** — cute collectible animals on a floating isometric island:
 
-- **Visual style**: Pixel art pets (128×128 SVG), front-facing, transparent background
-- **Home screen**: `PetLand` component — 10×10 CSS grid on a sky+grass background
-- **Pets**: Bunny, Chick, Frog, Fox, Deer (5 MVP species, expanding to 25)
-- **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — CSS `scale()` within cells
-- **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow effects
+- **Visual style**: Pixel art pets (PNG sprites, 36–44px responsive), front-facing, transparent background
+- **Home screen**: `PetLand` component — floating 3D-tilted island with sky, clouds, sun, waterfall
+- **Island**: Isometric elliptical grass surface with cliff sides, decorative trees/flowers/bushes/rocks
+- **Pets**: 20 species across 5 rarities (see Pet Species below)
+- **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
+- **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
 - **Land themes**: Meadow (default), Beach, Snow, Desert, Night Garden, Sakura (purchasable)
+- **Assets**: `public/assets/pets/*.png` (20 species: bunny, cat, chick, crane, deer, dragon, duckling, fox, frog, hamster, hedgehog, mouse, otter, owl, penguin, phoenix, raccoon, sparrow, unicorn, wolf)
 
 ## Quick Facts
 
@@ -40,7 +42,7 @@ Focus session completes → random pet generated (weighted by rarity)
 | State | Zustand 5 with `persist` + `subscribeWithSelector` middleware |
 | Styling | Tailwind CSS + CSS variables (HSL-based design tokens in `index.css`) |
 | UI Library | Radix UI primitives + shadcn/ui components (`src/components/ui/`) |
-| Animations | Framer Motion |
+| Animations | Framer Motion + CSS keyframes |
 | Backend | Supabase (auth, database, edge functions) |
 | Data Fetching | TanStack React Query |
 | Routing | React Router DOM v6 |
@@ -52,97 +54,306 @@ Focus session completes → random pet generated (weighted by rarity)
 ```bash
 npm run dev          # Vite dev server on :8080
 npm run build        # Production build to dist/
+npm run build:dev    # Development build
 npm run ios          # Build + copy to iOS project
 npm run test         # Vitest watch mode
 npm run test:run     # Single test run
+npm run test:coverage # Coverage report
+npm run test:ui      # Vitest UI
+npm run test:e2e     # Playwright end-to-end tests
 npm run typecheck    # tsc --noEmit
 npm run lint         # ESLint
 npm run analyze      # Bundle visualization (treemap)
+npm run preview      # Preview production build
+npm run cap:copy:ios # Copy dist/ to iOS + patch config
 ```
 
 ## Project Structure
 
 ```
 src/
-├── App.tsx                    # Root: providers, router, lazy page loading
+├── App.tsx                    # Root: ErrorBoundary → QueryClient → NativePluginProvider → OfflineProvider → Router
+├── main.tsx                   # Entry point
+├── index.css                  # Global CSS, HSL design tokens, Tailwind imports
+├── vite-env.d.ts              # Vite type declarations
 ├── pages/
-│   ├── Index.tsx              # Main page: auth gate → onboarding → GameUI
-│   ├── Auth.tsx               # Login/signup
+│   ├── Index.tsx              # Main page: auth gate → splash → onboarding → GameUI
+│   ├── Auth.tsx               # Login/signup (Apple Sign-In + guest mode)
 │   ├── PrivacyPolicy.tsx
 │   ├── TermsOfService.tsx
 │   └── NotFound.tsx
 ├── components/
-│   ├── PetLand.tsx            # Home screen — 10×10 pet collection grid
-│   ├── PetLandCell.tsx        # Single grid cell — renders pet at scale
+│   ├── PetLand.tsx            # Home screen — floating isometric island with pets
+│   ├── IslandPet.tsx          # Single pet on island — positioned, scaled, animated
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
 │   ├── TopStatusBar.tsx       # XP bar, coins, level, streak at top
-│   ├── UnifiedFocusTimer.tsx  # Focus timer tab
-│   ├── BotCollectionGrid.tsx  # Collection tab (legacy, being replaced by PetCollectionBook)
-│   ├── Shop.tsx               # Shop tab
+│   ├── UnifiedFocusTimer.tsx  # Focus timer tab (orchestrates timer sub-components)
+│   ├── PetCollectionBook.tsx  # Pet collection catalog + species discovery tracking
+│   ├── Shop.tsx               # Shop tab (backgrounds, power-ups, bundles)
 │   ├── Settings.tsx           # Settings tab
+│   ├── RewardModals.tsx       # Reward modal coordinator
+│   ├── RewardModal.tsx        # Generic reward popup
+│   ├── XPRewardModal.tsx      # XP/level-up reward modal
+│   ├── DailyLoginRewardModal.tsx  # Daily login bonus modal
+│   ├── StreakDisplay.tsx       # Streak visualization
+│   ├── AchievementGallery.tsx # Achievement display grid
+│   ├── AchievementTracker.tsx # Achievement progress tracker
+│   ├── PremiumSubscription.tsx # Premium upgrade UI
+│   ├── QuickFocusButton.tsx   # Quick-start focus button
+│   ├── GlobalSoundToggle.tsx  # Global sound on/off toggle
+│   ├── VersionNotice.tsx      # App version display
+│   ├── SplashScreen.tsx       # Loading splash screen
+│   ├── ErrorBoundary.tsx      # Top-level error boundary
+│   ├── FeatureErrorBoundary.tsx # Feature-scoped error boundary
+│   ├── PageErrorBoundary.tsx  # Page-scoped error boundary
+│   ├── PluginUnavailableBanner.tsx # Native plugin unavailable warning
 │   ├── focus-timer/           # Timer sub-components
+│   │   ├── index.ts           # Barrel exports
+│   │   ├── constants.ts       # Timer constants
 │   │   ├── TimerView.tsx      # Timer circle display
+│   │   ├── TimerDisplay.tsx   # Time remaining display
 │   │   ├── TimerControls.tsx  # Start/pause/stop buttons
 │   │   ├── TimerPresetGrid.tsx # Duration presets (25/30/45/60/90/120/180 min)
-│   │   ├── StatsView.tsx      # Session statistics
+│   │   ├── TimerStats.tsx     # Session statistics summary
+│   │   ├── TimerModals.tsx    # Timer-related modals coordinator
+│   │   ├── StatsView.tsx      # Detailed statistics view
+│   │   ├── ViewToggle.tsx     # Timer/stats view toggle
 │   │   ├── FocusLockScreen.tsx # Lock screen during focus
-│   │   ├── AppBlockingSection.tsx
-│   │   ├── AmbientSoundPicker.tsx
-│   │   └── BackgroundThemeSwitcher.tsx
+│   │   ├── FocusShieldNudge.tsx # Prompt to enable focus shield
+│   │   ├── AppBlockingSection.tsx # App blocking config UI
+│   │   ├── AmbientSoundPicker.tsx # Sound selection UI
+│   │   ├── BackgroundThemeSwitcher.tsx # Timer background theme picker
+│   │   ├── PetRevealModal.tsx # Post-session pet reveal animation
+│   │   ├── BreakTransitionModal.tsx # Break between sessions modal
+│   │   ├── SessionNotesModal.tsx # Post-session notes
+│   │   ├── TaskIntentionModal.tsx # Pre-session task intention
+│   │   ├── backgrounds/       # Timer background themes
+│   │   │   ├── index.tsx      # Background component exports
+│   │   │   └── ThemeContext.tsx # Background theme context
+│   │   └── hooks/             # Timer-specific hooks
+│   │       ├── useTimerCore.ts       # Core timer state machine
+│   │       ├── useTimerCountdown.ts  # Countdown logic
+│   │       ├── useTimerControls.ts   # Play/pause/stop actions
+│   │       ├── useTimerLogic.ts      # Timer business logic orchestrator
+│   │       ├── useTimerRewards.ts    # Post-session reward calculation
+│   │       ├── useTimerPersistence.ts # Timer state persistence
+│   │       ├── useTimerAudio.ts      # Timer sound effects
+│   │       ├── useBackgroundTheme.ts # Background theme management
+│   │       ├── useBreakTransition.ts # Break flow management
+│   │       └── useSessionNotes.ts    # Session notes management
 │   ├── gamification/          # Challenges/achievements tab
-│   │   ├── GamificationHub.tsx
-│   │   ├── AchievementUnlockModal.tsx
-│   │   └── MilestoneCelebration.tsx
-│   ├── onboarding/
-│   │   └── OnboardingFlow.tsx
-│   ├── shop/                  # Shop sub-components
-│   ├── collection/            # Collection sub-components (legacy robot cards)
+│   │   ├── index.ts           # Barrel exports
+│   │   ├── GamificationHub.tsx # Main gamification tab layout
+│   │   ├── AchievementUnlockModal.tsx # Achievement unlock celebration
+│   │   └── MilestoneCelebration.tsx # Milestone celebration overlay
+│   ├── analytics/             # Analytics dashboard (tab)
+│   │   ├── index.ts           # Barrel exports
+│   │   ├── Analytics.tsx      # Main analytics dashboard
+│   │   ├── AnalyticsStatCards.tsx, AnalyticsHeatmap.tsx, AnalyticsWeeklyChart.tsx ...
+│   │   ├── AnalyticsFocusScore.tsx, AnalyticsGoalRing.tsx, AnalyticsMilestones.tsx ...
+│   │   ├── CollapsibleAnalyticsSection.tsx # Collapsible section wrapper
+│   │   └── SimpleBarChart.tsx # Bar chart utility
 │   ├── settings/              # Settings sub-components
-│   └── ui/                    # shadcn/ui component library (button, card, dialog, etc.)
-├── stores/                    # Zustand state management (see Stores section)
-│   └── landStore.ts           # Pet land grid state (current land, completed lands, species catalog)
-├── hooks/                     # Custom React hooks (see Hooks section)
+│   │   ├── SettingsProfile.tsx, SettingsAccount.tsx, SettingsTimer.tsx
+│   │   ├── SettingsFocusMode.tsx, SettingsGame.tsx, SettingsSound.tsx
+│   │   ├── SettingsAnalytics.tsx, SettingsAppearance.tsx
+│   │   ├── SettingsData.tsx   # Data export/delete (GDPR)
+│   │   └── SettingsAbout.tsx  # About screen
+│   ├── onboarding/
+│   │   └── OnboardingFlow.tsx # New user onboarding wizard
+│   ├── dev/
+│   │   └── PerformanceMonitor.tsx # Development performance monitor
+│   ├── shop/                  # Shop sub-components
+│   │   ├── styles.ts          # Shop styling utilities
+│   │   ├── BundleConfirmDialog.tsx # Bundle purchase confirmation
+│   │   ├── PurchaseConfirmDialog.tsx # Purchase confirmation
+│   │   ├── ShopPreviewComponents.tsx # Item preview cards
+│   │   └── tabs/              # Shop tab views
+│   │       ├── BackgroundsTab.tsx # Background themes shop
+│   │       ├── FeaturedTab.tsx    # Featured items
+│   │       ├── InventoryTab.tsx   # User inventory
+│   │       └── PowerUpsTab.tsx    # Power-up items
+│   └── ui/                    # shadcn/ui component library
+│       ├── button.tsx, card.tsx, dialog.tsx, drawer.tsx, input.tsx ...
+│       ├── skeleton-loaders.tsx # Context-aware loading skeletons
+│       ├── PixelIcon.tsx      # Pixel art icon component
+│       └── (35+ Radix-based primitives)
+├── stores/                    # Zustand state management
+│   ├── index.ts               # Store exports
+│   ├── landStore.ts           # Pet island grid state (current land, completed lands, species catalog)
+│   ├── xpStore.ts             # XP, level (max 50), unlocked entities
+│   ├── coinStore.ts           # Coin balance, earnings, spending, server sync
+│   ├── premiumStore.ts        # Subscription tier management
+│   ├── streakStore.ts         # Streak tracking, freezes, milestones
+│   ├── focusStore.ts          # Focus mode settings, blocked apps, strict mode
+│   ├── navigationStore.ts     # Active tab, modal state (not persisted)
+│   ├── shopStore.ts           # Owned items, equipped background
+│   ├── collectionStore.ts     # Legacy collection state
+│   ├── soundStore.ts          # Sound mixer layers, ambient sounds, volume
+│   ├── questStore.ts          # Daily/weekly quests
+│   ├── onboardingStore.ts     # Onboarding completion state
+│   ├── authStore.ts           # Guest ID, guest mode flag
+│   ├── themeStore.ts          # Home background theme
+│   └── offlineSyncStore.ts    # Offline action queue for sync
+├── hooks/                     # Custom React hooks
+│   ├── useAuth.ts             # Supabase auth, guest mode
+│   ├── useXPSystem.ts         # XP calculations, level-ups (re-exports from xp/)
+│   ├── xp/                    # XP system module
+│   │   ├── index.ts           # Barrel exports
+│   │   ├── useXPSystem.ts     # Core XP hook
+│   │   ├── xpConstants.ts     # XP curve constants
+│   │   ├── xpTypes.ts         # XP type definitions
+│   │   └── xpUtils.ts         # XP calculation utilities
+│   ├── useCoinSystem.ts       # Coin earning, spending, server validation
+│   ├── useStreakSystem.ts     # Streak tracking, freeze management
+│   ├── useFocusMode.ts        # Focus mode activation, app blocking
+│   ├── useStoreKit.ts         # StoreKit 2 IAP (subscriptions, coin packs, bundles)
+│   ├── useDeviceActivity.ts   # iOS Screen Time / DeviceActivity integration
+│   ├── useQuestSystem.ts      # Daily/weekly quest generation and tracking
+│   ├── useAchievementSystem.ts # Achievement unlock logic
+│   ├── useAchievementTracking.ts # Event-based achievement progress tracking
+│   ├── useMilestoneCelebrations.ts # Milestone detection and celebration UI
+│   ├── useDailyLoginRewards.ts # Daily login reward logic
+│   ├── useCoinBooster.ts      # Temporary coin boost items
+│   ├── useRewardHandlers.ts   # Session completion reward orchestration
+│   ├── useSoundMixer.ts       # Ambient sound layering
+│   ├── useAmbientSound.ts     # Individual ambient sound playback
+│   ├── useSoundEffects.ts     # UI sound effects
+│   ├── useClickSound.ts       # Button click sound
+│   ├── useHaptics.ts          # iOS haptic feedback
+│   ├── useWidgetSync.ts       # iOS widget data synchronization
+│   ├── useTimerExpiryGuard.ts # Ensures timer fires even if app backgrounded
+│   ├── useBackendAppState.ts  # Fetches user state from Supabase on load
+│   ├── useBackendStreaks.ts   # Server-side streak sync
+│   ├── useBackendQuests.ts    # Server-side quest sync
+│   ├── useSupabaseData.ts     # Generic Supabase data fetching
+│   ├── useShop.ts             # Shop purchase logic
+│   ├── useSettings.ts         # App settings management
+│   ├── useOnboarding.ts       # Onboarding flow logic
+│   ├── usePremiumStatus.ts    # Premium tier queries
+│   ├── useAnalytics.ts        # Analytics event tracking
+│   ├── useAnimatedCounter.ts  # Animated number transitions
+│   ├── useAppStateTracking.ts # App foreground/background tracking
+│   ├── useNotifications.ts    # Push notification management
+│   ├── useNativePluginStatus.ts # Native plugin availability
+│   ├── useOfflineSyncManager.ts # Offline sync queue management
+│   ├── usePerformanceMonitor.ts # Performance metrics logging
+│   ├── useReducedMotion.ts    # Reduced motion preference detection
+│   ├── useServiceWorker.ts    # Service worker registration
+│   └── use-mobile.tsx         # Mobile device detection
 ├── data/
 │   ├── PetDatabase.ts         # Pet species definitions, rarity weights, growth sizes, random roll
-│   ├── RobotDatabase.ts       # Legacy robot data (still used by collection/shop tabs, being phased out)
+│   ├── islandPositions.ts     # 100 island slot positions, isometric projection, depth scaling
 │   ├── ShopData.ts            # Shop items, backgrounds, bundles
-│   ├── GamificationData.ts    # Milestone definitions
-│   └── AmbientSoundsData.ts   # Sound library
+│   ├── GamificationData.ts    # Milestone/achievement definitions
+│   ├── AmbientSoundsData.ts   # Sound library catalog
+│   ├── SpecialAnimations.ts   # Special celebration animations
+│   └── LazySpecialAnimations.ts # Lazy-loaded animation variants
 ├── types/                     # TypeScript type definitions
+│   ├── index.ts               # Core app types
+│   ├── achievements.ts        # Achievement types
+│   ├── analytics.ts           # Analytics event types
+│   ├── app.ts                 # App-level types
+│   ├── browser-utils.ts       # Browser utility types
+│   ├── gamification.ts        # Gamification types
+│   ├── plugins.ts             # Native plugin types
+│   ├── quest-system.ts        # Quest types
+│   ├── rewards.ts             # Reward types
+│   ├── shop.ts                # Shop types
+│   ├── streak-system.ts       # Streak types
+│   ├── supabase-models.ts     # Supabase DB model types
+│   ├── theme.ts               # Theme types
+│   └── xp-system.ts           # XP system types
 ├── lib/                       # Utilities
 │   ├── constants.ts           # ALL game constants (XP, coins, streaks, etc.)
 │   ├── validation.ts          # Input validation helpers
 │   ├── storage-validation.ts  # Zod schemas for persisted state
-│   ├── validated-zustand-storage.ts # Safe Zustand storage adapter
+│   ├── storage-keys.ts        # localStorage key constants
+│   ├── validated-zustand-storage.ts # Safe Zustand storage adapter with Zod
 │   ├── logger.ts              # Structured logging
 │   ├── utils.ts               # cn() helper (clsx + tailwind-merge)
-│   └── security.ts            # Security utilities
+│   ├── security.ts            # Security utilities
+│   ├── accessibility.ts       # Accessibility helpers
+│   ├── apiUtils.ts            # API request utilities
+│   ├── debounce.ts            # Debounce utility
+│   ├── errorHandling.ts       # Error handling utilities
+│   ├── errorReporting.ts      # Error reporting service
+│   ├── iosOptimizations.ts    # iOS-specific performance optimizations
+│   ├── memoization.ts         # Memoization utilities
+│   ├── minimalSentry.ts       # Lightweight error tracking
+│   └── spriteAnimationManager.ts # Sprite animation frame management
+├── styles/                    # Modular CSS
+│   ├── pet-land.css           # Island sky, clouds, surface, cliff, waterfall, pets, tooltips
+│   ├── animations.css         # Shared keyframe animations
+│   ├── base.css               # Base/reset styles
+│   ├── navigation.css         # Tab bar, navigation styles
+│   ├── timer-controls.css     # Timer button styles
+│   ├── timer-backgrounds.css  # Timer background themes
+│   ├── collection.css         # Collection grid styles
+│   ├── gamification.css       # Achievement/quest styles
+│   ├── shop.css               # Shop layout styles
+│   ├── retro-theme.css        # Retro/pixel art theme tokens
+│   ├── retro-elements.css     # Retro UI element styles
+│   └── utilities.css          # CSS utility classes
 ├── contexts/                  # React contexts
+│   ├── AppContext.tsx          # Global app state context
+│   ├── AppStateContext.tsx     # App lifecycle state (foreground/background)
+│   ├── NativePluginContext.tsx # Native plugin availability context
+│   └── OfflineContext.tsx      # Offline/online status context
 ├── plugins/                   # Capacitor native plugins
 │   ├── device-activity/       # iOS Screen Time / DeviceActivity framework
+│   │   ├── index.ts           # Plugin registration
+│   │   ├── definitions.ts     # TypeScript interface definitions
+│   │   └── web.ts             # Web fallback (no-op)
 │   ├── store-kit/             # StoreKit 2 IAP
+│   │   ├── index.ts
+│   │   └── web.ts
 │   ├── app-review/            # App Store review prompt
+│   │   ├── index.ts
+│   │   └── web.ts
 │   └── widget-data/           # iOS widget data bridge
-├── styles/                    # Modular CSS
-│   ├── pet-land.css           # Pet land grid styles (sky, grid, cells, tooltips)
-│   └── ...                    # Other style modules
+│       └── index.ts
+├── services/                  # Business logic services
+│   ├── achievementService.ts  # Achievement processing service
+│   └── achievement/           # Achievement sub-modules
+│       ├── index.ts, achievementTypes.ts, achievementConstants.ts
+│       ├── achievementDefinitions.ts  # Achievement definitions
+│       ├── achievementProgress.ts     # Progress tracking
+│       ├── achievementStorage.ts      # Persistence
+│       └── achievementUtils.ts        # Utilities
+├── test/                      # Test files (mirrors src/ structure)
+│   ├── setup.ts               # Test setup (Vitest)
+│   ├── components/            # Component tests
+│   ├── hooks/                 # Hook tests
+│   ├── stores/                # Store tests
+│   ├── lib/                   # Utility tests
+│   ├── services/              # Service tests
+│   ├── contexts/              # Context tests
+│   ├── database/              # Database tests
+│   ├── integration/           # Integration tests
+│   ├── e2e/                   # End-to-end tests
+│   └── utils/                 # Test utilities
 └── integrations/
     └── supabase/              # Supabase client + generated types
 ```
 
 ## App Flow
 
-1. `App.tsx` — wraps everything in ErrorBoundary, QueryClient, NativePluginProvider, OfflineProvider
-2. Routes: `/` (Index), `/auth`, `/privacy`, `/terms`
-3. `Index.tsx` — checks auth → shows onboarding if new → renders **GameUI** (full overlay)
+1. `App.tsx` — wraps everything in ErrorBoundary → QueryClientProvider → NativePluginProvider → OfflineProvider → TooltipProvider → BrowserRouter
+2. Routes: `/` (Index), `/auth`, `/privacy`, `/terms`, `*` (NotFound)
+3. `Index.tsx`:
+   - Checks auth → redirects to `/auth` if not authenticated
+   - Hides native + HTML splash screens once auth resolves
+   - Shows `OnboardingFlow` if `!hasCompletedOnboarding`
+   - Renders **GameUI** (full-screen overlay)
 4. **GameUI** manages tab state and renders:
    - `TopStatusBar` — XP bar, level, coins, streak (home tab only)
    - `TabContent` — renders active tab (PetLand for home, lazy-loads others)
    - `IOSTabBar` — bottom navigation
-   - `RewardModals` — XP/coin/milestone reward popups
-5. **Tabs**: home (PetLand), timer, collection (Pets), challenges, shop, settings
+   - `RewardModals` — XP/coin/milestone/daily-login reward popups
+5. **Tabs**: home (PetLand), timer, collection (PetCollectionBook), challenges, shop, settings
 
 ## Stores (Zustand)
 
@@ -150,51 +361,113 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Current land grid (100 cells), completed lands, species catalog, pending pet** |
+| `landStore` | `nomo_land_data` | **Current island grid (100 cells), completed lands, species catalog, pending pet** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
 | `streakStore` | `nomo_streak_data` | Current streak, longest streak, streak freezes (max 3), total sessions |
 | `focusStore` | `nomo_focus_mode` | Focus mode settings, blocked apps, strict mode |
 | `navigationStore` | (not persisted) | Active tab, modal state, navigation history |
-| `shopStore` | (persisted) | Owned characters, backgrounds, equipped background |
-| `collectionStore` | (persisted) | Legacy: active home bots, favorites |
+| `shopStore` | (persisted) | Owned items, equipped background |
+| `collectionStore` | (persisted) | Legacy collection state |
 | `soundStore` | (persisted) | Sound mixer layers, ambient sounds, volume |
 | `questStore` | (persisted) | Daily/weekly quests |
 | `onboardingStore` | (persisted) | Onboarding completion state |
 | `authStore` | (persisted) | Guest ID, guest mode flag |
 | `themeStore` | (persisted) | Home background theme |
+| `offlineSyncStore` | (persisted) | Offline action queue for background sync |
 
 ## Pet Collection System
 
-### Pet Species
-- **5 species** (MVP): Bunny, Chick, Frog, Fox, Deer
-- **Expanding to 25**: 8 common, 6 uncommon, 5 rare, 4 epic, 2 legendary
-- **Data**: `src/data/PetDatabase.ts`
-- **Assets**: `public/assets/pets/*.svg` (128×128 pixel art SVGs)
+### Pet Species (20 total)
+
+| Rarity | Species | Unlock Level |
+|--------|---------|-------------|
+| Common (8) | Bunny, Chick, Frog, Hamster, Duckling, Hedgehog, Mouse, Sparrow | 0–14 |
+| Uncommon (5) | Fox, Cat, Penguin, Raccoon, Otter | 4–22 |
+| Rare (4) | Deer, Owl, Wolf, Crane | 9–32 |
+| Epic (2) | Dragon, Phoenix | 20, 35 |
+| Legendary (1) | Unicorn | 40 |
+
+**Unlock level details**: Bunny/Chick (0), Frog (2), Hamster (3), Fox (4), Duckling (5), Hedgehog (7), Cat (8), Deer (9), Mouse (10), Penguin (12), Sparrow (14), Owl (16), Raccoon (18), Dragon (20), Otter (22), Wolf (25), Crane (32), Phoenix (35), Unicorn (40).
 
 ### Growth Sizes (3 tiers)
-| Size | Session Duration | CSS Scale | Cell Fill |
-|------|-----------------|-----------|-----------|
-| Baby | 25-45 min | `scale(0.4)` | ~40% |
-| Adolescent | 60-90 min | `scale(0.7)` | ~70% |
-| Adult | 120+ min | `scale(1.0)` | 100% |
+| Size | Session Duration | Scale Factor |
+|------|-----------------|-------------|
+| Baby | 25-45 min | 0.65 |
+| Adolescent | 60-90 min | 0.82 |
+| Adult | 120+ min | 1.0 |
 
 ### Rarity & Drop Weights
-| Rarity | Drop Weight | Glow Effect |
-|--------|------------|-------------|
-| Common | 45% | None |
-| Uncommon | 28% | White |
-| Rare | 17% | Blue |
-| Epic | 8% | Purple |
-| Legendary | 2% | Gold + shimmer |
+| Rarity | Drop Weight | Glow Effect | Glow Color |
+|--------|------------|-------------|------------|
+| Common | 45% | None | — |
+| Uncommon | 28% | White drop-shadow (3px) | `rgba(255, 255, 255, 0.6)` |
+| Rare | 17% | Blue drop-shadow (4px) | `rgba(59, 130, 246, 0.7)` |
+| Epic | 8% | Purple drop-shadow (5px) | `rgba(168, 85, 247, 0.7)` |
+| Legendary | 2% | Gold drop-shadow (6px) + shimmer animation | `rgba(234, 179, 8, 0.8)` |
 
-### Land Grid
-- **10×10 grid** = 100 cells per land
-- Fill order: left-to-right, top-to-bottom
-- Pets placed via `landStore.placePendingPet()`
-- When land is full → archive to `completedLands[]` → start new land
-- Land themes purchasable in shop (cosmetic background swap)
+### Floating Island System
+
+The home screen renders a **floating isometric island** (not a flat grid). Key concepts:
+
+**Island Visual Structure** (`pet-land.css`):
+- **Sky**: Gradient `#6BB8E0` → `#F0F7E4` with animated sun + 3 drifting clouds
+- **Island wrapper**: Floating bob animation (4s, ±6px vertical)
+- **Island container**: 3D perspective tilt (`perspective(600px) rotateX(14deg)`)
+- **Surface**: Elliptical grass top with radial gradient shading (`#90D450` → `#5E9729`)
+- **Cliff**: Brown gradient cliff sides beneath the grass
+- **Waterfall**: Animated blue water cascade on left side
+- **Shadow**: Soft radial shadow below the floating island
+- **Decorations**: 2 trees, 3 flowers, 3 bushes, 2 rocks, 1 path
+
+**Pet Positioning** (`islandPositions.ts`):
+- 100 positions computed from 10×10 grid via **isometric projection**
+- Center: (50%, 50%), Ellipse radii: RX=44%, RY=42%
+- Tile spacing: 5.6% (X) × 4.4% (Y) in isometric coordinates
+- Seeded deterministic jitter: ±1% X, ±0.8% Y per slot
+- Positions clamped to elliptical boundary (0.92 scale factor)
+
+**Depth System**:
+- **Depth scale**: Back of island = 0.7, front = 1.0 (based on isometric row+col)
+- **Z-index**: Range 10–28 based on `row + col` for proper layering
+- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.7 = 0.455)
+
+**Smart Placement Algorithm** (`landStore.ts`):
+- First 2 pets placed randomly
+- After that: **farthest-first insertion** — picks empty cell with maximum minimum distance to any placed pet
+- Random jitter (±0.5–1.0 distance) breaks ties and prevents predictable patterns
+- Creates organic, even distribution instead of clustering
+
+**Pet Rendering** (`IslandPet.tsx`):
+- Counter-rotated -14° to appear upright despite island tilt ("Paper Mario" effect)
+- Sprite size: 36×44px (responsive, scales up at 390px+ and 420px+ breakpoints)
+- Image rendering: `pixelated` / `crisp-edges`
+- Bob animation: 3s, ±2px, staggered delay per pet `(index % 7) * 0.4s`
+- Pop-in animation for new pets: 0.5s bounce (scale 0→1.15→1.0)
+- Tap to show tooltip card (name, rarity badge, size, session duration)
+- Haptic feedback on new pet placement
+
+**Land State** (`landStore.ts`):
+```typescript
+interface LandCell {
+  petId: string;           // Species ID (e.g., "bunny")
+  size: 'baby' | 'adolescent' | 'adult';
+  sessionMinutes: number;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  timestamp: number;
+}
+
+// Key constants
+LAND_SIZE = 100            // 10×10 grid
+LAND_COMPLETE_BONUS_COINS = 500
+```
+
+**Actions**:
+- `generateRandomPet(sessionMinutes, playerLevel)` — rolls random pet from unlocked pool
+- `placePendingPet()` — places pet using farthest-first algorithm, auto-archives full land
+- `startNewLand()` — manually start new island
+- `getFilledCount()` / `isLandComplete()` — query methods
 
 ## Game Systems
 
@@ -212,6 +485,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - **Session completion bonuses**: 25min→+15, 30→+20, 45→+35, 60→+50, 90→+80, 120→+120, 180→+180
 - **Random bonus**: 5% chance mega (2.5x), 10% super lucky (1.75x), 20% lucky (1.5x)
 - **Daily login**: 20 coins + 5/streak day (cap 100)
+- **Land completion**: 500 coin bonus
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
 ### Streaks
@@ -231,6 +505,8 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 - Blocks configurable apps (Instagram, TikTok, Twitter, etc.) via iOS DeviceActivity/Screen Time
 - Strict mode, notification blocking, emergency bypass with cooldown
 - Ambient sound mixer during focus sessions
+- Break transitions between Pomodoro sessions
+- Task intention + session notes modals
 
 ## Key Hooks
 
@@ -249,6 +525,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `useMilestoneCelebrations` | Milestone detection and celebration UI |
 | `useDailyLoginRewards` | Daily login reward logic |
 | `useCoinBooster` | Temporary coin boost items |
+| `useRewardHandlers` | Session completion reward orchestration |
 | `useSoundMixer` | Ambient sound layering |
 | `useHaptics` | iOS haptic feedback |
 | `useWidgetSync` | iOS widget data synchronization |
@@ -256,8 +533,26 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `useBackendAppState` | Fetches user state from Supabase on load |
 | `useBackendStreaks` | Server-side streak sync |
 | `useBackendQuests` | Server-side quest sync |
-| `useCollection` | Collection management (legacy, uses RobotDatabase) |
 | `useShop` | Shop purchase logic |
+| `useSettings` | App settings management |
+| `useReducedMotion` | Respects `prefers-reduced-motion` |
+| `usePerformanceMonitor` | Performance metrics logging |
+| `useOfflineSyncManager` | Offline action queue processing |
+
+### Timer Hooks (`focus-timer/hooks/`)
+
+| Hook | Purpose |
+|------|---------|
+| `useTimerCore` | Core timer state machine (idle/running/paused/break) |
+| `useTimerCountdown` | Countdown tick logic |
+| `useTimerControls` | Play/pause/stop actions |
+| `useTimerLogic` | Orchestrates all timer hooks together |
+| `useTimerRewards` | Post-session XP/coin/pet reward calculation |
+| `useTimerPersistence` | Persists timer state across app restarts |
+| `useTimerAudio` | Timer completion/tick sounds |
+| `useBackgroundTheme` | Timer background theme management |
+| `useBreakTransition` | Pomodoro break flow management |
+| `useSessionNotes` | Session notes management |
 
 ## Native Plugins (Capacitor)
 
@@ -267,6 +562,8 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `StoreKit` | `src/plugins/store-kit/` | StoreKit 2 for IAP (subscriptions + consumables) |
 | `AppReview` | `src/plugins/app-review/` | SKStoreReviewController prompts |
 | `WidgetData` | `src/plugins/widget-data/` | Bridge data to iOS home screen widgets |
+
+All plugins have web fallbacks (no-op) so the app runs in browsers during development.
 
 ## Supabase Backend
 
@@ -278,7 +575,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `validate-receipt` | StoreKit receipt validation for IAP |
 | `process-achievements` | Achievement unlock processing |
 | `delete-account` | Account deletion (GDPR compliance) |
-| `_shared/` | Shared utilities across functions |
+| `_shared/cors.ts` | Shared CORS configuration |
 
 ### Auth
 - Supabase Auth with Apple Sign-In (`@capacitor-community/apple-sign-in`)
@@ -289,12 +586,29 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 The current design uses the **Atelier white theme** with **pixel art**:
 
 - **Background**: `#FAFAF9` (warm white/stone) for non-home tabs
-- **Home screen**: CSS gradient sky + grass background
+- **Home screen**: Floating island on gradient sky (`#6BB8E0` → `#F0F7E4`)
 - **Theme color**: `#FAFAF9` for iOS status bar
 - **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind
 - **Component library**: shadcn/ui with Radix UI primitives
-- **Animations**: Framer Motion for page transitions, reward celebrations
+- **Animations**: Framer Motion for page transitions + CSS keyframes for island/pet animations
 - **Fonts**: Inter (via `@fontsource/inter`)
+- **Responsive**: Pet sprites scale 36px → 40px → 44px at breakpoints (390px, 420px)
+- **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
+
+### CSS Architecture (`src/styles/`)
+- `pet-land.css` — Island sky, clouds, surface, cliff, waterfall, decorations, pets, tooltips, progress bar
+- `animations.css` — Shared keyframe animations
+- `base.css` — Base/reset styles
+- `navigation.css` — Tab bar styles
+- `timer-controls.css` / `timer-backgrounds.css` — Timer UI styles
+- `collection.css` / `gamification.css` / `shop.css` — Feature-specific styles
+- `retro-theme.css` / `retro-elements.css` — Pixel art theme tokens and elements
+- `utilities.css` — CSS utility classes
+
+### CSS Class Naming
+- BEM-style: `.pet-land__sky`, `.island-pet__sprite`, `.island-pet--legendary`
+- Modifier classes for rarity: `.island-pet--uncommon`, `--rare`, `--epic`, `--legendary`
+- State classes: `.island-pet--new` (pop animation)
 
 ## Build & Deploy
 
@@ -307,10 +621,13 @@ The current design uses the **Atelier white theme** with **pixel art**:
 
 - **Validated persistence**: All Zustand stores use `createValidatedStorage()` with Zod schemas — invalid persisted data falls back to defaults instead of crashing.
 - **Lazy loading**: All tab content and heavy components are lazy-loaded with `React.lazy()` and context-aware skeleton fallbacks.
-- **Error boundaries**: Every feature area has its own `FeatureErrorBoundary` wrapper — errors are isolated, not app-crashing.
+- **Error boundaries**: Three levels — `ErrorBoundary` (app), `PageErrorBoundary` (page), `FeatureErrorBoundary` (feature). Errors are isolated, not app-crashing.
 - **Server-authoritative coins**: Coin balance changes are cached locally but validated via the `validate-coins` edge function.
 - **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system for cross-component achievement progress.
-- **Legacy robot system**: `RobotDatabase.ts` and `useCollection` still exist for the collection/shop tabs but are being phased out in favor of the pet system.
+- **Offline support**: `offlineSyncStore` queues actions when offline, `useOfflineSyncManager` processes them when connectivity returns. `OfflineContext` tracks online/offline state.
+- **Native plugin fallbacks**: All Capacitor plugins have web fallbacks so the app runs in browsers. `NativePluginContext` tracks availability.
+- **Isometric depth**: Pets at the back of the island render smaller (0.7×) and with lower z-index, creating depth perspective.
+- **Counter-rotation**: Pets are rotated -14° to counteract the island's 14° forward tilt, appearing upright.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 
 ## Path Aliases
@@ -341,12 +658,9 @@ Bundles:
 
 ## What's Next (TODO)
 
-- [ ] PetRevealModal — post-session pet reveal screen (replaces XPRewardModal)
-- [ ] LandCompleteModal — celebration when 100th cell filled
-- [ ] PetCollectionBook — species catalog + land history (replaces BotCollectionGrid)
-- [ ] Wire pet generation into timer completion flow (`useTimerRewards`)
-- [ ] Update XP system to use PetDatabase for level-up unlocks (remove robot unlock logic)
+- [ ] LandCompleteModal — celebration when 100th cell filled (currently basic overlay)
+- [ ] Wire pet generation into timer completion flow (`useTimerRewards` → `landStore`)
 - [ ] Update shop for land themes, rarity boosts, species picks
-- [ ] Generate real pet pixel art via PixelLab API (25 species)
-- [ ] Update onboarding flow for pet theme
-- [ ] Remove remaining RobotDatabase dependencies from collection/shop
+- [ ] Generate final pet pixel art assets (current ones are placeholders)
+- [ ] Update onboarding flow for pet/island theme
+- [ ] Remove debug "Award Pet" button from PetLand before production
