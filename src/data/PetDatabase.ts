@@ -25,34 +25,34 @@ export interface PetSpecies {
  */
 export const PET_DATABASE: PetSpecies[] = [
   // ── Common (8 species) ─────────────────────────────────
-  { id: 'bunny', name: 'Bunny', rarity: 'common', unlockLevel: 0, description: 'A fluffy little bunny that loves peaceful meadows.', imagePath: '/assets/pets/bunny.svg' },
-  { id: 'chick', name: 'Chick', rarity: 'common', unlockLevel: 0, description: 'A cheerful baby chick always ready to explore.', imagePath: '/assets/pets/chick.svg' },
-  { id: 'frog', name: 'Frog', rarity: 'common', unlockLevel: 2, description: 'A chill frog who thrives in calm environments.', imagePath: '/assets/pets/frog.svg' },
-  { id: 'hamster', name: 'Hamster', rarity: 'common', unlockLevel: 3, description: 'A busy little hamster always on the go.', imagePath: '/assets/pets/hamster.svg' },
-  { id: 'duckling', name: 'Duckling', rarity: 'common', unlockLevel: 5, description: 'A wobbly duckling with big dreams.', imagePath: '/assets/pets/duckling.svg' },
-  { id: 'hedgehog', name: 'Hedgehog', rarity: 'common', unlockLevel: 7, description: 'A spiky friend who curls up during breaks.', imagePath: '/assets/pets/hedgehog.svg' },
-  { id: 'mouse', name: 'Mouse', rarity: 'common', unlockLevel: 10, description: 'A tiny mouse who nibbles through study notes.', imagePath: '/assets/pets/mouse.svg' },
-  { id: 'sparrow', name: 'Sparrow', rarity: 'common', unlockLevel: 14, description: 'A cheerful sparrow that sings during focus time.', imagePath: '/assets/pets/sparrow.svg' },
+  { id: 'bunny', name: 'Bunny', rarity: 'common', unlockLevel: 0, description: 'A fluffy little bunny that loves peaceful meadows.', imagePath: '/assets/pets/bunny.png' },
+  { id: 'chick', name: 'Chick', rarity: 'common', unlockLevel: 0, description: 'A cheerful baby chick always ready to explore.', imagePath: '/assets/pets/chick.png' },
+  { id: 'frog', name: 'Frog', rarity: 'common', unlockLevel: 2, description: 'A chill frog who thrives in calm environments.', imagePath: '/assets/pets/frog.png' },
+  { id: 'hamster', name: 'Hamster', rarity: 'common', unlockLevel: 3, description: 'A busy little hamster always on the go.', imagePath: '/assets/pets/hamster.png' },
+  { id: 'duckling', name: 'Duckling', rarity: 'common', unlockLevel: 5, description: 'A wobbly duckling with big dreams.', imagePath: '/assets/pets/duckling.png' },
+  { id: 'hedgehog', name: 'Hedgehog', rarity: 'common', unlockLevel: 7, description: 'A spiky friend who curls up during breaks.', imagePath: '/assets/pets/hedgehog.png' },
+  { id: 'mouse', name: 'Mouse', rarity: 'common', unlockLevel: 10, description: 'A tiny mouse who nibbles through study notes.', imagePath: '/assets/pets/mouse.png' },
+  { id: 'sparrow', name: 'Sparrow', rarity: 'common', unlockLevel: 14, description: 'A cheerful sparrow that sings during focus time.', imagePath: '/assets/pets/sparrow.png' },
 
   // ── Uncommon (5 species) ───────────────────────────────
-  { id: 'fox', name: 'Fox', rarity: 'uncommon', unlockLevel: 4, description: 'A clever fox with a keen sense of focus.', imagePath: '/assets/pets/fox.svg' },
-  { id: 'cat', name: 'Cat', rarity: 'uncommon', unlockLevel: 8, description: 'A curious cat who watches over your work.', imagePath: '/assets/pets/cat.svg' },
-  { id: 'penguin', name: 'Penguin', rarity: 'uncommon', unlockLevel: 12, description: 'A determined penguin who never gives up.', imagePath: '/assets/pets/penguin.svg' },
-  { id: 'raccoon', name: 'Raccoon', rarity: 'uncommon', unlockLevel: 18, description: 'A crafty raccoon with nimble paws.', imagePath: '/assets/pets/raccoon.svg' },
-  { id: 'otter', name: 'Otter', rarity: 'uncommon', unlockLevel: 22, description: 'A playful otter who rewards your persistence.', imagePath: '/assets/pets/otter.svg' },
+  { id: 'fox', name: 'Fox', rarity: 'uncommon', unlockLevel: 4, description: 'A clever fox with a keen sense of focus.', imagePath: '/assets/pets/fox.png' },
+  { id: 'cat', name: 'Cat', rarity: 'uncommon', unlockLevel: 8, description: 'A curious cat who watches over your work.', imagePath: '/assets/pets/cat.png' },
+  { id: 'penguin', name: 'Penguin', rarity: 'uncommon', unlockLevel: 12, description: 'A determined penguin who never gives up.', imagePath: '/assets/pets/penguin.png' },
+  { id: 'raccoon', name: 'Raccoon', rarity: 'uncommon', unlockLevel: 18, description: 'A crafty raccoon with nimble paws.', imagePath: '/assets/pets/raccoon.png' },
+  { id: 'otter', name: 'Otter', rarity: 'uncommon', unlockLevel: 22, description: 'A playful otter who rewards your persistence.', imagePath: '/assets/pets/otter.png' },
 
   // ── Rare (4 species) ───────────────────────────────────
-  { id: 'deer', name: 'Deer', rarity: 'rare', unlockLevel: 9, description: 'A graceful deer that appears only to the dedicated.', imagePath: '/assets/pets/deer.svg' },
-  { id: 'owl', name: 'Owl', rarity: 'rare', unlockLevel: 16, description: 'A wise owl that rewards late-night focus.', imagePath: '/assets/pets/owl.svg' },
-  { id: 'wolf', name: 'Wolf', rarity: 'rare', unlockLevel: 25, description: 'A loyal wolf drawn to focused discipline.', imagePath: '/assets/pets/wolf.svg' },
-  { id: 'crane', name: 'Crane', rarity: 'rare', unlockLevel: 32, description: 'An elegant crane symbolizing patience.', imagePath: '/assets/pets/crane.svg' },
+  { id: 'deer', name: 'Deer', rarity: 'rare', unlockLevel: 9, description: 'A graceful deer that appears only to the dedicated.', imagePath: '/assets/pets/deer.png' },
+  { id: 'owl', name: 'Owl', rarity: 'rare', unlockLevel: 16, description: 'A wise owl that rewards late-night focus.', imagePath: '/assets/pets/owl.png' },
+  { id: 'wolf', name: 'Wolf', rarity: 'rare', unlockLevel: 25, description: 'A loyal wolf drawn to focused discipline.', imagePath: '/assets/pets/wolf.png' },
+  { id: 'crane', name: 'Crane', rarity: 'rare', unlockLevel: 32, description: 'An elegant crane symbolizing patience.', imagePath: '/assets/pets/crane.png' },
 
   // ── Epic (2 species) ───────────────────────────────────
-  { id: 'dragon', name: 'Dragon', rarity: 'epic', unlockLevel: 20, description: 'A baby dragon forged by deep focus.', imagePath: '/assets/pets/dragon.svg' },
-  { id: 'phoenix', name: 'Phoenix', rarity: 'epic', unlockLevel: 35, description: 'A mythical bird reborn from streak flames.', imagePath: '/assets/pets/phoenix.svg' },
+  { id: 'dragon', name: 'Dragon', rarity: 'epic', unlockLevel: 20, description: 'A baby dragon forged by deep focus.', imagePath: '/assets/pets/dragon.png' },
+  { id: 'phoenix', name: 'Phoenix', rarity: 'epic', unlockLevel: 35, description: 'A mythical bird reborn from streak flames.', imagePath: '/assets/pets/phoenix.png' },
 
   // ── Legendary (1 species) ──────────────────────────────
-  { id: 'unicorn', name: 'Unicorn', rarity: 'legendary', unlockLevel: 40, description: 'The rarest pet — proof of legendary dedication.', imagePath: '/assets/pets/unicorn.svg' },
+  { id: 'unicorn', name: 'Unicorn', rarity: 'legendary', unlockLevel: 40, description: 'The rarest pet — proof of legendary dedication.', imagePath: '/assets/pets/unicorn.png' },
 ];
 
 /**
