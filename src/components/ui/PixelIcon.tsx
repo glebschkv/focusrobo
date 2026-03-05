@@ -66,6 +66,10 @@ const ICON_NAMES = new Set([
   'mood-exhausted', 'mood-neutral', 'mood-content', 'mood-happy', 'mood-fire',
   // Avatar animals
   'koala',
+  // Egg icons
+  'egg', 'egg-rare', 'egg-epic', 'egg-legendary',
+  // Additional missing icons now generated
+  'palm-tree',
 ]);
 
 interface PixelIconProps {

@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { Egg, Target } from 'lucide-react';
+import { Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { EGG_TYPES, SPECIES_SELECTOR_PRICE } from '@/data/EggData';
@@ -34,6 +34,13 @@ const RARITY_STRIPE: Record<PetRarity, string> = {
 };
 
 const RARITY_LABELS: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+
+const EGG_ICON_MAP: Record<string, string> = {
+  'common-egg': 'egg',
+  'rare-egg': 'egg-rare',
+  'epic-egg': 'egg-epic',
+  'legendary-egg': 'egg-legendary',
+};
 
 interface EggsTabProps {
   coinBalance: number;
@@ -141,7 +148,7 @@ function EggCard({
       <div className="p-3 flex flex-col flex-1">
         {/* Header */}
         <div className="flex items-center gap-1.5 mb-1.5">
-          <Egg className={cn('w-4 h-4', RARITY_COLORS[egg.rarity])} />
+          <PixelIcon name={EGG_ICON_MAP[egg.id] || 'egg'} size={18} />
           <span className={cn('font-bold text-xs', RARITY_COLORS[egg.rarity])}>
             {egg.name}
           </span>
