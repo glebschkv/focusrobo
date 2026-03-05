@@ -26,7 +26,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
     name: 'Sky Islands',
     description: 'Majestic rocky islands rising from calm waters under a serene sky.',
     category: 'backgrounds',
-    coinPrice: 1200,
+    coinPrice: 800,
     icon: 'island',
     rarity: 'rare',
     theme: 'sky-islands',
@@ -38,7 +38,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
     name: 'Calm Seas',
     description: 'A peaceful ocean horizon under a beautiful gradient sky.',
     category: 'backgrounds',
-    coinPrice: 1200,
+    coinPrice: 800,
     icon: 'wave',
     rarity: 'rare',
     theme: 'calm-seas',
@@ -50,7 +50,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
     name: 'Twilight Clouds',
     description: 'Dramatic clouds painted in soft twilight colors over the sea.',
     category: 'backgrounds',
-    coinPrice: 1600,
+    coinPrice: 1000,
     icon: 'cloud',
     rarity: 'epic',
     theme: 'twilight-clouds',
@@ -62,7 +62,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
     name: 'Aurora Horizon',
     description: 'A mesmerizing sky with ethereal light dancing across the clouds.',
     category: 'backgrounds',
-    coinPrice: 1600,
+    coinPrice: 1000,
     icon: 'sparkles',
     rarity: 'epic',
     theme: 'aurora-horizon',
@@ -74,7 +74,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
     name: 'Sunset Clouds',
     description: 'Breathtaking sunset clouds reflected in still waters.',
     category: 'backgrounds',
-    coinPrice: 2000,
+    coinPrice: 1200,
     icon: 'sunset',
     rarity: 'legendary',
     theme: 'sunset-clouds',
@@ -91,7 +91,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Sakura Garden',
     description: 'A serene Japanese garden with cherry blossoms in full bloom.',
     category: 'backgrounds',
-    coinPrice: 1600,
+    coinPrice: 1000,
     icon: 'sakura',
     rarity: 'rare',
     theme: 'sakura',
@@ -102,7 +102,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Neon City',
     description: 'A futuristic cyberpunk cityscape with neon lights and holograms.',
     category: 'backgrounds',
-    coinPrice: 2400,
+    coinPrice: 1500,
     icon: 'neon-city',
     rarity: 'epic',
     theme: 'cyberpunk',
@@ -113,7 +113,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Aurora Borealis',
     description: 'Dance under the magical northern lights in this stunning arctic scene.',
     category: 'backgrounds',
-    coinPrice: 3000,
+    coinPrice: 1800,
     icon: 'aurora',
     rarity: 'epic',
     theme: 'aurora',
@@ -124,7 +124,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Crystal Cavern',
     description: 'A mystical underground cave filled with glowing crystals.',
     category: 'backgrounds',
-    coinPrice: 2000,
+    coinPrice: 1200,
     icon: 'diamond',
     rarity: 'rare',
     theme: 'crystal',
@@ -135,7 +135,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Volcanic Island',
     description: 'A dramatic volcanic landscape with flowing lava and ash.',
     category: 'backgrounds',
-    coinPrice: 3600,
+    coinPrice: 2200,
     icon: 'volcano',
     rarity: 'legendary',
     theme: 'volcano',
@@ -146,7 +146,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Cosmic Void',
     description: 'Float among the stars in the endless expanse of space.',
     category: 'backgrounds',
-    coinPrice: 4000,
+    coinPrice: 2500,
     icon: 'rocket',
     rarity: 'legendary',
     theme: 'space',
@@ -157,7 +157,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Deep Sea Reef',
     description: 'Explore a vibrant coral reef teeming with colorful life.',
     category: 'backgrounds',
-    coinPrice: 1800,
+    coinPrice: 1100,
     icon: 'fish',
     rarity: 'rare',
     theme: 'underwater',
@@ -168,7 +168,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Spooky Hollow',
     description: 'A haunted forest perfect for the spookiest of bots.',
     category: 'backgrounds',
-    coinPrice: 3000,
+    coinPrice: 1800,
     icon: 'pumpkin',
     rarity: 'epic',
     isLimited: true,
@@ -180,7 +180,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
     name: 'Winter Wonderland',
     description: 'A magical snowy scene with twinkling lights and cozy vibes.',
     category: 'backgrounds',
-    coinPrice: 3000,
+    coinPrice: 1800,
     icon: 'christmas-tree',
     rarity: 'epic',
     isLimited: true,
@@ -327,7 +327,6 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     contents: {
       coins: 1000,
       boosterId: 'focus_boost',
-      characterId: 'clover-cat', // Lucky Clover Cat - rare tier unlock
     },
     savings: '50%',
   },
@@ -343,7 +342,6 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     contents: {
       coins: 5000,
       boosterId: 'super_boost',
-      characterId: 'kitsune-spirit', // Legendary Kitsune Spirit
     },
     savings: '60%',
   },
@@ -359,7 +357,6 @@ export const STARTER_BUNDLES: StarterBundle[] = [
     contents: {
       coins: 12000,
       boosterId: 'super_boost',
-      characterId: 'storm-spirit', // Legendary Storm Spirit
       streakFreezes: 5,
     },
     savings: '65%',
@@ -376,7 +373,7 @@ export const BACKGROUND_BUNDLES: Bundle[] = [
     name: 'Sky Realms Bundle',
     description: 'A collection of 5 breathtaking sky and ocean themed backgrounds.',
     category: 'bundles',
-    coinPrice: 4500,
+    coinPrice: 2800,
     icon: 'sun-cloud',
     rarity: 'legendary',
     bundleType: 'backgrounds',
@@ -394,8 +391,8 @@ export const BACKGROUND_BUNDLES: Bundle[] = [
       '/assets/worlds/SKYBUNDLE4.png',
       '/assets/worlds/SKYBUNDLE5.png',
     ],
-    totalValue: 7600, // Sum of individual prices: 1200+1200+1600+1600+2000
-    savings: '41%',
+    totalValue: 4800, // Sum of individual prices: 800+800+1000+1000+1200
+    savings: '42%',
   },
 ];
 
@@ -469,9 +466,10 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
   return getAllShopItems().filter(item => item.rarity === rarity);
 };
 
-// Shop categories for UI - 3 tabs: Featured, Backgrounds, Power-Ups
+// Shop categories for UI - 4 tabs: Eggs, Themes, Boosts, Premium
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
-  { id: 'featured', name: 'Featured', icon: 'star' },
-  { id: 'customize', name: 'Backgrounds', icon: 'palette' },
-  { id: 'powerups', name: 'Power-Ups', icon: 'lightning' },
+  { id: 'eggs', name: 'Eggs', icon: 'egg' },
+  { id: 'customize', name: 'Themes', icon: 'palette' },
+  { id: 'powerups', name: 'Boosts', icon: 'lightning' },
+  { id: 'featured', name: 'Premium', icon: 'crown' },
 ];

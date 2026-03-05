@@ -23,6 +23,7 @@ export type ShopCategory =
   | 'coins'
   | 'bundles'
   | 'inventory'
+  | 'eggs'
   | 'pets'; // backward-compat alias for bots
 
 // ============================================================================

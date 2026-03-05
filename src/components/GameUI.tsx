@@ -10,18 +10,21 @@
  */
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useAppStateTracking } from "@/hooks/useAppStateTracking";
 import { AppStateProvider } from "@/contexts/AppStateContext";
 import { useRewardHandlers } from "@/hooks/useRewardHandlers";
+import { useCoinSystem } from "@/hooks/useCoinSystem";
 import { TopStatusBar } from "@/components/TopStatusBar";
 import { IOSTabBar } from "@/components/IOSTabBar";
 import { AchievementTracker } from "@/components/AchievementTracker";
 import { TabContent, preloadTabComponents } from "@/components/TabContent";
 import { RewardModals } from "@/components/RewardModals";
 import { GlobalSoundToggle } from "@/components/GlobalSoundToggle";
+import { LAND_COMPLETE_BONUS_COINS, useLandStore } from "@/stores/landStore";
 
 const TAB_STORAGE_KEY = 'botblock_currentTab';
-const VALID_TABS = ['home', 'timer', 'collection', 'challenges', 'shop', 'settings'];
+const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
 
 function getPersistedTab(): string {
   try {
@@ -64,6 +67,28 @@ export const GameUI = () => {
     };
   }, []);
 
+  // Award land completion bonus coins
+  const coinSystem = useCoinSystem();
+  useEffect(() => {
+    const handleLandCompleted = () => {
+      coinSystem.addCoins(LAND_COMPLETE_BONUS_COINS);
+    };
+    window.addEventListener('landCompleted', handleLandCompleted as EventListener);
+    return () => {
+      window.removeEventListener('landCompleted', handleLandCompleted as EventListener);
+    };
+  }, [coinSystem]);
+
+  // Collect passive offline income on app load
+  const collectOfflineIncome = useLandStore((s) => s.collectOfflineIncome);
+  useEffect(() => {
+    const earned = collectOfflineIncome();
+    if (earned > 0) {
+      coinSystem.addCoins(earned, 'daily_reward');
+      toast.success(`Welcome back! Your pets earned ${earned} coins while you were away.`);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- run once on mount
+
   // Single instance of useAppStateTracking — shared via context with all children
   const appState = useAppStateTracking();
   const {
@@ -91,7 +116,6 @@ export const GameUI = () => {
           {/* Unified Top Status Bar */}
           <TopStatusBar
             currentTab={currentTab}
-            onSettingsClick={() => setCurrentTab("settings")}
           />
 
           {/* Full Screen Content */}

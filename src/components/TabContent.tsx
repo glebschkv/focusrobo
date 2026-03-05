@@ -13,13 +13,11 @@ import {
   CollectionPageSkeleton,
   ShopPageSkeleton,
   SettingsSectionSkeleton,
-  AchievementGridSkeleton,
 } from "@/components/ui/skeleton-loaders";
 import {
   TimerErrorBoundary,
   CollectionErrorBoundary,
   ShopErrorBoundary,
-  GamificationErrorBoundary,
   SettingsErrorBoundary,
 } from "@/components/FeatureErrorBoundary";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -30,14 +28,11 @@ const importUnifiedFocusTimer = () => import("@/components/UnifiedFocusTimer").t
 const importPetCollectionBook = () => import("@/components/PetCollectionBook").then(m => ({ default: m.PetCollectionBook }));
 const importSettings = () => import("@/components/Settings").then(m => ({ default: m.Settings }));
 const importShop = () => import("@/components/Shop").then(m => ({ default: m.Shop }));
-const importGamificationHub = () => import("@/components/gamification").then(m => ({ default: m.GamificationHub }));
-
 // Lazy load heavy tab components for better initial load performance
 const UnifiedFocusTimer = lazy(importUnifiedFocusTimer);
 const PetCollectionBook = lazy(importPetCollectionBook);
 const Settings = lazy(importSettings);
 const Shop = lazy(importShop);
-const GamificationHub = lazy(importGamificationHub);
 
 // Preload all tab components after initial render
 // This ensures components are cached and ready when user navigates
@@ -61,7 +56,6 @@ export const preloadTabComponents = () => {
   schedulePreload(() => {
     setTimeout(() => {
       importShop();
-      importGamificationHub();
       importSettings();
     }, 500);
   });
@@ -78,8 +72,6 @@ const getTabSkeleton = (tab: string) => {
       return <ShopPageSkeleton />;
     case "settings":
       return <SettingsSectionSkeleton rows={5} />;
-    case "challenges":
-      return <AchievementGridSkeleton count={4} />;
     default:
       return null;
   }
@@ -107,8 +99,6 @@ export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentP
         return <TimerErrorBoundary><UnifiedFocusTimer /></TimerErrorBoundary>;
       case "collection":
         return <CollectionErrorBoundary><PetCollectionBook /></CollectionErrorBoundary>;
-      case "challenges":
-        return <GamificationErrorBoundary><GamificationHub onXPReward={onXPReward} onCoinReward={onCoinReward} /></GamificationErrorBoundary>;
       case "shop":
         return <ShopErrorBoundary><Shop /></ShopErrorBoundary>;
       case "settings":
