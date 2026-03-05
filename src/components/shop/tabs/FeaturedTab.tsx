@@ -136,7 +136,7 @@ export const FeaturedTab = ({
               <Check className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="font-bold text-sm text-green-700 dark:text-green-400">
+              <span className="font-bold text-sm text-green-700">
                 {currentPlan?.name || 'Premium'} Active
               </span>
               <p className="text-xs text-muted-foreground">You have full access</p>

@@ -175,7 +175,7 @@ export const BackgroundsTab = ({
                   )}>
                     <span className="text-[10px] font-bold block leading-tight truncate">{bg.name}</span>
                     {owned ? (
-                      <div className="text-[9px] font-medium text-center mt-1 text-purple-600 dark:text-purple-400">
+                      <div className="text-[9px] font-medium text-center mt-1 text-purple-600">
                         {isEquipped ? "Tap to unequip" : "Tap to equip"}
                       </div>
                     ) : (
