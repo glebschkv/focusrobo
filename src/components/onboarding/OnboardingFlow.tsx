@@ -471,7 +471,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             >
               <span className="flex items-center gap-2">
                 {currentStep === totalSteps - 1
-                  ? 'Begin Adventure'
+                  ? "Let's Go!"
                   : 'Next'}
                 <ChevronRight className="w-4 h-4" />
               </span>
@@ -543,13 +543,13 @@ const StepWelcome = () => (
             '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
         }}
       >
-        Welcome to BotBlock
+        Welcome to PhoNo
       </h1>
       <p
-        className="text-base px-2 leading-relaxed"
-        style={{ color: 'rgba(200,210,240,0.8)' }}
+        className="text-lg px-2 leading-relaxed font-medium"
+        style={{ color: 'rgba(220,225,245,0.85)' }}
       >
-        Put your phone down. Watch your world come alive.
+        Put your phone down.{'\n'}Watch your world come alive.
       </p>
     </motion.div>
 
@@ -593,13 +593,13 @@ const StepWelcome = () => (
     </motion.div>
 
     <motion.p
-      className="text-sm px-8 leading-relaxed"
-      style={{ color: 'rgba(180,190,220,0.65)' }}
+      className="text-base px-6 leading-relaxed"
+      style={{ color: 'rgba(200,210,235,0.75)' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.5 }}
     >
-      Collect magical companions, unlock new worlds, and grow your focus.
+      Every minute you stay focused earns you cute pets, XP, and coins. Build your own floating island!
     </motion.p>
   </div>
 );
@@ -612,24 +612,24 @@ const howItWorksSteps = [
   {
     icon: '/assets/icons/clock.png',
     fallback: '\u23F1',
-    label: 'Start a focus session',
-    sub: 'Set a timer and put your phone aside',
+    label: 'Set a focus timer',
+    sub: 'Choose 25 min to 3 hours and put your phone down',
     color: 'rgba(100,180,255,0.15)',
     borderColor: 'rgba(100,180,255,0.2)',
   },
   {
     icon: '/assets/icons/star.png',
     fallback: '\u2B50',
-    label: 'Earn XP as you focus',
-    sub: 'Every minute counts toward leveling up',
+    label: 'Earn XP & coins',
+    sub: 'Level up and unlock rewards every session',
     color: 'rgba(255,200,80,0.12)',
     borderColor: 'rgba(255,200,80,0.2)',
   },
   {
     icon: '/assets/icons/paw.png',
     fallback: '\uD83D\uDC3E',
-    label: 'Unlock new companions',
-    sub: '50+ creatures across 6 worlds to discover',
+    label: 'Collect cute pets',
+    sub: '41 species to discover — longer sessions = bigger pets',
     color: 'rgba(200,120,255,0.12)',
     borderColor: 'rgba(200,120,255,0.2)',
   },
@@ -653,7 +653,7 @@ const StepHowItWorks = () => (
       >
         How it works
       </h1>
-      <p className="text-sm" style={{ color: 'rgba(200,210,240,0.6)' }}>
+      <p className="text-base" style={{ color: 'rgba(210,218,240,0.7)' }}>
         Three simple steps to get started
       </p>
     </motion.div>
@@ -699,14 +699,14 @@ const StepHowItWorks = () => (
             {/* Text */}
             <div className="text-left min-w-0 flex-1">
               <p
-                className="text-sm font-semibold leading-snug"
-                style={{ color: 'rgba(255,255,255,0.9)' }}
+                className="text-[15px] font-semibold leading-snug"
+                style={{ color: 'rgba(255,255,255,0.92)' }}
               >
                 {step.label}
               </p>
               <p
-                className="text-xs leading-snug mt-0.5"
-                style={{ color: 'rgba(200,210,240,0.55)' }}
+                className="text-[13px] leading-snug mt-0.5"
+                style={{ color: 'rgba(210,218,240,0.6)' }}
               >
                 {step.sub}
               </p>
@@ -738,13 +738,13 @@ const StepMeetCompanion = () => (
             '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
         }}
       >
-        Meet your companion
+        Your first pet!
       </h1>
       <p
         className="text-base px-4 leading-relaxed"
-        style={{ color: 'rgba(200,210,240,0.75)' }}
+        style={{ color: 'rgba(210,218,240,0.8)' }}
       >
-        Star Wizard is ready for your first adventure together.
+        Star Wizard will join your island. Start focusing to collect more!
       </p>
     </motion.div>
 
@@ -831,8 +831,8 @@ const StepMeetCompanion = () => (
         </span>
       </div>
       <p
-        className="text-xs leading-relaxed"
-        style={{ color: 'rgba(200,210,240,0.55)' }}
+        className="text-sm leading-relaxed"
+        style={{ color: 'rgba(210,218,240,0.65)' }}
       >
         A young wizard in training who casts spells of concentration.
       </p>
@@ -864,22 +864,22 @@ const StepMeetCompanion = () => (
 const shieldBenefits = [
   {
     icon: Shield,
-    label: 'Auto-block distracting apps',
-    sub: 'Activated when you start a focus session',
+    label: 'Blocks distracting apps',
+    sub: 'Instagram, TikTok, and more — blocked while you focus',
     color: 'rgba(160,120,255,0.15)',
     borderColor: 'rgba(160,120,255,0.25)',
   },
   {
     icon: Lock,
-    label: 'Automatically unblocked',
-    sub: 'Apps return when your session ends',
+    label: 'Turns off automatically',
+    sub: 'Everything goes back to normal when your timer ends',
     color: 'rgba(120,100,220,0.12)',
     borderColor: 'rgba(120,100,220,0.2)',
   },
   {
     icon: Sparkles,
-    label: 'Earn +25% bonus XP',
-    sub: 'Extra rewards for distraction-free focus',
+    label: '+25% bonus XP',
+    sub: 'Extra rewards when you stay distraction-free',
     color: 'rgba(200,120,255,0.12)',
     borderColor: 'rgba(200,120,255,0.2)',
   },
@@ -919,8 +919,8 @@ const StepFocusShield = () => {
         >
           Focus Shield
         </h1>
-        <p className="text-sm" style={{ color: 'rgba(200,210,240,0.6)' }}>
-          Block distracting apps while you focus
+        <p className="text-base" style={{ color: 'rgba(210,218,240,0.7)' }}>
+          Stay focused by blocking distracting apps
         </p>
       </motion.div>
 
@@ -995,14 +995,14 @@ const StepFocusShield = () => {
                 </div>
                 <div className="text-left min-w-0 flex-1">
                   <p
-                    className="text-sm font-semibold leading-snug"
-                    style={{ color: 'rgba(255,255,255,0.9)' }}
+                    className="text-[15px] font-semibold leading-snug"
+                    style={{ color: 'rgba(255,255,255,0.92)' }}
                   >
                     {step.label}
                   </p>
                   <p
-                    className="text-xs leading-snug mt-0.5"
-                    style={{ color: 'rgba(200,210,240,0.55)' }}
+                    className="text-[13px] leading-snug mt-0.5"
+                    style={{ color: 'rgba(210,218,240,0.6)' }}
                   >
                     {step.sub}
                   </p>
