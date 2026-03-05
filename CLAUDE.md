@@ -8,14 +8,14 @@
 Focus session completes → random pet generated (weighted by rarity + player level)
 → pet size based on session length (baby/adolescent/adult)
 → pet placed on floating island using farthest-first spatial algorithm
-→ fill all 100 slots = island complete → archive → new island
+→ fill island (expands 5×5→20×20) = island complete → archive → new island
 ```
 
 ## Art & Theme Direction
 
 **Pixel art aesthetic** — cute collectible animals on a floating isometric island:
 
-- **Visual style**: Pixel art pets (PNG sprites, 36–44px responsive), front-facing, transparent background
+- **Visual style**: Pixel art pets (PNG sprites, 56–84px responsive), front-facing, transparent background
 - **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes)
 - **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
 - **Pets**: 20 species across 5 rarities (see Pet Species below)
@@ -429,12 +429,12 @@ The home screen renders a **floating isometric island** (not a flat grid). Key c
 - Uses the exact same diamond vertices (TOP, RIGHT, BOTTOM, LEFT) and `diamondPt()` function as `IslandSVG.tsx` — pets align precisely with tile centers
 - Cell centers: `(row+0.5)/10, (col+0.5)/10` normalized, then mapped to SVG coords and converted to container percentages
 - No jitter — exact centering on each tile
-- Pet CSS transform: `translate(-50%, -50%)` centers sprite on tile position
+- Pet CSS transform: `translate(-50%, -60%)` positions sprite so feet rest on tile
 
 **Depth System**:
-- **Depth scale**: Back of island = 0.78, front = 1.0 (based on isometric row+col)
+- **Depth scale**: Back of island = 0.85, front = 1.0 (based on isometric row+col)
 - **Z-index**: Range 10–28 based on `row + col` for proper layering
-- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.78 = 0.507)
+- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.85 = 0.553)
 
 **Smart Placement Algorithm** (`landStore.ts`):
 - First 2 pets placed randomly
@@ -443,7 +443,7 @@ The home screen renders a **floating isometric island** (not a flat grid). Key c
 - Creates organic, even distribution instead of clustering
 
 **Pet Rendering** (`IslandPet.tsx`):
-- Sprite size: 36×44px (responsive, scales up at 390px+ and 420px+ breakpoints)
+- Sprite size: 56px base (responsive: 62px@375, 68px@390, 74px@420, 84px@768)
 - Image rendering: `pixelated` / `crisp-edges`
 - Bob animation: 3s, ±2px, staggered delay per pet `(index % 11) * 0.27s`, per-pet offset variation ±0.5px
 - Pop-in animation for new pets: 0.5s bounce (scale 0→1.15→1.0)
@@ -609,7 +609,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Component library**: shadcn/ui with Radix UI primitives
 - **Animations**: Framer Motion for page transitions + CSS keyframes for island/pet animations
 - **Fonts**: Inter (via `@fontsource/inter`)
-- **Responsive**: Pet sprites scale 36px → 40px → 44px at breakpoints (390px, 420px)
+- **Responsive**: Pet sprites scale 56px → 62px → 68px → 74px → 84px at breakpoints (375px, 390px, 420px, 768px)
 - **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
 
 ### CSS Architecture (`src/styles/`)
@@ -643,7 +643,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system for cross-component achievement progress.
 - **Offline support**: `offlineSyncStore` queues actions when offline, `useOfflineSyncManager` processes them when connectivity returns. `OfflineContext` tracks online/offline state.
 - **Native plugin fallbacks**: All Capacitor plugins have web fallbacks so the app runs in browsers. `NativePluginContext` tracks availability.
-- **Isometric depth**: Pets at the back of the island render smaller (0.78×) and with lower z-index, creating depth perspective.
+- **Isometric depth**: Pets at the back of the island render smaller (0.85×) and with lower z-index, creating depth perspective.
 - **Parallax tilt**: Touch-drag shifts sky/island/pets layers at different speeds (0.15/0.5/0.85) using ref-based DOM updates — zero React re-renders during interaction. Spring physics for momentum and snap-back.
 - **SVG-aligned pet positions**: `islandPositions.ts` and `IslandSVG.tsx` share identical diamond vertices and bilinear interpolation math so pets sit exactly on their tile centers.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
