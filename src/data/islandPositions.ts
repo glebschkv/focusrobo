@@ -245,14 +245,12 @@ const REFERENCE_GRID = 5;
 /**
  * Scale factor for pet sprites based on grid density.
  * At gridSize=5 (starting tier), sprites are full size.
- * At higher gridSizes, sprites shrink proportionally to tile size.
- * Pets intentionally overlap tiles at higher densities to stay readable.
+ * At higher gridSizes, sprites shrink linearly. The 1.3× boost keeps pets
+ * ~1.5–2× tile width so they "stand" on tiles like trees — visible and charming.
  */
 export function getGridDensityScale(gridSize: number): number {
   const g = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
-  if (g <= 8) return REFERENCE_GRID / g;
-  // More generous scale — pets overlap tiles but remain visible
-  return Math.max(0.7, 0.75 * (1 + REFERENCE_GRID / g));
+  return (REFERENCE_GRID / g) * 1.3;
 }
 
 /** Rotation step type (kept for backward compat) */
