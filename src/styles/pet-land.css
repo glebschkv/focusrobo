@@ -374,7 +374,7 @@
 .pet-land__island-wrapper {
   position: relative;
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   margin: auto;
   animation: pet-land-island-float 4.5s ease-in-out infinite;
   cursor: grab;
