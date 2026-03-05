@@ -618,6 +618,29 @@
   100% { background-position: -200% 0; }
 }
 
+/* ── Devoted affinity sparkle (softer version of legendary shimmer) ── */
+
+.island-pet--devoted .island-pet__sprite {
+  filter: drop-shadow(0 0 3px rgba(200, 220, 255, 0.5));
+}
+
+.island-pet--devoted::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 4px;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(200, 220, 255, 0.2) 48%,
+    rgba(200, 220, 255, 0.08) 52%,
+    transparent 65%
+  );
+  background-size: 200% 100%;
+  animation: island-pet-shimmer 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
 /* ── Pet fallback placeholder ──────────────────────────────────── */
 
 .island-pet__fallback {
@@ -995,6 +1018,7 @@
   .island-pet { transition: none; }
   .island-pet__sprite { animation: none; }
   .island-pet__shimmer { animation: none; }
+  .island-pet--devoted::before { animation: none; }
   .island-pet--new { animation: none; opacity: 1; }
   .island-pet--new::after { animation: none; }
   .island-pet--epic { animation: none; }

@@ -40,19 +40,6 @@ const ZOOM_DEFAULT = 1.0;
 const ZOOM_WHEEL_STEP = 0.06;
 const ZOOM_DOUBLE_TAP = 1.5;
 
-const useDebugAwardPet = () => {
-  const generateRandomPet = useLandStore((s) => s.generateRandomPet);
-  const placePendingPet = useLandStore((s) => s.placePendingPet);
-
-  return useCallback(() => {
-    const durations = [25, 30, 45, 60, 90, 120, 180];
-    const mins = durations[Math.floor(Math.random() * durations.length)];
-    const level = Math.floor(Math.random() * 40) + 1;
-    generateRandomPet(mins, level);
-    placePendingPet();
-  }, [generateRandomPet, placePendingPet]);
-};
-
 /** Ref-based parallax tilt + zoom — zero React re-renders during drag/pinch */
 function useIslandParallax() {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -228,7 +215,6 @@ function useIslandParallax() {
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
-  const debugAwardPet = useDebugAwardPet();
   const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
   const landJustCompleted = useLandStore((s) => s.landJustCompleted);
   const clearLastPlaced = useLandStore((s) => s.clearLastPlaced);
@@ -463,29 +449,6 @@ export const PetLand = () => {
         </span>
       </div>
 
-      {/* Debug button — dev only */}
-      {import.meta.env.DEV && (
-        <button
-          onClick={debugAwardPet}
-          style={{
-            position: 'fixed',
-            bottom: 100,
-            right: 16,
-            zIndex: 9999,
-            padding: '8px 14px',
-            background: 'rgba(76, 175, 80, 0.9)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 20,
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          }}
-        >
-          + Award Pet
-        </button>
-      )}
     </div>
   );
 };

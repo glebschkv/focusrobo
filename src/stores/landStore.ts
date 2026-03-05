@@ -14,6 +14,7 @@ import { z } from 'zod';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 import type { GrowthSize, PetRarity } from '@/data/PetDatabase';
 import { getGrowthSize, rollRandomPet } from '@/data/PetDatabase';
+import type { EggType } from '@/data/EggData';
 import {
   GRID_SIZE,
   ISLAND_POSITIONS,
@@ -117,6 +118,9 @@ const landStoreSchema = z.object({
   pendingPet: z.union([pendingPetSchema, z.null()]),
   ownedThemes: z.array(z.string().max(100)).max(50),
   selectedNextTheme: z.string().max(100),
+  wishedSpecies: z.union([z.string().max(100), z.null()]).default(null),
+  speciesAffinity: z.record(z.string(), z.number().int().min(0)).default({}),
+  lastOfflineCheck: z.number().min(0).default(0),
 });
 
 // ============================================================================
@@ -214,6 +218,9 @@ interface LandStoreState {
   pendingPet: PendingPet | null;
   ownedThemes: string[];
   selectedNextTheme: string;
+  wishedSpecies: string | null;
+  speciesAffinity: Record<string, number>;
+  lastOfflineCheck: number;
   lastPlacedIndex: number | null;
   landJustCompleted: number | null;
   milestoneReached: number | null;
@@ -221,14 +228,19 @@ interface LandStoreState {
 
 interface LandStoreActions {
   generateRandomPet: (sessionMinutes: number, playerLevel: number) => PendingPet;
+  hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
   placePendingPet: () => number;
   startNewLand: () => void;
   isLandComplete: () => boolean;
   isTierFull: () => boolean;
   getFilledCount: () => number;
   getAvailableCells: () => Set<number>;
+  setWishedSpecies: (speciesId: string | null) => void;
   addOwnedTheme: (themeId: string) => void;
   setSelectedNextTheme: (themeId: string) => void;
+  getAffinityLevel: (speciesId: string) => 'none' | 'familiar' | 'bonded' | 'devoted';
+  growPet: (cellIndex: number, targetSize: 'adolescent' | 'adult') => boolean;
+  collectOfflineIncome: () => number;
   clearLastPlaced: () => void;
   clearLandCompleted: () => void;
   clearMilestone: () => void;
@@ -244,6 +256,9 @@ const initialState: LandStoreState = {
   pendingPet: null,
   ownedThemes: ['meadow'],
   selectedNextTheme: 'meadow',
+  wishedSpecies: null,
+  speciesAffinity: {},
+  lastOfflineCheck: Date.now(),
   lastPlacedIndex: null,
   landJustCompleted: null,
   milestoneReached: null,
@@ -265,6 +280,19 @@ export const useLandStore = create<LandStore>()(
           sessionMinutes,
         };
 
+        set({ pendingPet: pending });
+        return pending;
+      },
+
+      hatchEgg: (egg: EggType, playerLevel: number) => {
+        const species = rollRandomPet(playerLevel, egg.rarityWeights);
+        // Egg hatches always produce baby-size pets
+        const pending: PendingPet = {
+          petId: species.id,
+          size: 'baby',
+          rarity: species.rarity,
+          sessionMinutes: 0,
+        };
         set({ pendingPet: pending });
         return pending;
       },
@@ -300,6 +328,8 @@ export const useLandStore = create<LandStore>()(
             currentLand,
             landJustCompleted: completedLandNumber,
           });
+          // Emit event so GameUI can award land completion bonus coins
+          window.dispatchEvent(new CustomEvent('landCompleted', { detail: completedLandNumber }));
           cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
           if (cellIndex === -1) return -1;
         }
@@ -314,6 +344,10 @@ export const useLandStore = create<LandStore>()(
 
         const newCells = [...currentLand.cells];
         newCells[cellIndex] = newCell;
+
+        // Update species affinity (total count across all islands)
+        const newAffinity = { ...get().speciesAffinity };
+        newAffinity[pendingPet.petId] = (newAffinity[pendingPet.petId] || 0) + 1;
 
         // Update species catalog
         const newCatalog = { ...speciesCatalog };
@@ -351,6 +385,7 @@ export const useLandStore = create<LandStore>()(
         set({
           currentLand: updatedLand,
           speciesCatalog: newCatalog,
+          speciesAffinity: newAffinity,
           pendingPet: null,
           lastPlacedIndex: cellIndex,
           ...(hit !== null ? { milestoneReached: hit } : {}),
@@ -388,6 +423,10 @@ export const useLandStore = create<LandStore>()(
         return getAvailableCellIndices(get().currentLand.gridSize);
       },
 
+      setWishedSpecies: (speciesId: string | null) => {
+        set({ wishedSpecies: speciesId });
+      },
+
       addOwnedTheme: (themeId: string) => {
         const { ownedThemes } = get();
         if (!ownedThemes.includes(themeId)) {
@@ -397,6 +436,48 @@ export const useLandStore = create<LandStore>()(
 
       setSelectedNextTheme: (themeId: string) => {
         set({ selectedNextTheme: themeId });
+      },
+
+      getAffinityLevel: (speciesId: string) => {
+        const count = get().speciesAffinity[speciesId] || 0;
+        if (count >= 10) return 'devoted';
+        if (count >= 5) return 'bonded';
+        if (count >= 3) return 'familiar';
+        return 'none';
+      },
+
+      growPet: (cellIndex: number, targetSize: 'adolescent' | 'adult') => {
+        const { currentLand, speciesAffinity } = get();
+        const cell = currentLand.cells[cellIndex];
+        if (!cell) return false;
+
+        const count = speciesAffinity[cell.petId] || 0;
+        // Bonded (5+) = can grow to adolescent, Devoted (10+) = can grow to adult
+        if (targetSize === 'adolescent' && count < 5) return false;
+        if (targetSize === 'adult' && count < 10) return false;
+        // Can't shrink
+        if (targetSize === 'adolescent' && SIZE_RANK[cell.size] >= SIZE_RANK['adolescent']) return false;
+        if (targetSize === 'adult' && SIZE_RANK[cell.size] >= SIZE_RANK['adult']) return false;
+
+        const newCells = [...currentLand.cells];
+        newCells[cellIndex] = { ...cell, size: targetSize };
+        set({ currentLand: { ...currentLand, cells: newCells } });
+        return true;
+      },
+
+      collectOfflineIncome: () => {
+        const { lastOfflineCheck, currentLand } = get();
+        const now = Date.now();
+        const hoursPassed = (now - lastOfflineCheck) / (1000 * 60 * 60);
+        if (hoursPassed < 1) {
+          set({ lastOfflineCheck: now });
+          return 0;
+        }
+        const filledCount = currentLand.cells.filter(c => c !== null).length;
+        // 1 coin per pet per hour, capped at 24 coins/day
+        const earned = Math.min(Math.floor(filledCount * hoursPassed), 24);
+        set({ lastOfflineCheck: now });
+        return earned;
       },
 
       clearLastPlaced: () => {
@@ -429,6 +510,9 @@ export const useLandStore = create<LandStore>()(
         pendingPet: state.pendingPet,
         ownedThemes: state.ownedThemes,
         selectedNextTheme: state.selectedNextTheme,
+        wishedSpecies: state.wishedSpecies,
+        speciesAffinity: state.speciesAffinity,
+        lastOfflineCheck: state.lastOfflineCheck,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
@@ -453,3 +537,4 @@ export const useCompletedLands = () => useLandStore((s) => s.completedLands);
 export const useSpeciesCatalog = () => useLandStore((s) => s.speciesCatalog);
 export const usePendingPet = () => useLandStore((s) => s.pendingPet);
 export const useOwnedThemes = () => useLandStore((s) => s.ownedThemes);
+export const useWishedSpecies = () => useLandStore((s) => s.wishedSpecies);

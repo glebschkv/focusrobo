@@ -1,6 +1,5 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
-import { Settings } from "lucide-react";
 import { useState } from "react";
 import {
   Popover,
@@ -13,10 +12,9 @@ import { useSpeciesCatalog } from "@/stores/landStore";
 
 interface TopStatusBarProps {
   currentTab: string;
-  onSettingsClick?: () => void;
 }
 
-export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps) => {
+export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const [statsOpen, setStatsOpen] = useState(false);
   const [streakOpen, setStreakOpen] = useState(false);
   const {
@@ -174,14 +172,6 @@ export const TopStatusBar = ({ currentTab, onSettingsClick }: TopStatusBarProps)
             </PopoverContent>
           </Popover>
 
-          {/* Settings Button */}
-          <button
-            onClick={onSettingsClick}
-            className="settings-btn"
-            aria-label="Open settings"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>

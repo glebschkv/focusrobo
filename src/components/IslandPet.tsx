@@ -13,6 +13,7 @@ import { memo, useEffect, useState, useCallback } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
 import { getIslandPosition, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useLandStore } from '@/stores/landStore';
 import type { LandCell } from '@/stores/landStore';
 
 /** Build the sprite path, trying growth-specific first (e.g. polar-bear-baby.png) */
@@ -50,6 +51,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
   const [imageError, setImageError] = useState(false);
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
+  const affinityLevel = useLandStore((s) => s.getAffinityLevel)(cell.petId);
+  const isDev = affinityLevel === 'devoted';
 
   useEffect(() => {
     if (isNew) haptic('medium');
@@ -108,7 +111,7 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
 
   return (
     <div
-      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''}`}
+      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''} ${isDev ? 'island-pet--devoted' : ''}`}
       style={{
         left: `${pos.x}%`,
         top: `${pos.y}%`,
