@@ -1,6 +1,5 @@
 import React from 'react';
 import { logger } from "@/lib/logger";
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trophy, Share2, Lock, ChevronLeft, Check } from 'lucide-react';
 import { useAchievementSystem, Achievement } from '@/hooks/useAchievementSystem';
 import { useXPSystem } from '@/hooks/useXPSystem';
@@ -15,7 +14,33 @@ export interface AchievementGalleryProps {
   embedded?: boolean;
 }
 
-export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose }) => {
+// ── Tier badge colors — green-themed for embedded, original for standalone ──
+
+const TIER_COLORS_EMBEDDED: Record<string, { bg: string; border: string; text: string }> = {
+  bronze: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
+  silver: { bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-600' },
+  gold: { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-700' },
+  platinum: { bg: 'bg-teal-100', border: 'border-teal-300', text: 'text-teal-700' },
+  diamond: { bg: 'bg-violet-100', border: 'border-violet-300', text: 'text-violet-700' },
+};
+
+const TIER_COLORS_DARK: Record<string, { bg: string; border: string; text: string }> = {
+  bronze: { bg: 'bg-amber-900/30', border: 'border-amber-600/40', text: 'text-amber-400' },
+  silver: { bg: 'bg-slate-400/20', border: 'border-slate-400/40', text: 'text-slate-300' },
+  gold: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/40', text: 'text-yellow-400' },
+  platinum: { bg: 'bg-teal-400/20', border: 'border-teal-400/40', text: 'text-teal-300' },
+  diamond: { bg: 'bg-purple-400/20', border: 'border-purple-400/40', text: 'text-purple-300' },
+};
+
+const TIER_LABEL: Record<string, string> = {
+  bronze: 'Bronze',
+  silver: 'Silver',
+  gold: 'Gold',
+  platinum: 'Platinum',
+  diamond: 'Diamond',
+};
+
+export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose, embedded }) => {
   const {
     achievements,
     unlockedAchievements,
@@ -26,37 +51,16 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
   } = useAchievementSystem();
   const { addDirectXP } = useXPSystem();
   const coinSystem = useCoinSystem();
-  const tierColors: Record<string, { bg: string; border: string; text: string }> = {
-    bronze: { bg: 'bg-amber-900/30', border: 'border-amber-600/40', text: 'text-amber-400' },
-    silver: { bg: 'bg-slate-400/20', border: 'border-slate-400/40', text: 'text-slate-300' },
-    gold: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/40', text: 'text-yellow-400' },
-    platinum: { bg: 'bg-teal-400/20', border: 'border-teal-400/40', text: 'text-teal-300' },
-    diamond: { bg: 'bg-purple-400/20', border: 'border-purple-400/40', text: 'text-purple-300' }
-  };
 
-  const tierLabel: Record<string, string> = {
-    bronze: 'Bronze',
-    silver: 'Silver',
-    gold: 'Gold',
-    platinum: 'Platinum',
-    diamond: 'Diamond'
-  };
+  const tierColors = embedded ? TIER_COLORS_EMBEDDED : TIER_COLORS_DARK;
 
   const handleClaim = (achievement: Achievement) => {
     const rewards = claimRewards(achievement.id);
-    if (rewards.xp === 0 && rewards.coins === 0) {
-      return; // Already claimed by another path (e.g., unlock popup)
-    }
+    if (rewards.xp === 0 && rewards.coins === 0) return;
     playSoundEffect('coinCollect');
-    if (rewards.xp > 0) {
-      addDirectXP(rewards.xp);
-    }
-    if (rewards.coins > 0) {
-      coinSystem.addCoins(rewards.coins);
-    }
-    toast.success("Rewards Claimed!", {
-      description: `+${rewards.xp} XP, +${rewards.coins} Coins`,
-    });
+    if (rewards.xp > 0) addDirectXP(rewards.xp);
+    if (rewards.coins > 0) coinSystem.addCoins(rewards.coins);
+    toast.success("Rewards Claimed!", { description: `+${rewards.xp} XP, +${rewards.coins} Coins` });
   };
 
   const handleShare = async (achievementId: string) => {
@@ -86,6 +90,119 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
     const xpReward = achievement.rewards.find(r => r.type === 'xp')?.amount || 0;
     const coinReward = achievement.rewards.find(r => r.type === 'coins')?.amount || 0;
 
+    if (embedded) {
+      // ── Green-themed card for collection tab ──
+      return (
+        <div className={cn(
+          "p-4 rounded-2xl transition-all border",
+          canClaim
+            ? "bg-amber-50 border-amber-300 shadow-sm"
+            : isUnlocked
+            ? "bg-[hsl(var(--col-card))] border-[hsl(var(--col-border))]"
+            : "bg-[hsl(var(--col-surface))] border-[hsl(var(--col-border))]"
+        )}>
+          <div className="flex items-start gap-3 mb-3">
+            <div className={cn(
+              "w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 border",
+              canClaim
+                ? "bg-amber-100 border-amber-300"
+                : isUnlocked
+                ? "bg-[hsl(var(--col-accent-soft))] border-[hsl(var(--col-border))]"
+                : "bg-[hsl(var(--col-divider))] border-[hsl(var(--col-border))]"
+            )}>
+              {isSecret ? <PixelIcon name="question-mark" size={24} /> : <PixelIcon name={achievement.icon} size={24} />}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className={cn(
+                  "font-bold text-sm",
+                  canClaim ? "text-amber-800" : "text-[hsl(var(--col-text))]"
+                )}>
+                  {isSecret ? '???' : achievement.title}
+                </h3>
+                {isUnlocked && isClaimed && (
+                  <Check className="w-3.5 h-3.5 text-[hsl(var(--col-accent))] flex-shrink-0" />
+                )}
+              </div>
+              <span className={cn(
+                "inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wide border",
+                tier.bg, tier.border, tier.text
+              )}>
+                {TIER_LABEL[achievement.tier]}
+              </span>
+            </div>
+
+            <div className="flex-shrink-0">
+              {canClaim ? (
+                <button
+                  onClick={() => handleClaim(achievement)}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-bold uppercase shadow-sm transition-all active:scale-95"
+                >
+                  Claim
+                </button>
+              ) : isUnlocked ? (
+                <button
+                  onClick={() => handleShare(achievement.id)}
+                  className="w-9 h-9 rounded-xl bg-[hsl(var(--col-accent-soft))] hover:bg-[hsl(var(--col-accent-medium))] border border-[hsl(var(--col-border))] flex items-center justify-center transition-colors"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-[hsl(var(--col-muted))]" />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          {!isSecret ? (
+            <>
+              <p className={cn(
+                "text-xs mb-3 leading-relaxed",
+                isUnlocked ? "text-[hsl(var(--col-muted))]" : "text-[hsl(var(--col-subtle))]"
+              )}>
+                {achievement.description}
+              </p>
+
+              <div className="mb-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] text-[hsl(var(--col-subtle))]">Progress</span>
+                  <span className={cn(
+                    "text-[10px] font-semibold",
+                    canClaim ? "text-amber-600" : isUnlocked ? "text-[hsl(var(--col-accent))]" : "text-[hsl(var(--col-muted))]"
+                  )}>
+                    {achievement.progress}/{achievement.target}
+                  </span>
+                </div>
+                <div className="h-1.5 bg-[hsl(var(--col-divider))] rounded-full overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full rounded-full transition-all duration-500",
+                      canClaim
+                        ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                        : isUnlocked
+                        ? "collection-progress-fill"
+                        : "bg-[hsl(var(--col-ghost))]"
+                    )}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2 border-t border-[hsl(var(--col-divider))]">
+                <span className="text-[10px] text-[hsl(var(--col-subtle))]">Rewards:</span>
+                <span className="text-[10px] font-semibold text-[hsl(var(--col-accent))]">+{xpReward} XP</span>
+                <span className="text-[10px] font-semibold text-amber-600 inline-flex items-center gap-0.5">+{coinReward} <PixelIcon name="coin" size={12} /></span>
+              </div>
+            </>
+          ) : (
+            <p className="text-xs text-[hsl(var(--col-subtle))] flex items-center gap-2">
+              <Lock className="w-3.5 h-3.5" />
+              Secret achievement. Keep playing to discover it!
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    // ── Original dark-themed card (standalone mode) ──
     return (
       <div className={cn(
         "p-4 rounded-2xl transition-all border",
@@ -95,9 +212,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
           ? "bg-gradient-to-br from-green-500/10 to-emerald-600/5 border-green-500/30"
           : "bg-purple-950/40 border-purple-700/30"
       )}>
-        {/* Top row: Icon, Title, Tier badge */}
         <div className="flex items-start gap-3 mb-3">
-          {/* Icon */}
           <div className={cn(
             "w-14 h-14 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 border-2",
             canClaim
@@ -108,8 +223,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
           )}>
             {isSecret ? <PixelIcon name="question-mark" size={28} /> : <PixelIcon name={achievement.icon} size={28} />}
           </div>
-
-          {/* Title & Tier */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className={cn(
@@ -118,21 +231,15 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
               )}>
                 {isSecret ? '???' : achievement.title}
               </h3>
-              {isUnlocked && isClaimed && (
-                <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
-              )}
+              {isUnlocked && isClaimed && <Check className="w-4 h-4 text-green-400 flex-shrink-0" />}
             </div>
-
-            {/* Tier Badge */}
             <span className={cn(
               "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
               tier.bg, tier.border, tier.text
             )}>
-              {tierLabel[achievement.tier]}
+              {TIER_LABEL[achievement.tier]}
             </span>
           </div>
-
-          {/* Claim/Share button */}
           <div className="flex-shrink-0">
             {canClaim ? (
               <button
@@ -151,8 +258,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
             ) : null}
           </div>
         </div>
-
-        {/* Description */}
         {!isSecret ? (
           <>
             <p className={cn(
@@ -161,8 +266,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
             )}>
               {achievement.description}
             </p>
-
-            {/* Progress bar */}
             <div className="mb-2">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs text-purple-400">Progress</span>
@@ -187,8 +290,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
                 />
               </div>
             </div>
-
-            {/* Rewards */}
             <div className="flex items-center gap-4 pt-2 border-t border-purple-700/30">
               <span className="text-xs text-purple-400">Rewards:</span>
               <span className="text-xs font-semibold text-blue-400">+{xpReward} XP</span>
@@ -209,7 +310,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
   const totalPoints = getTotalAchievementPoints();
   const unclaimedCount = unlockedAchievements.filter(a => !a.rewardsClaimed).length;
 
-  // Sort achievements: claimable first, then by progress percentage
   const sortedAchievements = [...achievements].sort((a, b) => {
     const aCanClaim = a.isUnlocked && !a.rewardsClaimed;
     const bCanClaim = b.isUnlocked && !b.rewardsClaimed;
@@ -218,9 +318,55 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
     return (b.progress / b.target) - (a.progress / a.target);
   });
 
+  // ── Embedded mode: green-themed, no wrapping container ──
+  if (embedded) {
+    return (
+      <div>
+        {/* Summary card */}
+        <div className="p-3 rounded-2xl bg-[hsl(var(--col-card))] border border-[hsl(var(--col-border))] mb-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <span className="text-sm font-bold text-[hsl(var(--col-text))]">
+                {unlockedAchievements.length}/{achievements.length}
+              </span>
+            </div>
+            <span className="text-xs font-bold text-amber-600">{totalPoints} pts</span>
+          </div>
+          <div className="h-2 bg-[hsl(var(--col-divider))] rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full collection-progress-fill transition-all duration-500"
+              style={{ width: `${completionPercentage}%` }}
+            />
+          </div>
+          {unclaimedCount > 0 && (
+            <p className="text-[10px] text-amber-600 mt-1.5 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              {unclaimedCount} ready to claim!
+            </p>
+          )}
+        </div>
+
+        {/* Achievement list */}
+        <div className="space-y-2.5">
+          {sortedAchievements.length === 0 ? (
+            <div className="text-center py-12">
+              <Trophy className="w-10 h-10 mx-auto mb-2 text-[hsl(var(--col-ghost))]" />
+              <p className="text-xs text-[hsl(var(--col-subtle))]">No achievements yet</p>
+            </div>
+          ) : (
+            sortedAchievements.map(achievement => (
+              <AchievementCard key={achievement.id} achievement={achievement} />
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Standalone mode: original dark purple ──
   return (
     <div className="h-full flex flex-col bg-[hsl(260,30%,10%)]">
-      {/* Header */}
       <div className="px-4 pt-4 pb-4">
         <div className="flex items-center gap-3 mb-4">
           {onClose && (
@@ -245,8 +391,6 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
             <div className="text-xs text-purple-400">points</div>
           </div>
         </div>
-
-        {/* Progress bar */}
         <div className="bg-purple-900/40 rounded-xl p-3 border border-purple-700/30">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-purple-300">Overall Progress</span>
@@ -266,9 +410,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
           )}
         </div>
       </div>
-
-      {/* Achievement List */}
-      <ScrollArea className="flex-1 px-4">
+      <div className="flex-1 overflow-y-auto px-4">
         <div className="space-y-3 pb-6">
           {sortedAchievements.length === 0 ? (
             <div className="text-center py-16 text-purple-400">
@@ -281,7 +423,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
             ))
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

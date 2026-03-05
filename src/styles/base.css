@@ -72,6 +72,28 @@ input, textarea, [contenteditable="true"] {
     --shadow-inner: inset 0 1px 3px hsla(150 10% 12% / 0.06);
     --shadow-surreal: 4px 8px 24px hsla(150 10% 12% / 0.08), -2px -2px 12px hsla(152 44% 45% / 0.04), 0 0 0 1px hsla(0 0% 100% / 0.3) inset;
 
+    /* Collection Page — semantic tokens for the green catalog theme */
+    --col-bg-start: 135 25% 96%;   /* #F2F8F3 top gradient */
+    --col-bg-end: 130 22% 93%;     /* #EAF3EB bottom gradient */
+    --col-text: 140 27% 23%;       /* #2D4A32 primary text */
+    --col-text-secondary: 142 22% 34%; /* #4A6B4E secondary text */
+    --col-accent: 148 38% 48%;     /* #4CA771 accent green */
+    --col-accent-soft: 148 38% 48% / 0.10; /* accent at 10% */
+    --col-accent-medium: 148 38% 48% / 0.15; /* accent at 15% */
+    --col-muted: 144 14% 48%;      /* #6B8A6F muted text */
+    --col-subtle: 140 13% 66%;     /* #8BA68F subtle text */
+    --col-faint: 140 12% 73%;      /* #A3BCA6 very faint */
+    --col-ghost: 140 14% 77%;      /* #B0C4B3 ghost text */
+    --col-whisper: 140 14% 83%;    /* #C4D4C7 whisper text */
+    --col-border: 140 18% 86%;     /* #D4E5D7 border */
+    --col-divider: 138 16% 90%;    /* #E0ECDF dividers */
+    --col-surface: 140 14% 93%;    /* #EDF2EE surface */
+    --col-tint: 140 20% 92%;       /* #E8F0E9 tint */
+    --col-card: 0 0% 100% / 0.80;  /* white glass card */
+    --col-card-hover: 0 0% 100% / 0.90;
+    --col-progress-start: 150 42% 58%; /* #6BC18F gradient start */
+    --col-progress-end: 148 38% 48%;   /* #4CA771 gradient end */
+
     /* iOS Transitions */
     --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
