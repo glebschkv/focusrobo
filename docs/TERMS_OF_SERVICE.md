@@ -187,8 +187,8 @@ These Terms, together with our Privacy Policy, constitute the entire agreement b
 For questions about these Terms, contact us:
 
 **NoMo Inc.**
-Email: support@nomoinc.co
-Website: https://nomoinc.co
+Email: support@fonoinc.com
+Website: https://fonoinc.com
 
 ---
 

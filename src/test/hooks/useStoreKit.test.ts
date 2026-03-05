@@ -120,7 +120,7 @@ vi.mock('@/integrations/supabase/client', () => ({
             tier: 'premium',
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
             purchasedAt: new Date().toISOString(),
-            productId: 'co.botblock.app.premium.monthly',
+            productId: 'com.fonoinc.app.premium.monthly',
             environment: 'sandbox',
           },
         },
@@ -142,7 +142,7 @@ vi.mock('@/hooks/usePremiumStatus', () => ({
       priceValue: 5.99,
       period: 'monthly',
       features: [],
-      iapProductId: 'co.botblock.app.premium.monthly',
+      iapProductId: 'com.fonoinc.app.premium.monthly',
       bonusCoins: 1000,
     },
     {
@@ -154,7 +154,7 @@ vi.mock('@/hooks/usePremiumStatus', () => ({
       priceValue: 44.99,
       period: 'yearly',
       features: [],
-      iapProductId: 'co.botblock.app.premium.yearly',
+      iapProductId: 'com.fonoinc.app.premium.yearly',
       bonusCoins: 2500,
     },
     {
@@ -166,7 +166,7 @@ vi.mock('@/hooks/usePremiumStatus', () => ({
       priceValue: 199.99,
       period: 'lifetime',
       features: [],
-      iapProductId: 'co.botblock.app.lifetime',
+      iapProductId: 'com.fonoinc.app.lifetime',
       bonusCoins: 10000,
     },
   ],
@@ -179,7 +179,7 @@ import { useStoreKit } from '@/hooks/useStoreKit';
 // Mock data for tests
 const mockProducts = [
   {
-    id: 'co.botblock.app.premium.monthly',
+    id: 'com.fonoinc.app.premium.monthly',
     displayName: 'Premium Monthly',
     description: 'Double your progress',
     price: '5.99',
@@ -188,7 +188,7 @@ const mockProducts = [
     subscriptionPeriod: { unit: 'month' as const, value: 1 },
   },
   {
-    id: 'co.botblock.app.premium.yearly',
+    id: 'com.fonoinc.app.premium.yearly',
     displayName: 'Premium Yearly',
     description: 'Double your progress - save 37%',
     price: '44.99',
@@ -197,7 +197,7 @@ const mockProducts = [
     subscriptionPeriod: { unit: 'year' as const, value: 1 },
   },
   {
-    id: 'co.botblock.app.lifetime',
+    id: 'com.fonoinc.app.lifetime',
     displayName: 'Lifetime',
     description: 'Forever access',
     price: '199.99',
@@ -205,7 +205,7 @@ const mockProducts = [
     type: 'nonConsumable' as const,
   },
   {
-    id: 'co.botblock.app.coins.starter',
+    id: 'com.fonoinc.app.coins.starter',
     displayName: 'Starter Coins',
     description: '500 coins',
     price: '0.99',
@@ -224,7 +224,7 @@ const mockActiveSubscriptionStatus = {
   hasActiveSubscription: true,
   activeSubscriptions: [
     {
-      productId: 'co.botblock.app.premium.monthly',
+      productId: 'com.fonoinc.app.premium.monthly',
       transactionId: 'txn_123',
       purchaseDate: Date.now() - 7 * 24 * 60 * 60 * 1000, // 7 days ago
       expirationDate: Date.now() + 23 * 24 * 60 * 60 * 1000, // 23 days from now
@@ -240,7 +240,7 @@ const mockLifetimeStatus = {
   activeSubscriptions: [],
   purchasedProducts: [
     {
-      productId: 'co.botblock.app.lifetime',
+      productId: 'com.fonoinc.app.lifetime',
       transactionId: 'txn_lifetime_123',
       purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
       expirationDate: null,
@@ -376,9 +376,9 @@ describe('useStoreKit', () => {
       expect(result.current.products).toEqual(mockProducts);
       expect(mockGetProducts).toHaveBeenCalledWith({
         productIds: expect.arrayContaining([
-          'co.botblock.app.premium.monthly',
-          'co.botblock.app.premium.yearly',
-          'co.botblock.app.lifetime',
+          'com.fonoinc.app.premium.monthly',
+          'com.fonoinc.app.premium.yearly',
+          'com.fonoinc.app.lifetime',
         ]),
       });
     });
@@ -455,7 +455,7 @@ describe('useStoreKit', () => {
       const mockPurchaseResult = {
         success: true,
         transactionId: 'txn_123',
-        productId: 'co.botblock.app.premium.monthly',
+        productId: 'com.fonoinc.app.premium.monthly',
         purchaseDate: Date.now(),
         expirationDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
       };
@@ -470,12 +470,12 @@ describe('useStoreKit', () => {
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        purchaseResult = await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(purchaseResult).toEqual(expect.objectContaining({ success: true }));
       expect(mockPurchase).toHaveBeenCalledWith({
-        productId: 'co.botblock.app.premium.monthly',
+        productId: 'com.fonoinc.app.premium.monthly',
       });
     });
 
@@ -495,7 +495,7 @@ describe('useStoreKit', () => {
       expect(result.current.isPurchasing).toBe(false);
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // After purchase completes, isPurchasing should be false
@@ -507,7 +507,7 @@ describe('useStoreKit', () => {
         success: true,
         transactionId: 'txn_123',
         signedTransaction: 'mock_signed_transaction',
-        productId: 'co.botblock.app.premium.monthly',
+        productId: 'com.fonoinc.app.premium.monthly',
       });
 
       const { result } = renderHook(() => useStoreKit());
@@ -518,7 +518,7 @@ describe('useStoreKit', () => {
 
       let purchaseResult: any;
       await act(async () => {
-        purchaseResult = await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        purchaseResult = await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // Source does NOT show a success toast on purchase - it returns the result with validation data
@@ -533,7 +533,7 @@ describe('useStoreKit', () => {
         success: true,
         transactionId: 'txn_123',
         signedTransaction: 'mock_signed_transaction',
-        productId: 'co.botblock.app.premium.monthly',
+        productId: 'com.fonoinc.app.premium.monthly',
       });
 
       const { result } = renderHook(() => useStoreKit());
@@ -545,7 +545,7 @@ describe('useStoreKit', () => {
       const initialCallCount = mockGetSubscriptionStatus.mock.calls.length;
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(mockGetSubscriptionStatus.mock.calls.length).toBeGreaterThan(initialCallCount);
@@ -567,7 +567,7 @@ describe('useStoreKit', () => {
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        purchaseResult = await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(purchaseResult).toEqual(expect.objectContaining({ cancelled: true }));
@@ -591,7 +591,7 @@ describe('useStoreKit', () => {
       mockToastInfo.mockClear();
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // Toast should not be called for cancellation
@@ -613,7 +613,7 @@ describe('useStoreKit', () => {
       });
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(result.current.isPurchasing).toBe(false);
@@ -634,7 +634,7 @@ describe('useStoreKit', () => {
       });
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(mockToastInfo).toHaveBeenCalledWith(
@@ -658,7 +658,7 @@ describe('useStoreKit', () => {
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        purchaseResult = await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // safeStoreKitCall returns a generic failed result with default message
@@ -679,7 +679,7 @@ describe('useStoreKit', () => {
       });
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // Toast shows generic error message from implementation (sonner API: toast.error(title, opts))
@@ -702,7 +702,7 @@ describe('useStoreKit', () => {
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        purchaseResult = await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(purchaseResult).toEqual({
@@ -721,7 +721,7 @@ describe('useStoreKit', () => {
       });
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       expect(result.current.isPurchasing).toBe(false);
@@ -735,13 +735,13 @@ describe('useStoreKit', () => {
         restoredCount: 2,
         purchases: [
           {
-            productId: 'co.botblock.app.premium.monthly',
+            productId: 'com.fonoinc.app.premium.monthly',
             transactionId: 'txn_restored_1',
             signedTransaction: 'mock_signed_transaction_1',
             purchaseDate: Date.now() - 7 * 24 * 60 * 60 * 1000,
           },
           {
-            productId: 'co.botblock.app.lifetime',
+            productId: 'com.fonoinc.app.lifetime',
             transactionId: 'txn_restored_2',
             signedTransaction: 'mock_signed_transaction_2',
             purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000,
@@ -769,7 +769,7 @@ describe('useStoreKit', () => {
         success: true,
         restoredCount: 1,
         purchases: [{
-          productId: 'co.botblock.app.premium.monthly',
+          productId: 'com.fonoinc.app.premium.monthly',
           transactionId: 'txn_restored_1',
           signedTransaction: 'mock_signed_transaction',
         }],
@@ -798,7 +798,7 @@ describe('useStoreKit', () => {
         success: true,
         restoredCount: 1,
         purchases: [{
-          productId: 'co.botblock.app.premium.monthly',
+          productId: 'com.fonoinc.app.premium.monthly',
           transactionId: 'txn_restored_1',
           signedTransaction: 'mock_signed_transaction',
         }],
@@ -991,7 +991,7 @@ describe('useStoreKit', () => {
         hasActiveSubscription: true,
         activeSubscriptions: [
           {
-            productId: 'co.botblock.app.premium.monthly',
+            productId: 'com.fonoinc.app.premium.monthly',
             transactionId: 'txn_monthly',
             purchaseDate: Date.now(),
             expirationDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
@@ -1019,7 +1019,7 @@ describe('useStoreKit', () => {
         hasActiveSubscription: true,
         activeSubscriptions: [
           {
-            productId: 'co.botblock.app.premium.yearly',
+            productId: 'com.fonoinc.app.premium.yearly',
             transactionId: 'txn_yearly',
             purchaseDate: Date.now(),
             expirationDate: Date.now() + 365 * 24 * 60 * 60 * 1000,
@@ -1063,7 +1063,7 @@ describe('useStoreKit', () => {
         hasActiveSubscription: true,
         activeSubscriptions: [
           {
-            productId: 'co.botblock.app.premium.monthly',
+            productId: 'com.fonoinc.app.premium.monthly',
             transactionId: 'txn_active',
             purchaseDate: Date.now(),
             expirationDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
@@ -1071,7 +1071,7 @@ describe('useStoreKit', () => {
         ],
         purchasedProducts: [
           {
-            productId: 'co.botblock.app.lifetime',
+            productId: 'com.fonoinc.app.lifetime',
             transactionId: 'txn_lifetime',
             purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000,
           },
@@ -1096,11 +1096,11 @@ describe('useStoreKit', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      const product = result.current.getProductById('co.botblock.app.premium.monthly');
+      const product = result.current.getProductById('com.fonoinc.app.premium.monthly');
 
       expect(product).toEqual(
         expect.objectContaining({
-          id: 'co.botblock.app.premium.monthly',
+          id: 'com.fonoinc.app.premium.monthly',
           displayName: 'Premium Monthly',
         })
       );
@@ -1127,7 +1127,7 @@ describe('useStoreKit', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      const product = result.current.getProductById('co.botblock.app.premium.monthly');
+      const product = result.current.getProductById('com.fonoinc.app.premium.monthly');
 
       expect(product).toBeUndefined();
     });
@@ -1199,7 +1199,7 @@ describe('useStoreKit', () => {
       });
 
       await act(async () => {
-        await result.current.purchaseProduct('co.botblock.app.premium.monthly');
+        await result.current.purchaseProduct('com.fonoinc.app.premium.monthly');
       });
 
       // safeStoreKitCall wraps errors into generic messages

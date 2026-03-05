@@ -154,22 +154,22 @@ async function serverValidatePurchase(
 // All IAP product IDs
 const ALL_PRODUCT_IDS = [
   // Subscriptions
-  'co.botblock.app.premium.monthly',
-  'co.botblock.app.premium.yearly',
-  'co.botblock.app.premiumplus.monthly',
-  'co.botblock.app.premiumplus.yearly',
-  'co.botblock.app.lifetime',
+  'com.fonoinc.app.premium.monthly',
+  'com.fonoinc.app.premium.yearly',
+  'com.fonoinc.app.premiumplus.monthly',
+  'com.fonoinc.app.premiumplus.yearly',
+  'com.fonoinc.app.lifetime',
   // Coin Packs (Consumables)
-  'co.botblock.app.coins.value',
-  'co.botblock.app.coins.premium',
-  'co.botblock.app.coins.mega',
-  'co.botblock.app.coins.ultra',
-  'co.botblock.app.coins.legendary',
+  'com.fonoinc.app.coins.value',
+  'com.fonoinc.app.coins.premium',
+  'com.fonoinc.app.coins.mega',
+  'com.fonoinc.app.coins.ultra',
+  'com.fonoinc.app.coins.legendary',
   // Starter Bundles (Non-Consumables)
-  'co.botblock.app.bundle.welcome',
-  'co.botblock.app.bundle.starter',
-  'co.botblock.app.bundle.collector',
-  'co.botblock.app.bundle.ultimate',
+  'com.fonoinc.app.bundle.welcome',
+  'com.fonoinc.app.bundle.starter',
+  'com.fonoinc.app.bundle.collector',
+  'com.fonoinc.app.bundle.ultimate',
 ];
 
 // Custom events for IAP fulfillment

@@ -171,8 +171,8 @@ const PrivacyPolicyContent = () => {
             </p>
             <div className="bg-white/5 rounded-lg p-4 space-y-1">
               <p className="text-white font-medium">BotBlock Inc.</p>
-              <p className="text-white/80">Email: privacy@nomoinc.co</p>
-              <p className="text-white/80">Website: https://nomoinc.co</p>
+              <p className="text-white/80">Email: privacy@fonoinc.com</p>
+              <p className="text-white/80">Website: https://fonoinc.com</p>
             </div>
           </section>
 

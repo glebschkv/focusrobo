@@ -1,9 +1,9 @@
-project_id = "slpuitnaizlsemvedjge"
+project_id = "xizxkpofwpxerqlokyuw"
 
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "co.nomoinc.nomo://callback"]
+additional_redirect_urls = ["https://localhost:3000", "capacitor://localhost", "com.fonoinc.app://callback"]
 
 [auth.email]
 enable_signup = true
@@ -13,7 +13,7 @@ enable_confirmations = false
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 15
+major_version = 17
 
 [studio]
 enabled = true

@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'co.botblock.app',
+  appId: 'com.fonoinc.app',
   appName: 'BotBlock',
   webDir: 'dist',
   ios: {
@@ -31,7 +31,7 @@ const config: CapacitorConfig = {
       }
     },
     BackgroundTask: {
-      label: "co.botblock.app.background-tracking",
+      label: "com.fonoinc.app.background-tracking",
       description: "Tracks app usage and awards points for time away from device"
     }
   },

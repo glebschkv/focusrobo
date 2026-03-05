@@ -417,8 +417,8 @@ export default function Auth() {
           const hashedNonce = await sha256(rawNonce);
 
           const result = await SignInWithApple.authorize({
-            clientId: 'co.botblock.app',
-            redirectURI: 'https://nomoinc.co',
+            clientId: 'com.fonoinc.app',
+            redirectURI: 'https://fonoinc.com',
             scopes: 'email name',
             state: crypto.randomUUID(),
             nonce: hashedNonce,
@@ -460,8 +460,8 @@ export default function Auth() {
         const hashedNonce = await sha256(rawNonce);
 
         const result = await SignInWithApple.authorize({
-          clientId: 'co.botblock.app',
-          redirectURI: 'https://nomoinc.co',
+          clientId: 'com.fonoinc.app',
+          redirectURI: 'https://fonoinc.com',
           scopes: 'email name',
           state: crypto.randomUUID(),
           nonce: hashedNonce,
