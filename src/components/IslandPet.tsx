@@ -11,7 +11,7 @@
 
 import { memo, useEffect, useState, useCallback } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
-import { getIslandPosition, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
+import { getIslandPosition, getDepthScale, getDepthZIndex, getGridDensityScale } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useLandStore } from '@/stores/landStore';
 import type { LandCell } from '@/stores/landStore';
@@ -74,7 +74,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
 
   const growthScale = GROWTH_SCALES[cell.size];
   const depthScale = getDepthScale(index);
-  const finalScale = growthScale * depthScale;
+  const gridScale = getGridDensityScale(gridSize);
+  const finalScale = growthScale * depthScale * gridScale;
   const zIndex = getDepthZIndex(index);
   const rarityColor = RARITY_COLORS[cell.rarity];
 

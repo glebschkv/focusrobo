@@ -71,7 +71,10 @@ function useIslandParallax() {
       containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, 0, 0) scale(${z})`;
     }
     if (petsRef.current) {
-      petsRef.current.style.transform = `translate3d(${offset * LAYER_PETS}px, 0, 0)`;
+      // Compensate for parent (containerRef) transform: pets layer is nested inside
+      // the island container, so its translate compounds with the parent's translate + scale.
+      // Dividing by z accounts for the parent's scale(z) which also scales child translations.
+      petsRef.current.style.transform = `translate3d(${offset * (LAYER_PETS - LAYER_ISLAND) / z}px, 0, 0)`;
     }
   }, []);
 
