@@ -1,0 +1,477 @@
+/* ============================================
+   SETTINGS PAGE — Deep Forest Dark Green Theme
+   Premium dark green aesthetic for settings
+   ============================================ */
+
+/* Page background — deep forest gradient */
+.settings-page {
+  background: linear-gradient(180deg, #1A2E23 0%, #142218 100%);
+}
+
+/* Header area */
+.settings-header {
+  padding: 16px 16px 12px;
+}
+
+/* Dark forest card */
+.settings-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(33, 59, 44, 0.85);
+  border: 1px solid rgba(76, 167, 113, 0.15);
+  box-shadow: 0 2px 8px rgba(10, 20, 14, 0.3);
+}
+
+/* Section title inside card */
+.settings-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.settings-section-title .settings-section-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(76, 167, 113, 0.15);
+}
+
+.settings-section-title .settings-section-icon svg {
+  width: 14px;
+  height: 14px;
+  color: #4CA771;
+}
+
+.settings-section-title span {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #E8F0EB;
+}
+
+/* Row item (toggle row, info row) */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(26, 46, 35, 0.6);
+  border: 1px solid rgba(76, 167, 113, 0.1);
+}
+
+/* Icon box */
+.settings-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-icon-box--active {
+  background: #4CA771;
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 167, 113, 0.3);
+}
+
+.settings-icon-box--inactive {
+  background: rgba(26, 46, 35, 0.6);
+  border: 1px solid rgba(76, 167, 113, 0.12);
+  color: #8BA68F;
+}
+
+/* Divider */
+.settings-divider {
+  height: 1px;
+  background: rgba(76, 167, 113, 0.12);
+  margin: 12px 0;
+}
+
+/* Primary action button (green) */
+.settings-btn-primary {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: #4CA771;
+  border: none;
+  box-shadow: 0 2px 8px rgba(76, 167, 113, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 4px rgba(76, 167, 113, 0.2);
+}
+
+/* Secondary / outline button */
+.settings-btn-secondary {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #E8F0EB;
+  background: rgba(26, 46, 35, 0.6);
+  border: 1px solid rgba(76, 167, 113, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-btn-secondary:active {
+  transform: scale(0.97);
+  background: rgba(26, 46, 35, 0.8);
+}
+
+/* Danger / destructive button */
+.settings-btn-danger {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #E57373;
+  background: rgba(196, 100, 100, 0.1);
+  border: 1.5px solid rgba(196, 100, 100, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-btn-danger:active {
+  transform: scale(0.97);
+  background: rgba(196, 100, 100, 0.15);
+}
+
+/* Gold / premium button */
+.settings-btn-gold {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #C5A033, #A88520);
+  border: 1.5px solid rgba(197, 160, 51, 0.4);
+  box-shadow: 0 2px 8px rgba(197, 160, 51, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-btn-gold:active {
+  transform: scale(0.97);
+}
+
+/* Link-style row (nav item) */
+.settings-link-row {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(26, 46, 35, 0.6);
+  border: 1px solid rgba(76, 167, 113, 0.1);
+  color: #E8F0EB;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-link-row:active {
+  transform: scale(0.98);
+  background: rgba(26, 46, 35, 0.8);
+}
+
+/* Info badges */
+.settings-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.settings-badge--green {
+  background: rgba(76, 167, 113, 0.15);
+  border: 1px solid rgba(76, 167, 113, 0.3);
+  color: #4CA771;
+}
+
+.settings-badge--amber {
+  background: rgba(197, 160, 51, 0.15);
+  border: 1px solid rgba(197, 160, 51, 0.3);
+  color: #C5A033;
+}
+
+.settings-badge--red {
+  background: rgba(196, 100, 100, 0.12);
+  border: 1px solid rgba(196, 100, 100, 0.25);
+  color: #E57373;
+}
+
+/* Premium tag */
+.settings-premium-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #C5A033, #A88520);
+  border: 1px solid rgba(197, 160, 51, 0.5);
+  color: white;
+}
+
+/* Warning box */
+.settings-warning {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(197, 160, 51, 0.1);
+  border: 1px solid rgba(197, 160, 51, 0.2);
+}
+
+/* Info box */
+.settings-info {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(76, 167, 113, 0.08);
+  border: 1px solid rgba(76, 167, 113, 0.15);
+}
+
+/* Tab pills */
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-tab:active {
+  transform: scale(0.95);
+}
+
+.settings-tab--active {
+  background: #4CA771;
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 167, 113, 0.35);
+}
+
+.settings-tab--inactive {
+  background: rgba(33, 59, 44, 0.7);
+  color: #8BA68F;
+  border: 1px solid rgba(76, 167, 113, 0.12);
+}
+
+/* Confirm dialog overlay */
+.settings-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  -webkit-backface-visibility: hidden;
+}
+
+.settings-dialog-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 16, 12, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.settings-dialog-card {
+  position: relative;
+  max-width: 320px;
+  width: 100%;
+  padding: 24px;
+  border-radius: 22px;
+  background: #1E3529;
+  border: 1.5px solid rgba(76, 167, 113, 0.2);
+  box-shadow: 0 16px 48px rgba(8, 16, 12, 0.5);
+}
+
+/* Slider helpers */
+.settings-slider-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.settings-slider-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4CA771;
+}
+
+.settings-slider-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6B8A6F;
+  margin-top: 4px;
+}
+
+/* Avatar */
+.settings-avatar-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(76, 167, 113, 0.12);
+  border: 2.5px solid rgba(76, 167, 113, 0.35);
+  box-shadow: 0 0 16px rgba(76, 167, 113, 0.15);
+}
+
+.settings-avatar-option {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-avatar-option--selected {
+  background: #4CA771;
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 167, 113, 0.3);
+  transform: scale(1.1);
+}
+
+.settings-avatar-option--unselected {
+  background: rgba(26, 46, 35, 0.6);
+  border: 1px solid rgba(76, 167, 113, 0.12);
+  color: #8BA68F;
+}
+
+/* Theme selector cards */
+.settings-theme-card {
+  position: relative;
+  padding: 12px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-theme-card:active {
+  transform: scale(0.95);
+}
+
+.settings-theme-card--selected {
+  background: rgba(76, 167, 113, 0.15);
+  border: 1.5px solid rgba(76, 167, 113, 0.35);
+}
+
+.settings-theme-card--unselected {
+  background: rgba(26, 46, 35, 0.5);
+  border: 1.5px solid rgba(76, 167, 113, 0.1);
+}
+
+/* Sound theme pills */
+.settings-sound-pill {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-sound-pill:active {
+  transform: scale(0.95);
+}
+
+.settings-sound-pill--selected {
+  background: #4CA771;
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 167, 113, 0.3);
+}
+
+.settings-sound-pill--unselected {
+  background: rgba(26, 46, 35, 0.5);
+  border: 1.5px solid rgba(76, 167, 113, 0.1);
+  color: #8BA68F;
+}
+
+/* About hero */
+.settings-about-hero {
+  position: relative;
+  padding: 28px 20px;
+  text-align: center;
+  border-radius: 18px;
+  background: linear-gradient(
+    170deg,
+    rgba(76, 167, 113, 0.12) 0%,
+    rgba(33, 59, 44, 0.85) 60%,
+    rgba(76, 167, 113, 0.06) 100%
+  );
+  border: 1px solid rgba(76, 167, 113, 0.15);
+  overflow: hidden;
+}
+
+.settings-about-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #4CA771;
+  border: 3px solid rgba(76, 167, 113, 0.4);
+  box-shadow: 0 4px 16px rgba(76, 167, 113, 0.3);
+}

@@ -10,88 +10,60 @@ export const SettingsAbout = () => {
   };
 
   return (
-    <div className="space-y-4">
-      {/* App Info - Hero */}
-      <div className="retro-game-card overflow-hidden">
-        <div className="relative p-6 text-center">
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 via-transparent to-pink-900/30" />
-          <div className="relative">
-            {/* App Icon */}
-            <div
-              className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(145deg, hsl(260 60% 55%) 0%, hsl(280 55% 50%) 100%)',
-                border: '3px solid hsl(260 50% 40%)',
-                boxShadow: '0 4px 0 hsl(260 50% 35%), 0 8px 16px hsl(260 50% 30% / 0.3), inset 0 2px 0 hsl(260 70% 70% / 0.3)',
-              }}
-            >
-              <img src="/app-icon.png" alt="BotBlock" width={48} height={48} className="rounded-lg" draggable={false} />
-            </div>
+    <div className="space-y-3">
+      {/* App Info Hero */}
+      <div className="settings-about-hero">
+        <div className="settings-about-icon">
+          <img src="/app-icon.png" alt="BotBlock" width={42} height={42} className="rounded-lg" draggable={false} />
+        </div>
 
-            {/* App Name */}
-            <h2 className="text-xl font-bold retro-pixel-text retro-neon-text mb-1">BotBlock</h2>
-            <p className="text-sm text-purple-300/80 mb-4">
-              Put down your phone, grow your island
-            </p>
+        <h2 className="text-xl font-bold text-[#E8F0EB] mb-1">BotBlock</h2>
+        <p className="text-sm text-[#8BA68F] mb-4">Put down your phone, grow your island</p>
 
-            {/* Version Badge */}
-            <div className="inline-flex items-center gap-3 retro-stat-pill px-4 py-2 rounded-full">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-bold text-green-400">v{appVersion}</span>
-              </div>
-              <div className="w-px h-4 bg-purple-600/50" />
-              <span className="text-xs text-purple-300/70">Live</span>
-            </div>
+        {/* Version Badge */}
+        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full"
+          style={{ background: 'rgba(26,46,35,0.6)', border: '1px solid rgba(76,167,113,0.12)' }}>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-[#4CA771] animate-pulse" />
+            <span className="text-xs font-bold text-[#4CA771]">v{appVersion}</span>
           </div>
+          <div className="w-px h-4" style={{ background: 'rgba(76,167,113,0.2)' }} />
+          <span className="text-xs text-[#6B8A6F]">Live</span>
         </div>
 
         {/* Tagline */}
-        <div className="p-4 text-center border-t border-purple-600/30">
-          <p className="text-sm text-purple-300/80">
-            Focus. Collect. Grow.
-          </p>
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(76,167,113,0.12)' }}>
+          <p className="text-sm text-[#8BA68F]">Focus. Collect. Grow.</p>
         </div>
       </div>
 
       {/* Legal */}
-      <div className="retro-game-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Shield className="w-4 h-4 text-teal-400" />
-          <span className="text-sm font-bold retro-pixel-text text-white">LEGAL</span>
+      <div className="settings-card">
+        <div className="settings-section-title">
+          <div className="settings-section-icon"><Shield /></div>
+          <span>Legal</span>
         </div>
+
         <div className="space-y-2">
-          <button
-            onClick={() => navigate('/privacy')}
-            className="w-full p-3 retro-stat-pill rounded-lg flex items-center gap-3 transition-all active:scale-95 text-purple-100"
-          >
-            <FileText className="w-5 h-5" />
-            <span className="text-sm font-semibold flex-1 text-left">Privacy Policy</span>
-            <ExternalLink className="w-4 h-4 text-purple-300/60" />
+          <button onClick={() => navigate('/privacy')} className="settings-link-row">
+            <FileText className="w-5 h-5 text-[#4CA771]" />
+            <span className="flex-1 text-left">Privacy Policy</span>
+            <ExternalLink className="w-4 h-4 text-[#6B8A6F]" />
           </button>
 
-          <button
-            onClick={() => navigate('/terms')}
-            className="w-full p-3 retro-stat-pill rounded-lg flex items-center gap-3 transition-all active:scale-95 text-purple-100"
-          >
-            <ScrollText className="w-5 h-5" />
-            <span className="text-sm font-semibold flex-1 text-left">Terms of Service</span>
-            <ExternalLink className="w-4 h-4 text-purple-300/60" />
+          <button onClick={() => navigate('/terms')} className="settings-link-row">
+            <ScrollText className="w-5 h-5 text-[#4CA771]" />
+            <span className="flex-1 text-left">Terms of Service</span>
+            <ExternalLink className="w-4 h-4 text-[#6B8A6F]" />
           </button>
 
-          <button
-            onClick={() => openLink('mailto:support@fonoinc.com')}
-            className="w-full p-3 retro-stat-pill rounded-lg flex items-center gap-3 transition-all active:scale-95 text-purple-100"
-          >
-            <MessageCircle className="w-5 h-5" />
-            <span className="text-sm font-semibold flex-1 text-left">Contact Support</span>
-            <ExternalLink className="w-4 h-4 text-purple-300/60" />
+          <button onClick={() => openLink('mailto:support@fonoinc.com')} className="settings-link-row">
+            <MessageCircle className="w-5 h-5 text-[#4CA771]" />
+            <span className="flex-1 text-left">Contact Support</span>
+            <ExternalLink className="w-4 h-4 text-[#6B8A6F]" />
           </button>
 
-          <button
-            onClick={() => openLink('https://fonoinc.com')}
-            className="w-full retro-arcade-btn retro-arcade-btn-green px-3 py-2.5 text-sm flex items-center gap-3"
-          >
+          <button onClick={() => openLink('https://fonoinc.com')} className="settings-btn-primary text-sm">
             <Heart className="w-5 h-5" />
             <span className="font-bold flex-1 text-left">Visit BotBlock Inc.</span>
             <ExternalLink className="w-4 h-4" />
@@ -100,8 +72,8 @@ export const SettingsAbout = () => {
       </div>
 
       {/* Footer */}
-      <div className="retro-stat-pill p-3 text-center">
-        <p className="text-[11px] text-purple-300/60">
+      <div className="text-center py-3">
+        <p className="text-[11px] text-[#6B8A6F]">
           &copy; {new Date().getFullYear()} BotBlock Inc. All rights reserved.
         </p>
       </div>

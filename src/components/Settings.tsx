@@ -11,7 +11,7 @@ import { SettingsProfile } from "@/components/settings/SettingsProfile";
 import { SettingsAnalytics } from "@/components/settings/SettingsAnalytics";
 import { SettingsFocusMode } from "@/components/settings/SettingsFocusMode";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Clock, Database, Heart, UserCircle, SlidersHorizontal } from "lucide-react";
+import { Loader2, Clock, Database, Heart, UserCircle, SlidersHorizontal, Settings as SettingsIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -41,40 +41,31 @@ export const Settings = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[#F8F8F4]">
-        <div
-          className="rounded-2xl p-6 flex items-center gap-3 bg-white border border-stone-200/60"
-          style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
-        >
-          <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
-          <span className="text-sm font-medium text-stone-600">Loading settings...</span>
+      <div className="h-full flex items-center justify-center settings-page">
+        <div className="settings-card flex items-center gap-3">
+          <Loader2 className="w-5 h-5 animate-spin text-[#4CA771]" />
+          <span className="text-sm font-medium text-[#8BA68F]">Loading settings...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-[hsl(var(--background))]">
+    <div className="h-full flex flex-col settings-page">
       {/* Header */}
-      <div className="relative px-4 pt-4 pb-3">
+      <div className="settings-header">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden bg-white border border-stone-200/60"
-            style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-          >
-            <img src="/app-icon.png" alt="BotBlock" width={32} height={32} className="rounded-lg" draggable={false} />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(76,167,113,0.15)' }}>
+            <SettingsIcon className="w-[18px] h-[18px] text-[#4CA771]" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-stone-900 tracking-tight">
-              Settings
-            </h1>
-            <p className="text-xs text-stone-400">
-              Customize Your Experience
-            </p>
+            <h1 className="text-lg font-bold text-[#E8F0EB] tracking-tight">Settings</h1>
+            <p className="text-[11px] text-[#6B8A6F]">Customize Your Experience</p>
           </div>
         </div>
       </div>
 
-      {/* Scrollable Tab Navigation */}
+      {/* Tab Navigation */}
       <div className="px-3 py-2">
         <div
           ref={tabsRef}
@@ -89,15 +80,7 @@ export const Settings = () => {
                 key={tab.id}
                 ref={isActive ? activeTabRef : null}
                 onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap transition-all duration-200 active:scale-95 flex-shrink-0 text-xs font-semibold",
-                  isActive
-                    ? "bg-emerald-500 text-white shadow-md"
-                    : "bg-stone-100 text-stone-500 border border-stone-200/50 hover:bg-stone-150"
-                )}
-                style={isActive ? {
-                  boxShadow: '0 2px 8px rgba(14,165,233,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
-                } : undefined}
+                className={cn("settings-tab", isActive ? "settings-tab--active" : "settings-tab--inactive")}
               >
                 <Icon className={cn("w-3.5 h-3.5", isActive ? "opacity-100" : "opacity-60")} />
                 <span>{tab.label}</span>
@@ -109,43 +92,28 @@ export const Settings = () => {
 
       {/* Content */}
       <ScrollArea className="flex-1 min-h-0">
-        <div className="px-4 pt-1 pb-6 space-y-4">
+        <div className="px-4 pt-1 pb-6 space-y-3">
           {activeTab === "account" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <SettingsProfile />
               <SettingsAccount />
             </div>
           )}
-
           {activeTab === "general" && (
-            <div className="space-y-4">
-              <SettingsAppearance
-                settings={settings}
-                onUpdate={updateSettings}
-              />
-              <SettingsSound
-                settings={settings}
-                onUpdate={updateSettings}
-              />
-              <SettingsGame
-                settings={settings}
-                onUpdate={updateSettings}
-              />
+            <div className="space-y-3">
+              <SettingsAppearance settings={settings} onUpdate={updateSettings} />
+              <SettingsSound settings={settings} onUpdate={updateSettings} />
+              <SettingsGame settings={settings} onUpdate={updateSettings} />
             </div>
           )}
-
           {activeTab === "timer" && (
-            <div className="space-y-4">
-              <SettingsTimer
-                settings={settings}
-                onUpdate={updateSettings}
-              />
+            <div className="space-y-3">
+              <SettingsTimer settings={settings} onUpdate={updateSettings} />
               <SettingsFocusMode />
             </div>
           )}
-
           {activeTab === "data" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <SettingsAnalytics />
               <SettingsData
                 settings={settings}
@@ -156,10 +124,7 @@ export const Settings = () => {
               />
             </div>
           )}
-
-          {activeTab === "about" && (
-            <SettingsAbout />
-          )}
+          {activeTab === "about" && <SettingsAbout />}
         </div>
       </ScrollArea>
     </div>
