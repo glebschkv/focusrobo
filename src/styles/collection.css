@@ -26,8 +26,6 @@
   padding: 12px 8px;
   border-radius: 16px;
   background: hsl(var(--col-card));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid hsl(var(--col-border));
 }
 

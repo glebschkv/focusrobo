@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { cn } from '@/lib/utils';
-import { Lock, Sparkles, Heart } from 'lucide-react';
+import { Lock, Heart } from 'lucide-react';
 import { type PetSpecies, RARITY_GLOW } from '@/data/PetDatabase';
 import { RARITY_ACCENT, SIZE_LABEL } from './constants';
 
@@ -87,9 +87,6 @@ export const SpeciesCard = memo(({
           <span>{timesFound}x</span>
           {bestSize && <><span className="text-[hsl(var(--col-whisper))]">/</span><span>{SIZE_LABEL[bestSize] ?? bestSize}</span></>}
         </div>
-      )}
-      {species.rarity === 'legendary' && (
-        <Sparkles className="absolute top-1.5 left-1.5 w-3 h-3 text-amber-400 animate-pulse" />
       )}
     </button>
   );

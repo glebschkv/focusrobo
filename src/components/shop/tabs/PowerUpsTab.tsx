@@ -100,7 +100,7 @@ export const PowerUpsTab = ({
                 }}
                 disabled={boosterActive}
                 className={cn(
-                  "shop-list-card purple",
+                  "shop-list-card",
                   boosterActive && "disabled"
                 )}
               >
@@ -138,7 +138,7 @@ export const PowerUpsTab = ({
                   setSelectedItem(item);
                   setShowPurchaseConfirm(true);
                 }}
-                className="shop-grid-card cyan"
+                className="shop-grid-card"
               >
                 <PixelIcon name={item.icon} size={24} className="block mb-1 mx-auto" />
                 <span className="text-[10px] font-bold block">{item.name}</span>
@@ -160,7 +160,7 @@ export const PowerUpsTab = ({
         <div className="shop-section-header">
           <span className="shop-section-title">Buy Coins</span>
         </div>
-        <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2.5">
           {coins.map((pack) => (
             <button
               key={pack.id}
@@ -169,33 +169,21 @@ export const PowerUpsTab = ({
                 setShowPackConfirm(true);
               }}
               className={cn(
-                "shop-list-card",
-                pack.isBestValue ? "amber best-value" : ""
+                "shop-grid-card text-left",
+                pack.isBestValue && "best-value"
               )}
             >
-              <div className="flex items-center gap-3">
-                <PixelIcon name={pack.icon} size={24} />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm">{pack.name}</span>
-                    {pack.isBestValue && (
-                      <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[8px] font-bold rounded">BEST</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <PixelIcon name="coin" size={12} />
-                    <span className="text-amber-600 font-bold text-xs">{pack.coinAmount.toLocaleString()}</span>
-                    {pack.bonusCoins && (
-                      <span className="text-green-600 text-xs font-semibold">+{pack.bonusCoins.toLocaleString()}</span>
-                    )}
-                  </div>
-                </div>
-                <div className={cn(
-                  "iap-price-button",
-                  pack.isBestValue && "best-value"
-                )}>
-                  {storeKit.getLocalizedPrice(pack.iapProductId, pack.iapPrice)}
-                </div>
+              <PixelIcon name={pack.icon} size={28} className="block mb-1.5" />
+              <span className="font-bold text-xs block">{pack.name}</span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <PixelIcon name="coin" size={11} />
+                <span className="text-amber-600 font-bold text-[11px]">{pack.coinAmount.toLocaleString()}</span>
+                {pack.bonusCoins && (
+                  <span className="text-green-600 text-[10px] font-semibold">+{pack.bonusCoins.toLocaleString()}</span>
+                )}
+              </div>
+              <div className="iap-price-button mt-2 w-full text-center text-xs">
+                {storeKit.getLocalizedPrice(pack.iapProductId, pack.iapPrice)}
               </div>
             </button>
           ))}

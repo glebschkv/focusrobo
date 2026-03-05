@@ -32,7 +32,7 @@ export const PurchaseConfirmDialog = ({
         key={i}
         className={cn(
           "w-3 h-3",
-          rarity === 'legendary' ? "text-amber-400 fill-amber-400 animate-pulse" : "text-amber-400 fill-amber-400"
+          "text-amber-400 fill-amber-400"
         )}
       />
     ));
@@ -45,7 +45,6 @@ export const PurchaseConfirmDialog = ({
       <DialogContent className="retro-modal max-w-[280px] p-0 overflow-hidden border-0">
         <>
           <div className="retro-modal-header p-4 text-center">
-            <div className="retro-scanlines opacity-30" />
             <div className="h-28 mb-2 flex items-center justify-center overflow-hidden">
               {'previewImages' in selectedItem && (selectedItem as Bundle).previewImages ? (
                 <div className="w-full">
@@ -54,9 +53,7 @@ export const PurchaseConfirmDialog = ({
               ) : 'previewImage' in selectedItem && typeof selectedItem.previewImage === 'string' && selectedItem.previewImage ? (
                 <BackgroundPreview imagePath={selectedItem.previewImage} size="large" className="w-full" />
               ) : (
-                <div className="animate-bounce">
-                  <PixelIcon name={selectedItem.icon} size={48} className="retro-pixel-shadow" />
-                </div>
+                <PixelIcon name={selectedItem.icon} size={48} />
               )}
             </div>
             <DialogHeader>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Crown, ChevronRight, Check, Sparkles, Zap } from "lucide-react";
+import { Crown, ChevronRight, Check } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, COIN_PACKS, StarterBundle, CoinPack, Bundle } from "@/data/ShopData";
@@ -109,37 +109,23 @@ export const FeaturedTab = ({
           onClick={() => setShowPremiumModal(true)}
           className="shop-premium-card"
         >
-          <div className="shop-premium-shimmer" />
-          <div className="flex items-center gap-3 relative z-[1]">
+          <div className="flex items-center gap-3">
             <div className="shop-premium-crown">
-              <Crown className="w-6 h-6 text-white" style={{ filter: 'drop-shadow(0 1px 0 rgba(0,0,0,0.3))' }} />
+              <Crown className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-1.5">
-                <h3 className="font-black text-white text-[15px] tracking-tight" style={{ textShadow: '0 1px 0 rgba(0,0,0,0.3)' }}>
-                  Go Premium
-                </h3>
-                <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-              </div>
-              <div className="flex flex-wrap gap-1.5 mt-1.5">
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/15 text-[9px] font-bold text-white/90">
-                  <Zap className="w-2.5 h-2.5" /> 2x Coins
-                </span>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/15 text-[9px] font-bold text-white/90">
-                  <Sparkles className="w-2.5 h-2.5" /> All Sounds
-                </span>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-white/15 text-[9px] font-bold text-white/90">
-                  <Crown className="w-2.5 h-2.5" /> Exclusive Perks
-                </span>
-              </div>
+              <h3 className="font-black text-white text-[15px] tracking-tight">
+                Premium
+              </h3>
+              <p className="text-[10px] text-white/70 mt-1">2x coins, all sounds, exclusive perks</p>
             </div>
             <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
               <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('com.fonoinc.app.premium.monthly', '€4,99')}</span>
               <span className="text-white/50 text-[10px] font-bold">/month</span>
             </div>
           </div>
-          <div className="relative z-[1] flex items-center justify-center gap-1.5 mt-2.5 pt-2 border-t border-white/10">
-            <span className="text-white/80 text-[11px] font-bold tracking-wide uppercase">See all plans</span>
+          <div className="flex items-center justify-center gap-1.5 mt-2.5 pt-2 border-t border-white/10">
+            <span className="text-white/80 text-[11px] font-bold tracking-wide uppercase">View plans</span>
             <ChevronRight className="w-3.5 h-3.5 text-white/50" />
           </div>
         </button>
@@ -185,13 +171,6 @@ export const FeaturedTab = ({
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                       <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
                         <Check className="w-2.5 h-2.5" /> OWNED
-                      </span>
-                    </div>
-                  )}
-                  {!owned && (
-                    <div className="absolute top-2 right-2">
-                      <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
-                        SAVE {bundle.savings}
                       </span>
                     </div>
                   )}
@@ -244,7 +223,7 @@ export const FeaturedTab = ({
                 }}
                 className={cn(
                   "shop-list-card",
-                  alreadyPurchased ? "green" : "purple"
+                  alreadyPurchased && "green"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -252,13 +231,9 @@ export const FeaturedTab = ({
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm">{bundle.name}</span>
-                      {alreadyPurchased ? (
+                      {alreadyPurchased && (
                         <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
                           <Check className="w-2.5 h-2.5" /> OWNED
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
-                          SAVE {bundle.savings}
                         </span>
                       )}
                     </div>
@@ -288,15 +263,12 @@ export const FeaturedTab = ({
             setSelectedBundle(bestValuePack);
             setShowBundleConfirm(true);
           }}
-          className="shop-list-card amber best-value"
+          className="shop-list-card best-value"
         >
           <div className="flex items-center gap-3">
             <PixelIcon name="trophy" size={36} />
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sm">{bestValuePack.name}</span>
-                <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[8px] font-bold rounded">BEST</span>
-              </div>
+              <span className="font-bold text-sm">{bestValuePack.name}</span>
               <div className="flex items-center gap-1 mt-0.5">
                 <PixelIcon name="coin" size={12} />
                 <span className="text-amber-600 font-bold text-xs">{bestValuePack.coinAmount.toLocaleString()}</span>
@@ -313,18 +285,14 @@ export const FeaturedTab = ({
       </div>
 
       {/* Browse Backgrounds link */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <div className="shop-section-header" style={{ marginBottom: 0 }}>
-            <span className="shop-section-title">Backgrounds</span>
-          </div>
-          <button
-            onClick={() => setActiveCategory('customize')}
-            className="text-xs text-amber-600 font-bold"
-          >
-            See All →
-          </button>
-        </div>
+      <div className="flex items-center justify-between">
+        <span className="shop-section-title">Backgrounds</span>
+        <button
+          onClick={() => setActiveCategory('customize')}
+          className="text-xs text-amber-600 font-bold"
+        >
+          See All →
+        </button>
       </div>
     </div>
   );

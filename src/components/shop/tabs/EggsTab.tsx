@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { Egg, Sparkles, Target } from 'lucide-react';
+import { Egg, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { EGG_TYPES, SPECIES_SELECTOR_PRICE } from '@/data/EggData';
@@ -99,7 +99,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
           <span className="font-bold text-sm text-emerald-800">Species Selector</span>
         </div>
         <p className="text-[11px] text-emerald-600/80 mb-2">
-          Guarantee your next pet (session or egg) is your wished species!
+          Pick your next pet instead of leaving it to chance.
         </p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -146,9 +146,6 @@ function EggCard({
         <span className={cn('font-bold text-xs', RARITY_COLORS[egg.rarity])}>
           {egg.name}
         </span>
-        {egg.rarity === 'legendary' && (
-          <Sparkles className="w-3 h-3 text-amber-400 animate-pulse" />
-        )}
       </div>
 
       {/* Rarity odds */}
