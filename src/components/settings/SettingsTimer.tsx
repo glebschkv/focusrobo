@@ -16,7 +16,7 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
       {/* Focus & Break Times - Combined Card */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-4">
-          <Timer className="w-4 h-4 text-cyan-400" />
+          <Timer className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">SESSION DURATIONS</span>
         </div>
 

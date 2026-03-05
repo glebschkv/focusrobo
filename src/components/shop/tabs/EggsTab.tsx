@@ -92,13 +92,13 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       {/* Species Selector */}
       <div className={cn(
         'rounded-xl border p-3',
-        'bg-gradient-to-br from-sky-50 to-indigo-50 border-sky-200',
+        'bg-gradient-to-br from-emerald-50 to-indigo-50 border-emerald-200',
       )}>
         <div className="flex items-center gap-2 mb-1.5">
-          <Target className="w-4 h-4 text-sky-600" />
-          <span className="font-bold text-sm text-sky-800">Species Selector</span>
+          <Target className="w-4 h-4 text-emerald-600" />
+          <span className="font-bold text-sm text-emerald-800">Species Selector</span>
         </div>
-        <p className="text-[11px] text-sky-600/80 mb-2">
+        <p className="text-[11px] text-emerald-600/80 mb-2">
           Guarantee your next pet (session or egg) is your wished species!
         </p>
         <div className="flex items-center justify-between">
@@ -110,7 +110,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
             className={cn(
               'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
               canAfford(SPECIES_SELECTOR_PRICE)
-                ? 'bg-sky-500 text-white active:scale-95'
+                ? 'bg-emerald-500 text-white active:scale-95'
                 : 'bg-stone-200 text-stone-400 cursor-not-allowed',
             )}
             disabled={!canAfford(SPECIES_SELECTOR_PRICE)}

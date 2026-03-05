@@ -12,7 +12,7 @@ import { checkRateLimit, recordRateLimitAttempt, clearRateLimit, RATE_LIMIT_CONF
 import { Capacitor } from '@capacitor/core';
 
 const AUTH_BG = 'linear-gradient(180deg, hsl(40 20% 98%) 0%, hsl(38 15% 95%) 50%, hsl(36 12% 93%) 100%)';
-const INPUT_CLASS = 'h-12 rounded-xl bg-white border-stone-200 text-stone-900 placeholder:text-stone-400 focus:border-sky-500 focus:ring-sky-500';
+const INPUT_CLASS = 'h-12 rounded-xl bg-white border-stone-200 text-stone-900 placeholder:text-stone-400 focus:border-emerald-500 focus:ring-emerald-500';
 
 // Apple logo SVG component
 const AppleIcon = ({ className }: { className?: string }) => (
@@ -509,7 +509,7 @@ export default function Auth() {
       <PageErrorBoundary pageName="authentication page">
         <div className="min-h-screen flex items-center justify-center pt-safe pb-safe" style={{ background: AUTH_BG }}>
           <div className="text-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-2 border-stone-200 border-t-sky-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-stone-200 border-t-emerald-500 mx-auto mb-4"></div>
             <p className="text-sm text-stone-400 animate-pulse">Loading...</p>
           </div>
         </div>
@@ -583,7 +583,7 @@ export default function Auth() {
               className="w-full p-4 rounded-xl flex items-center gap-4 transition-all active:scale-[0.98] bg-white border border-stone-200"
               style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-sky-50 border border-sky-100">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 border border-emerald-100">
                 <PixelIcon name="sparkles" size={24} />
               </div>
               <div className="text-left flex-1">
@@ -667,7 +667,7 @@ export default function Auth() {
                 <p className="text-sm text-stone-400">
                   We sent a magic link to
                 </p>
-                <p className="text-sm font-semibold text-sky-500">{emailSentTo}</p>
+                <p className="text-sm font-semibold text-emerald-500">{emailSentTo}</p>
               </div>
               <p className="text-xs text-stone-400">
                 Click the link in the email to sign in. It may take a minute to arrive.
@@ -719,7 +719,7 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
+                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -737,7 +737,7 @@ export default function Auth() {
                 Don't have an account?{' '}
                 <button
                   onClick={() => { resetForm(); setMode('signup'); }}
-                  className="text-sky-500 hover:underline font-medium"
+                  className="text-emerald-500 hover:underline font-medium"
                 >
                   Sign up
                 </button>
@@ -798,7 +798,7 @@ export default function Auth() {
                 <button
                   type="button"
                   onClick={() => { setMode('forgot-password'); }}
-                  className="text-xs text-sky-500 hover:underline min-h-[44px] flex items-center"
+                  className="text-xs text-emerald-500 hover:underline min-h-[44px] flex items-center"
                 >
                   Forgot password?
                 </button>
@@ -827,7 +827,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -845,7 +845,7 @@ export default function Auth() {
             Don't have an account?{' '}
             <button
               onClick={() => { resetForm(); setMode('signup'); }}
-              className="text-sky-500 hover:underline font-medium"
+              className="text-emerald-500 hover:underline font-medium"
             >
               Sign up
             </button>
@@ -891,14 +891,14 @@ export default function Auth() {
                 <p className="text-sm text-stone-400">
                   We sent a confirmation link to
                 </p>
-                <p className="text-sm font-semibold text-sky-500">{emailSentTo}</p>
+                <p className="text-sm font-semibold text-emerald-500">{emailSentTo}</p>
               </div>
               <p className="text-xs text-stone-400">
                 Click the link in the email to activate your account. Check your spam folder if you don't see it.
               </p>
               <div className="pt-2 space-y-3">
                 <button
-                  className="w-full py-3 text-sm font-semibold rounded-xl bg-sky-500 text-white shadow-[0_2px_8px_rgba(14,165,233,0.3)] transition-all active:scale-[0.98]"
+                  className="w-full py-3 text-sm font-semibold rounded-xl bg-emerald-500 text-white shadow-[0_2px_8px_rgba(14,165,233,0.3)] transition-all active:scale-[0.98]"
                   onClick={() => { resetForm(); setMode('email-password'); }}
                 >
                   I've verified — Sign in
@@ -917,7 +917,7 @@ export default function Auth() {
                 <div className="relative inline-block mb-3">
                   <div
                     className="absolute inset-0 rounded-full blur-xl scale-[2]"
-                    style={{ background: 'hsl(199 80% 50% / 0.06)' }}
+                    style={{ background: 'hsl(152 44% 45% / 0.06)' }}
                   />
                   <img
                     src="/app-icon.png"
@@ -999,7 +999,7 @@ export default function Auth() {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
+                  className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -1017,7 +1017,7 @@ export default function Auth() {
                 Already have an account?{' '}
                 <button
                   onClick={() => { resetForm(); setMode('email-password'); }}
-                  className="text-sky-500 hover:underline font-medium"
+                  className="text-emerald-500 hover:underline font-medium"
                 >
                   Sign in
                 </button>
@@ -1074,7 +1074,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -1092,7 +1092,7 @@ export default function Auth() {
             Remember your password?{' '}
             <button
               onClick={() => { resetForm(); setMode('email-password'); }}
-              className="text-sky-500 hover:underline font-medium"
+              className="text-emerald-500 hover:underline font-medium"
             >
               Sign in
             </button>
@@ -1173,7 +1173,7 @@ export default function Auth() {
 
             <button
               type="submit"
-              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-sky-500 hover:bg-sky-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
+              className="w-full py-3.5 text-sm font-bold tracking-wide disabled:opacity-60 rounded-xl text-white transition-all active:scale-[0.98] bg-emerald-500 hover:bg-emerald-600 shadow-[0_2px_8px_rgba(14,165,233,0.3)]"
               disabled={isLoading}
             >
               {isLoading ? (

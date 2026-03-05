@@ -44,9 +44,9 @@ const CATEGORY_GLOW: Record<FocusCategory, { border: string; shadow: string; bg:
     bg: "bg-orange-500/20",
   },
   other: {
-    border: "border-cyan-400",
+    border: "border-teal-400",
     shadow: "shadow-[0_0_14px_rgba(34,211,238,0.5)]",
-    bg: "bg-cyan-500/20",
+    bg: "bg-teal-500/20",
   },
 };
 
@@ -137,7 +137,7 @@ export const TaskIntentionModal = memo(({
                 "w-full px-3 py-2.5 rounded-xl text-sm text-stone-900",
                 "bg-stone-50 border border-stone-200",
                 "placeholder:text-stone-300",
-                "focus:outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-200",
+                "focus:outline-none focus:border-emerald-300 focus:ring-1 focus:ring-emerald-200",
                 "transition-all duration-150"
               )}
               maxLength={50}
@@ -175,7 +175,7 @@ export const TaskIntentionModal = memo(({
               onClick={handleStart}
               className={cn(
                 "flex-1 py-2.5 rounded-xl font-semibold text-sm text-white",
-                "bg-sky-500 hover:bg-sky-600 active:scale-95",
+                "bg-emerald-500 hover:bg-emerald-600 active:scale-95",
                 "transition-all duration-150 touch-manipulation select-none"
               )}
             >

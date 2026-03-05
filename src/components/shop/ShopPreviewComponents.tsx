@@ -27,7 +27,7 @@ export const BackgroundPreview = ({
       className
     )}>
       {!loaded && !error && (
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-200 to-blue-300 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-200 to-teal-300 animate-pulse" />
       )}
       {error && (
         <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">

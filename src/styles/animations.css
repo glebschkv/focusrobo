@@ -38,17 +38,17 @@
     0%, 100% {
       box-shadow:
         0 4px 24px hsl(0 0% 0% / 0.08),
-        0 0 0 0 hsl(25 100% 50% / 0);
+        0 0 0 0 hsl(152 44% 45% / 0);
     }
     50% {
       box-shadow:
         0 4px 24px hsl(0 0% 0% / 0.08),
-        0 0 0 12px hsl(25 100% 50% / 0);
+        0 0 0 12px hsl(152 44% 45% / 0);
     }
     25%, 75% {
       box-shadow:
         0 4px 24px hsl(0 0% 0% / 0.08),
-        0 0 0 6px hsl(25 100% 50% / 0.3);
+        0 0 0 6px hsl(152 44% 45% / 0.3);
     }
   }
 
@@ -239,7 +239,7 @@
   /* Daily streak fire colors based on streak length */
   .streak-1 { color: hsl(35 90% 55%); }
   .streak-3 { color: hsl(30 95% 52%); }
-  .streak-7 { color: hsl(25 100% 50%); }
+  .streak-7 { color: hsl(152 44% 45%); }
   .streak-14 { color: hsl(20 100% 50%); }
   .streak-30 { color: hsl(15 100% 50%); }
   .streak-max {

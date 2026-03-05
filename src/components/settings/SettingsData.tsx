@@ -45,7 +45,7 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
       {/* Privacy Settings */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-4">
-          <Shield className="w-4 h-4 text-cyan-400" />
+          <Shield className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">PRIVACY</span>
         </div>
 
@@ -80,7 +80,7 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
       {/* Backup & Restore */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-4">
-          <HardDrive className="w-4 h-4 text-cyan-400" />
+          <HardDrive className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">BACKUP</span>
         </div>
 

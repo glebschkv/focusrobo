@@ -52,7 +52,7 @@ export const GameUI = () => {
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) return;
-    meta.setAttribute('content', '#FAFAF9');
+    meta.setAttribute('content', '#F8F8F4');
   }, [currentTab]);
 
   // Listen for programmatic tab switches (e.g. from collection "Buy from Shop" button)
@@ -121,7 +121,7 @@ export const GameUI = () => {
           {/* Full Screen Content */}
           <div
             className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 ${
-              currentTab === "home" ? "" : "bg-[#FAFAF9]"
+              currentTab === "home" ? "" : "bg-[#F8F8F4]"
             } ${
               currentTab === "timer" || currentTab === "home" ? "" : "pt-safe"
             }`}

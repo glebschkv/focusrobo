@@ -43,7 +43,7 @@ export const FocusLockScreen = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#FAFAF9]"
+          className="fixed inset-0 z-[100] bg-[#F8F8F4]"
         >
           {/* Background texture */}
           <div className="absolute inset-0 opacity-[0.03]">
@@ -62,8 +62,8 @@ export const FocusLockScreen = ({
               className="mb-8"
             >
               <div className="relative">
-                <div className="absolute inset-0 blur-xl bg-sky-200/40 rounded-full" />
-                <div className="relative w-24 h-24 bg-sky-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute inset-0 blur-xl bg-emerald-200/40 rounded-full" />
+                <div className="relative w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg">
                   <Shield className="w-12 h-12 text-white" />
                 </div>
               </div>
@@ -129,7 +129,7 @@ export const FocusLockScreen = ({
             >
               <Button
                 onClick={onReturnToApp}
-                className="w-full bg-sky-500 hover:bg-sky-600 text-white py-6 text-lg font-semibold"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 text-lg font-semibold"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Return to Focus

@@ -42,7 +42,7 @@ export function PluginUnavailableBanner({ className }: PluginUnavailableBannerPr
       className={cn(
         'bg-amber-500/90 text-amber-950 px-4 py-3',
         'flex items-center justify-between gap-3',
-        'backdrop-blur-sm border-b border-amber-600/50',
+        'border-b border-amber-600/50',
         className
       )}
       role="alert"

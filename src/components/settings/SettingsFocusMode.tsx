@@ -97,7 +97,7 @@ export const SettingsFocusMode = () => {
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-3">
                 {settings.blockNotifications ? (
-                  <BellOff className="w-4 h-4 text-cyan-400" />
+                  <BellOff className="w-4 h-4 text-teal-400" />
                 ) : (
                   <Bell className="w-4 h-4 text-purple-300/60" />
                 )}

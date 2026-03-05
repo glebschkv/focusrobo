@@ -26,7 +26,7 @@ export const RewardModal = ({ isOpen, onClose, newPetsEarned, timeAwayMinutes }:
         
         <div className="space-y-4">
           {/* Time Away Display */}
-          <Card className="bg-card/90 backdrop-blur-sm border-border/50">
+          <Card className="bg-card border-border">
             <div className="p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Clock className="w-5 h-5 text-primary" />
@@ -42,7 +42,7 @@ export const RewardModal = ({ isOpen, onClose, newPetsEarned, timeAwayMinutes }:
           </Card>
 
           {/* New Pets Earned */}
-          <Card className="bg-gradient-island/10 backdrop-blur-sm border-secondary/30 animate-island-glow">
+          <Card className="bg-card border-border">
             <div className="p-6 text-center">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <Sparkles className="w-6 h-6 text-accent animate-pulse" />

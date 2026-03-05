@@ -172,7 +172,7 @@ export const PetCollectionBook = memo(() => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#FAFAF9]">
+    <div className="h-full flex flex-col bg-[#F8F8F4]">
       {/* Header */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-3">

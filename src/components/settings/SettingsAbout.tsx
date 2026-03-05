@@ -57,7 +57,7 @@ export const SettingsAbout = () => {
       {/* Legal */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Shield className="w-4 h-4 text-cyan-400" />
+          <Shield className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">LEGAL</span>
         </div>
         <div className="space-y-2">

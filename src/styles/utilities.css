@@ -85,10 +85,9 @@
     overscroll-behavior-y: contain;
   }
 
-  /* Mobile-optimized backdrop blur */
+  /* Mobile-optimized solid background (replaces backdrop blur) */
   .backdrop-blur-ios {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: hsl(var(--card));
   }
   
   /* iOS-style button press effect */

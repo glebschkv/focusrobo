@@ -33,18 +33,18 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
                 className={cn(
                   "relative p-3 rounded-xl flex flex-col items-center gap-2 transition-all active:scale-95 border",
                   isSelected
-                    ? "bg-sky-50 border-sky-300"
+                    ? "bg-emerald-50 border-emerald-300"
                     : "bg-stone-50 border-stone-200"
                 )}
               >
                 {isSelected && (
-                  <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-sky-500 flex items-center justify-center">
+                  <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" />
                   </div>
                 )}
                 <div className={cn(
                   "w-10 h-10 rounded-xl flex items-center justify-center border",
-                  isSelected ? "bg-sky-100 border-sky-200 text-sky-600" : "bg-white border-stone-200 text-stone-400"
+                  isSelected ? "bg-emerald-100 border-emerald-200 text-emerald-600" : "bg-white border-stone-200 text-stone-400"
                 )}>
                   <Icon className="w-5 h-5" />
                 </div>

@@ -672,7 +672,7 @@ const StepHowItWorks = () => (
           }}
         >
           <div
-            className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl backdrop-blur-sm"
+            className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl"
             style={{
               background: step.color,
               border: `1px solid ${step.borderColor}`,
@@ -800,7 +800,7 @@ const StepMeetCompanion = () => (
 
     {/* Character card */}
     <motion.div
-      className="mx-auto max-w-[260px] rounded-2xl px-5 py-4 backdrop-blur-sm"
+      className="mx-auto max-w-[260px] rounded-2xl px-5 py-4"
       style={{
         background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.1)',
@@ -977,7 +977,7 @@ const StepFocusShield = () => {
               }}
             >
               <div
-                className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl backdrop-blur-sm"
+                className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl"
                 style={{
                   background: step.color,
                   border: `1px solid ${step.borderColor}`,
@@ -1059,7 +1059,7 @@ const StepFocusShield = () => {
         ) : (
           <div className="space-y-3">
             <div
-              className="py-3 px-4 rounded-2xl text-sm font-semibold backdrop-blur-sm"
+              className="py-3 px-4 rounded-2xl text-sm font-semibold"
               style={{
                 background: 'rgba(140,180,255,0.12)',
                 border: '1px solid rgba(140,180,255,0.25)',

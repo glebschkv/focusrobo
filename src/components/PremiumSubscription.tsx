@@ -245,12 +245,12 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
             </div>
             <div className="flex items-center gap-1.5">
               {plan.isPopular && (
-                <span className="px-2 py-0.5 bg-white/25 backdrop-blur-sm rounded text-[8px] font-black text-white uppercase tracking-wider border border-white/20">
+                <span className="px-2 py-0.5 bg-white/30 rounded text-[8px] font-black text-white uppercase tracking-wider border border-white/20">
                   Popular
                 </span>
               )}
               {tierKey === 'lifetime' && (
-                <span className="px-2 py-0.5 bg-white/25 backdrop-blur-sm rounded text-[8px] font-black text-white uppercase tracking-wider border border-white/20">
+                <span className="px-2 py-0.5 bg-white/30 rounded text-[8px] font-black text-white uppercase tracking-wider border border-white/20">
                   Best Value
                 </span>
               )}

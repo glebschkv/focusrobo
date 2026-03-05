@@ -25,7 +25,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
   // If achievements view is open, show it instead
   if (showAchievements) {
     return (
-      <div className="h-full flex flex-col bg-[#FAFAF9]">
+      <div className="h-full flex flex-col bg-[#F8F8F4]">
         <AchievementGallery
           embedded={true}
           onClose={() => setShowAchievements(false)}
@@ -35,7 +35,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#FAFAF9]">
+    <div className="h-full flex flex-col bg-[#F8F8F4]">
       {/* Header */}
       <div className="relative px-4 pt-4 pb-3">
         <div className="flex items-center gap-3">
@@ -123,14 +123,14 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
             }}
           >
             <h4 className="font-semibold text-stone-700 mb-3 flex items-center gap-2 text-[13px]">
-              <div className="w-5 h-5 rounded-md bg-sky-500/10 flex items-center justify-center">
-                <Zap className="w-3 h-3 text-sky-500" strokeWidth={2.5} />
+              <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center">
+                <Zap className="w-3 h-3 text-emerald-500" strokeWidth={2.5} />
               </div>
               How It Works
             </h4>
             <ul className="text-sm text-stone-500 space-y-2.5">
               <li className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0 mt-1.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 mt-1.5" />
                 Complete focus sessions to earn XP and level up
               </li>
               <li className="flex items-start gap-2.5">
