@@ -1,15 +1,10 @@
 /* ============================================
-   COLLECTION PAGE — Forest / Pastel Green Theme
-   All colors reference --col-* tokens from base.css
+   COLLECTION PAGE — Unified app theme
    ============================================ */
 
-/* Page background — soft sage green gradient */
+/* Page background — matches app */
 .collection-page {
-  background: linear-gradient(
-    180deg,
-    hsl(var(--col-bg-start)) 0%,
-    hsl(var(--col-bg-end)) 100%
-  );
+  background: hsl(var(--background));
 }
 
 /* Header area */
@@ -17,16 +12,17 @@
   padding: 16px 16px 12px;
 }
 
-/* Stats cards — frosted green glass */
+/* Stats cards */
 .collection-stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 8px;
+  padding: 14px 10px;
   border-radius: 16px;
-  background: hsl(var(--col-card));
-  border: 1px solid hsl(var(--col-border));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
 }
 
 /* ---- SPECIES CARDS ---- */
@@ -36,30 +32,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 14px;
-  padding: 10px 6px 8px;
+  border-radius: 16px;
+  padding: 12px 8px 10px;
   transition: transform 0.15s ease, box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .collection-card:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .collection-card--locked {
-  background: hsl(var(--col-surface));
-  border: 1.5px solid hsl(var(--col-border));
+  background: hsl(var(--muted) / 0.3);
+  border: 1.5px solid hsl(var(--border));
 }
 
 .collection-card--undiscovered {
-  background: hsl(var(--col-card));
-  border: 1.5px dashed hsl(var(--col-whisper));
+  background: hsl(var(--card));
+  border: 1.5px dashed hsl(var(--border));
 }
 
 .collection-card--discovered {
-  background: hsl(var(--col-card));
-  border: 1.5px solid hsl(var(--col-border));
-  box-shadow: 0 1px 4px hsl(var(--col-accent) / 0.06);
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
 }
 
 /* ---- LANDS TAB ---- */
@@ -67,18 +63,19 @@
 .collection-land-current {
   padding: 16px;
   border-radius: 20px;
-  background: hsl(var(--col-card));
+  background: hsl(var(--card));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid hsl(var(--col-border));
-  box-shadow: 0 2px 12px hsl(var(--col-accent) / 0.08);
+  border: 1.5px solid hsl(var(--border));
+  box-shadow: var(--shadow-md);
 }
 
 .collection-land-completed {
   padding: 14px;
   border-radius: 16px;
-  background: hsl(var(--col-card));
-  border: 1px solid hsl(var(--col-border));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
   transition: transform 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
@@ -92,16 +89,16 @@
 .collection-progress-fill {
   background: linear-gradient(
     90deg,
-    hsl(var(--col-progress-start)),
-    hsl(var(--col-progress-end))
+    hsl(var(--primary)),
+    hsl(var(--success))
   );
 }
 
 /* ---- SPECIES DETAIL DRAWER ---- */
 
 .collection-detail-drawer {
-  background: hsl(var(--col-bg-start));
-  border-top: 1.5px solid hsl(var(--col-border));
+  background: hsl(var(--background));
+  border-top: 1.5px solid hsl(var(--border));
 }
 
 .collection-detail-stat {
@@ -111,18 +108,14 @@
   justify-content: center;
   padding: 10px 6px;
   border-radius: 14px;
-  background: hsl(var(--col-card));
-  border: 1px solid hsl(var(--col-border));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
 }
 
 /* ---- LEGACY (backward compat) ---- */
 
 .collection-page-bg {
-  background: linear-gradient(
-    180deg,
-    hsl(var(--col-bg-start)) 0%,
-    hsl(var(--col-bg-end)) 100%
-  );
+  background: hsl(var(--background));
 }
 
 /* Quick focus FAB — green themed */

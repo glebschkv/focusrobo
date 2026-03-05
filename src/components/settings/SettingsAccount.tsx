@@ -24,8 +24,8 @@ const ConfirmDialog = ({
       <div className="settings-dialog-scrim" onClick={onCancel} aria-hidden />
       <div className="settings-dialog-card space-y-4">
         <div className="space-y-2 text-center">
-          <h2 className="text-base font-bold text-[#E8F0EB]">{title}</h2>
-          <p className="text-xs text-[#8BA68F]">{description}</p>
+          <h2 className="text-base font-bold text-[hsl(var(--foreground))]">{title}</h2>
+          <p className="text-xs text-[hsl(var(--muted-foreground))]">{description}</p>
         </div>
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
           <button className="settings-btn-secondary text-xs py-2" onClick={onCancel} disabled={isLoading}>
@@ -130,10 +130,10 @@ export const SettingsAccount = () => {
                 <Crown className={`w-5 h-5 ${isPremium ? 'text-white' : ''}`} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#E8F0EB]">
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
                   {isPremium ? currentPlan?.name || 'Premium' : 'Free Plan'}
                 </p>
-                <p className="text-[11px] text-[#8BA68F]">
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                   {isPremium
                     ? currentPlan?.period === 'lifetime' ? 'Lifetime access'
                       : `${currentPlan?.period === 'yearly' ? 'Annual' : 'Monthly'} subscription`
@@ -156,7 +156,7 @@ export const SettingsAccount = () => {
             <span className="text-sm font-semibold">{isRestoring ? 'Restoring...' : 'Restore Purchases'}</span>
           </button>
 
-          <p className="text-[11px] text-[#6B8A6F] text-center">
+          <p className="text-[11px] text-[hsl(var(--muted-foreground))] text-center">
             Made a purchase on another device? Tap restore to recover it.
           </p>
         </div>
@@ -173,15 +173,15 @@ export const SettingsAccount = () => {
           <div className="settings-row">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                isGuestMode ? 'settings-icon-box--inactive' : 'bg-[#4CA771] shadow-[0_2px_8px_rgba(76,167,113,0.3)]'
+                isGuestMode ? 'settings-icon-box--inactive' : 'bg-[hsl(var(--primary))] shadow-[0_2px_8px_rgba(76,167,113,0.3)]'
               }`}>
                 {isGuestMode ? <User className="w-5 h-5" /> : <Mail className="w-5 h-5 text-white" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#E8F0EB] truncate">
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))] truncate">
                   {isGuestMode ? 'Guest Account' : user?.email}
                 </p>
-                <p className="text-[11px] text-[#8BA68F]">
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                   {isGuestMode ? 'Not signed in — create an account to save your progress' : 'Synced to cloud'}
                 </p>
               </div>
@@ -192,12 +192,12 @@ export const SettingsAccount = () => {
           {isGuestMode && (
             <div className="settings-warning">
               <div className="flex items-start gap-2">
-                <Shield className="w-4 h-4 text-[#C5A033] mt-0.5 flex-shrink-0" />
+                <Shield className="w-4 h-4 text-[hsl(var(--warning))] mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-xs font-medium text-[#C5A033]">
+                  <p className="text-xs font-medium text-[hsl(var(--warning))]">
                     {isLocalOnlyGuest ? 'Your progress is only saved on this device' : "You're signed in as a guest"}
                   </p>
-                  <p className="text-[11px] text-[#8BA68F] mt-1">
+                  <p className="text-[11px] text-[hsl(var(--muted-foreground))] mt-1">
                     {isLocalOnlyGuest
                       ? 'Sign in to sync your bots and progress across devices'
                       : 'Create an account to keep your progress and sync across devices'}
@@ -244,15 +244,15 @@ export const SettingsAccount = () => {
         <div className="settings-card" style={{ borderColor: 'rgba(196,100,100,0.25)' }}>
           <div className="settings-section-title">
             <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)' }}>
-              <Trash2 className="w-3.5 h-3.5 text-[#E57373]" />
+              <Trash2 className="w-3.5 h-3.5 text-[hsl(var(--destructive))]" />
             </div>
-            <span className="text-[13px] font-bold text-[#E57373]">Danger Zone</span>
+            <span className="text-[13px] font-bold text-[hsl(var(--destructive))]">Danger Zone</span>
           </div>
           <button className="settings-btn-danger" disabled={isDeleting} onClick={() => setDeleteDialogOpen(true)}>
             {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
             <span>{isDeleting ? 'Deleting...' : 'Delete Account'}</span>
           </button>
-          <p className="text-[11px] text-[#6B8A6F] mt-2 text-center">
+          <p className="text-[11px] text-[hsl(var(--muted-foreground))] mt-2 text-center">
             This will permanently remove your account and all data
           </p>
         </div>

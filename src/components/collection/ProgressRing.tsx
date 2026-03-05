@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-/** Circular progress ring — SVG-based, uses collection design tokens. */
+/** Circular progress ring — SVG-based, uses shared design tokens. */
 export const ProgressRing = memo(({
   percent,
   size = 44,
@@ -19,13 +19,13 @@ export const ProgressRing = memo(({
       <circle
         cx={size / 2} cy={size / 2} r={r}
         fill="none"
-        stroke="hsl(var(--col-divider))"
+        stroke="hsl(var(--muted))"
         strokeWidth={stroke}
       />
       <circle
         cx={size / 2} cy={size / 2} r={r}
         fill="none"
-        stroke="hsl(var(--col-accent))"
+        stroke="hsl(var(--primary))"
         strokeWidth={stroke}
         strokeLinecap="round"
         strokeDasharray={circumference}

@@ -213,6 +213,10 @@ function useIslandParallax() {
       onPointerCancel: handlePointerUp,
       onWheel: handleWheel,
     },
+    setZoom: (z: number) => {
+      currentZoom.current = clampZoom(z);
+      updateCSS();
+    },
   };
 }
 
@@ -232,7 +236,13 @@ export const PetLand = () => {
   const tierScale = getIslandScale(gridSize);
   const progressPct = (filledCount / tierCapacity) * 100;
 
-  const { wrapperRef, skyRef, containerRef, petsRef, handlers: parallaxHandlers } = useIslandParallax();
+  const { wrapperRef, skyRef, containerRef, petsRef, handlers: parallaxHandlers, setZoom } = useIslandParallax();
+
+  // Auto-zoom for larger islands so pets remain visible
+  useEffect(() => {
+    if (gridSize >= 17) setZoom(1.3);
+    else if (gridSize >= 14) setZoom(1.15);
+  }, [gridSize, setZoom]);
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
 
   // Clear new pet glow after 8 seconds

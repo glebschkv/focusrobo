@@ -43,18 +43,18 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
         <div className="space-y-3">
           <div className="settings-row">
             <div>
-              <Label className="text-xs font-semibold text-[#E8F0EB]">Usage Analytics</Label>
-              <p className="text-[11px] text-[#8BA68F]">Anonymous usage data to improve the app</p>
+              <Label className="text-xs font-semibold text-[hsl(var(--foreground))]">Usage Analytics</Label>
+              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Anonymous usage data to improve the app</p>
             </div>
             <Switch checked={settings.dataCollection} onCheckedChange={(checked) => onUpdate({ dataCollection: checked })} />
           </div>
 
           <div className="settings-row">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-3.5 h-3.5 text-[#C5A033]" />
+              <AlertTriangle className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />
               <div>
-                <Label className="text-xs font-semibold text-[#E8F0EB]">Crash Reports</Label>
-                <p className="text-[11px] text-[#8BA68F]">Send error logs</p>
+                <Label className="text-xs font-semibold text-[hsl(var(--foreground))]">Crash Reports</Label>
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Send error logs</p>
               </div>
             </div>
             <Switch checked={settings.crashReporting} onCheckedChange={(checked) => onUpdate({ crashReporting: checked })} />
@@ -80,7 +80,7 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
               type="file"
               accept=".json"
               onChange={handleFileChange}
-              className="cursor-pointer h-11 text-xs bg-[rgba(26,46,35,0.6)] border-[rgba(76,167,113,0.15)] text-[#E8F0EB] file:mr-2 file:px-2 file:py-1 file:rounded file:border-0 file:bg-[rgba(76,167,113,0.15)] file:text-[#4CA771] file:text-xs file:font-medium"
+              className="cursor-pointer h-11 text-xs bg-[hsl(var(--muted)/0.3)] border-[hsl(var(--border))] text-[hsl(var(--foreground))] file:mr-2 file:px-2 file:py-1 file:rounded file:border-0 file:bg-[hsl(var(--primary)/0.12)] file:text-[hsl(var(--primary))] file:text-xs file:font-medium"
             />
           </div>
 
@@ -96,9 +96,9 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
       <div className="settings-card" style={{ borderColor: 'rgba(196,100,100,0.2)' }}>
         <div className="settings-section-title">
           <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)' }}>
-            <RotateCcw className="w-3.5 h-3.5 text-[#E57373]" />
+            <RotateCcw className="w-3.5 h-3.5 text-[hsl(var(--destructive))]" />
           </div>
-          <span className="text-[13px] font-bold text-[#E57373]">Reset</span>
+          <span className="text-[13px] font-bold text-[hsl(var(--destructive))]">Reset</span>
         </div>
 
         <button className="settings-btn-danger" onClick={() => setResetDialogOpen(true)}>
@@ -112,8 +112,8 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
           <div className="settings-dialog-scrim" onClick={() => setResetDialogOpen(false)} aria-hidden />
           <div className="settings-dialog-card space-y-4">
             <div className="space-y-2 text-center">
-              <h2 className="text-base font-bold text-[#E8F0EB]">Reset Settings?</h2>
-              <p className="text-xs text-[#8BA68F]">This will restore all default settings. Consider exporting first.</p>
+              <h2 className="text-base font-bold text-[hsl(var(--foreground))]">Reset Settings?</h2>
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">This will restore all default settings. Consider exporting first.</p>
             </div>
             <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
               <button className="settings-btn-secondary text-xs py-2" onClick={() => setResetDialogOpen(false)}>Cancel</button>

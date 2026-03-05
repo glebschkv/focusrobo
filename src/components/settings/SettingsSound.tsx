@@ -38,8 +38,8 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
               {settings.soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </div>
             <div>
-              <Label className="text-sm font-bold text-[#E8F0EB]">Sound Effects</Label>
-              <p className="text-[11px] text-[#8BA68F]">Timer alerts and game sounds</p>
+              <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Sound Effects</Label>
+              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Timer alerts and game sounds</p>
             </div>
           </div>
           <Switch
@@ -55,10 +55,10 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
             {/* Volume Control */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs font-semibold text-[#8BA68F]">Volume</Label>
+                <Label className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">Volume</Label>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#4CA771]">{settings.soundVolume}%</span>
-                  <button onClick={testSound} className="p-1.5 rounded-md bg-[#4CA771] text-white">
+                  <span className="text-sm font-bold text-[hsl(var(--primary))]">{settings.soundVolume}%</span>
+                  <button onClick={testSound} className="p-1.5 rounded-md bg-[hsl(var(--primary))] text-white">
                     <Play className="w-3 h-3" />
                   </button>
                 </div>
@@ -69,7 +69,7 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
 
             {/* Sound Theme */}
             <div>
-              <Label className="text-xs font-semibold text-[#8BA68F] mb-2 block">Sound Theme</Label>
+              <Label className="text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-2 block">Sound Theme</Label>
               <div className="flex gap-2">
                 {soundThemes.map((theme) => {
                   const Icon = theme.icon;
@@ -99,8 +99,8 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
               <MousePointerClick className="w-4 h-4" />
             </div>
             <div>
-              <Label className="text-sm font-bold text-[#E8F0EB]">Button Sounds</Label>
-              <p className="text-[11px] text-[#8BA68F]">Subtle tap feedback</p>
+              <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Button Sounds</Label>
+              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Subtle tap feedback</p>
             </div>
           </div>
           <Switch

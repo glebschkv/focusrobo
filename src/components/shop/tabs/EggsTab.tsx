@@ -25,12 +25,12 @@ const RARITY_COLORS: Record<PetRarity, string> = {
   legendary: 'text-amber-500',
 };
 
-const RARITY_BG: Record<PetRarity, string> = {
-  common: 'bg-stone-50 border-stone-200',
-  uncommon: 'bg-green-50 border-green-200',
-  rare: 'bg-blue-50 border-blue-200',
-  epic: 'bg-purple-50 border-purple-200',
-  legendary: 'bg-amber-50 border-amber-200',
+const RARITY_STRIPE: Record<PetRarity, string> = {
+  common: 'bg-stone-300',
+  uncommon: 'bg-green-400',
+  rare: 'bg-blue-400',
+  epic: 'bg-purple-400',
+  legendary: 'bg-amber-400',
 };
 
 const RARITY_LABELS: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
@@ -90,15 +90,12 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       </div>
 
       {/* Species Selector */}
-      <div className={cn(
-        'rounded-xl border p-3',
-        'bg-gradient-to-br from-emerald-50 to-indigo-50 border-emerald-200',
-      )}>
+      <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 shadow-sm">
         <div className="flex items-center gap-2 mb-1.5">
-          <Target className="w-4 h-4 text-emerald-600" />
-          <span className="font-bold text-sm text-emerald-800">Species Selector</span>
+          <Target className="w-4 h-4 text-[hsl(var(--primary))]" />
+          <span className="font-bold text-sm text-[hsl(var(--foreground))]">Species Selector</span>
         </div>
-        <p className="text-[11px] text-emerald-600/80 mb-2">
+        <p className="text-[11px] text-[hsl(var(--muted-foreground))] mb-2">
           Pick your next pet instead of leaving it to chance.
         </p>
         <div className="flex items-center justify-between">
@@ -110,8 +107,8 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
             className={cn(
               'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
               canAfford(SPECIES_SELECTOR_PRICE)
-                ? 'bg-emerald-500 text-white active:scale-95'
-                : 'bg-stone-200 text-stone-400 cursor-not-allowed',
+                ? 'bg-[hsl(var(--primary))] text-white active:scale-95'
+                : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed',
             )}
             disabled={!canAfford(SPECIES_SELECTOR_PRICE)}
           >
@@ -136,56 +133,59 @@ function EggCard({
 }) {
   return (
     <div className={cn(
-      'rounded-xl border p-3 flex flex-col',
-      RARITY_BG[egg.rarity],
+      'rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] flex flex-col overflow-hidden shadow-sm',
       egg.rarity === 'legendary' && 'ring-1 ring-amber-300',
     )}>
-      {/* Header */}
-      <div className="flex items-center gap-1.5 mb-1">
-        <Egg className={cn('w-4 h-4', RARITY_COLORS[egg.rarity])} />
-        <span className={cn('font-bold text-xs', RARITY_COLORS[egg.rarity])}>
-          {egg.name}
-        </span>
-      </div>
-
-      {/* Rarity odds */}
-      <div className="space-y-0.5 mb-2">
-        {RARITY_LABELS.map((rarity) => {
-          const weight = egg.rarityWeights[rarity];
-          if (weight === 0) return null;
-          return (
-            <div key={rarity} className="flex items-center justify-between">
-              <span className={cn('text-[10px] capitalize', RARITY_COLORS[rarity])}>
-                {rarity}
-              </span>
-              <span className="text-[10px] font-mono font-bold text-stone-500">
-                {weight}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Price + buy */}
-      <div className="mt-auto flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <PixelIcon name="coin" size={14} />
-          <span className="font-black text-sm text-amber-700">
-            {egg.coinPrice.toLocaleString()}
+      {/* Rarity stripe header */}
+      <div className={cn('h-1', RARITY_STRIPE[egg.rarity])} />
+      <div className="p-3 flex flex-col flex-1">
+        {/* Header */}
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <Egg className={cn('w-4 h-4', RARITY_COLORS[egg.rarity])} />
+          <span className={cn('font-bold text-xs', RARITY_COLORS[egg.rarity])}>
+            {egg.name}
           </span>
         </div>
-        <button
-          onClick={onHatch}
-          disabled={!canAfford || hatching}
-          className={cn(
-            'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
-            canAfford && !hatching
-              ? 'bg-amber-500 text-white active:scale-95 hover:bg-amber-600'
-              : 'bg-stone-200 text-stone-400 cursor-not-allowed',
-          )}
-        >
-          {hatching ? '...' : 'Hatch!'}
-        </button>
+
+        {/* Rarity odds */}
+        <div className="space-y-0.5 mb-2.5">
+          {RARITY_LABELS.map((rarity) => {
+            const weight = egg.rarityWeights[rarity];
+            if (weight === 0) return null;
+            return (
+              <div key={rarity} className="flex items-center justify-between">
+                <span className={cn('text-[10px] capitalize', RARITY_COLORS[rarity])}>
+                  {rarity}
+                </span>
+                <span className="text-[10px] font-mono font-bold text-[hsl(var(--muted-foreground))]">
+                  {weight}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Price + buy */}
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <PixelIcon name="coin" size={14} />
+            <span className="font-black text-sm text-amber-700">
+              {egg.coinPrice.toLocaleString()}
+            </span>
+          </div>
+          <button
+            onClick={onHatch}
+            disabled={!canAfford || hatching}
+            className={cn(
+              'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all',
+              canAfford && !hatching
+                ? 'bg-[hsl(var(--primary))] text-white active:scale-95'
+                : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed',
+            )}
+          >
+            {hatching ? '...' : 'Hatch!'}
+          </button>
+        </div>
       </div>
     </div>
   );

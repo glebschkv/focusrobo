@@ -9,7 +9,7 @@
  *   SpeciesDetailDrawer — bottom sheet for tapping a species
  *
  * Achievements are lazy-loaded from AchievementGallery.
- * All colors use --col-* design tokens from base.css.
+ * All colors use shared design tokens from base.css.
  */
 
 import { useState, useMemo, useCallback, memo, lazy, Suspense } from 'react';
@@ -133,12 +133,12 @@ export const PetCollectionBook = memo(() => {
         {/* Title + discovery count */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--col-accent-soft))] flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-[hsl(var(--col-accent))]" />
+            <div className="w-9 h-9 rounded-xl bg-[hsl(var(--primary)/0.12)] flex items-center justify-center">
+              <Leaf className="w-4.5 h-4.5 text-[hsl(var(--primary))]" />
             </div>
-            <h1 className="text-lg font-bold tracking-tight text-[hsl(var(--col-text))]">Collection</h1>
+            <h1 className="text-lg font-bold tracking-tight text-[hsl(var(--foreground))]">Collection</h1>
           </div>
-          <span className="text-xs font-bold text-[hsl(var(--col-accent))]">
+          <span className="text-xs font-bold text-[hsl(var(--primary))]">
             {stats.discovered}/{stats.total}
           </span>
         </div>
@@ -147,31 +147,31 @@ export const PetCollectionBook = memo(() => {
         <div className="grid grid-cols-3 gap-2.5 mb-4">
           <div className="collection-stat-card col-span-2 flex-row gap-3">
             <div className="relative flex items-center justify-center flex-shrink-0">
-              <ProgressRing percent={discoveryPct} size={38} stroke={3} />
-              <span className="absolute text-[10px] font-black text-[hsl(var(--col-text))]">{discoveryPct}%</span>
+              <ProgressRing percent={discoveryPct} size={42} stroke={3.5} />
+              <span className="absolute text-[10px] font-black text-[hsl(var(--foreground))]">{discoveryPct}%</span>
             </div>
             <div>
-              <p className="text-sm font-black text-[hsl(var(--col-text))]">{stats.discovered}/{stats.total} species</p>
-              <p className="text-[9px] font-semibold text-[hsl(var(--col-muted))]">{stats.totalFound} pets found</p>
+              <p className="text-sm font-black text-[hsl(var(--foreground))]">{stats.discovered}/{stats.total} species</p>
+              <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))]">{stats.totalFound} pets found</p>
             </div>
           </div>
           <div className="collection-stat-card">
-            <p className="text-xl font-black text-[hsl(var(--col-text))] mb-0.5">{stats.landsCompleted}</p>
-            <p className="text-[9px] font-semibold text-[hsl(var(--col-muted))] uppercase tracking-wide">Lands</p>
+            <p className="text-xl font-black text-[hsl(var(--foreground))] mb-0.5">{stats.landsCompleted}</p>
+            <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">Lands</p>
           </div>
         </div>
 
         {/* Pill tabs */}
-        <div className="flex gap-1.5 p-1 rounded-xl bg-[hsl(var(--col-divider)/0.6)]">
+        <div className="flex gap-1.5 p-1 rounded-xl bg-[hsl(var(--muted)/0.5)]">
           {TAB_LIST.map((tab) => (
             <button
               key={tab}
               onClick={() => handleTabChange(tab)}
               className={cn(
-                'flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all',
+                'flex-1 py-2 rounded-lg text-[11px] font-bold transition-all',
                 activeTab === tab
-                  ? 'bg-white text-[hsl(var(--col-text))] shadow-sm'
-                  : 'text-[hsl(var(--col-muted))] hover:text-[hsl(var(--col-accent))]',
+                  ? 'bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm'
+                  : 'text-[hsl(var(--muted-foreground))]',
               )}
             >
               {TAB_LABELS[tab]}
@@ -213,7 +213,7 @@ export const PetCollectionBook = memo(() => {
             {activeTab === 'achievements' && (
               <div className="px-4 pt-3 pb-28">
                 <Suspense fallback={
-                  <div className="py-12 text-center text-xs text-[hsl(var(--col-subtle))]">Loading achievements...</div>
+                  <div className="py-12 text-center text-xs text-[hsl(var(--muted-foreground))]">Loading achievements...</div>
                 }>
                   <LazyAchievementGallery embedded />
                 </Suspense>

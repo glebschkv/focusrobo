@@ -236,7 +236,7 @@ export function getIslandPosition(index: number, gridSize: number): IslandPositi
  */
 export function getIslandScale(gridSize: number): number {
   const g = gridSize || MIN_GRID_TIER;
-  return 0.45 + 0.55 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
+  return 0.55 + 0.45 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
 }
 
 /** Reference grid size where base sprite size (56px) fits tiles well */
@@ -249,7 +249,9 @@ const REFERENCE_GRID = 5;
  */
 export function getGridDensityScale(gridSize: number): number {
   const g = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
-  return REFERENCE_GRID / g;
+  // Gentler curve for larger grids — pets stay readable at 17×17+ sizes
+  if (g <= 8) return REFERENCE_GRID / g;
+  return Math.max(0.55, 0.625 * (1 + REFERENCE_GRID / g));
 }
 
 /** Rotation step type (kept for backward compat) */

@@ -1,6 +1,6 @@
 /**
  * Collection page constants — rarity visuals, labels, shared mappings.
- * All colors reference CSS custom properties from base.css (--col-*).
+ * All colors reference shared CSS design tokens from base.css.
  */
 
 import type { PetRarity } from '@/data/PetDatabase';
@@ -16,7 +16,7 @@ export const RARITY_LABEL: Record<PetRarity, string> = {
 };
 
 /** Rarity accent colors — only the bits that genuinely vary per rarity.
- *  Structural styles (card bg, border, text) use --col-* tokens. */
+ *  Structural styles (card bg, border, text) use shared design tokens. */
 export const RARITY_ACCENT: Record<PetRarity, {
   dot: string;
   label: string;
@@ -24,10 +24,10 @@ export const RARITY_ACCENT: Record<PetRarity, {
   cardBorder: string;
 }> = {
   common: {
-    dot: 'bg-[hsl(var(--col-subtle))]',
-    label: 'text-[hsl(var(--col-muted))]',
-    cardBg: 'bg-[hsl(var(--col-card))]',
-    cardBorder: 'border-[hsl(var(--col-border))]',
+    dot: 'bg-[hsl(var(--muted-foreground))]',
+    label: 'text-[hsl(var(--muted-foreground))]',
+    cardBg: 'bg-[hsl(var(--card))]',
+    cardBorder: 'border-[hsl(var(--border))]',
   },
   uncommon: {
     dot: 'bg-emerald-500',

@@ -65,8 +65,8 @@ export const SettingsFocusMode = () => {
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <Label className="text-sm font-bold text-[#E8F0EB]">Focus Mode</Label>
-              <p className="text-[11px] text-[#8BA68F]">Block distractions during focus</p>
+              <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Focus Mode</Label>
+              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Block distractions during focus</p>
             </div>
           </div>
           <Switch checked={settings.enabled} onCheckedChange={(enabled) => updateSettings({ enabled })} />
@@ -80,11 +80,11 @@ export const SettingsFocusMode = () => {
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-3">
                 {settings.blockNotifications
-                  ? <BellOff className="w-4 h-4 text-[#4CA771]" />
-                  : <Bell className="w-4 h-4 text-[#6B8A6F]" />}
+                  ? <BellOff className="w-4 h-4 text-[hsl(var(--primary))]" />
+                  : <Bell className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />}
                 <div>
-                  <p className="text-sm font-semibold text-[#E8F0EB]">Block Notifications</p>
-                  <p className="text-[11px] text-[#8BA68F]">Enable Do Not Disturb</p>
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Block Notifications</p>
+                  <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Enable Do Not Disturb</p>
                 </div>
               </div>
               <Switch checked={settings.blockNotifications} onCheckedChange={(blockNotifications) => updateSettings({ blockNotifications })} />
@@ -94,19 +94,19 @@ export const SettingsFocusMode = () => {
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center gap-3">
                 {settings.strictMode
-                  ? <Lock className="w-4 h-4 text-[#E57373]" />
-                  : <Unlock className="w-4 h-4 text-[#6B8A6F]" />}
+                  ? <Lock className="w-4 h-4 text-[hsl(var(--destructive))]" />
+                  : <Unlock className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />}
                 <div>
-                  <p className="text-sm font-semibold text-[#E8F0EB]">Strict Mode</p>
-                  <p className="text-[11px] text-[#8BA68F]">Session locked until timer ends</p>
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Strict Mode</p>
+                  <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Session locked until timer ends</p>
                 </div>
               </div>
               <Switch checked={settings.strictMode} onCheckedChange={(strictMode) => updateSettings({ strictMode })} />
             </div>
 
             {settings.strictMode && (
-              <div className="mt-2 p-2 rounded-lg" style={{ background: 'rgba(196,100,100,0.1)', border: '1px solid rgba(196,100,100,0.2)' }}>
-                <div className="flex items-center gap-2 text-[#E57373]">
+              <div className="mt-2 p-2 rounded-lg" style={{ background: 'hsl(var(--destructive) / 0.08)', border: '1px solid rgba(196,100,100,0.2)' }}>
+                <div className="flex items-center gap-2 text-[hsl(var(--destructive))]">
                   <AlertTriangle className="w-3 h-3" />
                   <p className="text-[11px] font-medium">Focus mode stays active until the timer completes</p>
                 </div>
@@ -131,8 +131,8 @@ export const SettingsFocusMode = () => {
                     : <Shield className="w-4 h-4" />}
                 </div>
                 <div className="flex-1">
-                  <Label className="text-sm font-bold text-[#E8F0EB]">Focus Shield</Label>
-                  <p className="text-[11px] text-[#8BA68F]">
+                  <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Focus Shield</Label>
+                  <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                     {shieldPermissionGranted
                       ? shieldAppsConfigured || shieldSelectedDomains > 0
                         ? `${shieldLabel} will be blocked during focus`
@@ -149,7 +149,7 @@ export const SettingsFocusMode = () => {
 
               {!shieldPermissionGranted ? (
                 <div className="space-y-2">
-                  <p className="text-xs text-[#8BA68F]">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
                     {hasAttemptedShieldPermission
                       ? "Screen Time permission is needed. You can update this in Settings."
                       : "Screen Time access lets the app block distracting apps during focus sessions and earn bonus rewards."}
@@ -182,8 +182,8 @@ export const SettingsFocusMode = () => {
                   {/* Website Blocking */}
                   <div className="settings-divider" />
                   <div className="flex items-center gap-2 mb-2">
-                    <Globe className="w-3.5 h-3.5 text-[#4CA771]" />
-                    <span className="text-xs font-bold text-[#E8F0EB]">Website Blocking</span>
+                    <Globe className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+                    <span className="text-xs font-bold text-[hsl(var(--foreground))]">Website Blocking</span>
                     {!isPremium && <span className="settings-premium-tag"><Crown className="w-2.5 h-2.5" /> Premium</span>}
                     {isPremium && shieldSelectedDomains > 0 && (
                       <span className="settings-badge settings-badge--green text-[9px]">{shieldSelectedDomains} selected</span>
@@ -192,7 +192,7 @@ export const SettingsFocusMode = () => {
 
                   {!isPremium ? (
                     <div className="settings-info" style={{ borderStyle: 'dashed', borderColor: 'rgba(197,160,51,0.25)', background: 'rgba(197,160,51,0.06)' }}>
-                      <p className="text-[11px] text-[#8BA68F] mb-2">
+                      <p className="text-[11px] text-[hsl(var(--muted-foreground))] mb-2">
                         Block distracting websites like Instagram, TikTok & more during focus sessions.
                       </p>
                       <button onClick={() => setShowPremiumModal(true)} className="settings-btn-gold text-xs">
@@ -201,7 +201,7 @@ export const SettingsFocusMode = () => {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <p className="text-[11px] text-[#8BA68F]">
+                      <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                         {shieldSelectedDomains > 0
                           ? `${shieldSelectedDomains} website${shieldSelectedDomains !== 1 ? 's' : ''} will be blocked via Screen Time during focus.`
                           : 'Select websites to block via Screen Time during focus sessions.'}
@@ -220,8 +220,8 @@ export const SettingsFocusMode = () => {
 
                   <div className="settings-info">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-[#4CA771]" />
-                      <p className="text-[11px] text-[#8BA68F]">Perfect focus = +25% XP & +50 coins bonus</p>
+                      <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))]" />
+                      <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Perfect focus = +25% XP & +50 coins bonus</p>
                     </div>
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export const SettingsFocusMode = () => {
 
           {/* Info Card */}
           <div className="settings-card">
-            <p className="text-[11px] text-[#6B8A6F] text-center">
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))] text-center">
               Focus Mode activates when you start a focus timer and deactivates when the session ends.
             </p>
           </div>
