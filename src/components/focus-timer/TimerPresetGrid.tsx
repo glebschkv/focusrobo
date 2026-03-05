@@ -74,7 +74,7 @@ export const TimerPresetGrid = ({
 
   return (
     <div className="w-full max-w-sm">
-      <p className="timer-grid-label" id="preset-grid-label">Choose Focus Mode</p>
+      <p className="timer-grid-label" id="preset-grid-label">Duration</p>
       <div
         ref={gridRef}
         className="grid grid-cols-3 gap-2.5"
@@ -126,22 +126,6 @@ export const TimerPresetGrid = ({
               )}>
                 {preset.name}
               </div>
-              {estimatedXP !== null && (
-                <div className={cn(
-                  "text-[11px] font-bold mt-0.5 tabular-nums",
-                  isSelected ? "text-yellow-200" : "text-yellow-600 dark:text-yellow-400"
-                )}>
-                  +{estimatedXP} XP
-                </div>
-              )}
-              {petSizeHint && (
-                <div className={cn(
-                  "timer-preset-size-hint",
-                  isSelected ? "text-white/60" : "text-muted-foreground"
-                )}>
-                  {petSizeHint}
-                </div>
-              )}
             </button>
           );
         })}
