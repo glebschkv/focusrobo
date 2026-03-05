@@ -79,20 +79,13 @@ export const DailyLoginRewardModal = ({
           <div className="relative z-[1]">
             {/* Hero icon */}
             <div className="relative inline-block mb-3">
-              <div
-                className="absolute inset-0 rounded-full blur-xl scale-[2.5]"
-                style={{ background: 'hsl(45 100% 50% / 0.2)' }}
-              />
               <div className="relative animate-bounce" style={{ animationDuration: '2s' }}>
                 <PixelIcon name={iconName} size={64} />
               </div>
             </div>
 
             {/* Title */}
-            <h2
-              className="text-xl font-black uppercase tracking-tight text-white"
-              style={{ textShadow: '0 0 10px hsl(260 80% 70% / 0.5), 0 2px 0 rgba(0,0,0,0.3)' }}
-            >
+            <h2 className="text-xl font-black uppercase tracking-tight" style={{ color: 'hsl(150 10% 12%)' }}>
               Daily Login Reward!
             </h2>
 
@@ -102,10 +95,9 @@ export const DailyLoginRewardModal = ({
                 <div
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded text-[11px] font-black text-white"
                   style={{
-                    background: 'linear-gradient(180deg, hsl(25 80% 50%), hsl(20 85% 40%))',
-                    border: '2px solid hsl(25 70% 55%)',
-                    boxShadow: '0 2px 0 hsl(20 70% 30%), 0 0 8px hsl(25 100% 50% / 0.3)',
-                    textShadow: '0 1px 0 rgba(0,0,0,0.3)',
+                    background: 'hsl(25 65% 48%)',
+                    border: '2px solid hsl(25 55% 40%)',
+                    boxShadow: '0 2px 0 hsl(25 55% 32%)',
                   }}
                 >
                   <Flame className="w-3 h-3" />
@@ -122,43 +114,37 @@ export const DailyLoginRewardModal = ({
           <div
             className="p-4 rounded-xl text-center relative overflow-hidden"
             style={{
-              background: 'linear-gradient(180deg, hsl(45 100% 60%) 0%, hsl(40 90% 50%) 100%)',
-              border: '3px solid hsl(35 80% 40%)',
-              boxShadow: '0 4px 0 hsl(35 70% 30%), inset 0 1px 0 hsl(50 100% 80% / 0.5), 0 0 15px hsl(45 100% 50% / 0.3)',
+              background: 'hsl(45 70% 92%)',
+              border: '2px solid hsl(42 50% 75%)',
+              boxShadow: '0 2px 8px hsl(42 60% 50% / 0.15)',
             }}
           >
             <div className="relative z-10">
               <span
                 className="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider mb-2 text-white"
                 style={{
-                  background: 'hsl(35 70% 35%)',
-                  border: '1px solid hsl(30 60% 45%)',
+                  background: 'hsl(42 65% 45%)',
+                  border: '1px solid hsl(42 55% 55%)',
                 }}
               >
                 Day {currentDayInCycle}
               </span>
-              <p
-                className="text-lg font-black text-amber-900 mb-1"
-                style={{ textShadow: '0 1px 0 hsl(45 100% 70% / 0.5)' }}
-              >
+              <p className="text-lg font-black mb-1" style={{ color: 'hsl(35 50% 25%)' }}>
                 {displayReward.label}
               </p>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <PixelIcon name={iconName} size={28} />
-                <span
-                  className="text-3xl font-black text-amber-900"
-                  style={{ textShadow: '0 1px 0 hsl(45 100% 70% / 0.4)' }}
-                >
+                <span className="text-3xl font-black" style={{ color: 'hsl(35 50% 25%)' }}>
                   {getRewardValue(displayReward)}
                 </span>
               </div>
               {displayReward.coins > 0 && (
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <PixelIcon name="coin" size={16} />
-                  <span className="text-sm font-bold text-amber-800">+{displayReward.coins} Coins</span>
+                  <span className="text-sm font-bold" style={{ color: 'hsl(35 45% 30%)' }}>+{displayReward.coins} Coins</span>
                 </div>
               )}
-              <p className="text-[11px] text-amber-800 font-semibold">
+              <p className="text-[11px] font-semibold" style={{ color: 'hsl(35 40% 35%)' }}>
                 {displayReward.description}
               </p>
             </div>
@@ -168,7 +154,7 @@ export const DailyLoginRewardModal = ({
           <div className="space-y-2">
             <div
               className="text-[9px] font-black uppercase tracking-[0.2em] text-center"
-              style={{ color: 'hsl(260 25% 45%)' }}
+              style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               This Week's Rewards
             </div>
@@ -189,19 +175,17 @@ export const DailyLoginRewardModal = ({
                     )}
                     style={{
                       background: isClaimed
-                        ? 'linear-gradient(180deg, hsl(120 35% 22%) 0%, hsl(120 40% 16%) 100%)'
+                        ? 'hsl(152 30% 95%)'
                         : isToday
-                        ? 'linear-gradient(180deg, hsl(45 50% 28%) 0%, hsl(40 45% 20%) 100%)'
-                        : 'linear-gradient(180deg, hsl(260 25% 22%) 0%, hsl(260 30% 16%) 100%)',
+                        ? 'hsl(45 50% 94%)'
+                        : 'hsl(var(--muted))',
                       border: isToday
-                        ? '2px solid hsl(45 100% 55%)'
+                        ? '2px solid hsl(42 65% 52%)'
                         : isClaimed
-                        ? '2px solid hsl(120 50% 35%)'
-                        : '2px solid hsl(260 35% 30%)',
+                        ? '2px solid hsl(152 40% 65%)'
+                        : '1px solid hsl(var(--border))',
                       boxShadow: isToday
-                        ? '0 0 8px hsl(45 100% 50% / 0.4)'
-                        : isClaimed
-                        ? '0 0 4px hsl(120 80% 40% / 0.2)'
+                        ? '0 1px 4px hsl(42 60% 50% / 0.2)'
                         : 'none',
                     }}
                   >
@@ -209,10 +193,10 @@ export const DailyLoginRewardModal = ({
                       className="text-[8px] font-black uppercase"
                       style={{
                         color: isToday
-                          ? 'hsl(45 90% 65%)'
+                          ? 'hsl(35 50% 35%)'
                           : isClaimed
-                          ? 'hsl(120 50% 60%)'
-                          : 'hsl(260 20% 55%)',
+                          ? 'hsl(152 44% 40%)'
+                          : 'hsl(var(--muted-foreground))',
                       }}
                     >
                       D{dayNum}
@@ -228,10 +212,10 @@ export const DailyLoginRewardModal = ({
                       className="text-[8px] font-bold"
                       style={{
                         color: isToday
-                          ? 'hsl(45 80% 60%)'
+                          ? 'hsl(35 45% 30%)'
                           : isClaimed
-                          ? 'hsl(120 40% 55%)'
-                          : 'hsl(260 20% 50%)',
+                          ? 'hsl(152 40% 35%)'
+                          : 'hsl(var(--muted-foreground))',
                       }}
                     >
                       {r.type === 'streak_freeze' ? 'Freeze' : r.xp}
@@ -247,25 +231,24 @@ export const DailyLoginRewardModal = ({
             <div
               className="retro-reward-item"
               style={{
-                borderColor: 'hsl(25 80% 50%)',
-                background: 'linear-gradient(180deg, hsl(25 35% 22%) 0%, hsl(20 30% 16%) 100%)',
-                boxShadow: '0 0 8px hsl(25 100% 50% / 0.2)',
+                borderColor: 'hsl(25 50% 75%)',
+                background: 'hsl(30 40% 95%)',
               }}
             >
               <div
                 className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                 style={{
-                  background: 'linear-gradient(180deg, hsl(25 60% 30%), hsl(20 55% 22%))',
-                  border: '2px solid hsl(25 50% 40%)',
+                  background: 'hsl(25 50% 90%)',
+                  border: '1px solid hsl(25 40% 78%)',
                 }}
               >
-                <Flame className="w-4 h-4 text-orange-400" />
+                <Flame className="w-4 h-4 text-orange-500" />
               </div>
               <div className="flex-1">
-                <span className="text-xs font-bold" style={{ color: 'hsl(25 90% 65%)' }}>
+                <span className="text-xs font-bold" style={{ color: 'hsl(25 60% 40%)' }}>
                   Streak Bonus Active!
                 </span>
-                <p className="text-[10px] text-purple-300/60">
+                <p className="text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
                   +{currentStreak >= 30 ? 50 : currentStreak >= 14 ? 30 : currentStreak >= 7 ? 20 : 10}% XP on focus sessions
                 </p>
               </div>

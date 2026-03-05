@@ -30,7 +30,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose 
     bronze: { bg: 'bg-amber-900/30', border: 'border-amber-600/40', text: 'text-amber-400' },
     silver: { bg: 'bg-slate-400/20', border: 'border-slate-400/40', text: 'text-slate-300' },
     gold: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/40', text: 'text-yellow-400' },
-    platinum: { bg: 'bg-cyan-400/20', border: 'border-cyan-400/40', text: 'text-cyan-300' },
+    platinum: { bg: 'bg-teal-400/20', border: 'border-teal-400/40', text: 'text-teal-300' },
     diamond: { bg: 'bg-purple-400/20', border: 'border-purple-400/40', text: 'text-purple-300' }
   };
 

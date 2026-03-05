@@ -119,21 +119,21 @@ const PremiumLockedPreview = ({
     </div>
 
     {/* Personalized lock overlay */}
-    <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-background/60 backdrop-blur-sm rounded-xl">
+    <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-background/90 rounded-xl">
       <div
         className="flex flex-col items-center gap-3 p-6 rounded-xl text-center max-w-[280px]"
         style={{
-          background: 'linear-gradient(180deg, hsl(260 25% 20%) 0%, hsl(260 30% 15%) 100%)',
-          border: '3px solid hsl(35 80% 50%)',
-          boxShadow: '0 4px 0 hsl(260 50% 12%), 0 0 20px hsl(35 100% 50% / 0.15)',
+          background: 'hsl(var(--card))',
+          border: '2px solid hsl(42 50% 70%)',
+          boxShadow: '0 4px 16px hsl(150 10% 12% / 0.1)',
         }}
       >
         <div
           className="w-12 h-12 rounded-xl flex items-center justify-center"
           style={{
-            background: 'linear-gradient(135deg, hsl(35 90% 55%) 0%, hsl(25 90% 50%) 100%)',
-            border: '3px solid hsl(40 80% 65%)',
-            boxShadow: '0 4px 0 hsl(25 80% 30%)',
+            background: 'hsl(42 65% 52%)',
+            border: '2px solid hsl(42 50% 65%)',
+            boxShadow: '0 2px 8px hsl(42 60% 50% / 0.25)',
           }}
         >
           <Lock className="w-5 h-5 text-white" />
@@ -141,26 +141,26 @@ const PremiumLockedPreview = ({
 
         {/* Rotating personalized teaser */}
         <div className="min-h-[44px] flex flex-col justify-center">
-          <h3 className="text-white font-black text-sm uppercase tracking-wider retro-pixel-text">
+          <h3 className="font-black text-sm uppercase tracking-wider" style={{ color: 'hsl(var(--foreground))' }}>
             Premium Analytics
           </h3>
           {premiumTeasers.length > 0 ? (
             <p
               key={teaserIndex}
               className="text-[11px] mt-1 animate-in fade-in duration-500"
-              style={{ color: 'hsl(260 20% 55%)' }}
+              style={{ color: 'hsl(var(--muted-foreground))' }}
             >
               {premiumTeasers[teaserIndex]}
             </p>
           ) : (
-            <p className="text-[11px] mt-1" style={{ color: 'hsl(260 20% 55%)' }}>
+            <p className="text-[11px] mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Insights, heatmaps, focus quality, milestones & more
             </p>
           )}
         </div>
 
         {/* Feature count */}
-        <div className="flex items-center gap-3 text-[10px]" style={{ color: 'hsl(260 20% 45%)' }}>
+        <div className="flex items-center gap-3 text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
           <span>15 Premium Features</span>
           <span>|</span>
           <span>Unlimited History</span>
@@ -168,12 +168,11 @@ const PremiumLockedPreview = ({
 
         <button
           onClick={onUpgrade}
-          className="mt-1 px-6 py-2.5 rounded-lg border-[3px] font-black uppercase tracking-wider text-sm text-white flex items-center gap-2 active:translate-y-1 transition-all"
+          className="mt-1 px-6 py-2.5 rounded-lg font-bold uppercase tracking-wider text-sm text-white flex items-center gap-2 active:scale-97 transition-all"
           style={{
-            background: 'linear-gradient(180deg, hsl(35 80% 55%) 0%, hsl(35 85% 45%) 50%, hsl(35 90% 35%) 100%)',
-            borderColor: 'hsl(35 70% 65%)',
-            boxShadow: '0 5px 0 hsl(35 90% 25%), inset 0 2px 0 hsl(35 60% 70%), 0 0 15px hsl(35 100% 50% / 0.4)',
-            textShadow: '0 2px 0 rgba(0,0,0,0.3)',
+            background: 'hsl(42 65% 52%)',
+            border: '2px solid hsl(42 50% 60%)',
+            boxShadow: '0 2px 8px hsl(42 60% 50% / 0.3)',
           }}
         >
           <Crown className="w-4 h-4" />
@@ -262,7 +261,7 @@ export const Analytics = () => {
   return (
     <div className="pb-24">
       {/* ─── Sticky Tab Bar ─── */}
-      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-md border-b border-border/40">
+      <div className="sticky top-0 z-20 bg-background border-b border-border">
         <div ref={tabBarRef} className="flex relative px-4">
           {TABS.map((tab) => (
             <button

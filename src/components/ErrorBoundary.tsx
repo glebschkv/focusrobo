@@ -131,7 +131,7 @@ export class ErrorBoundary extends Component<Props, State> {
       const remainingRetries = ERROR_BOUNDARY.MAX_RETRY_ATTEMPTS - retryCount;
 
       return (
-        <div className="h-screen w-full flex items-center justify-center bg-gradient-to-b from-blue-900 to-indigo-950 p-4">
+        <div className="h-screen w-full flex items-center justify-center bg-gradient-to-b from-emerald-900 to-emerald-950 p-4">
           <Alert className="max-w-md bg-white/10 border-white/20 text-white">
             <AlertTriangle className="h-5 w-5 text-yellow-400" />
             <AlertTitle className="text-lg font-bold">Oops! Something went wrong</AlertTitle>

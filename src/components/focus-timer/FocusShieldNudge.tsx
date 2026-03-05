@@ -77,8 +77,8 @@ export const FocusShieldNudge = () => {
             className="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-white border border-stone-200 shadow-sm"
           >
             {/* Shield icon */}
-            <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-sky-50 border border-sky-200">
-              <Shield className="w-[18px] h-[18px] text-sky-500" />
+            <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-50 border border-emerald-200">
+              <Shield className="w-[18px] h-[18px] text-emerald-500" />
             </div>
 
             {/* Text */}
@@ -95,7 +95,7 @@ export const FocusShieldNudge = () => {
             <button
               onClick={handleAction}
               disabled={isLoading}
-              className="flex-shrink-0 flex items-center gap-0.5 px-3.5 min-h-[36px] rounded-lg text-[12px] font-bold transition-all active:scale-95 bg-sky-500 text-white"
+              className="flex-shrink-0 flex items-center gap-0.5 px-3.5 min-h-[36px] rounded-lg text-[12px] font-bold transition-all active:scale-95 bg-emerald-500 text-white"
               style={{ opacity: isLoading ? 0.6 : 1 }}
             >
               {actionLabel}

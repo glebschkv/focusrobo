@@ -143,7 +143,7 @@ export const SessionNotesModal = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="What did you accomplish? Any thoughts?"
-              className="w-full h-20 p-3 rounded-xl bg-stone-50 border border-stone-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-200"
+              className="w-full h-20 p-3 rounded-xl bg-stone-50 border border-stone-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 

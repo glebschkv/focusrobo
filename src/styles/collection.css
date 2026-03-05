@@ -325,7 +325,7 @@
   }
 
   .inventory-badge.shop-badge {
-    background: hsl(38 92% 50%);
+    background: hsl(42 65% 52%);
     color: white;
     border: none;
   }
@@ -360,9 +360,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: hsl(var(--background) / 0.6);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: hsla(60 20% 97% / 0.85);
     border-radius: 14px;
   }
 

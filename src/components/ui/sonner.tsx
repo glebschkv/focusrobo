@@ -14,13 +14,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
         duration: 3000,
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-[#1a0f24]/95 group-[.toaster]:text-white group-[.toaster]:border-2 group-[.toaster]:border-purple-400/30 group-[.toaster]:shadow-[0_4px_20px_rgba(147,51,234,0.25)] group-[.toaster]:rounded-2xl group-[.toaster]:text-sm group-[.toaster]:backdrop-blur-xl group-[.toaster]:px-4 group-[.toaster]:py-3",
+            "group toast group-[.toaster]:bg-[#1C211E]/95 group-[.toaster]:text-white group-[.toaster]:border-2 group-[.toaster]:border-emerald-400/30 group-[.toaster]:shadow-[0_4px_20px_rgba(64,133,106,0.2)] group-[.toaster]:rounded-2xl group-[.toaster]:text-sm group-[.toaster]:px-4 group-[.toaster]:py-3",
           title: "group-[.toast]:text-white group-[.toast]:font-bold group-[.toast]:text-sm group-[.toast]:tracking-wide",
-          description: "group-[.toast]:text-purple-100/70 group-[.toast]:text-xs",
+          description: "group-[.toast]:text-emerald-100/70 group-[.toast]:text-xs",
           actionButton:
-            "group-[.toast]:bg-purple-500/30 group-[.toast]:text-purple-100 group-[.toast]:border group-[.toast]:border-purple-400/40 group-[.toast]:text-xs group-[.toast]:rounded-lg group-[.toast]:font-bold",
+            "group-[.toast]:bg-emerald-500/30 group-[.toast]:text-emerald-100 group-[.toast]:border group-[.toast]:border-emerald-400/40 group-[.toast]:text-xs group-[.toast]:rounded-lg group-[.toast]:font-bold",
           cancelButton:
-            "group-[.toast]:bg-white/10 group-[.toast]:text-purple-200/60 group-[.toast]:text-xs group-[.toast]:rounded-lg",
+            "group-[.toast]:bg-white/10 group-[.toast]:text-emerald-200/60 group-[.toast]:text-xs group-[.toast]:rounded-lg",
           success:
             "group-[.toaster]:border-emerald-400/40 group-[.toaster]:bg-[#0d1a14]/95 group-[.toaster]:shadow-[0_4px_20px_rgba(52,211,153,0.2)]",
           error:

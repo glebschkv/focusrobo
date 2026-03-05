@@ -44,10 +44,10 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
             streakFreezeCount > 0 ? "" : "opacity-50"
           )}>
             <div className="retro-scanlines" />
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-cyan-400 to-cyan-600" />
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-400 to-teal-600" />
             <div className="relative pt-3 pb-2.5 px-3">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-sm border border-cyan-500/50">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-teal-400 to-teal-600 shadow-sm border border-teal-500/50">
                   <Snowflake className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xs font-black uppercase tracking-tight">Streak Freeze</span>
@@ -56,7 +56,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                 <span className="text-[10px] text-muted-foreground">Protects your streak</span>
                 <span className={cn(
                   "text-lg font-black tabular-nums",
-                  streakFreezeCount > 0 ? "text-cyan-600 dark:text-cyan-400" : "text-gray-400"
+                  streakFreezeCount > 0 ? "text-teal-600 dark:text-teal-400" : "text-gray-400"
                 )}>
                   {streakFreezeCount}
                 </span>

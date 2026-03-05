@@ -116,7 +116,7 @@ export const StreakDisplay = () => {
               boxShadow: 'inset 0 1px 0 hsl(40 40% 95%), 0 1px 0 hsl(30 25% 70% / 0.3)',
             }}
           >
-            <Snowflake className="w-4 h-4 text-cyan-500 mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 2px hsl(190 100% 50% / 0.4))' }} />
+            <Snowflake className="w-4 h-4 text-teal-500 mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 2px hsl(190 100% 50% / 0.4))' }} />
             <div style={{ fontSize: 16, fontWeight: 800, color: 'hsl(30 50% 22%)' }}>{streakData.streakFreezeCount}</div>
             <div style={{ fontSize: 10, color: 'hsl(30 30% 45%)', fontWeight: 600 }}>Freezes</div>
           </div>

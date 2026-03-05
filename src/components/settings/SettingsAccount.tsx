@@ -271,7 +271,7 @@ export const SettingsAccount = () => {
       {/* Account Info */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-4">
-          <UserCircle className="w-4 h-4 text-cyan-400" />
+          <UserCircle className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">ACCOUNT</span>
         </div>
 

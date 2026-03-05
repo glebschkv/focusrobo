@@ -54,7 +54,7 @@ export const AnalyticsSessionHistory = ({ sessions, formatDuration }: SessionHis
       case 'break':
         return 'text-green-500 bg-green-500/10';
       case 'countup':
-        return 'text-cyan-500 bg-cyan-500/10';
+        return 'text-teal-500 bg-teal-500/10';
     }
   };
 

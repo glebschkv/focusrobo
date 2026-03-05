@@ -283,7 +283,7 @@ export const AppBlockingSection = ({
               </div>
               {selectedDomainsCount > 0 && (
                 <div className="flex items-start gap-2 text-xs text-white/50">
-                  <span className="text-cyan-400">•</span>
+                  <span className="text-teal-400">•</span>
                   <span>Selected websites are blocked in Safari</span>
                 </div>
               )}

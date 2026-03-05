@@ -15,7 +15,7 @@ export const SettingsGame = ({ settings, onUpdate }: SettingsGameProps) => {
       {/* Toggles - Combined */}
       <div className="retro-game-card p-4">
         <div className="flex items-center gap-2 mb-4">
-          <Gamepad2 className="w-4 h-4 text-cyan-400" />
+          <Gamepad2 className="w-4 h-4 text-teal-400" />
           <span className="text-sm font-bold retro-pixel-text text-white">GAMEPLAY</span>
         </div>
 

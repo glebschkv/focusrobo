@@ -41,12 +41,12 @@ export const Settings = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[#FAFAF9]">
+      <div className="h-full flex items-center justify-center bg-[#F8F8F4]">
         <div
           className="rounded-2xl p-6 flex items-center gap-3 bg-white border border-stone-200/60"
           style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)' }}
         >
-          <Loader2 className="w-5 h-5 animate-spin text-sky-500" />
+          <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
           <span className="text-sm font-medium text-stone-600">Loading settings...</span>
         </div>
       </div>
@@ -54,7 +54,7 @@ export const Settings = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#FAFAF9]">
+    <div className="h-full flex flex-col bg-[#F8F8F4]">
       {/* Header */}
       <div className="relative px-4 pt-4 pb-3">
         <div className="flex items-center gap-3">
@@ -92,7 +92,7 @@ export const Settings = () => {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap transition-all duration-200 active:scale-95 flex-shrink-0 text-xs font-semibold",
                   isActive
-                    ? "bg-sky-500 text-white shadow-md"
+                    ? "bg-emerald-500 text-white shadow-md"
                     : "bg-stone-100 text-stone-500 border border-stone-200/50 hover:bg-stone-150"
                 )}
                 style={isActive ? {

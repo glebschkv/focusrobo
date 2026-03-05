@@ -45,18 +45,15 @@ export const XPRewardModal = ({
             <div
               className="mx-auto w-14 h-14 rounded-xl flex items-center justify-center mb-3"
               style={{
-                background: 'linear-gradient(180deg, hsl(45 90% 55%), hsl(35 85% 45%))',
-                border: '3px solid hsl(30 70% 40%)',
-                boxShadow: '0 3px 0 hsl(30 70% 30%), 0 0 15px hsl(45 100% 50% / 0.4)',
+                background: 'hsl(42 65% 52%)',
+                border: '2px solid hsl(42 55% 42%)',
+                boxShadow: '0 2px 0 hsl(42 55% 36%)',
               }}
             >
-              <Zap className="w-7 h-7 text-amber-900" style={{ filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.3))' }} />
+              <Zap className="w-7 h-7 text-white" />
             </div>
 
-            <h2
-              className="text-xl font-black uppercase tracking-tight text-white"
-              style={{ textShadow: '0 0 10px hsl(260 80% 70% / 0.5), 0 2px 0 rgba(0,0,0,0.3)' }}
-            >
+            <h2 className="text-xl font-black uppercase tracking-tight" style={{ color: 'hsl(150 10% 12%)' }}>
               Session Complete!
             </h2>
           </div>
@@ -71,17 +68,16 @@ export const XPRewardModal = ({
                 className="inline-flex items-center gap-1 px-3 py-1 rounded text-[10px] font-black uppercase tracking-wider mb-1 animate-pulse border"
                 style={{
                   background: displayReward.bonusType === 'mega_bonus'
-                    ? 'linear-gradient(180deg, hsl(45 90% 55%), hsl(40 85% 45%))'
+                    ? 'hsl(42 65% 52%)'
                     : displayReward.bonusType === 'super_lucky'
-                    ? 'linear-gradient(180deg, hsl(280 70% 55%), hsl(280 75% 45%))'
-                    : 'linear-gradient(180deg, hsl(140 65% 45%), hsl(140 70% 35%))',
+                    ? 'hsl(270 40% 50%)'
+                    : 'hsl(152 44% 45%)',
                   borderColor: displayReward.bonusType === 'mega_bonus'
-                    ? 'hsl(35 80% 40%)'
+                    ? 'hsl(42 55% 42%)'
                     : displayReward.bonusType === 'super_lucky'
-                    ? 'hsl(280 60% 55%)'
-                    : 'hsl(140 55% 35%)',
+                    ? 'hsl(270 35% 42%)'
+                    : 'hsl(152 40% 38%)',
                   color: 'white',
-                  textShadow: '0 1px 0 rgba(0,0,0,0.3)',
                 }}
               >
                 <Flame className="w-3 h-3" />
@@ -91,11 +87,11 @@ export const XPRewardModal = ({
               </div>
             )}
             <div className="flex items-center justify-center gap-2">
-              <Star className="w-5 h-5 text-amber-400" style={{ filter: 'drop-shadow(0 0 4px hsl(45 100% 50% / 0.6))' }} />
-              <span className="text-2xl font-black tabular-nums text-amber-300" style={{ textShadow: '0 0 8px hsl(45 100% 50% / 0.4)' }}>
+              <Star className="w-5 h-5 text-amber-500" />
+              <span className="text-2xl font-black tabular-nums text-amber-600">
                 +{displayReward.xpGained}
               </span>
-              <span className="text-sm font-bold text-amber-400/70">XP</span>
+              <span className="text-sm font-bold text-amber-500/70">XP</span>
             </div>
             {displayReward.hasBonusXP && displayReward.bonusXP > 0 && (
               <p className="text-[10px] text-green-400 font-bold">
@@ -115,7 +111,7 @@ export const XPRewardModal = ({
               </div>
               <span
                 className="text-xs font-mono font-bold"
-                style={{ color: 'hsl(260 20% 65%)' }}
+                style={{ color: 'hsl(150 10% 50%)' }}
               >
                 {Math.round(levelProgress)}%
               </span>
@@ -133,24 +129,21 @@ export const XPRewardModal = ({
           {/* Level Up Celebration */}
           {displayReward.leveledUp && (
             <div
-              className="relative overflow-hidden rounded-lg p-4 text-center animate-pulse"
+              className="relative overflow-hidden rounded-lg p-4 text-center"
               style={{
-                background: 'linear-gradient(180deg, hsl(45 100% 60%) 0%, hsl(40 90% 50%) 100%)',
-                border: '3px solid hsl(35 80% 40%)',
-                boxShadow: '0 4px 0 hsl(35 70% 30%), inset 0 1px 0 hsl(50 100% 80% / 0.5), 0 0 20px hsl(45 100% 50% / 0.4)',
+                background: 'hsl(42 65% 52%)',
+                border: '2px solid hsl(42 55% 42%)',
+                boxShadow: '0 2px 0 hsl(42 55% 36%)',
               }}
             >
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Trophy className="w-6 h-6 text-amber-900" />
-                <span
-                  className="text-lg font-black uppercase tracking-wide text-amber-900"
-                  style={{ textShadow: '0 1px 0 hsl(45 100% 70% / 0.5)' }}
-                >
+                <Trophy className="w-6 h-6 text-white" />
+                <span className="text-lg font-black uppercase tracking-wide text-white">
                   Level Up!
                 </span>
-                <Sparkles className="w-5 h-5 text-amber-700 animate-spin" style={{ animationDuration: '3s' }} />
+                <Sparkles className="w-5 h-5 text-white/80 animate-spin" style={{ animationDuration: '3s' }} />
               </div>
-              <p className="text-sm text-amber-800 font-bold">
+              <p className="text-sm text-white/90 font-bold">
                 You reached Level {displayReward.newLevel}!
               </p>
             </div>
@@ -161,7 +154,7 @@ export const XPRewardModal = ({
             <div className="space-y-2">
               <div
                 className="text-[9px] font-black uppercase tracking-[0.2em] text-center"
-                style={{ color: 'hsl(260 25% 45%)' }}
+                style={{ color: 'hsl(150 10% 40%)' }}
               >
                 <Gift className="w-3 h-3 inline mr-1" />
                 New Unlocks
@@ -223,7 +216,7 @@ export const XPRewardModal = ({
           {/* Continue Button */}
           <button
             onClick={onClose}
-            className="retro-arcade-btn retro-arcade-btn-purple w-full py-3 text-sm tracking-wider touch-manipulation"
+            className="retro-arcade-btn retro-arcade-btn-green w-full py-3 text-sm tracking-wider touch-manipulation"
           >
             Continue
           </button>

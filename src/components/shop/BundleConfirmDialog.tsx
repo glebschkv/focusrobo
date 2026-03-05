@@ -58,7 +58,7 @@ export const BundleConfirmDialog = ({
 
     if (starterBundle.contents.streakFreezes && starterBundle.contents.streakFreezes > 0) {
       contentItems.push({
-        icon: <Shield className="w-4 h-4 text-cyan-400" />,
+        icon: <Shield className="w-4 h-4 text-teal-400" />,
         label: `${starterBundle.contents.streakFreezes} Streak Freeze${starterBundle.contents.streakFreezes > 1 ? 's' : ''}`,
         sublabel: 'Protect your streaks',
       });
@@ -173,7 +173,7 @@ export const BundleConfirmDialog = ({
                 "w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
                 isPurchasing
                   ? "bg-stone-100 text-stone-400 cursor-not-allowed"
-                  : "bg-sky-500 text-white hover:bg-sky-600"
+                  : "bg-emerald-500 text-white hover:bg-emerald-600"
               )}
             >
               {isPurchasing ? (

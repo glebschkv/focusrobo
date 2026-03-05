@@ -14,22 +14,17 @@
     z-index: 40;
   }
 
-  /* Premium — Glass top bar with refined depth */
+  /* Solid matte top bar */
   .game-top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
     padding: 7px 10px;
-    background: hsla(0 0% 100% / 0.82);
-    backdrop-filter: blur(32px) saturate(200%);
-    -webkit-backdrop-filter: blur(32px) saturate(200%);
-    border: 1px solid hsla(0 0% 100% / 0.6);
-    border-radius: 18px;
-    box-shadow:
-      0 1px 3px hsla(24 10% 10% / 0.04),
-      0 4px 16px hsla(24 10% 10% / 0.06),
-      inset 0 1px 0 hsla(0 0% 100% / 0.5);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
   }
 
   .top-bar-left {
@@ -44,7 +39,7 @@
     gap: 8px;
   }
 
-  /* Level Badge — Premium gradient with glow */
+  /* Level Badge — Solid sage pill */
   .level-badge-btn {
     position: relative;
     display: flex;
@@ -52,20 +47,18 @@
     align-items: center;
     gap: 3px;
     padding: 5px 12px;
-    background: linear-gradient(135deg, hsl(199 89% 52%), hsl(199 89% 44%));
+    background: hsl(var(--primary));
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease, opacity 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    box-shadow:
-      0 2px 8px hsl(var(--primary) / 0.3),
-      inset 0 1px 0 hsla(0 0% 100% / 0.2);
+    box-shadow: 0 2px 6px hsl(var(--primary) / 0.25);
   }
 
   .level-badge-btn:active {
     transform: scale(0.95);
-    box-shadow: 0 1px 4px hsl(var(--primary) / 0.3);
+    box-shadow: 0 1px 3px hsl(var(--primary) / 0.2);
   }
 
   .level-badge-inner {
@@ -234,22 +227,18 @@
     font-weight: 500;
   }
 
-  /* Premium Stat Chips — glass morphism with depth */
+  /* Solid matte stat chips */
   .stat-chip {
     display: flex;
     align-items: center;
     gap: 5px;
     padding: 6px 10px;
-    background: hsla(0 0% 100% / 0.7);
-    border: 1px solid hsla(0 0% 100% / 0.5);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: 12px;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease;
     -webkit-tap-highlight-color: transparent;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow:
-      0 1px 3px rgba(0,0,0,0.04),
-      inset 0 1px 0 hsla(0 0% 100% / 0.4);
+    box-shadow: var(--shadow-xs);
   }
 
   .chip-icon {
@@ -264,21 +253,19 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Coin chip — warm gold gradient */
+  /* Coin chip — solid warm cream */
   .coin-chip {
-    background: linear-gradient(135deg, hsl(48 96% 96%), hsl(45 90% 92%));
-    border-color: hsl(45 65% 82%);
-    box-shadow:
-      0 1px 4px hsla(38 92% 50% / 0.1),
-      inset 0 1px 0 hsla(48 100% 98% / 0.8);
+    background: hsl(50 30% 95%);
+    border-color: hsl(42 40% 78%);
+    box-shadow: var(--shadow-xs);
   }
 
   .coin-icon {
-    color: hsl(38 92% 50%);
+    color: hsl(42 65% 48%);
   }
 
   .coin-chip .chip-value {
-    color: hsl(32 80% 30%);
+    color: hsl(35 50% 28%);
   }
 
   .coin-chip:active {
@@ -292,27 +279,25 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: linear-gradient(135deg, hsl(199 89% 52%), hsl(199 89% 44%));
+    background: hsl(var(--primary));
     border: none;
     color: white;
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
     margin-left: 2px;
-    box-shadow: 0 1px 4px hsl(var(--primary) / 0.3);
+    box-shadow: 0 1px 3px hsl(var(--primary) / 0.25);
   }
 
-  /* Streak chip — warm glow when active */
+  /* Streak chip — solid, warm when active */
   .streak-chip {
-    background: hsla(0 0% 100% / 0.7);
+    background: hsl(var(--card));
   }
 
   .streak-chip.active {
-    background: linear-gradient(135deg, hsl(24 95% 97%), hsl(24 90% 94%));
-    border-color: hsl(24 75% 82%);
-    box-shadow:
-      0 1px 4px hsla(24 80% 50% / 0.1),
-      inset 0 1px 0 hsla(24 100% 98% / 0.8);
+    background: hsl(152 30% 95%);
+    border-color: hsl(152 30% 78%);
+    box-shadow: var(--shadow-xs);
   }
 
   .streak-icon {
@@ -331,10 +316,10 @@
   }
 
   .streak-chip.active .chip-value {
-    color: hsl(20 70% 25%);
+    color: hsl(152 30% 25%);
   }
 
-  /* Settings button — refined glass */
+  /* Settings button — solid matte */
   .settings-btn {
     display: flex;
     align-items: center;
@@ -342,25 +327,23 @@
     width: 34px;
     height: 34px;
     padding: 0;
-    background: hsla(0 0% 100% / 0.5);
-    border: 1px solid hsla(0 0% 100% / 0.4);
+    background: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
     color: hsl(var(--muted-foreground));
     -webkit-tap-highlight-color: transparent;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
   }
 
   .settings-btn:active {
     transform: scale(0.92);
-    background: hsla(0 0% 0% / 0.04);
+    background: hsl(var(--border));
   }
 
   .settings-btn:hover {
     color: hsl(var(--foreground));
-    background: hsla(0 0% 100% / 0.7);
+    background: hsl(var(--muted));
   }
 
   /* Zone Menu — Atelier */
@@ -428,25 +411,20 @@
     justify-content: space-around;
     gap: 2px;
     padding: 6px 16px;
-    background: hsla(0 0% 100% / 0.85);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 1px solid hsla(0 0% 100% / 0.6);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: 22px;
-    box-shadow:
-      0 4px 24px hsla(24 10% 10% / 0.08),
-      0 1px 4px hsla(24 10% 10% / 0.04),
-      inset 0 1px 0 hsla(0 0% 100% / 0.5);
+    box-shadow: 0 -1px 4px hsla(150 10% 12% / 0.06), var(--shadow-sm);
     pointer-events: auto;
     max-width: 380px;
     width: 100%;
   }
 
-  /* All tabs now use the same white glass bar — no dark variant needed */
+  /* All tabs use the same solid bar */
   .dock-bar.dark-context {
-    background: hsla(0 0% 100% / 0.8);
+    background: hsl(var(--card));
     border-color: hsl(var(--border));
-    box-shadow: var(--shadow-floating-soft);
+    box-shadow: var(--shadow-sm);
   }
 
   .dock-bar.dark-context .dock-item-icon {
@@ -546,21 +524,18 @@
     opacity: 1;
   }
 
-  /* Center focus button — Premium gradient with layered glow */
+  /* Center focus button — Solid sage */
   .dock-center-btn {
     position: relative;
     width: 54px;
     height: 54px;
     margin: -12px 4px;
-    background: linear-gradient(135deg, hsl(199 89% 56%), hsl(199 89% 44%));
+    background: hsl(var(--primary));
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow:
-      0 4px 16px hsl(var(--primary) / 0.35),
-      0 2px 4px hsl(var(--primary) / 0.2),
-      inset 0 2px 4px hsla(0 0% 100% / 0.2);
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.25);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -568,23 +543,17 @@
 
   .dock-center-btn:hover {
     transform: scale(1.06);
-    box-shadow:
-      0 6px 24px hsl(var(--primary) / 0.4),
-      0 2px 8px hsl(var(--primary) / 0.25),
-      inset 0 2px 4px hsla(0 0% 100% / 0.2);
+    box-shadow: 0 6px 16px hsl(var(--primary) / 0.3);
   }
 
   .dock-center-btn:active {
     transform: scale(0.93);
-    box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+    box-shadow: 0 2px 6px hsl(var(--primary) / 0.2);
   }
 
   .dock-center-btn.active {
-    background: linear-gradient(135deg, hsl(199 89% 50%), hsl(199 89% 38%));
-    box-shadow:
-      0 4px 24px hsl(var(--primary) / 0.4),
-      0 2px 8px hsl(var(--primary) / 0.3),
-      inset 0 2px 4px hsla(0 0% 100% / 0.15);
+    background: hsl(152 44% 38%);
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
   }
 
   .dock-center-btn .dock-item-icon {
@@ -670,10 +639,7 @@
   /* Center button adjustments in compact mode */
   .dock-center-btn.compact {
     margin: 0;
-    box-shadow:
-      0 4px 24px hsl(var(--primary) / 0.5),
-      0 2px 12px hsl(var(--primary) / 0.4),
-      inset 0 2px 4px hsl(0 0% 100% / 0.2);
+    box-shadow: 0 4px 16px hsl(var(--primary) / 0.35);
   }
 
   /* Animation for dock items appearing/disappearing */
@@ -699,24 +665,17 @@
     align-items: center;
     justify-content: center;
     padding: 8px;
-    background: linear-gradient(145deg,
-      hsl(45 95% 55%) 0%,
-      hsl(40 90% 48%) 100%
-    );
+    background: hsl(42 65% 52%);
     border: none;
     border-radius: 12px;
-    box-shadow:
-      0 2px 8px hsl(45 100% 50% / 0.3),
-      inset 0 1px 2px hsl(50 100% 70% / 0.4);
+    box-shadow: 0 2px 6px hsl(42 65% 52% / 0.25);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .quick-action-btn:hover {
     transform: translateY(-1px);
-    box-shadow:
-      0 4px 12px hsl(45 100% 50% / 0.4),
-      inset 0 1px 2px hsl(50 100% 70% / 0.4);
+    box-shadow: 0 4px 10px hsl(42 65% 52% / 0.3);
   }
 
   .quick-action-btn:active {
@@ -726,7 +685,7 @@
   .quick-action-btn svg {
     width: 18px;
     height: 18px;
-    color: hsl(35 80% 20%);
+    color: white;
   }
 
   /* Pulse animation for energy ready state */
@@ -737,15 +696,13 @@
   @keyframes energy-ready {
     0%, 100% {
       box-shadow:
-        0 2px 8px hsl(45 100% 50% / 0.3),
-        0 0 0 0 hsl(45 100% 50% / 0.4),
-        inset 0 1px 2px hsl(50 100% 70% / 0.4);
+        0 2px 6px hsl(42 65% 52% / 0.25),
+        0 0 0 0 hsl(42 65% 52% / 0.3);
     }
     50% {
       box-shadow:
-        0 2px 8px hsl(45 100% 50% / 0.3),
-        0 0 0 8px hsl(45 100% 50% / 0),
-        inset 0 1px 2px hsl(50 100% 70% / 0.4);
+        0 2px 6px hsl(42 65% 52% / 0.25),
+        0 0 0 8px hsl(42 65% 52% / 0);
     }
   }
 

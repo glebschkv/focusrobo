@@ -68,9 +68,9 @@ const Index = () => {
   if (!isAuthenticated) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#FAFAF9' }}>
+        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#F8F8F4' }}>
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-sky-500">BotBlock</h1>
+            <h1 className="text-4xl font-bold text-emerald-500">BotBlock</h1>
             <p className="text-stone-500">Create an account to save your progress!</p>
             <Button onClick={() => navigate('/auth')}>Get Started</Button>
           </div>
@@ -82,7 +82,7 @@ const Index = () => {
   if (isDataLoading) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#FAFAF9' }}>
+        <div className="h-screen w-full flex items-center justify-center" style={{ background: '#F8F8F4' }}>
           <LoadingFallback />
         </div>
       </PageErrorBoundary>
@@ -92,7 +92,7 @@ const Index = () => {
   if (!hasCompletedOnboarding) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#FAFAF9' }}>
+        <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#F8F8F4' }}>
           <Suspense fallback={<LoadingFallback />}>
             <OnboardingFlow onComplete={() => completeOnboarding()} />
           </Suspense>
@@ -103,7 +103,7 @@ const Index = () => {
 
   return (
     <PageErrorBoundary pageName="home page">
-      <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#FAFAF9' }}>
+      <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#F8F8F4' }}>
         {/* Game UI Overlay (includes PetLand home screen on home tab) */}
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>

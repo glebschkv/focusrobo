@@ -41,8 +41,8 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
       neon: 'retro-neon-yellow'
     },
     platinum: {
-      gradient: 'from-cyan-400 to-cyan-600',
-      border: 'border-cyan-300',
+      gradient: 'from-teal-400 to-teal-600',
+      border: 'border-teal-300',
       glow: 'shadow-[0_0_30px_rgba(34,211,238,0.6)]',
       neon: 'retro-neon-text'
     },
@@ -131,7 +131,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
             <Sparkles className="absolute top-10 right-10 w-4 h-4 text-yellow-400 animate-ping" style={{ animationDelay: '0.1s' }} />
             <Sparkles className="absolute bottom-24 left-10 w-5 h-5 text-yellow-400 animate-ping" style={{ animationDelay: '0.2s' }} />
             <Star className="absolute top-16 right-6 w-5 h-5 text-yellow-300 animate-spin" />
-            <Star className="absolute bottom-32 right-12 w-4 h-4 text-cyan-400 animate-spin" style={{ animationDelay: '0.3s' }} />
+            <Star className="absolute bottom-32 right-12 w-4 h-4 text-teal-400 animate-spin" style={{ animationDelay: '0.3s' }} />
           </div>
         )}
 
@@ -176,7 +176,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
             achievement.tier === 'bronze' && "retro-difficulty-normal",
             achievement.tier === 'silver' && "bg-gradient-to-b from-gray-400 to-gray-500 border-2 border-gray-300",
             achievement.tier === 'gold' && "retro-difficulty-hard",
-            achievement.tier === 'platinum' && "bg-gradient-to-b from-cyan-400 to-cyan-500 border-2 border-cyan-300",
+            achievement.tier === 'platinum' && "bg-gradient-to-b from-teal-400 to-teal-500 border-2 border-teal-300",
             achievement.tier === 'diamond' && "retro-difficulty-legendary"
           )}>
             <PixelIcon name={tierIcons[achievement.tier]} size={20} />
