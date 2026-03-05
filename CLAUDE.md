@@ -1,6 +1,6 @@
 # BotBlock — Architecture Reference
 
-> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (100 pets), archive it, start a new one. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (expands 5×5→20×20), archive it, start a new one. Players can also buy eggs in the shop to hatch pets with custom rarity weights. Built with React + Capacitor, deployed as a native iOS app.
 
 ## Core Gameplay Loop
 
@@ -9,6 +9,10 @@ Focus session completes → random pet generated (weighted by rarity + player le
 → pet size based on session length (baby/adolescent/adult)
 → pet placed on floating island using farthest-first spatial algorithm
 → fill island (expands 5×5→20×20) = island complete → archive → new island
+
+Alternatively:
+Shop → buy egg (common/rare/epic/legendary) with coins
+→ egg hatched with custom rarity weights → pet placed on island
 ```
 
 ## Art & Theme Direction
@@ -18,17 +22,17 @@ Focus session completes → random pet generated (weighted by rarity + player le
 - **Visual style**: Pixel art pets (PNG sprites, 56–84px responsive), front-facing, transparent background
 - **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes)
 - **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
-- **Pets**: 20 species across 5 rarities (see Pet Species below)
+- **Pets**: 41 species across 5 rarities (see Pet Species below)
 - **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
 - **Land themes**: Meadow (default), Beach, Snow, Desert, Night Garden, Sakura (purchasable)
-- **Assets**: `public/assets/pets/*.png` (20 species: bunny, cat, chick, crane, deer, dragon, duckling, fox, frog, hamster, hedgehog, mouse, otter, owl, penguin, phoenix, raccoon, sparrow, unicorn, wolf)
+- **Assets**: `public/assets/pets/*.png` (41 species × 4 size variants = 184 PNGs)
 
 ## Quick Facts
 
 - **App name**: BotBlock
-- **Bundle ID**: `co.botblock.app`
-- **App Group**: `group.co.botblock.app`
+- **Bundle ID**: `com.fonoinc.app`
+- **App Group**: `group.com.fonoinc.app`
 - **Package name**: `botblock` (in package.json)
 - **Storage prefix**: `nomo_` (all localStorage keys)
 
@@ -37,30 +41,33 @@ Focus session completes → random pet generated (weighted by rarity + player le
 | Layer | Technology |
 |-------|-----------|
 | Framework | React 18 + TypeScript |
-| Build | Vite (dev on port 8080) |
+| Build | Vite 6 (dev on port 8080) |
 | Native | Capacitor 7 (iOS primary, Android scaffolded) |
 | State | Zustand 5 with `persist` + `subscribeWithSelector` middleware |
-| Styling | Tailwind CSS + CSS variables (HSL-based design tokens in `index.css`) |
+| Styling | Tailwind CSS 3 + CSS variables (HSL-based design tokens in `index.css`) |
 | UI Library | Radix UI primitives + shadcn/ui components (`src/components/ui/`) |
-| Animations | Framer Motion + CSS keyframes |
+| Animations | Framer Motion 12 + CSS keyframes |
 | Backend | Supabase (auth, database, edge functions) |
-| Data Fetching | TanStack React Query |
+| Data Fetching | TanStack React Query 5 |
 | Routing | React Router DOM v6 |
 | Forms | React Hook Form + Zod validation |
 | Icons | Lucide React |
+| 3D (limited) | Three.js + @react-three/fiber + @react-three/drei |
 
 ## Scripts
 
 ```bash
 npm run dev          # Vite dev server on :8080
 npm run build        # Production build to dist/
-npm run build:dev    # Development build
+npm run build:dev    # Development build (with source maps)
 npm run ios          # Build + copy to iOS project
 npm run test         # Vitest watch mode
 npm run test:run     # Single test run
 npm run test:coverage # Coverage report
 npm run test:ui      # Vitest UI
 npm run test:e2e     # Playwright end-to-end tests
+npm run test:e2e:ui  # Playwright UI mode
+npm run test:e2e:headed # Playwright headed mode
 npm run typecheck    # tsc --noEmit
 npm run lint         # ESLint
 npm run analyze      # Bundle visualization (treemap)
@@ -91,8 +98,8 @@ src/
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
 │   ├── TopStatusBar.tsx       # XP bar, coins, level, streak at top
 │   ├── UnifiedFocusTimer.tsx  # Focus timer tab (orchestrates timer sub-components)
-│   ├── PetCollectionBook.tsx  # Pet collection catalog + species discovery tracking
-│   ├── Shop.tsx               # Shop tab (backgrounds, power-ups, bundles)
+│   ├── PetCollectionBook.tsx  # Pet collection catalog with wish-list support
+│   ├── Shop.tsx               # Shop tab (eggs, backgrounds, power-ups, bundles)
 │   ├── Settings.tsx           # Settings tab
 │   ├── RewardModals.tsx       # Reward modal coordinator
 │   ├── RewardModal.tsx        # Generic reward popup
@@ -110,6 +117,14 @@ src/
 │   ├── FeatureErrorBoundary.tsx # Feature-scoped error boundary
 │   ├── PageErrorBoundary.tsx  # Page-scoped error boundary
 │   ├── PluginUnavailableBanner.tsx # Native plugin unavailable warning
+│   ├── collection/            # Pet collection sub-components (modular tabs)
+│   │   ├── index.ts           # Barrel exports
+│   │   ├── constants.ts       # Rarity labels/colors, size labels, shared mappings
+│   │   ├── SpeciesTab.tsx     # Pet species discovery grid grouped by rarity with wish-list
+│   │   ├── LandsTab.tsx       # Current and archived floating islands, completion progress
+│   │   ├── SpeciesCard.tsx    # Individual species card with rarity badge, discovery count
+│   │   ├── SpeciesDetailDrawer.tsx # Drawer modal showing full pet details, affinity, wish mechanics
+│   │   └── ProgressRing.tsx   # SVG circular progress ring for island fill percentage
 │   ├── focus-timer/           # Timer sub-components
 │   │   ├── index.ts           # Barrel exports
 │   │   ├── constants.ts       # Timer constants
@@ -152,10 +167,26 @@ src/
 │   ├── analytics/             # Analytics dashboard (tab)
 │   │   ├── index.ts           # Barrel exports
 │   │   ├── Analytics.tsx      # Main analytics dashboard
-│   │   ├── AnalyticsStatCards.tsx, AnalyticsHeatmap.tsx, AnalyticsWeeklyChart.tsx ...
-│   │   ├── AnalyticsFocusScore.tsx, AnalyticsGoalRing.tsx, AnalyticsMilestones.tsx ...
+│   │   ├── AnalyticsStatCards.tsx      # Summary stat cards
+│   │   ├── AnalyticsHeatmap.tsx       # Focus session heatmap
+│   │   ├── AnalyticsWeeklyChart.tsx   # Weekly focus chart
+│   │   ├── AnalyticsFocusScore.tsx    # Focus score display
+│   │   ├── AnalyticsFocusScoreTrend.tsx # Focus score history trend
+│   │   ├── AnalyticsGoalRing.tsx      # Daily goal ring
+│   │   ├── AnalyticsMilestones.tsx    # Milestone achievements
+│   │   ├── AnalyticsBestHours.tsx     # Best focus hours breakdown
+│   │   ├── AnalyticsCategoryBreakdown.tsx # Focus category distribution
+│   │   ├── AnalyticsComparison.tsx    # Week-over-week comparison
+│   │   ├── AnalyticsCompletionTrend.tsx # Session completion rate trends
+│   │   ├── AnalyticsFocusQuality.tsx  # Perfect/good/distracted session ratios
+│   │   ├── AnalyticsInsights.tsx      # AI-driven insights
+│   │   ├── AnalyticsMonthlySummary.tsx # Month-to-date stats
+│   │   ├── AnalyticsRecords.tsx       # Personal records
+│   │   ├── AnalyticsSessionHistory.tsx # Detailed session history list
+│   │   ├── AnalyticsStreakAlert.tsx    # Streak warning badge
+│   │   ├── AnalyticsWeeklyReport.tsx  # Weekly report card
 │   │   ├── CollapsibleAnalyticsSection.tsx # Collapsible section wrapper
-│   │   └── SimpleBarChart.tsx # Bar chart utility
+│   │   └── SimpleBarChart.tsx         # Bar chart utility
 │   ├── settings/              # Settings sub-components
 │   │   ├── SettingsProfile.tsx, SettingsAccount.tsx, SettingsTimer.tsx
 │   │   ├── SettingsFocusMode.tsx, SettingsGame.tsx, SettingsSound.tsx
@@ -172,6 +203,7 @@ src/
 │   │   ├── PurchaseConfirmDialog.tsx # Purchase confirmation
 │   │   ├── ShopPreviewComponents.tsx # Item preview cards
 │   │   └── tabs/              # Shop tab views
+│   │       ├── EggsTab.tsx        # Egg purchasing and hatching UI (default tab)
 │   │       ├── BackgroundsTab.tsx # Background themes shop
 │   │       ├── FeaturedTab.tsx    # Featured items
 │   │       ├── InventoryTab.tsx   # User inventory
@@ -180,10 +212,15 @@ src/
 │       ├── button.tsx, card.tsx, dialog.tsx, drawer.tsx, input.tsx ...
 │       ├── skeleton-loaders.tsx # Context-aware loading skeletons
 │       ├── PixelIcon.tsx      # Pixel art icon component
-│       └── (35+ Radix-based primitives)
+│       ├── badge.variants.ts  # Badge style variants (CVA)
+│       ├── button.variants.ts # Button style variants (CVA)
+│       ├── toggle.variants.ts # Toggle style variants (CVA)
+│       ├── use-form-field.ts  # React Hook Form context utilities
+│       ├── use-sidebar.ts     # Sidebar state management hook
+│       └── (40+ Radix-based primitives)
 ├── stores/                    # Zustand state management
 │   ├── index.ts               # Store exports
-│   ├── landStore.ts           # Pet island grid state (current land, completed lands, species catalog)
+│   ├── landStore.ts           # Pet island grid, egg hatching, wished species, species affinity
 │   ├── xpStore.ts             # XP, level (max 50), unlocked entities
 │   ├── coinStore.ts           # Coin balance, earnings, spending, server sync
 │   ├── premiumStore.ts        # Subscription tier management
@@ -245,9 +282,10 @@ src/
 │   ├── useServiceWorker.ts    # Service worker registration
 │   └── use-mobile.tsx         # Mobile device detection
 ├── data/
-│   ├── PetDatabase.ts         # Pet species definitions, rarity weights, growth sizes, random roll
-│   ├── islandPositions.ts     # 100 island slot positions, isometric projection, depth scaling
-│   ├── ShopData.ts            # Shop items, backgrounds, bundles
+│   ├── PetDatabase.ts         # 41 pet species definitions, rarity weights, growth sizes, random roll
+│   ├── EggData.ts             # Egg types (common/rare/epic/legendary), prices, custom rarity weights
+│   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling
+│   ├── ShopData.ts            # Shop items, backgrounds, bundles, egg category
 │   ├── GamificationData.ts    # Milestone/achievement definitions
 │   ├── AmbientSoundsData.ts   # Sound library catalog
 │   ├── SpecialAnimations.ts   # Special celebration animations
@@ -327,17 +365,57 @@ src/
 ├── test/                      # Test files (mirrors src/ structure)
 │   ├── setup.ts               # Test setup (Vitest)
 │   ├── components/            # Component tests
-│   ├── hooks/                 # Hook tests
-│   ├── stores/                # Store tests
-│   ├── lib/                   # Utility tests
+│   ├── hooks/                 # Hook tests (~20 files)
+│   ├── stores/                # Store tests (6 files)
+│   ├── lib/                   # Utility tests (13 files)
 │   ├── services/              # Service tests
 │   ├── contexts/              # Context tests
-│   ├── database/              # Database tests
-│   ├── integration/           # Integration tests
+│   ├── database/              # Database tests (3 files)
+│   ├── integration/           # Integration tests (4 files)
 │   ├── e2e/                   # End-to-end tests
-│   └── utils/                 # Test utilities
+│   └── utils/                 # Test utilities (mocks, test-utils)
 └── integrations/
     └── supabase/              # Supabase client + generated types
+```
+
+### Other Project Directories
+
+```
+scripts/                       # Build & generation scripts
+├── assemble-spritesheet.mjs   # Spritesheet assembly
+├── generate-island-decorations.ts # Island decoration generation
+├── generate-pet-sprites.ts    # Pet sprite generation
+├── generate-placeholders.cjs  # Placeholder asset generation
+├── generate-splash.py         # Splash screen generation
+├── generate-sprite-directions.ts # Sprite direction variants
+└── patch-ios-config.cjs       # iOS config patching for Capacitor
+
+docs/                          # Documentation
+├── API.md                     # API documentation
+├── PRIVACY_POLICY.md          # Privacy policy
+├── TERMS_OF_SERVICE.md        # Terms of service
+├── TESTING.md                 # Testing guide
+├── WIDGETS.md                 # iOS widgets documentation
+└── privacy.html               # Privacy policy (HTML)
+
+e2e/                           # Playwright E2E tests
+├── auth.spec.ts               # Authentication flow tests
+├── collection.spec.ts         # Collection page tests
+├── focus-timer.spec.ts        # Timer flow tests
+├── navigation.spec.ts         # Navigation tests
+├── shop.spec.ts               # Shop tests
+├── streaks.spec.ts            # Streak tests
+└── integration/               # Integration E2E tests
+    ├── error-handling.spec.ts
+    ├── rewards-achievements.spec.ts
+    └── user-journey.spec.ts
+
+public/assets/                 # Static assets
+├── pets/                      # 184 PNG files (41 species × 4 size variants)
+├── icons/                     # 141 PNG icon files
+├── robots/                    # 27 SVG robot files across 6 zone subdirectories
+├── worlds/                    # 10 PNG world background files
+└── sprites/                   # (reserved for spritesheets)
 ```
 
 ## App Flow
@@ -354,7 +432,7 @@ src/
    - `TabContent` — renders active tab (PetLand for home, lazy-loads others)
    - `IOSTabBar` — bottom navigation
    - `RewardModals` — XP/coin/milestone/daily-login reward popups
-5. **Tabs**: home (PetLand), timer, collection (PetCollectionBook), challenges, shop, settings
+5. **Tabs**: home (PetLand), timer, collection (PetCollectionBook), shop, settings
 
 ## Stores (Zustand)
 
@@ -362,7 +440,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Current island grid (100 cells), grid expansion tier, completed lands, species catalog, pending pet** |
+| `landStore` | `nomo_land_data` | **Island grid (400 cells max), grid expansion tier, completed lands, species catalog, pending pet, wished species, species affinity, egg hatching** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
@@ -380,17 +458,17 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 ## Pet Collection System
 
-### Pet Species (20 total)
+### Pet Species (41 total)
 
-| Rarity | Species | Unlock Level |
-|--------|---------|-------------|
-| Common (8) | Bunny, Chick, Frog, Hamster, Duckling, Hedgehog, Mouse, Sparrow | 0–14 |
-| Uncommon (5) | Fox, Cat, Penguin, Raccoon, Otter | 4–22 |
-| Rare (4) | Deer, Owl, Wolf, Crane | 9–32 |
-| Epic (2) | Dragon, Phoenix | 20, 35 |
-| Legendary (1) | Unicorn | 40 |
+| Rarity | Count | Species | Unlock Levels |
+|--------|-------|---------|--------------|
+| Common | 16 | Bunny, Chick, Frog, Hamster, Duckling, Capybara, Hedgehog, Turtle, Bee, Mouse, Butterfly, Elephant, Monkey, Sparrow, Jellyfish, Sloth | 0–16 |
+| Uncommon | 10 | Fox, Cat, Corgi, Penguin, Shiba Inu, Koala, Raccoon, Parrot, Otter, Seal | 4–24 |
+| Rare | 9 | Deer, Owl, Panda, Red Panda, Wolf, Arctic Fox, Polar Bear, Flamingo, Crane | 9–32 |
+| Epic | 4 | Dragon, Tiger, Axolotl, Phoenix | 20–35 |
+| Legendary | 2 | Unicorn, Koi Fish | 40, 45 |
 
-**Unlock level details**: Bunny/Chick (0), Frog (2), Hamster (3), Fox (4), Duckling (5), Hedgehog (7), Cat (8), Deer (9), Mouse (10), Penguin (12), Sparrow (14), Owl (16), Raccoon (18), Dragon (20), Otter (22), Wolf (25), Crane (32), Phoenix (35), Unicorn (40).
+**Unlock level details**: Bunny/Chick (0), Frog (2), Hamster (3), Fox (4), Duckling (5), Capybara (6), Hedgehog (7), Cat/Turtle (8), Bee/Deer (9), Corgi/Mouse (10), Butterfly (11), Elephant/Penguin (12), Monkey (13), Shiba Inu/Sparrow (14), Jellyfish (15), Koala/Owl/Sloth (16), Raccoon (18), Dragon/Panda/Parrot (20), Otter (22), Red Panda (23), Seal (24), Wolf (25), Arctic Fox (27), Polar Bear (28), Flamingo/Tiger (30), Crane (32), Axolotl (33), Phoenix (35), Unicorn (40), Koi Fish (45).
 
 ### Growth Sizes (3 tiers)
 | Size | Session Duration | Scale Factor |
@@ -407,6 +485,37 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | Rare | 17% | Blue drop-shadow (4px) | `rgba(59, 130, 246, 0.7)` |
 | Epic | 8% | Purple drop-shadow (5px) | `rgba(168, 85, 247, 0.7)` |
 | Legendary | 2% | Gold drop-shadow (6px) + shimmer animation | `rgba(234, 179, 8, 0.8)` |
+
+### Egg System
+
+Players can buy eggs in the shop to hatch pets with custom rarity weights (overriding default drop rates). Defined in `src/data/EggData.ts`.
+
+| Egg | Price | Common | Uncommon | Rare | Epic | Legendary |
+|-----|-------|--------|----------|------|------|-----------|
+| Common Egg | 100 coins | 80% | 15% | 5% | 0% | 0% |
+| Rare Egg | 400 coins | 40% | 35% | 20% | 5% | 0% |
+| Epic Egg | 1,200 coins | 0% | 15% | 40% | 35% | 10% |
+| Legendary Egg | 3,000 coins | 0% | 0% | 20% | 40% | 40% |
+
+Species Selector: 2,000 coins (lets player choose specific species).
+
+Egg hatching is handled via `landStore.hatchEgg(egg, playerLevel)` which calls `rollRandomPet()` with the egg's custom rarity weights.
+
+### Wish List & Affinity
+
+- `wishedSpecies` — players can wish for a specific species (stored in landStore)
+- `speciesAffinity` — tracks affinity with species over time
+- `SpeciesDetailDrawer` shows full pet details with affinity stats and wish mechanics
+- `useWishedSpecies()` selector hook for components
+
+### Collection UI
+
+The collection page (`PetCollectionBook.tsx`) uses modular sub-components in `components/collection/`:
+- **SpeciesTab** — Grid of all species grouped by rarity, with discovery tracking and wish-list toggle
+- **LandsTab** — Current island progress + archived completed islands
+- **SpeciesCard** — Individual species card showing rarity badge, discovery count, size tracking
+- **SpeciesDetailDrawer** — Full-screen drawer with detailed pet info, affinity, and wish mechanics
+- **ProgressRing** — SVG circular progress indicator for island completion
 
 ### Floating Island System
 
@@ -425,9 +534,9 @@ The home screen renders a **floating isometric island** (not a flat grid). Key c
 - **Pinch-to-zoom**: Range 0.8×–2.0×, supports two-finger pinch, mouse wheel, and double-tap toggle (1.0↔1.5)
 
 **Pet Positioning** (`islandPositions.ts`):
-- 100 positions computed from 10×10 grid via **bilinear interpolation on diamond vertices**
+- Positions computed from grid via **bilinear interpolation on diamond vertices**
 - Uses the exact same diamond vertices (TOP, RIGHT, BOTTOM, LEFT) and `diamondPt()` function as `IslandSVG.tsx` — pets align precisely with tile centers
-- Cell centers: `(row+0.5)/10, (col+0.5)/10` normalized, then mapped to SVG coords and converted to container percentages
+- Cell centers: `(row+0.5)/gridSize, (col+0.5)/gridSize` normalized, then mapped to SVG coords and converted to container percentages
 - No jitter — exact centering on each tile
 - Pet CSS transform: `translate(-50%, -60%)` positions sprite so feet rest on tile
 
@@ -480,8 +589,10 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 
 **Actions**:
 - `generateRandomPet(sessionMinutes, playerLevel)` — rolls random pet from unlocked pool
+- `hatchEgg(egg, playerLevel)` — hatches egg with custom rarity weights, places pet
 - `placePendingPet()` — places pet using farthest-first algorithm, auto-expands tier if full, auto-archives full land
 - `startNewLand()` — manually start new island
+- `setWishedSpecies(speciesId)` — set wish-list species
 - `getAvailableCells()` — returns Set of unlocked cell indices for current grid size
 - `isTierFull()` — check if all available cells in current tier are filled
 - `getFilledCount()` / `isLandComplete()` — query methods
@@ -491,7 +602,7 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 ### XP & Leveling
 - **Max level**: 50
 - **XP per minute of focus**: 1.2 base
-- **Level formula**: `15 * 1.15^(level-1)` XP per level, or thresholds table for levels 1-20, then 700 XP/level after 20
+- **Level formula**: Thresholds table for levels 1-20, then 700 XP/level after 20
 - **Streak bonus**: +3% per day, capped at 60% (max multiplier 1.6x at 20 days)
 - **Premium multipliers**: free=1x, premium=2x, premium_plus=3x, lifetime=4x
 - **Focus bonuses**: Perfect focus (0 blocked attempts) = +25% XP + 50 coins; Good focus (1-2 attempts) = +10% XP + 25 coins
@@ -499,10 +610,11 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 
 ### Coins
 - **Base rate**: 2 coins/minute of focus
-- **Session completion bonuses**: 25min→+15, 30→+20, 45→+35, 60→+50, 90→+80, 120→+120, 180→+180
+- **Session completion bonuses**: 25min→+15, 30→+20, 45→+35, 60→+50, 90→+80, 120→+120, 180→+180, 240→+240, 300→+300
 - **Random bonus**: 5% chance mega (2.5x), 10% super lucky (1.75x), 20% lucky (1.5x)
 - **Daily login**: 20 coins + 5/streak day (cap 100)
 - **Land completion**: 500 coin bonus
+- **Egg purchases**: Common=100, Rare=400, Epic=1200, Legendary=3000 coins
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
 ### Streaks
@@ -606,9 +718,9 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Home screen**: Floating island on gradient sky (`#6BB8E0` → `#F0F7E4`)
 - **Theme color**: `#FAFAF9` for iOS status bar
 - **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind
-- **Component library**: shadcn/ui with Radix UI primitives
+- **Component library**: shadcn/ui with Radix UI primitives + CVA (class-variance-authority) for variant systems
 - **Animations**: Framer Motion for page transitions + CSS keyframes for island/pet animations
-- **Fonts**: Inter (via `@fontsource/inter`)
+- **Fonts**: SF Pro Display (Apple) with Inter fallback (via `@fontsource/inter`)
 - **Responsive**: Pet sprites scale 56px → 62px → 68px → 74px → 84px at breakpoints (375px, 390px, 420px, 768px)
 - **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
 
@@ -629,7 +741,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 
 ## Build & Deploy
 
-1. `npm run build` — Vite builds to `dist/`
+1. `npm run build` — Vite builds to `dist/` (code-split into vendor chunks: react, radix, three, motion, data, utils)
 2. `npm run cap:copy:ios` — copies `dist/` into iOS project + runs `scripts/patch-ios-config.cjs`
 3. Open `ios/App/App.xcworkspace` in Xcode
 4. Build/archive from Xcode for TestFlight/App Store
@@ -647,6 +759,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Parallax tilt**: Touch-drag shifts sky/island/pets layers at different speeds (0.15/0.5/0.85) using ref-based DOM updates — zero React re-renders during interaction. Spring physics for momentum and snap-back.
 - **SVG-aligned pet positions**: `islandPositions.ts` and `IslandSVG.tsx` share identical diamond vertices and bilinear interpolation math so pets sit exactly on their tile centers.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
+- **Egg-based pet generation**: `rollRandomPet()` accepts optional custom rarity weights, used by the egg system to override default drop rates.
 
 ## Path Aliases
 
@@ -676,9 +789,7 @@ Bundles:
 
 ## What's Next (TODO)
 
-- [ ] LandCompleteModal — celebration when 100th cell filled (currently basic overlay)
-- [ ] Wire pet generation into timer completion flow (`useTimerRewards` → `landStore`)
-- [ ] Update shop for land themes, rarity boosts, species picks
+- [ ] LandCompleteModal — celebration when island fully expanded and filled
 - [ ] Generate final pet pixel art assets (current ones are placeholders)
 - [ ] Update onboarding flow for pet/island theme
 - [ ] Remove debug "Award Pet" button from PetLand before production
