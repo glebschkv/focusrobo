@@ -51,6 +51,16 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
 
+  useEffect(() => {
+    if (isNew) haptic('medium');
+  }, [isNew, haptic]);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    haptic('selection');
+    onToggleTooltip(index);
+  }, [haptic, onToggleTooltip, index]);
+
   const species = getPetById(cell.petId);
   if (!species) return null;
 
@@ -79,18 +89,6 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
   const tooltipShiftClass =
     pos.x < 20 ? 'island-pet__tooltip--shift-right' :
     pos.x > 80 ? 'island-pet__tooltip--shift-left' : '';
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (isNew) haptic('medium');
-  }, [isNew, haptic]);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    haptic('selection');
-    onToggleTooltip(index);
-  }, [haptic, onToggleTooltip, index]);
 
   if (imageError) {
     return (

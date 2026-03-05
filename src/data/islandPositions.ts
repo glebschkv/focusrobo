@@ -137,7 +137,7 @@ export function getAvailableCellIndices(gridSize: number): Set<number> {
 
 /** Get the number of available cells for a given grid size */
 export function getAvailableCellCount(gridSize: number): number {
-  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize));
+  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
   return size * size;
 }
 
@@ -207,7 +207,7 @@ export function migrateCells<T>(oldCells: (T | null)[]): (T | null)[] {
  * are larger when gridSize is smaller. Pets sit at tile centers.
  */
 export function getIslandPosition(index: number, gridSize: number): IslandPosition | null {
-  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize));
+  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
   const offset = Math.floor((GRID_SIZE - size) / 2);
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
@@ -235,7 +235,8 @@ export function getIslandPosition(index: number, gridSize: number): IslandPositi
  * gridSize=5 → 0.45 (small island), gridSize=20 → 1.0 (full size).
  */
 export function getIslandScale(gridSize: number): number {
-  return 0.45 + 0.55 * (gridSize - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
+  const g = gridSize || MIN_GRID_TIER;
+  return 0.45 + 0.55 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
 }
 
 /** Rotation step type (kept for backward compat) */
