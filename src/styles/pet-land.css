@@ -461,9 +461,9 @@
   position: absolute;
   pointer-events: auto;
   transform:
-    translate(-50%, -50%)
+    translate(-50%, -80%)
     scale(var(--pet-scale, 1));
-  transform-origin: center bottom;
+  transform-origin: center center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
@@ -472,15 +472,15 @@
 
 .island-pet:active {
   transform:
-    translate(-50%, -50%)
+    translate(-50%, -80%)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
 /* ── Pet sprite ────────────────────────────────────────────────── */
 
 .island-pet__sprite {
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
   image-rendering: -webkit-crisp-edges;
   image-rendering: crisp-edges;
@@ -494,19 +494,19 @@
 }
 
 @media (min-width: 375px) {
-  .island-pet__sprite { width: 44px; height: 44px; }
+  .island-pet__sprite { width: 62px; height: 62px; }
 }
 
 @media (min-width: 390px) {
-  .island-pet__sprite { width: 48px; height: 48px; }
+  .island-pet__sprite { width: 68px; height: 68px; }
 }
 
 @media (min-width: 420px) {
-  .island-pet__sprite { width: 52px; height: 52px; }
+  .island-pet__sprite { width: 74px; height: 74px; }
 }
 
 @media (min-width: 768px) {
-  .island-pet__sprite { width: 58px; height: 58px; }
+  .island-pet__sprite { width: 84px; height: 84px; }
 }
 
 .island-pet--new .island-pet__sprite {

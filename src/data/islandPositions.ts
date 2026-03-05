@@ -79,7 +79,7 @@ export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
 // ─── Depth system ───────────────────────────────────────────────────
 
-const DEPTH_MIN = 0.78;
+const DEPTH_MIN = 0.85;
 const DEPTH_MAX = 1.0;
 
 export function getDepthScale(index: number): number {
