@@ -45,7 +45,7 @@ export const TimerView = ({
   onLockedBackgroundClick,
 }: TimerViewProps) => {
   return (
-    <div className="relative z-10 flex flex-col items-center justify-start px-4 pb-32">
+    <div className="relative z-10 flex flex-col items-center justify-start px-4 pt-2 pb-32">
       <TimerDisplay
         preset={selectedPreset}
         timeLeft={displayTime}
@@ -67,7 +67,7 @@ export const TimerView = ({
 
       {/* Preset grid — below controls, only when not running */}
       {!timerState.isRunning && (
-        <div className="mt-6 w-full flex justify-center">
+        <div className="mt-8 w-full flex justify-center">
           <TimerPresetGrid
             selectedPreset={selectedPreset}
             isRunning={timerState.isRunning}

@@ -38,13 +38,13 @@ export const TimerControls = ({
         <button
           onClick={onStart}
           aria-label={ARIA_LABELS.START_TIMER}
-          className="px-12 py-4 rounded-full text-base font-semibold tracking-wide text-white transition-all active:scale-95"
+          className="px-14 py-[18px] rounded-2xl text-lg font-bold tracking-wide text-white transition-all active:scale-95"
           style={{
             background: colors.ringStart,
-            boxShadow: `0 4px 20px ${colors.ringStart}40`,
+            boxShadow: `0 4px 20px ${colors.ringStart}50`,
           }}
         >
-          Start Focus
+          Start Growing
         </button>
       </div>
     );
@@ -55,19 +55,19 @@ export const TimerControls = ({
       <button
         onClick={isLocked ? handleLockedAction : onStop}
         aria-label={isLocked ? "Stop disabled — strict mode active" : ARIA_LABELS.STOP_TIMER}
-        className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90"
+        className="w-11 h-11 rounded-xl flex items-center justify-center transition-all active:scale-90"
         style={{
           background: `${colors.text}08`,
           opacity: isLocked ? 0.4 : 1,
         }}
       >
-        <Square className="w-4 h-4" style={{ color: `${colors.text}70` }} aria-hidden="true" />
+        <Square className="w-4 h-4" style={{ color: `${colors.text}60` }} aria-hidden="true" />
       </button>
 
       <button
         onClick={isLocked ? handleLockedAction : onPause}
         aria-label={isLocked ? "Pause disabled — strict mode active" : ARIA_LABELS.PAUSE_TIMER}
-        className="px-10 py-3.5 rounded-full text-sm font-semibold tracking-wide text-white transition-all active:scale-95"
+        className="px-12 py-4 rounded-2xl text-sm font-bold tracking-wide text-white transition-all active:scale-95"
         style={{
           background: isLocked ? `${colors.text}30` : colors.ringStart,
           boxShadow: isLocked ? 'none' : `0 4px 16px ${colors.ringStart}30`,
@@ -89,13 +89,13 @@ export const TimerControls = ({
       <button
         onClick={isLocked ? handleLockedAction : onSkip}
         aria-label={isLocked ? "Skip disabled — strict mode active" : "Skip to end"}
-        className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90"
+        className="w-11 h-11 rounded-xl flex items-center justify-center transition-all active:scale-90"
         style={{
           background: `${colors.text}08`,
           opacity: isLocked ? 0.4 : 1,
         }}
       >
-        <SkipForward className="w-4 h-4" style={{ color: `${colors.text}70` }} aria-hidden="true" />
+        <SkipForward className="w-4 h-4" style={{ color: `${colors.text}60` }} aria-hidden="true" />
       </button>
     </div>
   );

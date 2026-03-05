@@ -35,17 +35,17 @@ export const TimerDisplay = ({
   const progressPercent = Math.round(progress);
 
   const ringSize = 240;
-  const strokeWidth = 6;
+  const strokeWidth = 10;
   const radius = (ringSize - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="w-full max-w-sm mb-6" role="region" aria-label="Focus timer">
+    <div className="w-full max-w-sm mb-8" role="region" aria-label="Focus timer">
       {/* Minimal session label */}
       <div className="flex items-center justify-between mb-6 px-2">
         <div>
-          <h2 className="text-base font-semibold tracking-tight" style={{ color: colors.text }}>
+          <h2 className="text-sm font-bold tracking-tight" style={{ color: colors.text }}>
             {preset.name}
           </h2>
           <p className="text-[12px] font-medium" style={{ color: `${colors.text}80` }}>
@@ -85,8 +85,9 @@ export const TimerDisplay = ({
               cy={ringSize / 2}
               r={radius}
               fill="none"
-              stroke={`${colors.text}12`}
+              stroke={`${colors.text}18`}
               strokeWidth={strokeWidth}
+              strokeLinecap="round"
             />
             {/* Progress */}
             <circle
@@ -99,14 +100,17 @@ export const TimerDisplay = ({
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
+              style={{
+                transition: 'stroke-dashoffset 0.5s ease-out',
+                filter: `drop-shadow(0 0 8px ${colors.ringStart}4D)`,
+              }}
             />
           </svg>
 
           {/* Center time display */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div
-              className="text-[52px] font-extralight tracking-wider tabular-nums"
+              className="text-[46px] font-semibold tracking-tight tabular-nums"
               style={{ color: colors.text }}
               role="timer"
               aria-live="polite"
@@ -116,7 +120,7 @@ export const TimerDisplay = ({
               {formatTime(displayTime)}
             </div>
             <p
-              className="text-[11px] font-medium tracking-wide uppercase mt-1"
+              className="text-[12px] font-semibold tracking-widest uppercase mt-1"
               style={{ color: `${colors.text}50` }}
               aria-live="polite"
             >
