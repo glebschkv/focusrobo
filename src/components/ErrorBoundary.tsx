@@ -156,7 +156,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-2 mt-4">
               <Button
                 onClick={() => window.location.reload()}
-                className="flex-1 bg-blue-500 hover:bg-blue-600"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Restart App

@@ -40,7 +40,7 @@ const PageErrorFallback = ({ pageName }: PageErrorFallbackProps) => {
     <div
       className="min-h-screen flex items-center justify-center p-6"
       style={{
-        background: 'linear-gradient(180deg, hsl(200 60% 85%) 0%, hsl(200 40% 92%) 50%, hsl(40 50% 93%) 100%)'
+        background: 'linear-gradient(180deg, hsl(150 30% 88%) 0%, hsl(140 20% 93%) 50%, hsl(60 20% 95%) 100%)'
       }}
     >
       <div className="w-full max-w-md">
