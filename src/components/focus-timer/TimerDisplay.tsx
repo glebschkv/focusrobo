@@ -25,117 +25,103 @@ export const TimerDisplay = ({
   isCountup = false,
   elapsedTime = 0
 }: TimerDisplayProps) => {
-  // Get theme-aware colors
   const { colors } = useThemeColors();
 
-  // For countup mode, show elapsed time; for countdown, show remaining time
   const displayTime = isCountup ? elapsedTime : timeLeft;
 
-  // For countup mode, progress is based on elapsed time toward max duration
-  // For countdown mode, progress is based on time spent in session
   const progress = isCountup
     ? (elapsedTime / MAX_COUNTUP_DURATION) * 100
     : sessionDuration > 0 ? ((sessionDuration - timeLeft) / sessionDuration) * 100 : 0;
   const progressPercent = Math.round(progress);
 
-  // Circular progress ring dimensions
-  const ringSize = 220;
-  const strokeWidth = 8;
+  const ringSize = 240;
+  const strokeWidth = 6;
   const radius = (ringSize - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-  // Generate unique gradient ID to avoid conflicts
-  const gradientId = `timerGradient-${colors.ringStart.replace(/[^a-zA-Z0-9]/g, '')}`;
-
   return (
-    <div className="w-full max-w-sm mb-4" role="region" aria-label="Focus timer">
-      {/* Atelier header pill */}
-      <div className="timer-header-pill mb-4">
-        <div className="flex items-center gap-3">
-          <div className="timer-header-icon" aria-hidden="true">
-            <preset.icon className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold text-stone-900">{preset.name}</h2>
-            <p className="text-[11px] text-stone-400 font-medium">
-              {isCountup ? 'Up to 6 hours' : `${preset.duration} minutes`}
-            </p>
-          </div>
+    <div className="w-full max-w-sm mb-6" role="region" aria-label="Focus timer">
+      {/* Minimal session label */}
+      <div className="flex items-center justify-between mb-6 px-2">
+        <div>
+          <h2 className="text-base font-semibold tracking-tight" style={{ color: colors.text }}>
+            {preset.name}
+          </h2>
+          <p className="text-[12px] font-medium" style={{ color: `${colors.text}80` }}>
+            {isCountup ? 'Open-ended' : `${preset.duration} min`}
+          </p>
         </div>
         <button
           onClick={onToggleSound}
           aria-label={ariaLabel.toggle('Sound', soundEnabled)}
-          className="timer-sound-btn"
+          className="w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-90"
+          style={{ background: `${colors.text}10` }}
         >
           {soundEnabled ? (
-            <Volume2 className="w-4 h-4 text-stone-600" aria-hidden="true" />
+            <Volume2 className="w-4 h-4" style={{ color: colors.text }} aria-hidden="true" />
           ) : (
-            <VolumeX className="w-4 h-4 text-stone-300" aria-hidden="true" />
+            <VolumeX className="w-4 h-4" style={{ color: `${colors.text}40` }} aria-hidden="true" />
           )}
         </button>
       </div>
 
-      {/* Atelier timer ring — thin, clean, on white */}
+      {/* Timer ring — no container, just the ring on the background */}
       <div className="flex flex-col items-center">
-        <div className="timer-ring-container">
-          <div className="relative" style={{ width: ringSize, height: ringSize }}>
-            <svg
-              width={ringSize}
-              height={ringSize}
-              className="absolute inset-0 -rotate-90"
-              role="progressbar"
-              aria-valuenow={progressPercent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={isCountup ? `Elapsed: ${progressPercent}% of 6 hours` : `Session progress: ${progressPercent}% complete`}
-            >
-              {/* Track — subtle stone */}
-              <circle
-                cx={ringSize / 2}
-                cy={ringSize / 2}
-                r={radius}
-                fill="none"
-                stroke="#E7E5E4"
-                strokeWidth={strokeWidth - 2}
-              />
-              {/* Progress fill — sky accent */}
-              <circle
-                cx={ringSize / 2}
-                cy={ringSize / 2}
-                r={radius}
-                fill="none"
-                stroke="#0EA5E9"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
-              />
-            </svg>
+        <div className="relative" style={{ width: ringSize, height: ringSize }}>
+          <svg
+            width={ringSize}
+            height={ringSize}
+            className="absolute inset-0 -rotate-90"
+            role="progressbar"
+            aria-valuenow={progressPercent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={isCountup ? `Elapsed: ${progressPercent}% of 6 hours` : `Session progress: ${progressPercent}% complete`}
+          >
+            {/* Track */}
+            <circle
+              cx={ringSize / 2}
+              cy={ringSize / 2}
+              r={radius}
+              fill="none"
+              stroke={`${colors.text}12`}
+              strokeWidth={strokeWidth}
+            />
+            {/* Progress */}
+            <circle
+              cx={ringSize / 2}
+              cy={ringSize / 2}
+              r={radius}
+              fill="none"
+              stroke={colors.ringStart}
+              strokeWidth={strokeWidth}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              style={{ transition: 'stroke-dashoffset 0.5s ease-out' }}
+            />
+          </svg>
 
-            {/* Center time display */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div
-                className="text-5xl font-light tracking-wide tabular-nums"
-                style={{ color: '#1C1917' }}
-                role="timer"
-                aria-live="polite"
-                aria-atomic="true"
-                aria-label={isCountup ? `Time elapsed: ${formatTimeForScreenReader(displayTime)}` : `Time remaining: ${formatTimeForScreenReader(displayTime)}`}
-              >
-                {formatTime(displayTime)}
-              </div>
-              <div
-                className={cn(
-                  "timer-status-badge",
-                  isRunning && "active"
-                )}
-                aria-live="polite"
-              >
-                {isRunning ? (isCountup ? 'Counting up...' : 'Focus time...') : 'Ready to focus'}
-              </div>
+          {/* Center time display */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div
+              className="text-[52px] font-extralight tracking-wider tabular-nums"
+              style={{ color: colors.text }}
+              role="timer"
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label={isCountup ? `Time elapsed: ${formatTimeForScreenReader(displayTime)}` : `Time remaining: ${formatTimeForScreenReader(displayTime)}`}
+            >
+              {formatTime(displayTime)}
             </div>
+            <p
+              className="text-[11px] font-medium tracking-wide uppercase mt-1"
+              style={{ color: `${colors.text}50` }}
+              aria-live="polite"
+            >
+              {isRunning ? (isCountup ? 'Counting' : 'Focusing') : 'Ready'}
+            </p>
           </div>
         </div>
       </div>

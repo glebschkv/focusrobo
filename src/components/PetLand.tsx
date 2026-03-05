@@ -63,14 +63,15 @@ function useIslandParallax() {
 
   const updateCSS = useCallback(() => {
     const offset = currentOffset.current;
+    const z = currentZoom.current;
     if (skyRef.current) {
-      skyRef.current.style.transform = `translateX(${offset * LAYER_SKY}px)`;
+      skyRef.current.style.transform = `translate3d(${offset * LAYER_SKY}px, 0, 0)`;
     }
     if (containerRef.current) {
-      containerRef.current.style.transform = `translateX(${offset * LAYER_ISLAND}px) scale(${currentZoom.current})`;
+      containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, 0, 0) scale(${z})`;
     }
     if (petsRef.current) {
-      petsRef.current.style.transform = `translateX(${offset * LAYER_PETS}px)`;
+      petsRef.current.style.transform = `translate3d(${offset * LAYER_PETS}px, 0, 0)`;
     }
   }, []);
 
