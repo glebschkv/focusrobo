@@ -1,21 +1,19 @@
 /**
  * Island Position Map
  *
- * Maps 100 land cell indices to (x%, y%) coordinates on the isometric diamond
- * surface. Uses the EXACT same diamond vertices and bilinear interpolation as
- * IslandSVG.tsx so pets sit precisely at the center of each tile.
- *
- * All values are percentages relative to the island-container (which matches
- * the SVG viewBox aspect ratio 420×258).
+ * Maps up to 400 land cell indices (20×20 grid) to (x%, y%) coordinates on
+ * the isometric diamond surface. Uses the EXACT same diamond vertices and
+ * bilinear interpolation as IslandSVG.tsx so pets sit precisely at the center
+ * of each tile.
  *
  * Supports progressive island expansion: the island starts as a centered 5×5
- * region within the 10×10 grid and expands as pets fill it up.
+ * region and expands through tiers up to 20×20.
  */
 
-export const GRID_SIZE = 10;
+/** Maximum grid dimension — the underlying grid is always 20×20 */
+export const GRID_SIZE = 20;
 
 // ─── Diamond vertices (identical to IslandSVG.tsx) ──────────────────
-// These define the grass surface shape in SVG coordinate space (viewBox 420×258)
 const VB_W = 420;
 const VB_H = 258;
 
@@ -62,13 +60,11 @@ function computePositions(): IslandPosition[] {
     const row = Math.floor(i / GRID_SIZE);
     const col = i % GRID_SIZE;
 
-    // Cell center: offset by 0.5 to hit the middle of each tile
     const r = (row + 0.5) / GRID_SIZE;
     const c = (col + 0.5) / GRID_SIZE;
 
     const svgPt = diamondPt(r, c);
 
-    // Convert SVG coordinates to container percentages
     positions.push({
       x: (svgPt.x / VB_W) * 100,
       y: (svgPt.y / VB_H) * 100,
@@ -78,29 +74,21 @@ function computePositions(): IslandPosition[] {
   return positions;
 }
 
-/** Pre-computed 100 positions on the island surface */
+/** Pre-computed 400 positions (20×20) on the island surface */
 export const ISLAND_POSITIONS: IslandPosition[] = computePositions();
 
-/**
- * Get depth-based scale for a cell index.
- * Back of island (top of diamond) = smaller, front (bottom) = larger.
- * Range: 0.78 → 1.0 for subtle depth.
- */
+// ─── Depth system ───────────────────────────────────────────────────
+
 const DEPTH_MIN = 0.78;
 const DEPTH_MAX = 1.0;
 
 export function getDepthScale(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
-  // Isometric depth: higher row+col = closer to camera
   const isoDepth = (row + col) / (2 * (GRID_SIZE - 1));
   return DEPTH_MIN + isoDepth * (DEPTH_MAX - DEPTH_MIN);
 }
 
-/**
- * Get z-index for a cell based on its depth (isometric row+col sum).
- * Higher sum = closer to camera = higher z-index.
- */
 export function getDepthZIndex(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
@@ -108,24 +96,30 @@ export function getDepthZIndex(index: number): number {
 }
 
 // ─── Island Expansion System ────────────────────────────────────────
-// The island starts as a centered 5×5 region and expands tier by tier
-// as the player fills up the available cells.
 
 /** Min grid size (starting tier) */
 export const MIN_GRID_TIER = 5;
 /** Max grid size (fully expanded) */
-export const MAX_GRID_TIER = 10;
+export const MAX_GRID_TIER = 20;
 
 /**
- * Get the set of cell indices (0–99) that are available at a given grid size.
- * A grid size of N means a centered N×N region within the 10×10 grid.
- *
- * Grid 5×5 → rows 2-6, cols 2-6 (25 cells)
- * Grid 6×6 → rows 2-7, cols 2-7 (36 cells)
- * Grid 7×7 → rows 1-7, cols 1-7 (49 cells)
- * Grid 8×8 → rows 1-8, cols 1-8 (64 cells)
- * Grid 9×9 → rows 0-8, cols 0-8 (81 cells)
- * Grid 10×10 → rows 0-9, cols 0-9 (100 cells)
+ * Expansion tiers — the island grows through these sizes.
+ * Each tier fills up before the next one unlocks.
+ * Jumps get bigger at higher tiers for dramatic expansion feel.
+ */
+export const EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20] as const;
+
+/** Get the next expansion tier after the given grid size, or null if maxed */
+export function getNextTier(gridSize: number): number | null {
+  for (const tier of EXPANSION_TIERS) {
+    if (tier > gridSize) return tier;
+  }
+  return null;
+}
+
+/**
+ * Get the set of cell indices that are available at a given grid size.
+ * A grid size of N means a centered N×N region within the 20×20 grid.
  */
 export function getAvailableCellIndices(gridSize: number): Set<number> {
   const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize));
@@ -155,14 +149,20 @@ export function computeMinGridSize(cells: (unknown | null)[]): number {
   let minRow = GRID_SIZE, maxRow = 0, minCol = GRID_SIZE, maxCol = 0;
   let hasAny = false;
 
+  // Detect whether cells is old 10×10 format (length ≤ 100) or new 20×20
+  const gridWidth = cells.length <= 100 ? 10 : GRID_SIZE;
+
   for (let i = 0; i < cells.length; i++) {
     if (cells[i] !== null) {
-      const row = Math.floor(i / GRID_SIZE);
-      const col = i % GRID_SIZE;
-      minRow = Math.min(minRow, row);
-      maxRow = Math.max(maxRow, row);
-      minCol = Math.min(minCol, col);
-      maxCol = Math.max(maxCol, col);
+      const row = Math.floor(i / gridWidth);
+      const col = i % gridWidth;
+      // If old format, offset into the 20×20 center
+      const adjRow = gridWidth === 10 ? row + 5 : row;
+      const adjCol = gridWidth === 10 ? col + 5 : col;
+      minRow = Math.min(minRow, adjRow);
+      maxRow = Math.max(maxRow, adjRow);
+      minCol = Math.min(minCol, adjCol);
+      maxCol = Math.max(maxCol, adjCol);
       hasAny = true;
     }
   }
@@ -170,15 +170,33 @@ export function computeMinGridSize(cells: (unknown | null)[]): number {
   if (!hasAny) return MIN_GRID_TIER;
 
   // Find the smallest centered grid that contains all pets
-  for (let size = MIN_GRID_TIER; size <= MAX_GRID_TIER; size++) {
-    const offset = Math.floor((GRID_SIZE - size) / 2);
-    if (minRow >= offset && maxRow < offset + size &&
-        minCol >= offset && maxCol < offset + size) {
-      return size;
+  for (const tier of EXPANSION_TIERS) {
+    const offset = Math.floor((GRID_SIZE - tier) / 2);
+    if (minRow >= offset && maxRow < offset + tier &&
+        minCol >= offset && maxCol < offset + tier) {
+      return tier;
     }
   }
 
   return MAX_GRID_TIER;
+}
+
+/**
+ * Migrate a 100-cell (10×10) array to a 400-cell (20×20) array.
+ * Old cells are centered within the new grid (offset by 5 in each axis).
+ */
+export function migrateCells<T>(oldCells: (T | null)[]): (T | null)[] {
+  if (oldCells.length > 100) return oldCells; // Already migrated
+  const newCells: (T | null)[] = new Array(GRID_SIZE * GRID_SIZE).fill(null);
+  for (let i = 0; i < oldCells.length; i++) {
+    if (oldCells[i] !== null) {
+      const oldRow = Math.floor(i / 10);
+      const oldCol = i % 10;
+      const newIndex = (oldRow + 5) * GRID_SIZE + (oldCol + 5);
+      newCells[newIndex] = oldCells[i];
+    }
+  }
+  return newCells;
 }
 
 /** Rotation step type (kept for backward compat) */

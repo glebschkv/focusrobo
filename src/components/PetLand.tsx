@@ -275,6 +275,9 @@ export const PetLand = () => {
     setActiveTooltipIndex(null);
   }, []);
 
+  // Build pet elements with stable callback — memo() on IslandPet ensures only
+  // pets whose props actually changed (showTooltip, isNew) re-render.
+  // handleToggleTooltip is stable (useCallback with [] deps).
   const slotElements = useMemo(() => {
     return currentLand.cells.map((cell, index) => {
       if (cell) {
@@ -285,7 +288,7 @@ export const PetLand = () => {
             index={index}
             isNew={index === lastPlacedIndex}
             showTooltip={activeTooltipIndex === index}
-            onToggleTooltip={() => handleToggleTooltip(index)}
+            onToggleTooltip={handleToggleTooltip}
           />
         );
       }
@@ -445,7 +448,7 @@ export const PetLand = () => {
         </div>
         <span className="pet-land__progress-label">
           Land {currentLand.number} · {filledCount}/{LAND_SIZE}
-          {currentLand.gridSize < 10 && ` · ${currentLand.gridSize}×${currentLand.gridSize}`}
+          {currentLand.gridSize < 20 && ` · ${currentLand.gridSize}×${currentLand.gridSize}`}
         </span>
       </div>
 
