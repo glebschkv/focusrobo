@@ -463,9 +463,9 @@
   position: absolute;
   pointer-events: auto;
   transform:
-    translate(-50%, -50%)
+    translate(-50%, -85%)
     scale(var(--pet-scale, 1));
-  transform-origin: center center;
+  transform-origin: center 85%;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
@@ -473,7 +473,7 @@
 
 .island-pet:active {
   transform:
-    translate(-50%, -50%)
+    translate(-50%, -85%)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
@@ -524,9 +524,9 @@
 .island-pet::before {
   content: '';
   position: absolute;
-  bottom: -2px;
+  top: 85%;
   left: 50%;
-  transform: translateX(-50%) scale(var(--pet-scale, 1));
+  transform: translate(-50%, -50%);
   width: 20px;
   height: 6px;
   border-radius: 50%;
@@ -542,15 +542,15 @@
 
 @keyframes island-pet-pop {
   0% {
-    transform: translate(-50%, -50%) scale(0) rotate(-8deg);
+    transform: translate(-50%, -85%) scale(0) rotate(-8deg);
     opacity: 0;
   }
   60% {
-    transform: translate(-50%, -50%) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
+    transform: translate(-50%, -85%) scale(calc(var(--pet-scale, 1) * 1.15)) rotate(2deg);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%) scale(var(--pet-scale, 1)) rotate(0);
+    transform: translate(-50%, -85%) scale(var(--pet-scale, 1)) rotate(0);
     opacity: 1;
   }
 }
