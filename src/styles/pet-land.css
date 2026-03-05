@@ -612,6 +612,24 @@
   100% { background-position: -200% 0; }
 }
 
+/* ── Devoted species sparkle ───────────────────────────────────── */
+
+.island-pet__devotion-sparkle {
+  position: absolute;
+  inset: -3px;
+  border-radius: 4px;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+              radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 35%),
+              radial-gradient(circle at 50% 50%, rgba(234, 179, 8, 0.15) 0%, transparent 60%);
+  animation: devotion-sparkle 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes devotion-sparkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
 /* ── Pet fallback placeholder ──────────────────────────────────── */
 
 .island-pet__fallback {
@@ -988,6 +1006,7 @@
   .island-pet { transition: none; }
   .island-pet__sprite { animation: none; }
   .island-pet__shimmer { animation: none; }
+  .island-pet__devotion-sparkle { animation: none; }
   .island-pet--new { animation: none; opacity: 1; }
   .island-pet--new::after { animation: none; }
   .island-pet--epic { animation: none; }

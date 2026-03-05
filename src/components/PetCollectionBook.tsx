@@ -5,13 +5,14 @@
  * Replaces the old BotCollectionGrid which showed 40+ robots.
  */
 
-import { useState, useMemo, memo } from 'react';
+import { useState, useMemo, memo, useCallback } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { PET_DATABASE, type PetSpecies, type PetRarity, RARITY_GLOW } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import { useXPStore } from '@/stores/xpStore';
 import { cn } from '@/lib/utils';
-import { Book, Grid3X3, Lock, Star, Trophy, Search, Sparkles } from 'lucide-react';
+import { Book, Grid3X3, Lock, Star, Trophy, Search, Sparkles, Heart } from 'lucide-react';
+import { playSoundEffect } from '@/hooks/useSoundEffects';
 
 // ============================================================================
 // Rarity styling
@@ -73,18 +74,37 @@ const SIZE_LABEL: Record<string, string> = {
 // Sub-components
 // ============================================================================
 
+const AFFINITY_THRESHOLDS = [
+  { level: 'familiar' as const, count: 3, label: 'Familiar', color: 'text-emerald-500' },
+  { level: 'bonded' as const, count: 5, label: 'Bonded', color: 'text-blue-500' },
+  { level: 'devoted' as const, count: 10, label: 'Devoted', color: 'text-amber-500' },
+];
+
+function getAffinityInfo(count: number) {
+  if (count >= 10) return { level: 'devoted', label: 'Devoted', color: 'text-amber-500', next: null, nextCount: 0 };
+  if (count >= 5) return { level: 'bonded', label: 'Bonded', color: 'text-blue-500', next: 'Devoted', nextCount: 10 };
+  if (count >= 3) return { level: 'familiar', label: 'Familiar', color: 'text-emerald-500', next: 'Bonded', nextCount: 5 };
+  return { level: 'none', label: null, color: '', next: 'Familiar', nextCount: 3 };
+}
+
 const SpeciesCard = memo(({
   species,
   discovered,
   timesFound,
   bestSize,
   locked,
+  isWished,
+  affinityCount,
+  onWish,
 }: {
   species: PetSpecies;
   discovered: boolean;
   timesFound: number;
   bestSize: string | null;
   locked: boolean;
+  isWished: boolean;
+  affinityCount: number;
+  onWish: (speciesId: string) => void;
 }) => {
   const glow = RARITY_GLOW[species.rarity];
   const style = RARITY_CARD_STYLE[species.rarity];
@@ -121,13 +141,30 @@ const SpeciesCard = memo(({
     );
   }
 
+  const affinity = getAffinityInfo(affinityCount);
+
   return (
     <div
       className={cn(
         'relative rounded-xl border-2 p-2.5 transition-all flex flex-col items-center',
         style.bg, style.border, style.glow,
+        isWished && 'ring-2 ring-pink-300 ring-offset-1',
       )}
     >
+      {/* Wish heart button */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onWish(species.id); }}
+        className="absolute top-1.5 left-1.5 p-0.5"
+        aria-label={isWished ? 'Remove wish' : 'Set as wish'}
+      >
+        <Heart
+          className={cn(
+            'w-3.5 h-3.5 transition-colors',
+            isWished ? 'text-pink-500 fill-pink-500' : 'text-stone-300',
+          )}
+        />
+      </button>
+
       {/* Pet image */}
       <div className="h-14 flex items-center justify-center mb-1.5">
         <img
@@ -155,10 +192,10 @@ const SpeciesCard = memo(({
         {RARITY_LABEL[species.rarity]}
       </span>
 
-      {/* Stats */}
+      {/* Stats + affinity */}
       {timesFound > 0 && (
         <div className="flex items-center gap-1 mt-1.5 text-[9px] font-semibold text-stone-500">
-          <span>×{timesFound}</span>
+          <span>×{affinityCount}</span>
           {bestSize && (
             <>
               <span className="text-stone-300">·</span>
@@ -166,6 +203,20 @@ const SpeciesCard = memo(({
             </>
           )}
         </div>
+      )}
+
+      {/* Affinity badge */}
+      {affinity.label && (
+        <span className={cn('mt-1 text-[8px] font-bold', affinity.color)}>
+          {affinity.label}
+        </span>
+      )}
+
+      {/* Affinity progress */}
+      {affinity.next && affinityCount > 0 && (
+        <span className="mt-0.5 text-[8px] text-stone-400">
+          {affinityCount}/{affinity.nextCount} to {affinity.next}
+        </span>
       )}
 
       {/* Legendary sparkle */}
@@ -185,10 +236,27 @@ export const PetCollectionBook = memo(() => {
   const speciesCatalog = useLandStore((s) => s.speciesCatalog);
   const currentLand = useLandStore((s) => s.currentLand);
   const completedLands = useLandStore((s) => s.completedLands);
+  const wishedSpecies = useLandStore((s) => s.wishedSpecies);
+  const speciesAffinity = useLandStore((s) => s.speciesAffinity);
+  const setWishedSpecies = useLandStore((s) => s.setWishedSpecies);
   const currentLevel = useXPStore((s) => s.currentLevel);
 
   const [activeTab, setActiveTab] = useState<'catalog' | 'lands'>('catalog');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleWish = useCallback((speciesId: string) => {
+    if (wishedSpecies === speciesId) {
+      setWishedSpecies(null);
+    } else {
+      setWishedSpecies(speciesId);
+      playSoundEffect('click');
+    }
+  }, [wishedSpecies, setWishedSpecies]);
+
+  const wishedPet = useMemo(() => {
+    if (!wishedSpecies) return null;
+    return PET_DATABASE.find(p => p.id === wishedSpecies) ?? null;
+  }, [wishedSpecies]);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -300,6 +368,30 @@ export const PetCollectionBook = memo(() => {
       <ScrollArea className="flex-1 min-h-0">
         {activeTab === 'catalog' && (
           <div className="px-4 pt-1 pb-28">
+            {/* Wished pet banner */}
+            {wishedPet && (
+              <div className="mb-3 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200">
+                <div className="flex items-center gap-2.5">
+                  <Heart className="w-4 h-4 text-pink-500 fill-pink-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-pink-800">
+                      Wished: {wishedPet.name}
+                    </p>
+                    <p className="text-[10px] text-pink-600/70 mt-0.5">
+                      Focus or hatch eggs to find {wishedPet.name}!
+                    </p>
+                  </div>
+                  <img
+                    src={wishedPet.imagePath}
+                    alt={wishedPet.name}
+                    className="w-8 h-8 object-contain flex-shrink-0"
+                    style={{ imageRendering: 'pixelated' }}
+                    draggable={false}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Species grid */}
             {filteredSpecies.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -322,6 +414,9 @@ export const PetCollectionBook = memo(() => {
                       timesFound={entry?.timesFound ?? 0}
                       bestSize={entry?.bestSize ?? null}
                       locked={locked}
+                      isWished={wishedSpecies === species.id}
+                      affinityCount={speciesAffinity[species.id] || 0}
+                      onWish={handleWish}
                     />
                   );
                 })}

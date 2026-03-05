@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Zap, Clock, Backpack, Star, Palette, Zap as ZapIcon } from "lucide-react";
+import { Zap, Clock, Backpack, Star, Palette, Zap as ZapIcon, Egg } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { useShop } from "@/hooks/useShop";
@@ -18,17 +18,19 @@ import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { FeaturedTab } from "@/components/shop/tabs/FeaturedTab";
 import { BackgroundsTab } from "@/components/shop/tabs/BackgroundsTab";
 import { PowerUpsTab } from "@/components/shop/tabs/PowerUpsTab";
+import { EggsTab } from "@/components/shop/tabs/EggsTab";
 import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
 
 const CATEGORY_ICONS: Record<string, typeof Star> = {
+  eggs: Egg,
   featured: Star,
   customize: Palette,
   powerups: ZapIcon,
 };
 
 export const Shop = () => {
-  const [activeCategory, setActiveCategory] = useState<ShopCategory>("featured");
+  const [activeCategory, setActiveCategory] = useState<ShopCategory>("eggs");
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [showPurchaseConfirm, setShowPurchaseConfirm] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
@@ -96,6 +98,13 @@ export const Shop = () => {
 
   const renderContent = () => {
     switch (activeCategory) {
+      case 'eggs':
+        return (
+          <EggsTab
+            coinBalance={coinBalance}
+            canAfford={canAfford}
+          />
+        );
       case 'featured':
         return (
           <FeaturedTab

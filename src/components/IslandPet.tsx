@@ -15,6 +15,7 @@ interface IslandPetProps {
   cell: LandCell;
   index: number;
   isNew?: boolean;
+  isDevotion?: boolean;
   showTooltip: boolean;
   onToggleTooltip: () => void;
 }
@@ -33,7 +34,7 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, isNew, isDevotion, showTooltip, onToggleTooltip }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const { haptic } = useHaptics();
 
@@ -128,6 +129,9 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
 
       {/* Legendary shimmer */}
       {cell.rarity === 'legendary' && <div className="island-pet__shimmer" />}
+
+      {/* Devoted species sparkle */}
+      {isDevotion && <div className="island-pet__devotion-sparkle" />}
 
       {/* Tooltip on tap */}
       {showTooltip && (

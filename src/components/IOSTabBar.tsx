@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { Timer, Home, ShoppingBag, PawPrint, Settings, ChevronUp, Trophy } from "lucide-react";
+import { Timer, Home, ShoppingBag, PawPrint, Settings, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useClickSound } from "@/hooks/useClickSound";
 import { useHaptics } from "@/hooks/useHaptics";
@@ -13,23 +13,13 @@ interface TabBarProps {
   onCompactChange?: (isCompact: boolean) => void;
 }
 
-// Tab configuration with notification support
-const tabs = [
+// Tab configuration — 5 tabs with Focus at center
+const orderedTabs = [
   { id: "home", icon: Home, label: "Home" },
-  { id: "timer", icon: Timer, label: "Focus", isCenter: true },
   { id: "collection", icon: PawPrint, label: "Pets" },
-  { id: "challenges", icon: Trophy, label: "Challenges" },
+  { id: "timer", icon: Timer, label: "Focus", isCenter: true },
   { id: "shop", icon: ShoppingBag, label: "Shop" },
   { id: "settings", icon: Settings, label: "Settings" },
-];
-
-// Reorder tabs so timer is in center
-const orderedTabs = [
-  tabs[0], // Home
-  tabs[2], // Collection
-  tabs[1], // Timer (center)
-  tabs[3], // Challenges
-  tabs[4], // Shop
 ];
 
 export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompactChange }: TabBarProps) => {

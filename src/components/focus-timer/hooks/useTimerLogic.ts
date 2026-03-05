@@ -249,6 +249,7 @@ export const useTimerLogic = () => {
       }
 
       let xpEarned = 0;
+      let coinsEarned = 0;
       if (state.timerState.sessionType !== 'break') {
         const rewardResult = await awardSessionRewards(
           completedMinutes,
@@ -264,6 +265,7 @@ export const useTimerLogic = () => {
         );
 
         xpEarned = rewardResult.xpEarned;
+        coinsEarned = rewardResult.coinsEarned;
 
         if (rewardResult.focusBonusType === 'PERFECT FOCUS') {
           triggerHaptic('success');

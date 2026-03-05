@@ -134,8 +134,18 @@ export function getPetsByRarity(rarity: PetRarity): PetSpecies[] {
 /**
  * Randomly select a pet species from the available pool,
  * weighted by rarity.
+ *
+ * @param playerLevel - Player's current level (determines which species are unlocked)
+ * @param customWeights - Optional custom rarity weights (e.g. from egg hatching)
  */
-export function rollRandomPet(playerLevel: number): PetSpecies {
+export function rollRandomPet(
+  playerLevel: number,
+  customWeights?: Partial<Record<PetRarity, number>>,
+): PetSpecies {
+  const weights = customWeights
+    ? { ...RARITY_WEIGHTS, ...customWeights }
+    : RARITY_WEIGHTS;
+
   const pool = getAvailablePets(playerLevel);
 
   if (pool.length === 0) {
@@ -155,7 +165,7 @@ export function rollRandomPet(playerLevel: number): PetSpecies {
   // Calculate total weight from available rarities only
   let totalWeight = 0;
   for (const rarity of Object.keys(rarityGroups) as PetRarity[]) {
-    totalWeight += RARITY_WEIGHTS[rarity];
+    totalWeight += weights[rarity];
   }
 
   // Roll for rarity
@@ -163,7 +173,7 @@ export function rollRandomPet(playerLevel: number): PetSpecies {
   let selectedRarity: PetRarity = 'common';
 
   for (const rarity of Object.keys(rarityGroups) as PetRarity[]) {
-    roll -= RARITY_WEIGHTS[rarity];
+    roll -= weights[rarity];
     if (roll <= 0) {
       selectedRarity = rarity;
       break;

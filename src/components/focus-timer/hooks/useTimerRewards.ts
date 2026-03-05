@@ -15,6 +15,7 @@ import { FOCUS_BONUS } from '@/lib/constants';
 interface RewardResult {
   xpEarned: number;
   coinsEarned: number;
+  baseCoinsEarned: number;
   focusBonusType: string;
 }
 
@@ -41,6 +42,7 @@ export function useTimerRewards() {
     const result: RewardResult = {
       xpEarned: 0,
       coinsEarned: 0,
+      baseCoinsEarned: 0,
       focusBonusType: '',
     };
 
@@ -57,10 +59,12 @@ export function useTimerRewards() {
     }
 
     // Award XP for work sessions (minimum 25 minutes)
+    // Note: awardXP() also awards base session coins via coinSystem.awardCoins() internally
     if (sessionInfo.sessionType !== 'break' && completedMinutes >= 25) {
       try {
         const reward = await awardXP(completedMinutes);
         result.xpEarned = reward?.xpGained || 0;
+        result.baseCoinsEarned = reward?.coinReward || 0;
 
         // Apply focus bonus to XP
         if (focusMultiplier > 1.0 && result.xpEarned > 0 && xpSystem && 'addDirectXP' in xpSystem) {
@@ -81,7 +85,9 @@ export function useTimerRewards() {
         ? FOCUS_BONUS.PERFECT_FOCUS.coinBonus
         : FOCUS_BONUS.GOOD_FOCUS.coinBonus;
       coinSystem.addCoins(bonusCoins);
-      result.coinsEarned = bonusCoins;
+      result.coinsEarned = result.baseCoinsEarned + bonusCoins;
+    } else {
+      result.coinsEarned = result.baseCoinsEarned;
     }
 
     // Dispatch achievement tracking event for focus sessions

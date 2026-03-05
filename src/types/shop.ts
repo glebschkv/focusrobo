@@ -23,7 +23,8 @@ export type ShopCategory =
   | 'coins'
   | 'bundles'
   | 'inventory'
-  | 'pets'; // backward-compat alias for bots
+  | 'pets' // backward-compat alias for bots
+  | 'eggs';
 
 // ============================================================================
 // Base Shop Item Types

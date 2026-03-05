@@ -13,15 +13,18 @@ import { useState, useEffect } from "react";
 import { useAppStateTracking } from "@/hooks/useAppStateTracking";
 import { AppStateProvider } from "@/contexts/AppStateContext";
 import { useRewardHandlers } from "@/hooks/useRewardHandlers";
+import { useCoinSystem } from "@/hooks/useCoinSystem";
+import { useLandStore } from "@/stores/landStore";
 import { TopStatusBar } from "@/components/TopStatusBar";
 import { IOSTabBar } from "@/components/IOSTabBar";
 import { AchievementTracker } from "@/components/AchievementTracker";
 import { TabContent, preloadTabComponents } from "@/components/TabContent";
 import { RewardModals } from "@/components/RewardModals";
 import { GlobalSoundToggle } from "@/components/GlobalSoundToggle";
+import { toast } from "sonner";
 
 const TAB_STORAGE_KEY = 'botblock_currentTab';
-const VALID_TABS = ['home', 'timer', 'collection', 'challenges', 'shop', 'settings'];
+const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
 
 function getPersistedTab(): string {
   try {
@@ -64,6 +67,35 @@ export const GameUI = () => {
     };
   }, []);
 
+  // Award land completion bonus coins when island is filled
+  const { addCoins } = useCoinSystem();
+  useEffect(() => {
+    const handleLandComplete = (event: CustomEvent<{ landNumber: number; bonusCoins: number }>) => {
+      const { bonusCoins, landNumber } = event.detail;
+      addCoins(bonusCoins, 'achievement');
+      toast.success(`Island ${landNumber} Complete!`, {
+        description: `+${bonusCoins} bonus coins! Starting a new island.`,
+        duration: 5000,
+      });
+    };
+    window.addEventListener('land:completed', handleLandComplete as EventListener);
+    return () => window.removeEventListener('land:completed', handleLandComplete as EventListener);
+  }, [addCoins]);
+
+  // Collect passive offline income on mount
+  const collectOfflineIncome = useLandStore((s) => s.collectOfflineIncome);
+  useEffect(() => {
+    const coins = collectOfflineIncome();
+    if (coins > 0) {
+      addCoins(coins, 'passive');
+      toast.success(`Welcome back!`, {
+        description: `Your pets earned ${coins} coins while you were away!`,
+        duration: 4000,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Single instance of useAppStateTracking — shared via context with all children
   const appState = useAppStateTracking();
   const {
@@ -89,10 +121,7 @@ export const GameUI = () => {
       <AchievementTracker>
         <div className="fixed inset-0 pointer-events-none z-40">
           {/* Unified Top Status Bar */}
-          <TopStatusBar
-            currentTab={currentTab}
-            onSettingsClick={() => setCurrentTab("settings")}
-          />
+          <TopStatusBar currentTab={currentTab} />
 
           {/* Full Screen Content */}
           <div
