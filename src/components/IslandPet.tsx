@@ -11,6 +11,13 @@ import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPo
 import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
+/** Build the sprite path, trying growth-specific first (e.g. polar-bear-baby.png) */
+function getSpritePath(petId: string, size: string, basePath: string): { primary: string; fallback: string } {
+  const dir = basePath.substring(0, basePath.lastIndexOf('/'));
+  const primary = `${dir}/${petId}-${size}.png`;
+  return { primary, fallback: basePath };
+}
+
 interface IslandPetProps {
   cell: LandCell;
   index: number;
@@ -35,10 +42,14 @@ const RARITY_LABELS: Record<string, string> = {
 
 export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
+  const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
   if (!species) return null;
+
+  const { primary: growthPath, fallback: basePath } = getSpritePath(cell.petId, cell.size, species.imagePath);
+  const spriteSrc = useGrowthSprite ? growthPath : basePath;
 
   const pos = ISLAND_POSITIONS[index];
   if (!pos) return null;
@@ -115,12 +126,18 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
       }}
     >
       <img
-        src={species.imagePath}
+        src={spriteSrc}
         alt={species.name}
         className="island-pet__sprite"
         draggable={false}
         loading="lazy"
-        onError={() => setImageError(true)}
+        onError={() => {
+          if (useGrowthSprite) {
+            setUseGrowthSprite(false);
+          } else {
+            setImageError(true);
+          }
+        }}
       />
 
       {/* Pet shadow on ground */}
