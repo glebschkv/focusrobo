@@ -2,18 +2,18 @@
  * IslandPet Component
  *
  * Renders a single pet absolutely positioned on the isometric diamond island.
- * Includes depth-based scaling, rarity glow effects, idle bobbing, and tooltips.
+ * Includes depth-based scaling, rarity glow effects, idle bobbing.
  *
- * Performance: uses memo() with a STABLE callback prop (onToggleTooltip receives
- * the index as an argument, so the callback reference never changes). This ensures
- * only pets whose props actually changed re-render — not all 100+ on every click.
+ * Performance optimizations:
+ * - memo() with stable callback prop
+ * - No per-pet store subscriptions or hooks (haptics handled at parent)
+ * - CSS containment for layout isolation
+ * - reducedAnimations mode disables bob + filter animations for 60+ pets
  */
 
-import { memo, useEffect, useState, useCallback } from 'react';
-import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
+import { memo, useState, useCallback } from 'react';
+import { getPetById, GROWTH_SCALES } from '@/data/PetDatabase';
 import { getIslandPosition, getDepthScale, getDepthZIndex, getGridDensityScale } from '@/data/islandPositions';
-import { useHaptics } from '@/hooks/useHaptics';
-import { useLandStore } from '@/stores/landStore';
 import type { LandCell } from '@/stores/landStore';
 
 /** Build the sprite path, trying growth-specific first (e.g. polar-bear-baby.png) */
@@ -29,39 +29,18 @@ interface IslandPetProps {
   gridSize: number;
   isNew?: boolean;
   showTooltip: boolean;
-  /** Stable callback — pet passes its own index */
   onToggleTooltip: (index: number) => void;
+  reducedAnimations?: boolean;
 }
 
-const SIZE_LABELS: Record<string, string> = {
-  baby: 'Baby',
-  adolescent: 'Teen',
-  adult: 'Adult',
-};
-
-const RARITY_LABELS: Record<string, string> = {
-  common: 'Common',
-  uncommon: 'Uncommon',
-  rare: 'Rare',
-  epic: 'Epic',
-  legendary: 'Legendary',
-};
-
-export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, reducedAnimations }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
-  const { haptic } = useHaptics();
-  const isDev = useLandStore((s) => (s.speciesAffinity[cell.petId] || 0) >= 10);
-
-  useEffect(() => {
-    if (isNew) haptic('medium');
-  }, [isNew, haptic]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    haptic('selection');
     onToggleTooltip(index);
-  }, [haptic, onToggleTooltip, index]);
+  }, [onToggleTooltip, index]);
 
   const species = getPetById(cell.petId);
   if (!species) return null;
@@ -77,21 +56,17 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
   const gridScale = getGridDensityScale(gridSize);
   const finalScale = growthScale * depthScale * gridScale;
   const zIndex = getDepthZIndex(index);
-  const rarityColor = RARITY_COLORS[cell.rarity];
 
-  const bobDelay = ((index % 11) * 0.27).toFixed(1);
-  const bobOffset = ((index % 3) - 1) * 0.5;
+  // Use fewer unique bob delays to allow browser animation batching
+  const bobGroup = index % 5;
+  const bobDelay = (bobGroup * 0.6).toFixed(1);
 
   const rarityClass =
     cell.rarity !== 'common'
       ? `island-pet--${cell.rarity}`
       : '';
 
-  const tooltipBelow = pos.y < 30;
-
-  const tooltipShiftClass =
-    pos.x < 20 ? 'island-pet__tooltip--shift-right' :
-    pos.x > 80 ? 'island-pet__tooltip--shift-left' : '';
+  const animClass = reducedAnimations ? 'island-pet--reduced' : '';
 
   if (imageError) {
     return (
@@ -111,18 +86,18 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
 
   return (
     <div
-      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''} ${isDev ? 'island-pet--devoted' : ''}`}
+      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''} ${animClass}`}
       style={{
         left: `${pos.x}%`,
         top: `${pos.y}%`,
         zIndex,
         '--pet-scale': finalScale,
         '--bob-delay': `${bobDelay}s`,
-        '--bob-offset': `${bobOffset}px`,
+        contain: 'layout style paint',
       } as React.CSSProperties}
       onClick={handleClick}
       role="button"
-      aria-label={`${RARITY_LABELS[cell.rarity]} ${species.name}, ${SIZE_LABELS[cell.size]} size`}
+      aria-label={`${species.name}`}
     >
       <img
         src={spriteSrc}
@@ -139,33 +114,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
         }}
       />
 
-      {/* Legendary shimmer */}
-      {cell.rarity === 'legendary' && <div className="island-pet__shimmer" />}
-
-      {/* Tooltip on tap */}
-      {showTooltip && (
-        <div
-          className={`island-pet__tooltip ${tooltipBelow ? 'island-pet__tooltip--below' : ''} ${tooltipShiftClass}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleTooltip(index);
-          }}
-        >
-          <span className="island-pet__tooltip-name">{species.name}</span>
-          <span
-            className="island-pet__tooltip-rarity"
-            style={{
-              background: `${rarityColor.tooltip}22`,
-              color: rarityColor.tooltip,
-            }}
-          >
-            {RARITY_LABELS[cell.rarity]}
-          </span>
-          <span className="island-pet__tooltip-detail">
-            {SIZE_LABELS[cell.size]}{cell.sessionMinutes > 0 ? ` · ${cell.sessionMinutes}min` : ' · Hatched'}
-          </span>
-        </div>
-      )}
+      {/* Legendary shimmer — only if not in reduced mode */}
+      {cell.rarity === 'legendary' && !reducedAnimations && <div className="island-pet__shimmer" />}
     </div>
   );
 });

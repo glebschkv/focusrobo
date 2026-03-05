@@ -391,6 +391,13 @@
   50% { transform: translateY(-5px); }
 }
 
+/* ── Zoom + pan layer (controlled via JS ref) ───── */
+
+.pet-land__zoom-layer {
+  transform-origin: center center;
+  will-change: transform;
+}
+
 /* ── Island scaler — handles tier growth animation ───── */
 
 .pet-land__island-scaler {
@@ -1021,6 +1028,307 @@
   70% { opacity: 0.6; transform: scale(0.8); }
 }
 
+/* ── Performance modes — reduce GPU load with many pets ────── */
+
+/* 60+ pets: disable bob animation, simplify rarity filters */
+.pet-land--perf-med .island-pet__sprite {
+  animation: none !important;
+}
+.pet-land--perf-med .island-pet--epic .island-pet__sprite {
+  animation: none !important;
+}
+
+/* 100+ pets: also disable rarity filter effects and shimmer */
+.pet-land--perf-low .island-pet__sprite {
+  animation: none !important;
+  filter: none !important;
+}
+.pet-land--perf-low .island-pet--epic .island-pet__sprite {
+  animation: none !important;
+  filter: none !important;
+}
+.pet-land--perf-low .island-pet__shimmer {
+  display: none;
+}
+.pet-land--perf-low .island-pet--devoted::before {
+  display: none;
+}
+.pet-land--perf-low .island-pet::before {
+  display: none;
+}
+
+/* Per-pet reduced mode (set via prop) */
+.island-pet--reduced .island-pet__sprite {
+  animation: none;
+}
+.island-pet--reduced.island-pet--epic .island-pet__sprite {
+  animation: none;
+}
+
+/* ── Pet Detail Card — bottom sheet style ─────────────────── */
+
+.pet-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pet-detail-backdrop--visible {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.pet-detail-card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 8px;
+  padding: 0 20px 28px;
+  background: var(--rarity-bg), hsl(var(--card) / 0.97);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--rarity-border);
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  box-shadow:
+    0 -4px 24px rgba(0, 0, 0, 0.12),
+    var(--rarity-glow, none);
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow: hidden;
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+}
+
+.pet-detail-card--visible {
+  transform: translateY(0);
+}
+
+/* Rarity accent line at top */
+.pet-detail-card__accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--rarity-color) 30%,
+    var(--rarity-color) 70%,
+    transparent
+  );
+  opacity: 0.7;
+}
+
+.pet-detail-card--common .pet-detail-card__accent {
+  opacity: 0.3;
+}
+
+/* Drag handle */
+.pet-detail-card__handle {
+  width: 36px;
+  height: 4px;
+  margin: 10px auto 4px;
+  border-radius: 2px;
+  background: hsl(var(--muted-foreground) / 0.25);
+  cursor: pointer;
+}
+
+/* Sprite showcase */
+.pet-detail-card__sprite-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 110px;
+  margin: 4px 0 8px;
+}
+
+.pet-detail-card__sprite {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 2;
+  animation: pet-detail-sprite-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+.pet-detail-card__sprite-glow {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--rarity-color) 0%,
+    transparent 70%
+  );
+  opacity: 0.15;
+  filter: blur(16px);
+  z-index: 1;
+  animation: pet-detail-glow-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pet-detail-sprite-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pet-detail-glow-pulse {
+  0%, 100% { opacity: 0.12; transform: scale(0.95); }
+  50% { opacity: 0.2; transform: scale(1.05); }
+}
+
+/* Header */
+.pet-detail-card__header {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.pet-detail-card__name {
+  font-size: 20px;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.pet-detail-card__rarity-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pet-detail-card__stars {
+  display: inline-flex;
+  gap: 1px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.pet-detail-card__star {
+  color: var(--rarity-color);
+}
+
+.pet-detail-card__star--empty {
+  opacity: 0.2;
+}
+
+.pet-detail-card__rarity-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid;
+}
+
+/* Description */
+.pet-detail-card__description {
+  text-align: center;
+  font-size: 13px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+  margin: 4px 0 14px;
+  padding: 0 8px;
+}
+
+/* Stats grid */
+.pet-detail-card__stats {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 12px 4px;
+  background: hsl(var(--muted) / 0.4);
+  border-radius: 14px;
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+.pet-detail-card__stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pet-detail-card__stat-divider {
+  width: 1px;
+  background: hsl(var(--border) / 0.5);
+  align-self: stretch;
+  margin: 4px 0;
+}
+
+.pet-detail-card__stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+}
+
+.pet-detail-card__stat-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  font-variant-numeric: tabular-nums;
+}
+
+.pet-detail-card__stat-sub {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground) / 0.7);
+}
+
+/* Footer */
+.pet-detail-card__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.pet-detail-card__unlock {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground) / 0.6);
+  font-weight: 500;
+}
+
+/* Legendary card gets shimmer animation */
+.pet-detail-card--legendary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px 20px 0 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 167, 38, 0.06) 45%,
+    rgba(255, 167, 38, 0.02) 55%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: island-pet-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* ── Reduced motion ──────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1043,4 +1351,8 @@
   .pet-land__particle { display: none; }
   .pet-land__sparkle { display: none; }
   .pet-land__milestone { animation: none; }
+  .pet-detail-card { transition: none; }
+  .pet-detail-card__sprite { animation: none; opacity: 1; }
+  .pet-detail-card__sprite-glow { animation: none; }
+  .pet-detail-card--legendary::before { animation: none; }
 }
