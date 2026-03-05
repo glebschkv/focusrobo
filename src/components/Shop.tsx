@@ -160,7 +160,7 @@ export const Shop = () => {
           <h1 className="text-base font-black uppercase tracking-tight text-amber-900">Shop</h1>
           {isBoosterActive() && activeBooster && (
             <div className="shop-booster-pill">
-              <Zap className="w-3 h-3 text-purple-600 animate-pulse" />
+              <Zap className="w-3 h-3 text-purple-600" />
               <span className="text-[10px] font-bold text-purple-700">
                 {getCurrentMultiplier()}x
               </span>

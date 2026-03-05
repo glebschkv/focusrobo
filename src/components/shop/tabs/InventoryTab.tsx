@@ -1,5 +1,4 @@
 import { Snowflake, Zap, Clock, Image, Palette } from "lucide-react";
-import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { useStreakFreezeCount } from "@/stores/streakStore";
 import { useOwnedBackgrounds, useEquippedBackground } from "@/stores/shopStore";
@@ -43,11 +42,9 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
             "retro-shop-card relative overflow-hidden",
             streakFreezeCount > 0 ? "" : "opacity-50"
           )}>
-            <div className="retro-scanlines" />
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-400 to-teal-600" />
-            <div className="relative pt-3 pb-2.5 px-3">
+            <div className="pt-3 pb-2.5 px-3">
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-teal-400 to-teal-600 shadow-sm border border-teal-500/50">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-teal-500">
                   <Snowflake className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xs font-black uppercase tracking-tight">Streak Freeze</span>
@@ -69,17 +66,13 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
             "retro-shop-card relative overflow-hidden",
             boosterActive ? "" : "opacity-50"
           )}>
-            <div className="retro-scanlines" />
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-400 to-purple-600" />
-            <div className="relative pt-3 pb-2.5 px-3">
+            <div className="pt-3 pb-2.5 px-3">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center shadow-sm border",
-                  boosterActive
-                    ? "bg-gradient-to-br from-purple-400 to-purple-600 border-purple-500/50"
-                    : "bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700 border-gray-400/50"
+                  "w-8 h-8 rounded-lg flex items-center justify-center",
+                  boosterActive ? "bg-purple-500" : "bg-gray-400"
                 )}>
-                  <Zap className={cn("w-4 h-4 text-white", boosterActive && "animate-pulse")} />
+                  <Zap className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-xs font-black uppercase tracking-tight">Booster</span>
               </div>
@@ -130,7 +123,6 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                     isEquipped && "retro-shop-card-owned"
                   )}
                 >
-                  <div className="retro-scanlines" />
                   {bg.previewImage ? (
                     <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
                       <img
@@ -158,13 +150,8 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
             })}
           </div>
         ) : (
-          <div className="retro-shop-card relative overflow-hidden">
-            <div className="retro-scanlines" />
-            <div className="py-5 px-4 text-center">
-              <Image className="w-7 h-7 text-gray-300 dark:text-gray-600 mx-auto mb-1.5" />
-              <p className="text-xs font-bold text-muted-foreground">No backgrounds yet</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Buy them from the shop!</p>
-            </div>
+          <div className="py-5 px-4 text-center">
+            <p className="text-xs font-bold text-muted-foreground">No backgrounds owned</p>
           </div>
         )}
       </div>
@@ -172,11 +159,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
       {/* Empty state */}
       {!hasAnyItems && (
         <div className="py-8 text-center">
-          <div className="block mb-2"><PixelIcon name="backpack" size={36} /></div>
-          <p className="text-sm font-bold text-muted-foreground">Your inventory is empty</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Purchase items from the shop to see them here!
-          </p>
+          <p className="text-sm font-bold text-muted-foreground">Nothing here yet</p>
         </div>
       )}
     </div>

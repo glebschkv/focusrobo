@@ -58,9 +58,6 @@ export const SpeciesDetailDrawer = memo(({
                   }}
                   draggable={false}
                 />
-                {species.rarity === 'legendary' && (
-                  <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-amber-400 animate-pulse" />
-                )}
               </div>
             </div>
 

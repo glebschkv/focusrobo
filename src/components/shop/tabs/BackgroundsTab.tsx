@@ -90,13 +90,9 @@ export const BackgroundsTab = ({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-sm">{bundle.name}</span>
-                        {owned ? (
+                        {owned && (
                           <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
                             <Check className="w-2.5 h-2.5" /> OWNED
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
-                            SAVE {bundle.savings}
                           </span>
                         )}
                       </div>
@@ -171,12 +167,6 @@ export const BackgroundsTab = ({
                         </div>
                       </div>
                     )}
-                    <div className={cn(
-                      "absolute top-1 right-1 h-2 w-2 rounded-full",
-                      bg.rarity === 'legendary' ? "bg-amber-400" :
-                      bg.rarity === 'epic' ? "bg-purple-400" :
-                      bg.rarity === 'rare' ? "bg-blue-400" : "bg-gray-400"
-                    )} />
                   </div>
                   <div className={cn(
                     "p-2",

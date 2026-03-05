@@ -145,16 +145,15 @@ export const PetCollectionBook = memo(() => {
 
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-2.5 mb-4">
-          <div className="collection-stat-card">
-            <div className="relative flex items-center justify-center mb-1">
+          <div className="collection-stat-card col-span-2 flex-row gap-3">
+            <div className="relative flex items-center justify-center flex-shrink-0">
               <ProgressRing percent={discoveryPct} size={38} stroke={3} />
               <span className="absolute text-[10px] font-black text-[hsl(var(--col-text))]">{discoveryPct}%</span>
             </div>
-            <p className="text-[9px] font-semibold text-[hsl(var(--col-muted))] uppercase tracking-wide">Found</p>
-          </div>
-          <div className="collection-stat-card">
-            <p className="text-xl font-black text-[hsl(var(--col-text))] mb-0.5">{stats.totalFound}</p>
-            <p className="text-[9px] font-semibold text-[hsl(var(--col-muted))] uppercase tracking-wide">Total Pets</p>
+            <div>
+              <p className="text-sm font-black text-[hsl(var(--col-text))]">{stats.discovered}/{stats.total} species</p>
+              <p className="text-[9px] font-semibold text-[hsl(var(--col-muted))]">{stats.totalFound} pets found</p>
+            </div>
           </div>
           <div className="collection-stat-card">
             <p className="text-xl font-black text-[hsl(var(--col-text))] mb-0.5">{stats.landsCompleted}</p>

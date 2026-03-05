@@ -92,9 +92,7 @@ export const BundleConfirmDialog = ({
           {/* Header */}
           <div className="p-4 text-center border-b border-stone-100 bg-stone-50">
             <div className="h-24 mb-2 flex items-center justify-center">
-              <div className="animate-bounce" style={{ animationDuration: '2s' }}>
-                <PixelIcon name={bundle.icon} size={64} />
-              </div>
+              <PixelIcon name={bundle.icon} size={64} />
             </div>
 
             {/* Bundle name */}
@@ -117,10 +115,7 @@ export const BundleConfirmDialog = ({
                 {[...Array(bundle.rarity === 'common' ? 1 : bundle.rarity === 'rare' ? 2 : bundle.rarity === 'epic' ? 3 : 4)].map((_, i) => (
                   <Star
                     key={i}
-                    className={cn(
-                      "w-4 h-4 text-amber-400 fill-amber-400",
-                      bundle.rarity === 'legendary' && "animate-pulse"
-                    )}
+                    className="w-4 h-4 text-amber-400 fill-amber-400"
                   />
                 ))}
               </div>
