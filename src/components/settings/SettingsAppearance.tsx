@@ -32,21 +32,21 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
               className={cn("settings-theme-card", isSelected ? "settings-theme-card--selected" : "settings-theme-card--unselected")}
             >
               {isSelected && (
-                <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#4CA771] flex items-center justify-center">
+                <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[hsl(var(--primary))] flex items-center justify-center">
                   <Check className="w-2.5 h-2.5 text-white" />
                 </div>
               )}
               <div className={cn(
                 "w-10 h-10 rounded-xl flex items-center justify-center border",
                 isSelected
-                  ? "bg-[rgba(76,167,113,0.15)] border-[rgba(76,167,113,0.3)] text-[#4CA771]"
-                  : "bg-[rgba(26,46,35,0.5)] border-[rgba(76,167,113,0.1)] text-[#8BA68F]"
+                  ? "bg-[hsl(var(--primary)/0.12)] border-[rgba(76,167,113,0.3)] text-[hsl(var(--primary))]"
+                  : "bg-[rgba(26,46,35,0.5)] border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
               )}>
                 <Icon className="w-5 h-5" />
               </div>
               <div className="text-center">
-                <div className="text-xs font-semibold text-[#E8F0EB]">{option.label}</div>
-                <div className="text-[11px] text-[#6B8A6F]">{option.description}</div>
+                <div className="text-xs font-semibold text-[hsl(var(--foreground))]">{option.label}</div>
+                <div className="text-[11px] text-[hsl(var(--muted-foreground))]">{option.description}</div>
               </div>
             </button>
           );

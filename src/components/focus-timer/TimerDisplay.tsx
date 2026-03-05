@@ -35,7 +35,7 @@ export const TimerDisplay = ({
   const progressPercent = Math.round(progress);
 
   const ringSize = 240;
-  const strokeWidth = 10;
+  const strokeWidth = 12;
   const radius = (ringSize - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -66,9 +66,18 @@ export const TimerDisplay = ({
         </button>
       </div>
 
-      {/* Timer ring — no container, just the ring on the background */}
+      {/* Timer ring with frosted backdrop for contrast */}
       <div className="flex flex-col items-center">
         <div className="relative" style={{ width: ringSize, height: ringSize }}>
+          {/* Frosted backdrop circle for visibility on any background */}
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `radial-gradient(circle, ${colors.glassBg} 0%, transparent 72%)`,
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+            }}
+          />
           <svg
             width={ringSize}
             height={ringSize}
@@ -85,7 +94,7 @@ export const TimerDisplay = ({
               cy={ringSize / 2}
               r={radius}
               fill="none"
-              stroke={`${colors.text}18`}
+              stroke={`${colors.text}30`}
               strokeWidth={strokeWidth}
               strokeLinecap="round"
             />
@@ -102,7 +111,7 @@ export const TimerDisplay = ({
               strokeDashoffset={strokeDashoffset}
               style={{
                 transition: 'stroke-dashoffset 0.5s ease-out',
-                filter: `drop-shadow(0 0 8px ${colors.ringStart}4D)`,
+                filter: `drop-shadow(0 0 12px ${colors.ringStart}66)`,
               }}
             />
           </svg>

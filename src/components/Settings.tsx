@@ -43,8 +43,8 @@ export const Settings = () => {
     return (
       <div className="h-full flex items-center justify-center settings-page">
         <div className="settings-card flex items-center gap-3">
-          <Loader2 className="w-5 h-5 animate-spin text-[#4CA771]" />
-          <span className="text-sm font-medium text-[#8BA68F]">Loading settings...</span>
+          <Loader2 className="w-5 h-5 animate-spin text-[hsl(var(--primary))]" />
+          <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Loading settings...</span>
         </div>
       </div>
     );
@@ -55,12 +55,12 @@ export const Settings = () => {
       {/* Header */}
       <div className="settings-header">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(76,167,113,0.15)' }}>
-            <SettingsIcon className="w-[18px] h-[18px] text-[#4CA771]" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[hsl(var(--primary)/0.12)]">
+            <SettingsIcon className="w-[18px] h-[18px] text-[hsl(var(--primary))]" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#E8F0EB] tracking-tight">Settings</h1>
-            <p className="text-[11px] text-[#6B8A6F]">Customize Your Experience</p>
+            <h1 className="text-lg font-bold text-[hsl(var(--foreground))] tracking-tight">Settings</h1>
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Customize Your Experience</p>
           </div>
         </div>
       </div>

@@ -98,8 +98,8 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
           canClaim
             ? "bg-amber-50 border-amber-300 shadow-sm"
             : isUnlocked
-            ? "bg-[hsl(var(--col-card))] border-[hsl(var(--col-border))]"
-            : "bg-[hsl(var(--col-surface))] border-[hsl(var(--col-border))]"
+            ? "bg-[hsl(var(--card))] border-[hsl(var(--border))]"
+            : "bg-[hsl(var(--muted))] border-[hsl(var(--border))]"
         )}>
           <div className="flex items-start gap-3 mb-3">
             <div className={cn(
@@ -107,8 +107,8 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
               canClaim
                 ? "bg-amber-100 border-amber-300"
                 : isUnlocked
-                ? "bg-[hsl(var(--col-accent-soft))] border-[hsl(var(--col-border))]"
-                : "bg-[hsl(var(--col-divider))] border-[hsl(var(--col-border))]"
+                ? "bg-[hsl(var(--primary/0.1))] border-[hsl(var(--border))]"
+                : "bg-[hsl(var(--muted))] border-[hsl(var(--border))]"
             )}>
               {isSecret ? <PixelIcon name="question-mark" size={24} /> : <PixelIcon name={achievement.icon} size={24} />}
             </div>
@@ -117,12 +117,12 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
               <div className="flex items-center gap-2 mb-1">
                 <h3 className={cn(
                   "font-bold text-sm",
-                  canClaim ? "text-amber-800" : "text-[hsl(var(--col-text))]"
+                  canClaim ? "text-amber-800" : "text-[hsl(var(--foreground))]"
                 )}>
                   {isSecret ? '???' : achievement.title}
                 </h3>
                 {isUnlocked && isClaimed && (
-                  <Check className="w-3.5 h-3.5 text-[hsl(var(--col-accent))] flex-shrink-0" />
+                  <Check className="w-3.5 h-3.5 text-[hsl(var(--primary))] flex-shrink-0" />
                 )}
               </div>
               <span className={cn(
@@ -144,9 +144,9 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
               ) : isUnlocked ? (
                 <button
                   onClick={() => handleShare(achievement.id)}
-                  className="w-9 h-9 rounded-xl bg-[hsl(var(--col-accent-soft))] hover:bg-[hsl(var(--col-accent-medium))] border border-[hsl(var(--col-border))] flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-xl bg-[hsl(var(--primary/0.1))] hover:bg-[hsl(var(--primary/0.15))] border border-[hsl(var(--border))] flex items-center justify-center transition-colors"
                 >
-                  <Share2 className="w-3.5 h-3.5 text-[hsl(var(--col-muted))]" />
+                  <Share2 className="w-3.5 h-3.5 text-[hsl(var(--muted-foreground))]" />
                 </button>
               ) : null}
             </div>
@@ -156,22 +156,22 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
             <>
               <p className={cn(
                 "text-xs mb-3 leading-relaxed",
-                isUnlocked ? "text-[hsl(var(--col-muted))]" : "text-[hsl(var(--col-subtle))]"
+                isUnlocked ? "text-[hsl(var(--muted-foreground))]" : "text-[hsl(var(--muted-foreground))]"
               )}>
                 {achievement.description}
               </p>
 
               <div className="mb-2">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] text-[hsl(var(--col-subtle))]">Progress</span>
+                  <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Progress</span>
                   <span className={cn(
                     "text-[10px] font-semibold",
-                    canClaim ? "text-amber-600" : isUnlocked ? "text-[hsl(var(--col-accent))]" : "text-[hsl(var(--col-muted))]"
+                    canClaim ? "text-amber-600" : isUnlocked ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--muted-foreground))]"
                   )}>
                     {achievement.progress}/{achievement.target}
                   </span>
                 </div>
-                <div className="h-1.5 bg-[hsl(var(--col-divider))] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[hsl(var(--muted))] rounded-full overflow-hidden">
                   <div
                     className={cn(
                       "h-full rounded-full transition-all duration-500",
@@ -179,21 +179,21 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
                         ? "bg-gradient-to-r from-amber-500 to-amber-400"
                         : isUnlocked
                         ? "collection-progress-fill"
-                        : "bg-[hsl(var(--col-ghost))]"
+                        : "bg-[hsl(var(--muted-foreground))]"
                     )}
                     style={{ width: `${progress}%` }}
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 pt-2 border-t border-[hsl(var(--col-divider))]">
-                <span className="text-[10px] text-[hsl(var(--col-subtle))]">Rewards:</span>
-                <span className="text-[10px] font-semibold text-[hsl(var(--col-accent))]">+{xpReward} XP</span>
+              <div className="flex items-center gap-3 pt-2 border-t border-[hsl(var(--muted))]">
+                <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Rewards:</span>
+                <span className="text-[10px] font-semibold text-[hsl(var(--primary))]">+{xpReward} XP</span>
                 <span className="text-[10px] font-semibold text-amber-600 inline-flex items-center gap-0.5">+{coinReward} <PixelIcon name="coin" size={12} /></span>
               </div>
             </>
           ) : (
-            <p className="text-xs text-[hsl(var(--col-subtle))] flex items-center gap-2">
+            <p className="text-xs text-[hsl(var(--muted-foreground))] flex items-center gap-2">
               <Lock className="w-3.5 h-3.5" />
               Secret achievement. Keep playing to discover it!
             </p>
@@ -323,17 +323,17 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
     return (
       <div>
         {/* Summary card */}
-        <div className="p-3 rounded-2xl bg-[hsl(var(--col-card))] border border-[hsl(var(--col-border))] mb-3">
+        <div className="p-3 rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] mb-3">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-amber-500" />
-              <span className="text-sm font-bold text-[hsl(var(--col-text))]">
+              <span className="text-sm font-bold text-[hsl(var(--foreground))]">
                 {unlockedAchievements.length}/{achievements.length}
               </span>
             </div>
             <span className="text-xs font-bold text-amber-600">{totalPoints} pts</span>
           </div>
-          <div className="h-2 bg-[hsl(var(--col-divider))] rounded-full overflow-hidden">
+          <div className="h-2 bg-[hsl(var(--muted))] rounded-full overflow-hidden">
             <div
               className="h-full rounded-full collection-progress-fill transition-all duration-500"
               style={{ width: `${completionPercentage}%` }}
@@ -351,8 +351,8 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
         <div className="space-y-2.5">
           {sortedAchievements.length === 0 ? (
             <div className="text-center py-12">
-              <Trophy className="w-10 h-10 mx-auto mb-2 text-[hsl(var(--col-ghost))]" />
-              <p className="text-xs text-[hsl(var(--col-subtle))]">No achievements yet</p>
+              <Trophy className="w-10 h-10 mx-auto mb-2 text-[hsl(var(--muted-foreground))]" />
+              <p className="text-xs text-[hsl(var(--muted-foreground))]">No achievements yet</p>
             </div>
           ) : (
             sortedAchievements.map(achievement => (

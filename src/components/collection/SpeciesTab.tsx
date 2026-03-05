@@ -38,11 +38,11 @@ export const SpeciesTab = memo(({
     <div className="px-4 pt-3 pb-28">
       {/* Empty state for brand-new users */}
       {!hasAnyPets && (
-        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[hsl(var(--col-accent-soft))] border border-[hsl(var(--col-border))] mb-4">
-          <Sparkles className="w-4 h-4 text-[hsl(var(--col-accent))] flex-shrink-0" />
+        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[hsl(var(--primary)/0.08)] border border-[hsl(var(--border))] mb-4">
+          <Sparkles className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-[hsl(var(--col-text))]">Start collecting!</p>
-            <p className="text-[10px] text-[hsl(var(--col-muted))]">Complete a focus session to discover your first pet.</p>
+            <p className="text-[11px] font-bold text-[hsl(var(--foreground))]">Start collecting!</p>
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))]">Complete a focus session to discover your first pet.</p>
           </div>
         </div>
       )}
@@ -74,14 +74,14 @@ export const SpeciesTab = memo(({
               <span className={cn('text-[10px] font-bold uppercase tracking-wider', accent.label)}>
                 {RARITY_LABEL[rarity]}
               </span>
-              <span className="text-[10px] font-semibold text-[hsl(var(--col-ghost))]">
+              <span className="text-[10px] font-semibold text-[hsl(var(--muted-foreground))]">
                 {discoveredInGroup}/{species.length}
               </span>
-              <div className="h-px flex-1 bg-[hsl(var(--col-divider))]" />
+              <div className="h-px flex-1 bg-[hsl(var(--border))]" />
             </div>
 
             {/* Species grid */}
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2.5">
               {species.map((sp) => {
                 const entry = speciesCatalog[sp.id];
                 return (

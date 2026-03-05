@@ -28,7 +28,7 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 <div className="settings-icon-box settings-icon-box--active w-7 h-7 rounded-md">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-semibold text-[#E8F0EB]">Focus</span>
+                <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Focus</span>
               </div>
               <span className="settings-slider-value">{settings.defaultFocusTime}m</span>
             </div>
@@ -43,9 +43,9 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 <div className="settings-icon-box settings-icon-box--inactive w-7 h-7 rounded-md">
                   <Coffee className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-semibold text-[#E8F0EB]">Short Break</span>
+                <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Short Break</span>
               </div>
-              <span className="text-sm font-bold text-[#8BA68F]">{settings.shortBreakTime}m</span>
+              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.shortBreakTime}m</span>
             </div>
             <Slider min={3} max={15} step={1} value={[settings.shortBreakTime]}
               onValueChange={([value]) => onUpdate({ shortBreakTime: value })} className="w-full" />
@@ -58,9 +58,9 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 <div className="settings-icon-box settings-icon-box--inactive w-7 h-7 rounded-md">
                   <Zap className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-semibold text-[#E8F0EB]">Long Break</span>
+                <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Long Break</span>
               </div>
-              <span className="text-sm font-bold text-[#8BA68F]">{settings.longBreakTime}m</span>
+              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.longBreakTime}m</span>
             </div>
             <Slider min={10} max={30} step={5} value={[settings.longBreakTime]}
               onValueChange={([value]) => onUpdate({ longBreakTime: value })} className="w-full" />
@@ -73,9 +73,9 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 <div className="settings-icon-box settings-icon-box--inactive w-7 h-7 rounded-md">
                   <Repeat className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-semibold text-[#E8F0EB]">Sessions Before Long Break</span>
+                <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Sessions Before Long Break</span>
               </div>
-              <span className="text-sm font-bold text-[#8BA68F]">{settings.longBreakInterval}</span>
+              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.longBreakInterval}</span>
             </div>
             <Slider min={2} max={8} step={1} value={[settings.longBreakInterval]}
               onValueChange={([value]) => onUpdate({ longBreakInterval: value })} className="w-full" />
@@ -92,8 +92,8 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
               <Bell className="w-4 h-4" />
             </div>
             <div>
-              <Label className="text-sm font-bold text-[#E8F0EB]">Notifications</Label>
-              <p className="text-[11px] text-[#8BA68F]">Alert when timer ends</p>
+              <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Notifications</Label>
+              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Alert when timer ends</p>
             </div>
           </div>
           <Switch

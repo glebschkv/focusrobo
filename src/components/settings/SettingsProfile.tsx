@@ -78,7 +78,7 @@ export const SettingsProfile = () => {
               <PixelIcon name={currentAvatar.icon} size={42} />
             </div>
             {isEditing && (
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#4CA771] flex items-center justify-center border-2 border-[#1A2E23]">
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[hsl(var(--primary))] flex items-center justify-center border-2 border-[hsl(var(--background))]">
                 <Camera className="w-3 h-3 text-white" />
               </div>
             )}
@@ -105,7 +105,7 @@ export const SettingsProfile = () => {
 
         {/* Display Name */}
         <div className="space-y-2">
-          <Label htmlFor="displayName" className="text-xs text-[#8BA68F]">Display Name</Label>
+          <Label htmlFor="displayName" className="text-xs text-[hsl(var(--muted-foreground))]">Display Name</Label>
           {isEditing ? (
             <Input
               id="displayName"
@@ -113,12 +113,12 @@ export const SettingsProfile = () => {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Enter your name"
-              className="h-10 rounded-lg bg-[rgba(26,46,35,0.6)] border-[rgba(76,167,113,0.15)] text-[#E8F0EB] placeholder:text-[#6B8A6F]"
+              className="h-10 rounded-lg bg-[hsl(var(--muted)/0.3)] border-[hsl(var(--border))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]"
               maxLength={30}
             />
           ) : (
             <div className="settings-row">
-              <span className="text-sm font-medium text-[#E8F0EB]">
+              <span className="text-sm font-medium text-[hsl(var(--foreground))]">
                 {profile?.display_name || 'Not set'}
               </span>
               <button
@@ -126,7 +126,7 @@ export const SettingsProfile = () => {
                 className="p-1.5 rounded-md transition-all active:scale-95"
                 style={{ background: 'rgba(26,46,35,0.6)', border: '1px solid rgba(76,167,113,0.12)' }}
               >
-                <Pencil className="w-3.5 h-3.5 text-[#8BA68F]" />
+                <Pencil className="w-3.5 h-3.5 text-[hsl(var(--muted-foreground))]" />
               </button>
             </div>
           )}
