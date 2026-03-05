@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.co.botblock.app</string>
+		<string>group.com.fonoinc.app</string>
 	</array>
 </dict>
 </plist>

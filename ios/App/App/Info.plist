@@ -70,10 +70,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>co.botblock.app</string>
+			<string>com.fonoinc.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>co.botblock.app</string>
+				<string>com.fonoinc.app</string>
 			</array>
 		</dict>
 	</array>
@@ -93,7 +93,7 @@
 	<!-- Background Task Identifiers -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>co.botblock.app.background-tracking</string>
+		<string>com.fonoinc.app.background-tracking</string>
 	</array>
 
 	<!-- Screen Time API Usage -->

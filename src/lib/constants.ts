@@ -12,8 +12,8 @@
 export const APP_CONFIG = {
   APP_NAME: 'BotBlock',
   APP_VERSION: '1.0.0',
-  APP_GROUP_IDENTIFIER: 'group.co.botblock.app',
-  BUNDLE_IDENTIFIER: 'co.botblock.app',
+  APP_GROUP_IDENTIFIER: 'group.com.fonoinc.app',
+  BUNDLE_IDENTIFIER: 'com.fonoinc.app',
   STORAGE_PREFIX: 'nomo_',
 } as const;
 
@@ -532,7 +532,7 @@ export const UI_CONFIG = {
 
 export const IOS_CONFIG = {
   /** Background task identifier */
-  BACKGROUND_TASK_ID: 'co.botblock.app.background-tracking',
+  BACKGROUND_TASK_ID: 'com.fonoinc.app.background-tracking',
 
   /** Background refresh interval in minutes */
   BACKGROUND_REFRESH_INTERVAL_MINUTES: 15,
@@ -543,22 +543,22 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
-    PREMIUM_MONTHLY: 'co.botblock.app.premium.monthly',
-    PREMIUM_YEARLY: 'co.botblock.app.premium.yearly',
-    PREMIUM_PLUS_MONTHLY: 'co.botblock.app.premiumplus.monthly',
-    PREMIUM_PLUS_YEARLY: 'co.botblock.app.premiumplus.yearly',
-    LIFETIME: 'co.botblock.app.lifetime',
+    PREMIUM_MONTHLY: 'com.fonoinc.app.premium.monthly',
+    PREMIUM_YEARLY: 'com.fonoinc.app.premium.yearly',
+    PREMIUM_PLUS_MONTHLY: 'com.fonoinc.app.premiumplus.monthly',
+    PREMIUM_PLUS_YEARLY: 'com.fonoinc.app.premiumplus.yearly',
+    LIFETIME: 'com.fonoinc.app.lifetime',
     // Coin Packs
-    COINS_VALUE: 'co.botblock.app.coins.value',
-    COINS_PREMIUM: 'co.botblock.app.coins.premium',
-    COINS_MEGA: 'co.botblock.app.coins.mega',
-    COINS_ULTRA: 'co.botblock.app.coins.ultra',
-    COINS_LEGENDARY: 'co.botblock.app.coins.legendary',
+    COINS_VALUE: 'com.fonoinc.app.coins.value',
+    COINS_PREMIUM: 'com.fonoinc.app.coins.premium',
+    COINS_MEGA: 'com.fonoinc.app.coins.mega',
+    COINS_ULTRA: 'com.fonoinc.app.coins.ultra',
+    COINS_LEGENDARY: 'com.fonoinc.app.coins.legendary',
     // Starter Bundles
-    BUNDLE_WELCOME: 'co.botblock.app.bundle.welcome',
-    BUNDLE_STARTER: 'co.botblock.app.bundle.starter',
-    BUNDLE_COLLECTOR: 'co.botblock.app.bundle.collector',
-    BUNDLE_ULTIMATE: 'co.botblock.app.bundle.ultimate',
+    BUNDLE_WELCOME: 'com.fonoinc.app.bundle.welcome',
+    BUNDLE_STARTER: 'com.fonoinc.app.bundle.starter',
+    BUNDLE_COLLECTOR: 'com.fonoinc.app.bundle.collector',
+    BUNDLE_ULTIMATE: 'com.fonoinc.app.bundle.ultimate',
   } as const,
 } as const;
 

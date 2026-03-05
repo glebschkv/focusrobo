@@ -1,9 +1,9 @@
-project_id = "slpuitnaizlsemvedjge"
+project_id = "xizxkpofwpxerqlokyuw"
 
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "co.nomoinc.nomo://callback"]
+additional_redirect_urls = ["https://localhost:3000", "capacitor://localhost", "com.fonoinc.app://callback"]
 
 [auth.email]
 enable_signup = true
