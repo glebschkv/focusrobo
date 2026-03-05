@@ -11,7 +11,7 @@
 
 import { memo, useEffect, useState, useCallback } from 'react';
 import { getPetById, GROWTH_SCALES, RARITY_COLORS } from '@/data/PetDatabase';
-import { ISLAND_POSITIONS, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
+import { getIslandPosition, getDepthScale, getDepthZIndex } from '@/data/islandPositions';
 import { useHaptics } from '@/hooks/useHaptics';
 import type { LandCell } from '@/stores/landStore';
 
@@ -25,6 +25,7 @@ function getSpritePath(petId: string, size: string, basePath: string): { primary
 interface IslandPetProps {
   cell: LandCell;
   index: number;
+  gridSize: number;
   isNew?: boolean;
   showTooltip: boolean;
   /** Stable callback — pet passes its own index */
@@ -45,7 +46,7 @@ const RARITY_LABELS: Record<string, string> = {
   legendary: 'Legendary',
 };
 
-export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
+export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onToggleTooltip }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
@@ -56,7 +57,7 @@ export const IslandPet = memo(({ cell, index, isNew, showTooltip, onToggleToolti
   const { primary: growthPath, fallback: basePath } = getSpritePath(cell.petId, cell.size, species.imagePath);
   const spriteSrc = useGrowthSprite ? growthPath : basePath;
 
-  const pos = ISLAND_POSITIONS[index];
+  const pos = getIslandPosition(index, gridSize);
   if (!pos) return null;
 
   const growthScale = GROWTH_SCALES[cell.size];

@@ -7,10 +7,11 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLandStore, LAND_SIZE } from '@/stores/landStore';
+import { useLandStore } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
+import { getIslandScale, getAvailableCellCount } from '@/data/islandPositions';
 
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
@@ -227,7 +228,6 @@ function useIslandParallax() {
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
-  const availableCells = useLandStore((s) => s.getAvailableCells)();
   const debugAwardPet = useDebugAwardPet();
   const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
   const landJustCompleted = useLandStore((s) => s.landJustCompleted);
@@ -236,7 +236,11 @@ export const PetLand = () => {
   const milestoneReached = useLandStore((s) => s.milestoneReached);
   const clearMilestone = useLandStore((s) => s.clearMilestone);
   const { haptic } = useHaptics();
-  const progressPct = (filledCount / LAND_SIZE) * 100;
+
+  const gridSize = currentLand.gridSize;
+  const tierCapacity = getAvailableCellCount(gridSize);
+  const tierScale = getIslandScale(gridSize);
+  const progressPct = (filledCount / tierCapacity) * 100;
 
   const { wrapperRef, skyRef, containerRef, petsRef, handlers: parallaxHandlers } = useIslandParallax();
   const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
@@ -286,6 +290,7 @@ export const PetLand = () => {
             key={`${currentLand.id}-${index}`}
             cell={cell}
             index={index}
+            gridSize={gridSize}
             isNew={index === lastPlacedIndex}
             showTooltip={activeTooltipIndex === index}
             onToggleTooltip={handleToggleTooltip}
@@ -294,7 +299,7 @@ export const PetLand = () => {
       }
       return null;
     });
-  }, [currentLand.cells, currentLand.id, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
+  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
 
   const growthClass = getGrowthStage(filledCount);
 
@@ -393,25 +398,31 @@ export const PetLand = () => {
           />
         ))}
 
-        {/* Island container — parallax layer (medium) */}
-        <div className="pet-land__island-container" ref={containerRef}>
-          {/* Pixel-art island — SVG with flat fills */}
-          <IslandSVG availableCells={availableCells} />
+        {/* Island scaler — animates island growth between tiers */}
+        <div
+          className="pet-land__island-scaler"
+          style={{ transform: `scale(${tierScale})` }}
+        >
+          {/* Island container — parallax layer (medium) */}
+          <div className="pet-land__island-container" ref={containerRef}>
+            {/* Pixel-art island — SVG with flat fills */}
+            <IslandSVG gridSize={gridSize} />
 
-          {/* Shadow beneath island */}
-          <div className="pet-land__island-shadow" />
+            {/* Shadow beneath island */}
+            <div className="pet-land__island-shadow" />
 
-          {/* Pets layer — parallax layer (fastest) */}
-          <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips}>
-            {slotElements}
+            {/* Pets layer — parallax layer (fastest) */}
+            <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips}>
+              {slotElements}
 
-            {filledCount === 0 && (
-              <div className="pet-land__empty-hint">
-                <span className="pet-land__empty-hint-text">
-                  Complete a focus session<br />to earn your first pet!
-                </span>
-              </div>
-            )}
+              {filledCount === 0 && (
+                <div className="pet-land__empty-hint">
+                  <span className="pet-land__empty-hint-text">
+                    Complete a focus session<br />to earn your first pet!
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -447,8 +458,8 @@ export const PetLand = () => {
           <div className="pet-land__progress-marker" style={{ left: '75%' }} />
         </div>
         <span className="pet-land__progress-label">
-          Land {currentLand.number} · {filledCount}/{LAND_SIZE}
-          {currentLand.gridSize < 20 && ` · ${currentLand.gridSize}×${currentLand.gridSize}`}
+          Land {currentLand.number} · {filledCount}/{tierCapacity}
+          {gridSize < 20 && ` · ${gridSize}×${gridSize}`}
         </span>
       </div>
 
