@@ -289,7 +289,7 @@ export const FeaturedTab = ({
         <span className="shop-section-title">Backgrounds</span>
         <button
           onClick={() => setActiveCategory('customize')}
-          className="text-xs text-amber-600 font-bold"
+          className="shop-see-all-btn"
         >
           See All →
         </button>

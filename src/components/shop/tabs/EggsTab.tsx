@@ -151,14 +151,13 @@ function EggCard({
         <div className="space-y-0.5 mb-2.5">
           {RARITY_LABELS.map((rarity) => {
             const weight = egg.rarityWeights[rarity];
-            if (weight === 0) return null;
             return (
               <div key={rarity} className="flex items-center justify-between">
-                <span className={cn('text-[10px] capitalize', RARITY_COLORS[rarity])}>
+                <span className={cn('text-[10px] capitalize', weight > 0 ? RARITY_COLORS[rarity] : 'text-[hsl(var(--muted-foreground)/0.3)]')}>
                   {rarity}
                 </span>
-                <span className="text-[10px] font-mono font-bold text-[hsl(var(--muted-foreground))]">
-                  {weight}%
+                <span className={cn("text-[10px] font-mono font-bold", weight > 0 ? "text-[hsl(var(--muted-foreground))]" : "text-[hsl(var(--muted-foreground)/0.3)]")}>
+                  {weight > 0 ? `${weight}%` : '—'}
                 </span>
               </div>
             );

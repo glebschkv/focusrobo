@@ -84,26 +84,26 @@ export const BundleConfirmDialog = ({
 
   return (
     <Dialog open={open && !!bundle} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[300px] p-0 overflow-hidden border border-stone-200 rounded-2xl bg-white shadow-lg">
+      <DialogContent className="max-w-[300px] p-0 overflow-hidden border border-[hsl(var(--border))] rounded-2xl bg-[hsl(var(--card))] shadow-lg">
         <VisuallyHidden>
           <DialogTitle>{bundle.name}</DialogTitle>
         </VisuallyHidden>
         <>
           {/* Header */}
-          <div className="p-4 text-center border-b border-stone-100 bg-stone-50">
+          <div className="p-4 text-center border-b border-[hsl(var(--border)/0.5)] bg-[hsl(var(--muted)/0.3)]">
             <div className="h-24 mb-2 flex items-center justify-center">
               <PixelIcon name={bundle.icon} size={64} />
             </div>
 
             {/* Bundle name */}
-            <h2 className="text-lg font-bold text-stone-900">
+            <h2 className="text-lg font-bold text-[hsl(var(--foreground))]">
               {bundle.name}
             </h2>
 
             {/* Savings badge */}
             {'savings' in bundle && bundle.savings && (
               <div className="mt-2 inline-flex items-center gap-1.5">
-                <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full uppercase tracking-wider bg-emerald-500">
+                <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full uppercase tracking-wider bg-[hsl(var(--primary))]">
                   Save {bundle.savings}
                 </span>
               </div>
@@ -124,33 +124,33 @@ export const BundleConfirmDialog = ({
 
           {/* Contents section */}
           <div className="p-4 space-y-3">
-            <p className="text-[11px] text-center leading-relaxed text-stone-400">
+            <p className="text-[11px] text-center leading-relaxed text-[hsl(var(--muted-foreground))]">
               {bundle.description}
             </p>
 
             {/* Contents list */}
             <div className="space-y-1.5">
-              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-center text-stone-300">
+              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-center text-[hsl(var(--muted-foreground)/0.6)]">
                 Includes
               </div>
               <div className="space-y-1.5">
                 {contentItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2.5 p-2 rounded-xl bg-stone-50 border border-stone-100"
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-[hsl(var(--muted)/0.3)] border border-[hsl(var(--border)/0.5)]"
                   >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-white border border-stone-200">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-[hsl(var(--card))] border border-[hsl(var(--border))]">
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className={cn(
                         "text-sm font-semibold",
-                        item.highlight ? "text-amber-500" : "text-stone-900"
+                        item.highlight ? "text-amber-500" : "text-[hsl(var(--foreground))]"
                       )}>
                         {item.label}
                       </div>
                       {item.sublabel && (
-                        <div className="text-[10px] leading-tight text-stone-400">
+                        <div className="text-[10px] leading-tight text-[hsl(var(--muted-foreground))]">
                           {item.sublabel}
                         </div>
                       )}
@@ -167,8 +167,8 @@ export const BundleConfirmDialog = ({
               className={cn(
                 "w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
                 isPurchasing
-                  ? "bg-stone-100 text-stone-400 cursor-not-allowed"
-                  : "bg-emerald-500 text-white hover:bg-emerald-600"
+                  ? "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed"
+                  : "bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary)/0.9)]"
               )}
             >
               {isPurchasing ? (
@@ -189,7 +189,7 @@ export const BundleConfirmDialog = ({
               onClick={() => onOpenChange(false)}
               disabled={isPurchasing}
               className={cn(
-                "w-full py-2.5 rounded-xl flex items-center justify-center text-xs font-medium text-stone-400 border border-stone-200 transition-all",
+                "w-full py-2.5 rounded-xl flex items-center justify-center text-xs font-medium text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))] transition-all",
                 isPurchasing && "opacity-50 cursor-not-allowed"
               )}
             >

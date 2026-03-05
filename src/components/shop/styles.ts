@@ -6,22 +6,22 @@ export const RARITY_COLORS = {
 };
 
 export const RARITY_BG = {
-  common: "bg-slate-100 dark:bg-slate-800",
-  rare: "bg-blue-50 dark:bg-blue-900/30",
-  epic: "bg-purple-50 dark:bg-purple-900/30",
-  legendary: "bg-amber-50 dark:bg-amber-900/30",
+  common: "bg-slate-100",
+  rare: "bg-blue-50",
+  epic: "bg-purple-50",
+  legendary: "bg-amber-50",
 };
 
 export const RARITY_BORDER = {
-  common: "border-slate-300 dark:border-slate-600",
-  rare: "border-blue-300 dark:border-blue-500",
-  epic: "border-purple-300 dark:border-purple-500",
-  legendary: "border-amber-300 dark:border-amber-500",
+  common: "border-slate-300",
+  rare: "border-blue-300",
+  epic: "border-purple-300",
+  legendary: "border-amber-300",
 };
 
 export const RARITY_GLOW = {
   common: "",
-  rare: "shadow-blue-200/50 dark:shadow-blue-500/20",
-  epic: "shadow-purple-200/50 dark:shadow-purple-500/20",
-  legendary: "shadow-amber-200/50 dark:shadow-amber-500/30",
+  rare: "shadow-blue-200/50",
+  epic: "shadow-purple-200/50",
+  legendary: "shadow-amber-200/50",
 };

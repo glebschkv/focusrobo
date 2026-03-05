@@ -170,8 +170,8 @@ export const BackgroundsTab = ({
                   </div>
                   <div className={cn(
                     "p-2",
-                    isEquipped ? "bg-purple-50 dark:bg-purple-900/20" :
-                    owned ? "bg-green-50 dark:bg-green-900/20" : RARITY_BG[bg.rarity || 'common']
+                    isEquipped ? "bg-purple-50" :
+                    owned ? "bg-green-50" : RARITY_BG[bg.rarity || 'common']
                   )}>
                     <span className="text-[10px] font-bold block leading-tight truncate">{bg.name}</span>
                     {owned ? (

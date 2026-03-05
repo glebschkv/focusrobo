@@ -101,7 +101,7 @@ export const PurchaseConfirmDialog = ({
               <span className="text-muted-foreground text-xs">Price:</span>
               <div className="flex items-center gap-1.5">
                 <PixelIcon name="coin" size={16} />
-                <span className="text-lg font-black text-amber-600 dark:text-amber-400">
+                <span className="text-lg font-black text-amber-600">
                   {('coinPrice' in selectedItem ? selectedItem.coinPrice : 0)?.toLocaleString()}
                 </span>
               </div>

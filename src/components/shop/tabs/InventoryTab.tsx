@@ -39,7 +39,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
         <div className="grid grid-cols-2 gap-2.5">
           {/* Streak Freezes */}
           <div className={cn(
-            "retro-shop-card relative overflow-hidden",
+            "shop-grid-card relative overflow-hidden",
             streakFreezeCount > 0 ? "" : "opacity-50"
           )}>
             <div className="pt-3 pb-2.5 px-3">
@@ -53,7 +53,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                 <span className="text-[10px] text-muted-foreground">Protects your streak</span>
                 <span className={cn(
                   "text-lg font-black tabular-nums",
-                  streakFreezeCount > 0 ? "text-teal-600 dark:text-teal-400" : "text-gray-400"
+                  streakFreezeCount > 0 ? "text-teal-600" : "text-gray-400"
                 )}>
                   {streakFreezeCount}
                 </span>
@@ -63,7 +63,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
 
           {/* Active Booster */}
           <div className={cn(
-            "retro-shop-card relative overflow-hidden",
+            "shop-grid-card relative overflow-hidden",
             boosterActive ? "" : "opacity-50"
           )}>
             <div className="pt-3 pb-2.5 px-3">
@@ -78,7 +78,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
               </div>
               {boosterActive && boosterInfo ? (
                 <div>
-                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                  <span className="text-[10px] font-bold text-purple-600">
                     {getCurrentMultiplier()}x {boosterInfo.name}
                   </span>
                   <div className="flex items-center gap-1 text-[10px] text-purple-500 mt-0.5">
@@ -119,12 +119,12 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                     }
                   }}
                   className={cn(
-                    "retro-shop-card relative overflow-hidden text-center transition-all active:scale-95",
-                    isEquipped && "retro-shop-card-owned"
+                    "shop-bg-card relative overflow-hidden text-center transition-all active:scale-95",
+                    isEquipped && "equipped"
                   )}
                 >
                   {bg.previewImage ? (
-                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100">
                       <img
                         src={bg.previewImage}
                         alt={bg.name}
@@ -133,7 +133,7 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                       />
                     </div>
                   ) : (
-                    <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
+                    <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                       <Image className="w-5 h-5 text-gray-400" />
                     </div>
                   )}

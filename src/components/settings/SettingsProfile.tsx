@@ -123,8 +123,7 @@ export const SettingsProfile = () => {
               </span>
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-1.5 rounded-md transition-all active:scale-95"
-                style={{ background: 'rgba(26,46,35,0.6)', border: '1px solid rgba(76,167,113,0.12)' }}
+                className="p-1.5 rounded-md transition-all active:scale-95 bg-[hsl(var(--muted)/0.5)] border border-[hsl(var(--border))]"
               >
                 <Pencil className="w-3.5 h-3.5 text-[hsl(var(--muted-foreground))]" />
               </button>

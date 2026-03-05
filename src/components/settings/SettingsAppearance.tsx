@@ -40,7 +40,7 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
                 "w-10 h-10 rounded-xl flex items-center justify-center border",
                 isSelected
                   ? "bg-[hsl(var(--primary)/0.12)] border-[rgba(76,167,113,0.3)] text-[hsl(var(--primary))]"
-                  : "bg-[rgba(26,46,35,0.5)] border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
+                  : "bg-[hsl(var(--muted)/0.5)] border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
               )}>
                 <Icon className="w-5 h-5" />
               </div>
