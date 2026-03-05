@@ -362,7 +362,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Current island grid (100 cells), completed lands, species catalog, pending pet** |
+| `landStore` | `nomo_land_data` | **Current island grid (100 cells), grid expansion tier, completed lands, species catalog, pending pet** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
@@ -461,14 +461,26 @@ interface LandCell {
 }
 
 // Key constants
-LAND_SIZE = 100            // 10×10 grid
+LAND_SIZE = 100              // Max 10×10 grid
 LAND_COMPLETE_BONUS_COINS = 500
+MIN_GRID_TIER = 5            // Island starts as centered 5×5
+MAX_GRID_TIER = 10           // Fully expanded 10×10
 ```
+
+**Island Expansion** (Forest-style progressive growth):
+- Island starts as a centered **5×5** region (25 cells) within the 10×10 grid
+- When all available cells in the current tier are filled, the island **auto-expands** by 1 (5→6→7→8→9→10)
+- **Locked tiles** render as earthy/brown; **unlocked tiles** are the bright green checkerboard
+- Grid size stored per-land as `gridSize` (5–10); migrates existing data on rehydration
+- Expansion tiers: 5×5(25) → 6×6(36) → 7×7(49) → 8×8(64) → 9×9(81) → 10×10(100)
+- Each tier uses centered rows/cols: `offset = floor((10 - size) / 2)`
 
 **Actions**:
 - `generateRandomPet(sessionMinutes, playerLevel)` — rolls random pet from unlocked pool
-- `placePendingPet()` — places pet using farthest-first algorithm, auto-archives full land
+- `placePendingPet()` — places pet using farthest-first algorithm, auto-expands tier if full, auto-archives full land
 - `startNewLand()` — manually start new island
+- `getAvailableCells()` — returns Set of unlocked cell indices for current grid size
+- `isTierFull()` — check if all available cells in current tier are filled
 - `getFilledCount()` / `isLandComplete()` — query methods
 
 ## Game Systems

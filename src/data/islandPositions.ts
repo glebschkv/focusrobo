@@ -7,9 +7,12 @@
  *
  * All values are percentages relative to the island-container (which matches
  * the SVG viewBox aspect ratio 420×258).
+ *
+ * Supports progressive island expansion: the island starts as a centered 5×5
+ * region within the 10×10 grid and expands as pets fill it up.
  */
 
-const GRID_SIZE = 10;
+export const GRID_SIZE = 10;
 
 // ─── Diamond vertices (identical to IslandSVG.tsx) ──────────────────
 // These define the grass surface shape in SVG coordinate space (viewBox 420×258)
@@ -47,7 +50,7 @@ function diamondPt(r: number, c: number): Pt {
 
 // ─── Position computation ───────────────────────────────────────────
 
-interface IslandPosition {
+export interface IslandPosition {
   x: number; // percentage (0-100) of container width
   y: number; // percentage (0-100) of container height
 }
@@ -102,6 +105,80 @@ export function getDepthZIndex(index: number): number {
   const row = Math.floor(index / GRID_SIZE);
   const col = index % GRID_SIZE;
   return 10 + row + col;
+}
+
+// ─── Island Expansion System ────────────────────────────────────────
+// The island starts as a centered 5×5 region and expands tier by tier
+// as the player fills up the available cells.
+
+/** Min grid size (starting tier) */
+export const MIN_GRID_TIER = 5;
+/** Max grid size (fully expanded) */
+export const MAX_GRID_TIER = 10;
+
+/**
+ * Get the set of cell indices (0–99) that are available at a given grid size.
+ * A grid size of N means a centered N×N region within the 10×10 grid.
+ *
+ * Grid 5×5 → rows 2-6, cols 2-6 (25 cells)
+ * Grid 6×6 → rows 2-7, cols 2-7 (36 cells)
+ * Grid 7×7 → rows 1-7, cols 1-7 (49 cells)
+ * Grid 8×8 → rows 1-8, cols 1-8 (64 cells)
+ * Grid 9×9 → rows 0-8, cols 0-8 (81 cells)
+ * Grid 10×10 → rows 0-9, cols 0-9 (100 cells)
+ */
+export function getAvailableCellIndices(gridSize: number): Set<number> {
+  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize));
+  const offset = Math.floor((GRID_SIZE - size) / 2);
+  const indices = new Set<number>();
+
+  for (let row = offset; row < offset + size; row++) {
+    for (let col = offset; col < offset + size; col++) {
+      indices.add(row * GRID_SIZE + col);
+    }
+  }
+
+  return indices;
+}
+
+/** Get the number of available cells for a given grid size */
+export function getAvailableCellCount(gridSize: number): number {
+  const size = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize));
+  return size * size;
+}
+
+/**
+ * Compute the minimum grid size needed to encompass all filled cells.
+ * Used when loading existing data to ensure no pets are in "locked" areas.
+ */
+export function computeMinGridSize(cells: (unknown | null)[]): number {
+  let minRow = GRID_SIZE, maxRow = 0, minCol = GRID_SIZE, maxCol = 0;
+  let hasAny = false;
+
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i] !== null) {
+      const row = Math.floor(i / GRID_SIZE);
+      const col = i % GRID_SIZE;
+      minRow = Math.min(minRow, row);
+      maxRow = Math.max(maxRow, row);
+      minCol = Math.min(minCol, col);
+      maxCol = Math.max(maxCol, col);
+      hasAny = true;
+    }
+  }
+
+  if (!hasAny) return MIN_GRID_TIER;
+
+  // Find the smallest centered grid that contains all pets
+  for (let size = MIN_GRID_TIER; size <= MAX_GRID_TIER; size++) {
+    const offset = Math.floor((GRID_SIZE - size) / 2);
+    if (minRow >= offset && maxRow < offset + size &&
+        minCol >= offset && maxCol < offset + size) {
+      return size;
+    }
+  }
+
+  return MAX_GRID_TIER;
 }
 
 /** Rotation step type (kept for backward compat) */

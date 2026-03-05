@@ -14,7 +14,14 @@ import { z } from 'zod';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 import type { GrowthSize, PetRarity } from '@/data/PetDatabase';
 import { getGrowthSize, rollRandomPet } from '@/data/PetDatabase';
-import { ISLAND_POSITIONS } from '@/data/islandPositions';
+import {
+  ISLAND_POSITIONS,
+  getAvailableCellIndices,
+  getAvailableCellCount,
+  computeMinGridSize,
+  MIN_GRID_TIER,
+  MAX_GRID_TIER,
+} from '@/data/islandPositions';
 
 // ============================================================================
 // Types
@@ -33,6 +40,8 @@ export interface Land {
   number: number;
   theme: string;
   cells: (LandCell | null)[];
+  /** Current expansion tier — grid is gridSize × gridSize centered in 10×10 */
+  gridSize: number;
   startedAt: number;
   completedAt: number | null;
   totalFocusMinutes: number;
@@ -77,6 +86,7 @@ const landSchema = z.object({
   number: z.number().int().min(1).max(10000),
   theme: z.string().max(100),
   cells: z.array(z.union([landCellSchema, z.null()])).max(LAND_SIZE),
+  gridSize: z.number().int().min(MIN_GRID_TIER).max(MAX_GRID_TIER).default(MIN_GRID_TIER),
   startedAt: z.number().min(0),
   completedAt: z.union([z.number().min(0), z.null()]),
   totalFocusMinutes: z.number().min(0),
@@ -114,6 +124,7 @@ function createEmptyLand(number: number, theme: string): Land {
     number,
     theme,
     cells: new Array(LAND_SIZE).fill(null),
+    gridSize: MIN_GRID_TIER,
     startedAt: Date.now(),
     completedAt: null,
     totalFocusMinutes: 0,
@@ -125,10 +136,12 @@ function createEmptyLand(number: number, theme: string): Land {
  * This creates an even, organic spread across the island instead of
  * random clustering. Falls back to random if only 0-1 pets are placed.
  */
-function getNextEmptyCellIndex(cells: (LandCell | null)[]): number {
+function getNextEmptyCellIndex(cells: (LandCell | null)[], gridSize: number): number {
+  const available = getAvailableCellIndices(gridSize);
   const emptyIndices: number[] = [];
   const filledIndices: number[] = [];
   for (let i = 0; i < cells.length; i++) {
+    if (!available.has(i)) continue; // Skip locked cells
     if (cells[i] === null) emptyIndices.push(i);
     else filledIndices.push(i);
   }
@@ -204,11 +217,17 @@ interface LandStoreActions {
   /** Start a new empty land (after completing current one) */
   startNewLand: () => void;
 
-  /** Check if the current land is full (100/100) */
+  /** Check if the current land is full (all 100 cells) */
   isLandComplete: () => boolean;
+
+  /** Check if the current expansion tier is full */
+  isTierFull: () => boolean;
 
   /** Get number of filled cells */
   getFilledCount: () => number;
+
+  /** Get the set of available cell indices for current grid size */
+  getAvailableCells: () => Set<number>;
 
   /** Buy and own a new land theme */
   addOwnedTheme: (themeId: string) => void;
@@ -268,9 +287,17 @@ export const useLandStore = create<LandStore>()(
         let { currentLand } = get();
         if (!pendingPet) return -1;
 
-        let cellIndex = getNextEmptyCellIndex(currentLand.cells);
+        let cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
 
-        // If the current land is full, auto-archive it and start a new one
+        // If current tier is full, try to expand first
+        if (cellIndex === -1 && currentLand.gridSize < MAX_GRID_TIER) {
+          const newGridSize = currentLand.gridSize + 1;
+          currentLand = { ...currentLand, gridSize: newGridSize };
+          set({ currentLand });
+          cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
+        }
+
+        // If the entire 10×10 land is full, auto-archive and start a new one
         if (cellIndex === -1) {
           const { completedLands, selectedNextTheme } = get();
           const completedLandNumber = currentLand.number;
@@ -284,7 +311,7 @@ export const useLandStore = create<LandStore>()(
             currentLand,
             landJustCompleted: completedLandNumber,
           });
-          cellIndex = getNextEmptyCellIndex(currentLand.cells);
+          cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
           if (cellIndex === -1) return -1; // Should not happen with fresh land
         }
 
@@ -327,10 +354,12 @@ export const useLandStore = create<LandStore>()(
           completedAt: newCells.every(c => c !== null) ? Date.now() : null,
         };
 
-        // Check for milestone (25/50/75)
+        // Check for milestone (25/50/75) or expansion tier completion
         const count = newCells.filter(Boolean).length;
+        const tierCapacity = getAvailableCellCount(updatedLand.gridSize);
+        const tierFull = count >= tierCapacity && updatedLand.gridSize < MAX_GRID_TIER;
         const milestones = [25, 50, 75];
-        const hit = milestones.find(m => count === m) ?? null;
+        const hit = tierFull ? tierCapacity : (milestones.find(m => count === m) ?? null);
 
         set({
           currentLand: updatedLand,
@@ -356,8 +385,21 @@ export const useLandStore = create<LandStore>()(
         return get().currentLand.cells.every(c => c !== null);
       },
 
+      isTierFull: () => {
+        const { currentLand } = get();
+        const available = getAvailableCellIndices(currentLand.gridSize);
+        for (const idx of available) {
+          if (currentLand.cells[idx] === null) return false;
+        }
+        return true;
+      },
+
       getFilledCount: () => {
         return get().currentLand.cells.filter(c => c !== null).length;
+      },
+
+      getAvailableCells: () => {
+        return getAvailableCellIndices(get().currentLand.gridSize);
       },
 
       addOwnedTheme: (themeId: string) => {
@@ -402,6 +444,20 @@ export const useLandStore = create<LandStore>()(
         ownedThemes: state.ownedThemes,
         selectedNextTheme: state.selectedNextTheme,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Migrate existing lands that don't have gridSize or have a gridSize
+        // too small for their existing pets
+        if (state?.currentLand) {
+          const land = state.currentLand;
+          const neededSize = computeMinGridSize(land.cells);
+          const currentSize = land.gridSize ?? MIN_GRID_TIER;
+          if (neededSize > currentSize) {
+            state.currentLand = { ...land, gridSize: neededSize };
+          } else if (!land.gridSize) {
+            state.currentLand = { ...land, gridSize: MIN_GRID_TIER };
+          }
+        }
+      },
     }
   )
 );

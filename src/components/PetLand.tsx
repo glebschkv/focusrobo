@@ -227,6 +227,7 @@ function useIslandParallax() {
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
+  const availableCells = useLandStore((s) => s.getAvailableCells)();
   const debugAwardPet = useDebugAwardPet();
   const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
   const landJustCompleted = useLandStore((s) => s.landJustCompleted);
@@ -392,7 +393,7 @@ export const PetLand = () => {
         {/* Island container — parallax layer (medium) */}
         <div className="pet-land__island-container" ref={containerRef}>
           {/* Pixel-art island — SVG with flat fills */}
-          <IslandSVG />
+          <IslandSVG availableCells={availableCells} />
 
           {/* Shadow beneath island */}
           <div className="pet-land__island-shadow" />
@@ -427,8 +428,10 @@ export const PetLand = () => {
       {/* Milestone */}
       {milestoneReached !== null && (
         <div className="pet-land__milestone" onClick={clearMilestone}>
-          <span className="pet-land__milestone-text">{milestoneReached}% filled!</span>
-          <span className="pet-land__milestone-sub">Your island is growing</span>
+          <span className="pet-land__milestone-text">
+            {milestoneReached} pets!
+          </span>
+          <span className="pet-land__milestone-sub">Your island is expanding</span>
         </div>
       )}
 
@@ -442,6 +445,7 @@ export const PetLand = () => {
         </div>
         <span className="pet-land__progress-label">
           Land {currentLand.number} · {filledCount}/{LAND_SIZE}
+          {currentLand.gridSize < 10 && ` · ${currentLand.gridSize}×${currentLand.gridSize}`}
         </span>
       </div>
 
