@@ -396,6 +396,7 @@
 .pet-land__island-scaler {
   transform-origin: center center;
   transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
 }
 
 /* ── Island container — holds diamond shape + cliff walls ───── */
@@ -453,6 +454,7 @@
   pointer-events: none;
   overflow: visible;
   will-change: transform;
+  contain: layout style;
 }
 
 /* ── Individual pet on island ──────────────────────────────────── */
@@ -461,18 +463,17 @@
   position: absolute;
   pointer-events: auto;
   transform:
-    translate(-50%, -60%)
+    translate(-50%, -70%)
     scale(var(--pet-scale, 1));
-  transform-origin: center center;
+  transform-origin: center bottom;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
-  contain: layout style;
 }
 
 .island-pet:active {
   transform:
-    translate(-50%, -60%)
+    translate(-50%, -70%)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 

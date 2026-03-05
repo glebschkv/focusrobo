@@ -1,7 +1,8 @@
-import { Play, Pause, Square, SkipForward, Lock } from "lucide-react";
+import { Pause, Square, SkipForward, Lock } from "lucide-react";
 import { ARIA_LABELS } from "@/lib/accessibility";
 import { toast } from "sonner";
 import { useFocusStore } from "@/stores/focusStore";
+import { useThemeColors } from "./backgrounds/ThemeContext";
 
 interface TimerControlsProps {
   isRunning: boolean;
@@ -20,57 +21,81 @@ export const TimerControls = ({
 }: TimerControlsProps) => {
   const strictMode = useFocusStore((s) => s.strictMode);
   const focusEnabled = useFocusStore((s) => s.enabled);
+  const { colors } = useThemeColors();
 
-  // Strict mode locks pause/stop/skip while the timer is running
   const isLocked = isRunning && focusEnabled && strictMode;
 
   const handleLockedAction = () => {
     toast.warning("Strict Mode Active", {
-      description: "You can't stop or pause until the timer completes. Disable strict mode in Settings to change this.",
+      description: "Timer must complete. Change in Settings.",
       duration: 3000,
     });
   };
 
-  return (
-    <div className="flex justify-center items-center gap-3" role="group" aria-label="Timer controls">
-      {!isRunning ? (
+  if (!isRunning) {
+    return (
+      <div className="flex justify-center" role="group" aria-label="Timer controls">
         <button
           onClick={onStart}
           aria-label={ARIA_LABELS.START_TIMER}
-          className="timer-btn-start"
+          className="px-12 py-4 rounded-full text-base font-semibold tracking-wide text-white transition-all active:scale-95"
+          style={{
+            background: colors.ringStart,
+            boxShadow: `0 4px 20px ${colors.ringStart}40`,
+          }}
         >
-          <Play className="w-5 h-5" aria-hidden="true" />
-          Start
+          Start Focus
         </button>
-      ) : (
-        <button
-          onClick={isLocked ? handleLockedAction : onPause}
-          aria-label={isLocked ? "Pause disabled — strict mode active" : ARIA_LABELS.PAUSE_TIMER}
-          className={isLocked ? "timer-btn-pause opacity-50" : "timer-btn-pause"}
-        >
-          {isLocked ? (
-            <Lock className="w-5 h-5" aria-hidden="true" />
-          ) : (
-            <Pause className="w-5 h-5" aria-hidden="true" />
-          )}
-          {isLocked ? "Locked" : "Pause"}
-        </button>
-      )}
+      </div>
+    );
+  }
 
+  return (
+    <div className="flex justify-center items-center gap-4" role="group" aria-label="Timer controls">
       <button
         onClick={isLocked ? handleLockedAction : onStop}
         aria-label={isLocked ? "Stop disabled — strict mode active" : ARIA_LABELS.STOP_TIMER}
-        className={isLocked ? "timer-btn-secondary opacity-50" : "timer-btn-secondary"}
+        className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90"
+        style={{
+          background: `${colors.text}08`,
+          opacity: isLocked ? 0.4 : 1,
+        }}
       >
-        <Square className="w-5 h-5 timer-icon-stop" aria-hidden="true" />
+        <Square className="w-4 h-4" style={{ color: `${colors.text}70` }} aria-hidden="true" />
+      </button>
+
+      <button
+        onClick={isLocked ? handleLockedAction : onPause}
+        aria-label={isLocked ? "Pause disabled — strict mode active" : ARIA_LABELS.PAUSE_TIMER}
+        className="px-10 py-3.5 rounded-full text-sm font-semibold tracking-wide text-white transition-all active:scale-95"
+        style={{
+          background: isLocked ? `${colors.text}30` : colors.ringStart,
+          boxShadow: isLocked ? 'none' : `0 4px 16px ${colors.ringStart}30`,
+        }}
+      >
+        {isLocked ? (
+          <span className="flex items-center gap-2">
+            <Lock className="w-4 h-4" aria-hidden="true" />
+            Locked
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <Pause className="w-4 h-4" aria-hidden="true" />
+            Pause
+          </span>
+        )}
       </button>
 
       <button
         onClick={isLocked ? handleLockedAction : onSkip}
-        aria-label={isLocked ? "Skip disabled — strict mode active" : "Skip to end of session"}
-        className={isLocked ? "timer-btn-secondary opacity-50" : "timer-btn-secondary"}
+        aria-label={isLocked ? "Skip disabled — strict mode active" : "Skip to end"}
+        className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90"
+        style={{
+          background: `${colors.text}08`,
+          opacity: isLocked ? 0.4 : 1,
+        }}
       >
-        <SkipForward className="w-5 h-5 timer-icon-skip" aria-hidden="true" />
+        <SkipForward className="w-4 h-4" style={{ color: `${colors.text}70` }} aria-hidden="true" />
       </button>
     </div>
   );
