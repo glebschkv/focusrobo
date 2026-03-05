@@ -4,7 +4,7 @@ import { AppSettings } from "@/hooks/useSettings";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Download, Upload, RotateCcw, Shield, AlertTriangle, HardDrive } from "lucide-react";
+import { Download, Upload, RotateCcw, Shield, AlertTriangle, HardDrive, Loader2 } from "lucide-react";
 import { toast } from 'sonner';
 
 interface SettingsDataProps {
@@ -21,74 +21,56 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
 
   const handleImport = async () => {
     if (!importFile) return;
-    try {
-      await onImport(importFile);
-      setImportFile(null);
-    } catch (error) {
-      settingsLogger.error('Import failed:', error);
-    }
+    try { await onImport(importFile); setImportFile(null); }
+    catch (error) { settingsLogger.error('Import failed:', error); }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type === 'application/json') {
-      setImportFile(file);
-    } else {
-      toast.error("Invalid File", {
-        description: "Please select a valid JSON settings file.",
-      });
-    }
+    if (file && file.type === 'application/json') { setImportFile(file); }
+    else { toast.error("Invalid File", { description: "Please select a valid JSON settings file." }); }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Privacy Settings */}
-      <div className="retro-game-card p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Shield className="w-4 h-4 text-teal-400" />
-          <span className="text-sm font-bold retro-pixel-text text-white">PRIVACY</span>
+    <div className="space-y-3">
+      {/* Privacy */}
+      <div className="settings-card">
+        <div className="settings-section-title">
+          <div className="settings-section-icon"><Shield /></div>
+          <span>Privacy</span>
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 rounded-lg bg-purple-900/20 border border-purple-600/30">
+          <div className="settings-row">
             <div>
-              <Label className="text-xs font-semibold text-white">Usage Analytics</Label>
-              <p className="text-[11px] text-purple-300/80">Anonymous usage data to improve the app</p>
+              <Label className="text-xs font-semibold text-[#E8F0EB]">Usage Analytics</Label>
+              <p className="text-[11px] text-[#8BA68F]">Anonymous usage data to improve the app</p>
             </div>
-            <Switch
-              checked={settings.dataCollection}
-              onCheckedChange={(checked) => onUpdate({ dataCollection: checked })}
-            />
+            <Switch checked={settings.dataCollection} onCheckedChange={(checked) => onUpdate({ dataCollection: checked })} />
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-lg bg-purple-900/20 border border-purple-600/30">
+          <div className="settings-row">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+              <AlertTriangle className="w-3.5 h-3.5 text-[#C5A033]" />
               <div>
-                <Label className="text-xs font-semibold text-white">Crash Reports</Label>
-                <p className="text-[11px] text-purple-300/80">Send error logs</p>
+                <Label className="text-xs font-semibold text-[#E8F0EB]">Crash Reports</Label>
+                <p className="text-[11px] text-[#8BA68F]">Send error logs</p>
               </div>
             </div>
-            <Switch
-              checked={settings.crashReporting}
-              onCheckedChange={(checked) => onUpdate({ crashReporting: checked })}
-            />
+            <Switch checked={settings.crashReporting} onCheckedChange={(checked) => onUpdate({ crashReporting: checked })} />
           </div>
         </div>
       </div>
 
-      {/* Backup & Restore */}
-      <div className="retro-game-card p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <HardDrive className="w-4 h-4 text-teal-400" />
-          <span className="text-sm font-bold retro-pixel-text text-white">BACKUP</span>
+      {/* Backup */}
+      <div className="settings-card">
+        <div className="settings-section-title">
+          <div className="settings-section-icon"><HardDrive /></div>
+          <span>Backup</span>
         </div>
 
         <div className="space-y-2">
-          <button
-            onClick={onExport}
-            className="w-full p-3 retro-stat-pill rounded-lg flex items-center justify-center gap-2 transition-all active:scale-95"
-          >
+          <button onClick={onExport} className="settings-btn-secondary">
             <Download className="w-4 h-4" />
             <span className="text-sm font-semibold">Export Settings</span>
           </button>
@@ -98,67 +80,44 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
               type="file"
               accept=".json"
               onChange={handleFileChange}
-              className="cursor-pointer h-11 text-xs file:mr-2 file:px-2 file:py-1 file:rounded file:border-0 file:bg-purple-500/20 file:text-purple-300 file:text-xs file:font-medium"
+              className="cursor-pointer h-11 text-xs bg-[rgba(26,46,35,0.6)] border-[rgba(76,167,113,0.15)] text-[#E8F0EB] file:mr-2 file:px-2 file:py-1 file:rounded file:border-0 file:bg-[rgba(76,167,113,0.15)] file:text-[#4CA771] file:text-xs file:font-medium"
             />
           </div>
 
           {importFile && (
-            <button
-              onClick={handleImport}
-              className="w-full retro-arcade-btn retro-arcade-btn-yellow px-3 py-2.5 text-sm flex items-center justify-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              <span>Import</span>
+            <button onClick={handleImport} className="settings-btn-gold text-sm">
+              <Upload className="w-4 h-4" /><span>Import</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Danger Zone */}
-      <div className="retro-game-card p-4 border-red-500/30">
-        <div className="flex items-center gap-2 mb-3">
-          <RotateCcw className="w-4 h-4 text-red-400" />
-          <span className="text-sm font-bold retro-pixel-text text-red-400">RESET</span>
+      {/* Reset */}
+      <div className="settings-card" style={{ borderColor: 'rgba(196,100,100,0.2)' }}>
+        <div className="settings-section-title">
+          <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)' }}>
+            <RotateCcw className="w-3.5 h-3.5 text-[#E57373]" />
+          </div>
+          <span className="text-[13px] font-bold text-[#E57373]">Reset</span>
         </div>
 
-        <button
-          className="w-full p-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-95 bg-red-500/10 text-red-400 border-2 border-red-500/30 font-semibold text-sm"
-          style={{ boxShadow: '0 2px 0 rgba(239,68,68,0.2)' }}
-          onClick={() => setResetDialogOpen(true)}
-        >
-          <RotateCcw className="w-4 h-4" />
-          <span>Reset All Settings</span>
+        <button className="settings-btn-danger" onClick={() => setResetDialogOpen(true)}>
+          <RotateCcw className="w-4 h-4" /><span>Reset All Settings</span>
         </button>
       </div>
 
       {/* Reset Confirmation */}
       {resetDialogOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ WebkitBackfaceVisibility: 'hidden' }}
-        >
-          <div className="absolute inset-0 bg-black/60" onClick={() => setResetDialogOpen(false)} aria-hidden />
-          <div className="relative retro-game-card border-2 border-purple-600/50 max-w-xs w-full p-6 space-y-4">
+        <div className="settings-dialog-overlay">
+          <div className="settings-dialog-scrim" onClick={() => setResetDialogOpen(false)} aria-hidden />
+          <div className="settings-dialog-card space-y-4">
             <div className="space-y-2 text-center">
-              <h2 className="text-base font-bold text-white">Reset Settings?</h2>
-              <p className="text-xs text-purple-300/80">
-                This will restore all default settings. Consider exporting first.
-              </p>
+              <h2 className="text-base font-bold text-[#E8F0EB]">Reset Settings?</h2>
+              <p className="text-xs text-[#8BA68F]">This will restore all default settings. Consider exporting first.</p>
             </div>
             <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-              <button
-                className="retro-stat-pill px-3 py-2 text-xs font-semibold rounded-lg"
-                onClick={() => setResetDialogOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-red-500 text-white px-3 py-2 text-xs font-bold rounded-lg"
-                style={{ boxShadow: '0 2px 0 rgba(185,28,28,0.8)' }}
-                onClick={() => { onReset(); setResetDialogOpen(false); }}
-              >
-                Reset
-              </button>
+              <button className="settings-btn-secondary text-xs py-2" onClick={() => setResetDialogOpen(false)}>Cancel</button>
+              <button className="settings-btn-danger text-xs py-2" onClick={() => { onReset(); setResetDialogOpen(false); }}>Reset</button>
             </div>
           </div>
         </div>

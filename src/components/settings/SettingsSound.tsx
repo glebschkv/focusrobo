@@ -22,35 +22,24 @@ const soundThemes = [
 export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
   const { play } = useSoundEffects();
   const [clickSoundOn, setClickSoundOn] = useState(() => {
-    try {
-      return localStorage.getItem('nomo_clickSoundEnabled') !== 'false';
-    } catch { return true; }
+    try { return localStorage.getItem('nomo_clickSoundEnabled') !== 'false'; }
+    catch { return true; }
   });
 
-  const testSound = () => {
-    play('notification');
-  };
+  const testSound = () => play('notification');
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Main Sound Card */}
-      <div className="retro-game-card p-4">
-        {/* Sound Toggle */}
+      <div className="settings-card">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              "w-9 h-9 rounded-lg flex items-center justify-center",
-              settings.soundEnabled ? "retro-level-badge" : "retro-stat-pill"
-            )}>
-              {settings.soundEnabled ? (
-                <Volume2 className="w-4 h-4" />
-              ) : (
-                <VolumeX className="w-4 h-4 text-muted-foreground" />
-              )}
+            <div className={cn("settings-icon-box", settings.soundEnabled ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+              {settings.soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </div>
             <div>
-              <Label className="text-sm font-bold text-white">Sound Effects</Label>
-              <p className="text-[11px] text-purple-300/80">Timer alerts and game sounds</p>
+              <Label className="text-sm font-bold text-[#E8F0EB]">Sound Effects</Label>
+              <p className="text-[11px] text-[#8BA68F]">Timer alerts and game sounds</p>
             </div>
           </div>
           <Switch
@@ -61,35 +50,26 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
 
         {settings.soundEnabled && (
           <>
-            <div className="border-t border-purple-600/30 my-4" />
+            <div className="settings-divider" />
 
             {/* Volume Control */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs font-semibold text-purple-300/80">Volume</Label>
+                <Label className="text-xs font-semibold text-[#8BA68F]">Volume</Label>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold retro-pixel-text text-white">{settings.soundVolume}%</span>
-                  <button
-                    onClick={testSound}
-                    className="retro-arcade-btn retro-arcade-btn-green p-1.5 rounded-md"
-                  >
+                  <span className="text-sm font-bold text-[#4CA771]">{settings.soundVolume}%</span>
+                  <button onClick={testSound} className="p-1.5 rounded-md bg-[#4CA771] text-white">
                     <Play className="w-3 h-3" />
                   </button>
                 </div>
               </div>
-              <Slider
-                min={0}
-                max={100}
-                step={5}
-                value={[settings.soundVolume]}
-                onValueChange={([value]) => onUpdate({ soundVolume: value })}
-                className="w-full"
-              />
+              <Slider min={0} max={100} step={5} value={[settings.soundVolume]}
+                onValueChange={([value]) => onUpdate({ soundVolume: value })} className="w-full" />
             </div>
 
             {/* Sound Theme */}
             <div>
-              <Label className="text-xs font-semibold text-purple-300/80 mb-2 block">Sound Theme</Label>
+              <Label className="text-xs font-semibold text-[#8BA68F] mb-2 block">Sound Theme</Label>
               <div className="flex gap-2">
                 {soundThemes.map((theme) => {
                   const Icon = theme.icon;
@@ -98,15 +78,10 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
                     <button
                       key={theme.value}
                       onClick={() => onUpdate({ soundTheme: theme.value as 'default' | 'nature' | 'minimal' })}
-                      className={cn(
-                        "flex-1 p-2.5 rounded-lg flex flex-col items-center gap-1 transition-all active:scale-95",
-                        isSelected
-                          ? "retro-level-badge"
-                          : "bg-purple-900/30 border-2 border-purple-600/30"
-                      )}
+                      className={cn("settings-sound-pill", isSelected ? "settings-sound-pill--selected" : "settings-sound-pill--unselected")}
                     >
-                      <Icon className={cn("w-4 h-4", isSelected ? "" : "text-purple-300/60")} />
-                      <span className={cn("text-[11px] font-bold", isSelected ? "" : "text-purple-300/80")}>{theme.label}</span>
+                      <Icon className="w-4 h-4" />
+                      <span className="text-[11px] font-bold">{theme.label}</span>
                     </button>
                   );
                 })}
@@ -117,26 +92,20 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
       </div>
 
       {/* Button Click Sounds */}
-      <div className="retro-game-card p-4">
+      <div className="settings-card">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              "w-9 h-9 rounded-lg flex items-center justify-center",
-              clickSoundOn ? "retro-level-badge" : "retro-stat-pill"
-            )}>
-              <MousePointerClick className={cn("w-4 h-4", !clickSoundOn && "text-muted-foreground")} />
+            <div className={cn("settings-icon-box", clickSoundOn ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+              <MousePointerClick className="w-4 h-4" />
             </div>
             <div>
-              <Label className="text-sm font-bold text-white">Button Sounds</Label>
-              <p className="text-[11px] text-purple-300/80">Subtle tap feedback</p>
+              <Label className="text-sm font-bold text-[#E8F0EB]">Button Sounds</Label>
+              <p className="text-[11px] text-[#8BA68F]">Subtle tap feedback</p>
             </div>
           </div>
           <Switch
             checked={clickSoundOn}
-            onCheckedChange={(checked) => {
-              setClickSoundOn(checked);
-              setClickSoundEnabled(checked);
-            }}
+            onCheckedChange={(checked) => { setClickSoundOn(checked); setClickSoundEnabled(checked); }}
           />
         </div>
       </div>

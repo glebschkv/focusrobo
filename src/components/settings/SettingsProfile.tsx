@@ -27,8 +27,6 @@ export const SettingsProfile = () => {
   const [selectedAvatar, setSelectedAvatar] = useState('default');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Local-only guests (no session) can't save profiles — hide the section.
-  // Anonymous Supabase users DO have a session and can edit their profile.
   const isLocalOnlyGuest = isGuestMode && !session;
 
   useEffect(() => {
@@ -43,13 +41,9 @@ export const SettingsProfile = () => {
       toast.error('Please enter a display name');
       return;
     }
-
     setIsSaving(true);
     try {
-      await updateProfile({
-        display_name: displayName.trim(),
-        avatar_url: selectedAvatar
-      });
+      await updateProfile({ display_name: displayName.trim(), avatar_url: selectedAvatar });
       setIsEditing(false);
       toast.success('Profile updated!');
     } catch (_error) {
@@ -67,27 +61,25 @@ export const SettingsProfile = () => {
 
   const currentAvatar = AVATAR_OPTIONS.find(a => a.id === selectedAvatar) || AVATAR_OPTIONS[0];
 
-  if (isLocalOnlyGuest) {
-    return null;
-  }
+  if (isLocalOnlyGuest) return null;
 
   return (
-    <div className="retro-game-card p-4">
-      <div className="flex items-center gap-2 mb-4">
-        <User className="w-4 h-4 text-teal-400" />
-        <span className="text-sm font-bold retro-pixel-text text-white">PROFILE</span>
+    <div className="settings-card">
+      <div className="settings-section-title">
+        <div className="settings-section-icon"><User /></div>
+        <span>Profile</span>
       </div>
 
       <div className="space-y-4">
-        {/* Avatar Selection */}
+        {/* Avatar */}
         <div className="flex flex-col items-center gap-3">
           <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/20 flex items-center justify-center border-2 border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-              <PixelIcon name={currentAvatar.icon} size={48} />
+            <div className="settings-avatar-ring">
+              <PixelIcon name={currentAvatar.icon} size={42} />
             </div>
             {isEditing && (
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center border-2 border-purple-300">
-                <Camera className="w-4 h-4 text-white" />
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#4CA771] flex items-center justify-center border-2 border-[#1A2E23]">
+                <Camera className="w-3 h-3 text-white" />
               </div>
             )}
           </div>
@@ -99,10 +91,8 @@ export const SettingsProfile = () => {
                   key={avatar.id}
                   onClick={() => setSelectedAvatar(avatar.id)}
                   className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center transition-all",
-                    selectedAvatar === avatar.id
-                      ? 'retro-level-badge scale-110'
-                      : 'retro-stat-pill'
+                    "settings-avatar-option",
+                    selectedAvatar === avatar.id ? "settings-avatar-option--selected" : "settings-avatar-option--unselected"
                   )}
                   title={avatar.label}
                 >
@@ -115,9 +105,7 @@ export const SettingsProfile = () => {
 
         {/* Display Name */}
         <div className="space-y-2">
-          <Label htmlFor="displayName" className="text-xs text-purple-300/80">
-            Display Name
-          </Label>
+          <Label htmlFor="displayName" className="text-xs text-[#8BA68F]">Display Name</Label>
           {isEditing ? (
             <Input
               id="displayName"
@@ -125,19 +113,20 @@ export const SettingsProfile = () => {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Enter your name"
-              className="h-10 rounded-lg"
+              className="h-10 rounded-lg bg-[rgba(26,46,35,0.6)] border-[rgba(76,167,113,0.15)] text-[#E8F0EB] placeholder:text-[#6B8A6F]"
               maxLength={30}
             />
           ) : (
-            <div className="flex items-center justify-between p-3 rounded-lg bg-purple-900/20 border border-purple-600/30">
-              <span className="text-sm font-medium text-white">
+            <div className="settings-row">
+              <span className="text-sm font-medium text-[#E8F0EB]">
                 {profile?.display_name || 'Not set'}
               </span>
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-1.5 rounded-md retro-stat-pill transition-all active:scale-95"
+                className="p-1.5 rounded-md transition-all active:scale-95"
+                style={{ background: 'rgba(26,46,35,0.6)', border: '1px solid rgba(76,167,113,0.12)' }}
               >
-                <Pencil className="w-4 h-4" />
+                <Pencil className="w-3.5 h-3.5 text-[#8BA68F]" />
               </button>
             </div>
           )}
@@ -146,21 +135,11 @@ export const SettingsProfile = () => {
         {/* Action Buttons */}
         {isEditing && (
           <div className="flex gap-2">
-            <button
-              onClick={handleCancel}
-              disabled={isSaving}
-              className="flex-1 retro-arcade-btn px-3 py-2 text-xs flex items-center justify-center gap-1"
-            >
-              <X className="w-4 h-4" />
-              Cancel
+            <button onClick={handleCancel} disabled={isSaving} className="flex-1 settings-btn-secondary text-xs py-2">
+              <X className="w-4 h-4" /> Cancel
             </button>
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex-1 retro-arcade-btn retro-arcade-btn-green px-3 py-2 text-xs flex items-center justify-center gap-1"
-            >
-              <Check className="w-4 h-4" />
-              {isSaving ? 'Saving...' : 'Save'}
+            <button onClick={handleSave} disabled={isSaving} className="flex-1 settings-btn-primary text-xs py-2">
+              <Check className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save'}
             </button>
           </div>
         )}
