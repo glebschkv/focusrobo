@@ -237,7 +237,7 @@ export const PetLand = () => {
   const clearMilestone = useLandStore((s) => s.clearMilestone);
   const { haptic } = useHaptics();
 
-  const gridSize = currentLand.gridSize;
+  const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
   const tierScale = getIslandScale(gridSize);
   const progressPct = (filledCount / tierCapacity) * 100;
