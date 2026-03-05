@@ -374,7 +374,7 @@
 .pet-land__island-wrapper {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 360px;
   margin: auto;
   animation: pet-land-island-float 4.5s ease-in-out infinite;
   cursor: grab;
@@ -463,9 +463,9 @@
   position: absolute;
   pointer-events: auto;
   transform:
-    translate(-50%, -65%)
+    translate(-50%, -50%)
     scale(var(--pet-scale, 1));
-  transform-origin: center bottom;
+  transform-origin: center center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
@@ -473,15 +473,15 @@
 
 .island-pet:active {
   transform:
-    translate(-50%, -65%)
+    translate(-50%, -50%)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
 /* ── Pet sprite ────────────────────────────────────────────────── */
 
 .island-pet__sprite {
-  width: 64px;
-  height: 64px;
+  width: 74px;
+  height: 74px;
   object-fit: contain;
   image-rendering: -webkit-crisp-edges;
   image-rendering: crisp-edges;
@@ -495,19 +495,19 @@
 }
 
 @media (min-width: 375px) {
-  .island-pet__sprite { width: 70px; height: 70px; }
+  .island-pet__sprite { width: 80px; height: 80px; }
 }
 
 @media (min-width: 390px) {
-  .island-pet__sprite { width: 76px; height: 76px; }
+  .island-pet__sprite { width: 88px; height: 88px; }
 }
 
 @media (min-width: 420px) {
-  .island-pet__sprite { width: 82px; height: 82px; }
+  .island-pet__sprite { width: 96px; height: 96px; }
 }
 
 @media (min-width: 768px) {
-  .island-pet__sprite { width: 96px; height: 96px; }
+  .island-pet__sprite { width: 110px; height: 110px; }
 }
 
 .island-pet--new .island-pet__sprite {

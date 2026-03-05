@@ -232,11 +232,11 @@ export function getIslandPosition(index: number, gridSize: number): IslandPositi
 
 /**
  * Compute the visual scale of the island based on grid tier.
- * gridSize=5 → 0.45 (small island), gridSize=20 → 1.0 (full size).
+ * gridSize=5 → 0.5 (small island), gridSize=20 → 0.92 (leaves breathing room).
  */
 export function getIslandScale(gridSize: number): number {
   const g = gridSize || MIN_GRID_TIER;
-  return 0.55 + 0.45 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
+  return 0.5 + 0.42 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
 }
 
 /** Reference grid size where base sprite size (56px) fits tiles well */
@@ -246,12 +246,13 @@ const REFERENCE_GRID = 5;
  * Scale factor for pet sprites based on grid density.
  * At gridSize=5 (starting tier), sprites are full size.
  * At higher gridSizes, sprites shrink proportionally to tile size.
+ * Pets intentionally overlap tiles at higher densities to stay readable.
  */
 export function getGridDensityScale(gridSize: number): number {
   const g = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
-  // Gentler curve for larger grids — pets stay readable at 17×17+ sizes
   if (g <= 8) return REFERENCE_GRID / g;
-  return Math.max(0.55, 0.625 * (1 + REFERENCE_GRID / g));
+  // More generous scale — pets overlap tiles but remain visible
+  return Math.max(0.7, 0.75 * (1 + REFERENCE_GRID / g));
 }
 
 /** Rotation step type (kept for backward compat) */
