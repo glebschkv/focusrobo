@@ -74,20 +74,20 @@ at+qIxUCMG1mihDK1A3UT82NQz60imOlM27jbdoXt2QfyFMm+YhidDkLF1vLUagM
 
 // Subscription tier mapping
 const SUBSCRIPTION_PRODUCTS: Record<string, { tier: 'premium' | 'premium_plus' | 'lifetime'; period: 'monthly' | 'yearly' | 'lifetime' }> = {
-  'co.nomoinc.nomo.premium.monthly': { tier: 'premium', period: 'monthly' },
-  'co.nomoinc.nomo.premium.yearly': { tier: 'premium', period: 'yearly' },
-  'co.nomoinc.nomo.premiumplus.monthly': { tier: 'premium_plus', period: 'monthly' },
-  'co.nomoinc.nomo.premiumplus.yearly': { tier: 'premium_plus', period: 'yearly' },
-  'co.nomoinc.nomo.lifetime': { tier: 'lifetime', period: 'lifetime' },
+  'com.fonoinc.app.premium.monthly': { tier: 'premium', period: 'monthly' },
+  'com.fonoinc.app.premium.yearly': { tier: 'premium', period: 'yearly' },
+  'com.fonoinc.app.premiumplus.monthly': { tier: 'premium_plus', period: 'monthly' },
+  'com.fonoinc.app.premiumplus.yearly': { tier: 'premium_plus', period: 'yearly' },
+  'com.fonoinc.app.lifetime': { tier: 'lifetime', period: 'lifetime' },
 };
 
 // Coin pack definitions (consumables)
 const COIN_PACK_PRODUCTS: Record<string, { coins: number; bonusCoins: number }> = {
-  'co.nomoinc.nomo.coins.value': { coins: 1500, bonusCoins: 300 },
-  'co.nomoinc.nomo.coins.premium': { coins: 5000, bonusCoins: 1000 },
-  'co.nomoinc.nomo.coins.mega': { coins: 15000, bonusCoins: 5000 },
-  'co.nomoinc.nomo.coins.ultra': { coins: 40000, bonusCoins: 20000 },
-  'co.nomoinc.nomo.coins.legendary': { coins: 100000, bonusCoins: 50000 },
+  'com.fonoinc.app.coins.value': { coins: 1500, bonusCoins: 300 },
+  'com.fonoinc.app.coins.premium': { coins: 5000, bonusCoins: 1000 },
+  'com.fonoinc.app.coins.mega': { coins: 15000, bonusCoins: 5000 },
+  'com.fonoinc.app.coins.ultra': { coins: 40000, bonusCoins: 20000 },
+  'com.fonoinc.app.coins.legendary': { coins: 100000, bonusCoins: 50000 },
 };
 
 // Starter bundle definitions (non-consumables)
@@ -97,22 +97,22 @@ const STARTER_BUNDLE_PRODUCTS: Record<string, {
   characterId?: string;
   streakFreezes?: number;
 }> = {
-  'co.nomoinc.nomo.bundle.welcome': {
+  'com.fonoinc.app.bundle.welcome': {
     coins: 600,
     boosterId: 'focus_boost',
     streakFreezes: 2
   },
-  'co.nomoinc.nomo.bundle.starter': {
+  'com.fonoinc.app.bundle.starter': {
     coins: 1000,
     boosterId: 'focus_boost',
     characterId: 'clover-cat'
   },
-  'co.nomoinc.nomo.bundle.collector': {
+  'com.fonoinc.app.bundle.collector': {
     coins: 5000,
     boosterId: 'super_boost',
     characterId: 'kitsune-spirit'
   },
-  'co.nomoinc.nomo.bundle.ultimate': {
+  'com.fonoinc.app.bundle.ultimate': {
     coins: 12000,
     boosterId: 'super_boost',
     characterId: 'storm-spirit',
@@ -130,7 +130,7 @@ function getProductType(productId: string): ProductType | null {
 }
 
 // Expected bundle ID
-const EXPECTED_BUNDLE_ID = 'co.nomoinc.nomo';
+const EXPECTED_BUNDLE_ID = 'com.fonoinc.app';
 
 interface JWSTransactionDecodedPayload {
   transactionId: string;

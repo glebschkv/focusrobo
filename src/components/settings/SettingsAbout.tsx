@@ -80,7 +80,7 @@ export const SettingsAbout = () => {
           </button>
 
           <button
-            onClick={() => openLink('mailto:support@nomoinc.co')}
+            onClick={() => openLink('mailto:support@fonoinc.com')}
             className="w-full p-3 retro-stat-pill rounded-lg flex items-center gap-3 transition-all active:scale-95 text-purple-100"
           >
             <MessageCircle className="w-5 h-5" />
@@ -89,7 +89,7 @@ export const SettingsAbout = () => {
           </button>
 
           <button
-            onClick={() => openLink('https://nomoinc.co')}
+            onClick={() => openLink('https://fonoinc.com')}
             className="w-full retro-arcade-btn retro-arcade-btn-green px-3 py-2.5 text-sm flex items-center gap-3"
           >
             <Heart className="w-5 h-5" />

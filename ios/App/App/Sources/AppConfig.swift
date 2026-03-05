@@ -24,9 +24,9 @@ enum AppConfig {
 
     /// App Group identifier - references SharedConstants for consistency with extensions
     static let appGroupIdentifier = SharedConstants.appGroupIdentifier
-    static let bundleIdentifier = "co.botblock.app"
+    static let bundleIdentifier = "com.fonoinc.app"
     static let appName = "BotBlock"
-    static let merchantIdentifier = "merchant.co.botblock.app"
+    static let merchantIdentifier = "merchant.com.fonoinc.app"
 
     static var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
@@ -43,7 +43,7 @@ enum AppConfig {
     // MARK: - Background Tasks
 
     enum BackgroundTask {
-        static let identifier = "co.botblock.app.background-tracking"
+        static let identifier = "com.fonoinc.app.background-tracking"
         static let refreshIntervalMinutes: TimeInterval = 15
         static let refreshIntervalSeconds: TimeInterval = 15 * 60
     }
@@ -75,24 +75,24 @@ enum AppConfig {
 
     enum ProductIDs {
         // Subscriptions
-        static let premiumMonthly = "co.botblock.app.premium.monthly"
-        static let premiumYearly = "co.botblock.app.premium.yearly"
-        static let premiumPlusMonthly = "co.botblock.app.premiumplus.monthly"
-        static let premiumPlusYearly = "co.botblock.app.premiumplus.yearly"
-        static let lifetime = "co.botblock.app.lifetime"
+        static let premiumMonthly = "com.fonoinc.app.premium.monthly"
+        static let premiumYearly = "com.fonoinc.app.premium.yearly"
+        static let premiumPlusMonthly = "com.fonoinc.app.premiumplus.monthly"
+        static let premiumPlusYearly = "com.fonoinc.app.premiumplus.yearly"
+        static let lifetime = "com.fonoinc.app.lifetime"
 
         // Coin Packs (Consumables)
-        static let coinsValue = "co.botblock.app.coins.value"
-        static let coinsPremium = "co.botblock.app.coins.premium"
-        static let coinsMega = "co.botblock.app.coins.mega"
-        static let coinsUltra = "co.botblock.app.coins.ultra"
-        static let coinsLegendary = "co.botblock.app.coins.legendary"
+        static let coinsValue = "com.fonoinc.app.coins.value"
+        static let coinsPremium = "com.fonoinc.app.coins.premium"
+        static let coinsMega = "com.fonoinc.app.coins.mega"
+        static let coinsUltra = "com.fonoinc.app.coins.ultra"
+        static let coinsLegendary = "com.fonoinc.app.coins.legendary"
 
         // Starter Bundles (Non-Consumables)
-        static let bundleWelcome = "co.botblock.app.bundle.welcome"
-        static let bundleStarter = "co.botblock.app.bundle.starter"
-        static let bundleCollector = "co.botblock.app.bundle.collector"
-        static let bundleUltimate = "co.botblock.app.bundle.ultimate"
+        static let bundleWelcome = "com.fonoinc.app.bundle.welcome"
+        static let bundleStarter = "com.fonoinc.app.bundle.starter"
+        static let bundleCollector = "com.fonoinc.app.bundle.collector"
+        static let bundleUltimate = "com.fonoinc.app.bundle.ultimate"
 
         static let allProducts: [String] = [
             premiumMonthly,

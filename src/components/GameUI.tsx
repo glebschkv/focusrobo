@@ -48,11 +48,13 @@ export const GameUI = () => {
     preloadTabComponents();
   }, []);
 
-  // Atelier — unified white theme color for all tabs
+  // Theme color — respects dark mode (4.2)
   useEffect(() => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) return;
-    meta.setAttribute('content', '#F8F8F4');
+    const isDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+      || document.documentElement.classList.contains('dark');
+    meta.setAttribute('content', isDark ? '#111614' : '#F8F8F4');
   }, [currentTab]);
 
   // Listen for programmatic tab switches (e.g. from collection "Buy from Shop" button)
@@ -120,8 +122,9 @@ export const GameUI = () => {
 
           {/* Full Screen Content */}
           <div
-            className={`absolute inset-0 pointer-events-auto overflow-auto pb-24 ${
-              currentTab === "home" ? "" : "bg-[#F8F8F4]"
+            style={{ paddingBottom: 'calc(var(--dock-height, 82px) + env(safe-area-inset-bottom, 0px) + 16px)' }}
+            className={`absolute inset-0 pointer-events-auto overflow-auto ${
+              currentTab === "home" ? "" : "bg-[hsl(var(--background))]"
             } ${
               currentTab === "timer" || currentTab === "home" ? "" : "pt-safe"
             }`}

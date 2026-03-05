@@ -183,9 +183,13 @@
     }
   }
 
-  /* Slide up entrance */
+  /* Slide up entrance + exit (6.2) */
   .slide-up-enter {
-    animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slide-up 0.3s var(--ease-ios-spring, cubic-bezier(0.175, 0.885, 0.32, 1.1));
+  }
+
+  .slide-down-exit {
+    animation: slide-down 0.2s var(--ease-ios, cubic-bezier(0.25, 0.46, 0.45, 0.94)) forwards;
   }
 
   @keyframes slide-up {
@@ -199,9 +203,24 @@
     }
   }
 
-  /* Scale fade entrance */
+  @keyframes slide-down {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  /* Scale fade entrance + exit (6.2) */
   .scale-fade-enter {
-    animation: scale-fade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: scale-fade 0.25s var(--ease-ios-spring, cubic-bezier(0.175, 0.885, 0.32, 1.1));
+  }
+
+  .scale-fade-exit {
+    animation: scale-fade-out 0.15s var(--ease-ios, cubic-bezier(0.25, 0.46, 0.45, 0.94)) forwards;
   }
 
   @keyframes scale-fade {
@@ -212,6 +231,17 @@
     to {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+
+  @keyframes scale-fade-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
     }
   }
 

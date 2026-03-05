@@ -3,7 +3,7 @@ import ManagedSettingsUI
 import UIKit
 import os.log
 
-private let log = OSLog(subsystem: "co.botblock.app.ShieldConfiguration", category: "Shield")
+private let log = OSLog(subsystem: "com.fonoinc.app.ShieldConfiguration", category: "Shield")
 
 /// Custom shield shown when a user tries to open a blocked app.
 /// Neon-branded design matching the app's splash screen aesthetic.
