@@ -399,14 +399,23 @@ export const PetLand = () => {
             <div className="pet-land__island-shadow" />
 
             {/* Pets layer — parallax layer (fastest) */}
-            <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips}>
+            <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips} role="group" aria-label="Your pet island">
               {slotElements}
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">
                   <span className="pet-land__empty-hint-text">
-                    Complete a focus session<br />to earn your first pet!
+                    Complete a focus session<br />to discover your first pet!
                   </span>
+                  <button
+                    className="pet-land__empty-cta"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'timer' }));
+                    }}
+                  >
+                    Start Focusing
+                  </button>
                 </div>
               )}
             </div>
@@ -444,7 +453,7 @@ export const PetLand = () => {
           <div className="pet-land__progress-marker" style={{ left: '50%' }} />
           <div className="pet-land__progress-marker" style={{ left: '75%' }} />
         </div>
-        <span className="pet-land__progress-label">
+        <span className="pet-land__progress-label tabular-nums">
           Land {currentLand.number} · {filledCount}/{tierCapacity}
           {gridSize < 20 && ` · ${gridSize}×${gridSize}`}
         </span>

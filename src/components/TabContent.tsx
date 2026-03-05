@@ -8,6 +8,7 @@
  */
 
 import { lazy, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   TimerDisplaySkeleton,
   CollectionPageSkeleton,
@@ -83,6 +84,18 @@ interface TabContentProps {
   onCoinReward: (amount: number) => void;
 }
 
+// Tab transition variants (1.3)
+const tabVariants = {
+  initial: { opacity: 0, y: 6 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -6 },
+};
+
+const tabTransition = {
+  duration: 0.15,
+  ease: [0.25, 0.46, 0.45, 0.94], // iOS ease
+};
+
 export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentProps) => {
   // Home tab renders PetLand directly (not lazy — it's the default view)
   if (currentTab === "home") {
@@ -115,8 +128,20 @@ export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentP
   }
 
   return (
-    <Suspense fallback={getTabSkeleton(currentTab)}>
-      {content}
-    </Suspense>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={currentTab}
+        variants={tabVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={tabTransition}
+        className="h-full"
+      >
+        <Suspense fallback={getTabSkeleton(currentTab)}>
+          {content}
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
   );
 };

@@ -26,8 +26,17 @@
   }
 
   .timer-preset-btn:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
+    filter: grayscale(0.5);
     cursor: not-allowed;
+  }
+
+  /* Pet size hint on preset (8.5) */
+  .timer-preset-size-hint {
+    font-size: 0.5625rem; /* 9px */
+    font-weight: 600;
+    margin-top: 2px;
+    opacity: 0.6;
   }
 
   /* Selected state — Solid sage */
@@ -121,7 +130,7 @@
     border-radius: 8px;
     background: hsl(var(--muted));
     border: 1px solid hsl(var(--border));
-    font-size: 11px;
+    font-size: var(--text-caption2);
     font-weight: 500;
     color: hsl(var(--muted-foreground));
     letter-spacing: 0.02em;
@@ -217,7 +226,7 @@
 
   /* Focus mode label */
   .timer-grid-label {
-    font-size: 11px;
+    font-size: var(--text-caption2);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;

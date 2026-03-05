@@ -18,6 +18,16 @@ const getEstimatedXP = (preset: TimerPreset): number | null => {
   return Math.floor(preset.duration * XP_CONFIG.BASE_XP_PER_MINUTE);
 };
 
+/** Get pet size hint based on session duration (8.5) */
+const getPetSizeHint = (preset: TimerPreset): string | null => {
+  if (preset.type === 'break') return null;
+  if (preset.isCountup) return 'Adult pet';
+  if (preset.duration >= 120) return 'Adult pet';
+  if (preset.duration >= 60) return 'Teen pet';
+  if (preset.duration >= 25) return 'Baby pet';
+  return null;
+};
+
 export const TimerPresetGrid = ({
   selectedPreset,
   isRunning,
@@ -82,6 +92,7 @@ export const TimerPresetGrid = ({
           const isSelected = selectedPreset.id === preset.id;
           const isBreak = preset.type === 'break';
           const estimatedXP = getEstimatedXP(preset);
+          const petSizeHint = getPetSizeHint(preset);
 
           return (
             <button
@@ -91,10 +102,10 @@ export const TimerPresetGrid = ({
               disabled={isRunning}
               role="radio"
               aria-checked={isSelected}
-              aria-label={`${preset.name}: ${preset.isCountup ? 'open-ended up to 6 hours' : `${preset.duration} minutes`}${isBreak ? ' (break)' : ''}${estimatedXP ? `, +${estimatedXP} XP` : ''}`}
+              aria-label={`${preset.name}: ${preset.isCountup ? 'open-ended up to 6 hours' : `${preset.duration} minutes`}${isBreak ? ' (break)' : ''}${estimatedXP ? `, +${estimatedXP} XP` : ''}${petSizeHint ? `, earns ${petSizeHint}` : ''}`}
               tabIndex={isSelected ? 0 : -1}
               className={cn(
-                "timer-preset-btn focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                "timer-preset-btn",
                 isSelected && "selected",
                 isBreak && !isSelected && "break-mode"
               )}
@@ -104,7 +115,7 @@ export const TimerPresetGrid = ({
                 isSelected ? "text-white" : isBreak ? "text-warning" : preset.isCountup ? "text-info" : "text-primary"
               )} />
               <div className={cn(
-                "text-xs font-bold",
+                "text-xs font-bold tabular-nums",
                 isSelected ? "text-white" : "text-foreground"
               )}>
                 {preset.isCountup ? '∞' : `${preset.duration}m`}
@@ -117,10 +128,18 @@ export const TimerPresetGrid = ({
               </div>
               {estimatedXP !== null && (
                 <div className={cn(
-                  "text-[11px] font-bold mt-0.5",
+                  "text-[11px] font-bold mt-0.5 tabular-nums",
                   isSelected ? "text-yellow-200" : "text-yellow-600 dark:text-yellow-400"
                 )}>
                   +{estimatedXP} XP
+                </div>
+              )}
+              {petSizeHint && (
+                <div className={cn(
+                  "timer-preset-size-hint",
+                  isSelected ? "text-white/60" : "text-muted-foreground"
+                )}>
+                  {petSizeHint}
                 </div>
               )}
             </button>
