@@ -461,7 +461,7 @@
   position: absolute;
   pointer-events: auto;
   transform:
-    translate(-50%, -80%)
+    translate(-50%, -60%)
     scale(var(--pet-scale, 1));
   transform-origin: center center;
   cursor: pointer;
@@ -472,7 +472,7 @@
 
 .island-pet:active {
   transform:
-    translate(-50%, -80%)
+    translate(-50%, -60%)
     scale(calc(var(--pet-scale, 1) * 0.9));
 }
 
