@@ -82,24 +82,24 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="flame-stats" size={14} className="inline mr-1 align-middle" />
+                      <PixelIcon name="paw" size={14} className="inline mr-1 align-middle" />
                       Pets on Land
                     </span>
-                    <span className="stat-val">{filledCount}/100</span>
+                    <span className="stat-val tabular-nums">{filledCount}/100</span>
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="flame-stats" size={14} className="inline mr-1 align-middle" />
+                      <PixelIcon name="compass" size={14} className="inline mr-1 align-middle" />
                       Species Found
                     </span>
-                    <span className="stat-val">{speciesFound}</span>
+                    <span className="stat-val tabular-nums">{speciesFound}</span>
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="flame-stats" size={14} className="inline mr-1 align-middle" />
+                      <PixelIcon name="flame-streak" size={14} className="inline mr-1 align-middle" />
                       Best Streak
                     </span>
-                    <span className="stat-val">{streakData.longestStreak} days</span>
+                    <span className="stat-val tabular-nums">{streakData.longestStreak} days</span>
                   </div>
                 </div>
 

@@ -54,7 +54,7 @@ export const Settings = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#F8F8F4]">
+    <div className="h-full flex flex-col bg-[hsl(var(--background))]">
       {/* Header */}
       <div className="relative px-4 pt-4 pb-3">
         <div className="flex items-center gap-3">

@@ -120,6 +120,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
         '--bob-offset': `${bobOffset}px`,
       } as React.CSSProperties}
       onClick={handleClick}
+      role="button"
+      aria-label={`${RARITY_LABELS[cell.rarity]} ${species.name}, ${SIZE_LABELS[cell.size]} size`}
     >
       <img
         src={spriteSrc}
