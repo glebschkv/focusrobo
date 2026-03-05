@@ -362,7 +362,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Current island grid (100 cells), completed lands, species catalog, pending pet** |
+| `landStore` | `nomo_land_data` | **Current island grid (100 cells), grid expansion tier, completed lands, species catalog, pending pet** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
@@ -461,14 +461,29 @@ interface LandCell {
 }
 
 // Key constants
-LAND_SIZE = 100            // 10×10 grid
+LAND_SIZE = 400              // Max 20×20 grid
+GRID_SIZE = 20               // Underlying grid dimension
 LAND_COMPLETE_BONUS_COINS = 500
+MIN_GRID_TIER = 5            // Island starts as centered 5×5
+MAX_GRID_TIER = 20           // Fully expanded 20×20
+EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 ```
+
+**Island Expansion** (Forest-style progressive growth):
+- Island starts as a centered **5×5** region (25 cells) within the 20×20 grid
+- When all available cells are filled, auto-expands to next tier: **5→6→7→8→9→10→12→14→17→20**
+- **Locked tiles** render as earthy/brown; **unlocked tiles** are the bright green checkerboard
+- Grid size stored per-land as `gridSize` (5–20); migrates old 10×10 data to 20×20 on rehydration
+- Expansion tiers: 5×5(25) → 6×6(36) → ... → 10×10(100) → 12×12(144) → 14×14(196) → 17×17(289) → 20×20(400)
+- Each tier uses centered rows/cols: `offset = floor((20 - size) / 2)`
+- Old 100-cell arrays auto-migrate to 400-cell via `migrateCells()` (centered at offset 5)
 
 **Actions**:
 - `generateRandomPet(sessionMinutes, playerLevel)` — rolls random pet from unlocked pool
-- `placePendingPet()` — places pet using farthest-first algorithm, auto-archives full land
+- `placePendingPet()` — places pet using farthest-first algorithm, auto-expands tier if full, auto-archives full land
 - `startNewLand()` — manually start new island
+- `getAvailableCells()` — returns Set of unlocked cell indices for current grid size
+- `isTierFull()` — check if all available cells in current tier are filled
 - `getFilledCount()` / `isLandComplete()` — query methods
 
 ## Game Systems

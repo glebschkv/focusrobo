@@ -49,8 +49,8 @@ function seeded(seed: number): number {
   return x - Math.floor(x);
 }
 
-// ─── Tile Grid (10×10 isometric) — matches 100 pet slots ──────────
-const GRID = 10;
+// ─── Tile Grid (20×20 isometric) — matches 400 pet slots ──────────
+const GRID = 20;
 
 function diamondPt(r: number, c: number): Pt {
   const g = GRID;
@@ -67,8 +67,8 @@ function diamondPt(r: number, c: number): Pt {
   return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
 }
 
-// Pre-compute all tiles
-const TILES: { points: string; isLight: boolean }[] = [];
+// Pre-compute all tiles with cell index for expansion system
+const TILES: { points: string; isLight: boolean; cellIndex: number }[] = [];
 for (let r = 0; r < GRID; r++) {
   for (let c = 0; c < GRID; c++) {
     const corners = [
@@ -80,6 +80,7 @@ for (let r = 0; r < GRID; r++) {
     TILES.push({
       points: pts(corners),
       isLight: (r + c) % 2 === 0,
+      cellIndex: r * GRID + c,
     });
   }
 }
@@ -486,7 +487,12 @@ const leftCliffClip = `M ${p(LW.tl)} L ${p(LW.tr)} L ${p(LW.br)} L ${p(LW.bl)} Z
 const rightCliffClip = `M ${p(RW.tl)} L ${p(RW.tr)} L ${p(RW.br)} L ${p(RW.bl)} Z`;
 
 // ─── Component ─────────────────────────────────────────────────────
-export const IslandSVG = () => (
+interface IslandSVGProps {
+  /** Set of cell indices (0–99) that are unlocked/active */
+  availableCells?: Set<number>;
+}
+
+export const IslandSVG = ({ availableCells }: IslandSVGProps = {}) => (
   <svg
     viewBox={`0 0 ${VB_W} ${VB_H}`}
     className="pet-land__island-svg"
@@ -542,6 +548,16 @@ export const IslandSVG = () => (
         <stop offset="0%" stopColor="#585044" />
         <stop offset="50%" stopColor="#4A4238" />
         <stop offset="100%" stopColor="#3E3830" />
+      </linearGradient>
+
+      {/* Locked tile gradients — earthy brown/dormant */}
+      <linearGradient id="ig-tl-locked" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#B8A878" />
+        <stop offset="100%" stopColor="#A89868" />
+      </linearGradient>
+      <linearGradient id="ig-td-locked" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#9E8E5E" />
+        <stop offset="100%" stopColor="#8E7E50" />
       </linearGradient>
 
       {/* Grass overhang fill */}
@@ -709,12 +725,19 @@ export const IslandSVG = () => (
     {/* Base fill with smoothed edges */}
     <path d={DIAMOND_SMOOTH} fill="url(#ig-grass)" />
 
-    {/* Checkerboard tiles — visible two-tone grid */}
-    {TILES.map((tile, i) => (
-      <polygon key={`t-${i}`} points={tile.points}
-        fill={tile.isLight ? 'url(#ig-tl)' : 'url(#ig-td)'}
-        stroke="rgba(75,120,28,0.2)" strokeWidth={0.6} />
-    ))}
+    {/* Checkerboard tiles — active tiles are green, locked tiles are earthy */}
+    {TILES.map((tile, i) => {
+      const isActive = !availableCells || availableCells.has(tile.cellIndex);
+      return (
+        <polygon key={`t-${i}`} points={tile.points}
+          fill={isActive
+            ? (tile.isLight ? 'url(#ig-tl)' : 'url(#ig-td)')
+            : (tile.isLight ? 'url(#ig-tl-locked)' : 'url(#ig-td-locked)')
+          }
+          stroke={isActive ? 'rgba(75,120,28,0.2)' : 'rgba(100,90,60,0.15)'}
+          strokeWidth={0.6} />
+      );
+    })}
 
     {/* ═══ GRASS TEXTURE DETAIL ═══ */}
     <g clipPath="url(#ig-diamond-clip)">

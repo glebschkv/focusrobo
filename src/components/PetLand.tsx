@@ -227,6 +227,7 @@ function useIslandParallax() {
 export const PetLand = () => {
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
+  const availableCells = useLandStore((s) => s.getAvailableCells)();
   const debugAwardPet = useDebugAwardPet();
   const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
   const landJustCompleted = useLandStore((s) => s.landJustCompleted);
@@ -274,6 +275,9 @@ export const PetLand = () => {
     setActiveTooltipIndex(null);
   }, []);
 
+  // Build pet elements with stable callback — memo() on IslandPet ensures only
+  // pets whose props actually changed (showTooltip, isNew) re-render.
+  // handleToggleTooltip is stable (useCallback with [] deps).
   const slotElements = useMemo(() => {
     return currentLand.cells.map((cell, index) => {
       if (cell) {
@@ -284,7 +288,7 @@ export const PetLand = () => {
             index={index}
             isNew={index === lastPlacedIndex}
             showTooltip={activeTooltipIndex === index}
-            onToggleTooltip={() => handleToggleTooltip(index)}
+            onToggleTooltip={handleToggleTooltip}
           />
         );
       }
@@ -392,7 +396,7 @@ export const PetLand = () => {
         {/* Island container — parallax layer (medium) */}
         <div className="pet-land__island-container" ref={containerRef}>
           {/* Pixel-art island — SVG with flat fills */}
-          <IslandSVG />
+          <IslandSVG availableCells={availableCells} />
 
           {/* Shadow beneath island */}
           <div className="pet-land__island-shadow" />
@@ -427,8 +431,10 @@ export const PetLand = () => {
       {/* Milestone */}
       {milestoneReached !== null && (
         <div className="pet-land__milestone" onClick={clearMilestone}>
-          <span className="pet-land__milestone-text">{milestoneReached}% filled!</span>
-          <span className="pet-land__milestone-sub">Your island is growing</span>
+          <span className="pet-land__milestone-text">
+            {milestoneReached} pets!
+          </span>
+          <span className="pet-land__milestone-sub">Your island is expanding</span>
         </div>
       )}
 
@@ -442,6 +448,7 @@ export const PetLand = () => {
         </div>
         <span className="pet-land__progress-label">
           Land {currentLand.number} · {filledCount}/{LAND_SIZE}
+          {currentLand.gridSize < 20 && ` · ${currentLand.gridSize}×${currentLand.gridSize}`}
         </span>
       </div>
 
