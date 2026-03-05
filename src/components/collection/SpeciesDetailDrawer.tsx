@@ -114,7 +114,7 @@ export const SpeciesDetailDrawer = memo(({
               className={`w-full py-3 rounded-2xl text-sm font-bold transition-all active:scale-[0.98] ${
                 isWished
                   ? 'bg-rose-50 text-rose-500 border border-rose-200'
-                  : 'bg-[hsl(var(--primary-soft))] text-[hsl(var(--primary))] border border-[hsl(var(--border))]'
+                  : 'bg-[hsl(var(--primary)/0.10)] text-[hsl(var(--primary))] border border-[hsl(var(--border))]'
               }`}
             >
               <Heart className="w-4 h-4 inline mr-1.5 -mt-0.5" fill={isWished ? 'currentColor' : 'none'} />

@@ -107,7 +107,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
               canClaim
                 ? "bg-amber-100 border-amber-300"
                 : isUnlocked
-                ? "bg-[hsl(var(--primary/0.1))] border-[hsl(var(--border))]"
+                ? "bg-[hsl(var(--primary) / 0.1))] border-[hsl(var(--border))]"
                 : "bg-[hsl(var(--muted))] border-[hsl(var(--border))]"
             )}>
               {isSecret ? <PixelIcon name="question-mark" size={24} /> : <PixelIcon name={achievement.icon} size={24} />}
@@ -144,7 +144,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
               ) : isUnlocked ? (
                 <button
                   onClick={() => handleShare(achievement.id)}
-                  className="w-9 h-9 rounded-xl bg-[hsl(var(--primary/0.1))] hover:bg-[hsl(var(--primary/0.15))] border border-[hsl(var(--border))] flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-xl bg-[hsl(var(--primary) / 0.1))] hover:bg-[hsl(var(--primary) / 0.15))] border border-[hsl(var(--border))] flex items-center justify-center transition-colors"
                 >
                   <Share2 className="w-3.5 h-3.5 text-[hsl(var(--muted-foreground))]" />
                 </button>
