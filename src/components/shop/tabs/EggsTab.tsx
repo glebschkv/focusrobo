@@ -13,7 +13,7 @@ import type { EggType } from '@/data/EggData';
 import type { PetRarity } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import { useCoinSystem } from '@/hooks/useCoinSystem';
-import { useAppState } from '@/contexts/AppStateContext';
+import { useCurrentLevel } from '@/stores/xpStore';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 
@@ -45,7 +45,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const hatchEgg = useLandStore((s) => s.hatchEgg);
   const placePendingPet = useLandStore((s) => s.placePendingPet);
   const coinSystem = useCoinSystem();
-  const { currentLevel } = useAppState();
+  const currentLevel = useCurrentLevel();
 
   const handleHatch = async (egg: EggType) => {
     if (hatching) return;
@@ -56,13 +56,19 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
 
     setHatching(true);
     try {
-      coinSystem.spendCoins(egg.coinPrice, 'shop_purchase');
+      const spent = await coinSystem.spendCoins(egg.coinPrice, 'shop_purchase');
+      if (!spent) {
+        toast.error('Purchase failed!');
+        return;
+      }
       const pet = hatchEgg(egg, currentLevel);
       placePendingPet();
       playSoundEffect('purchase');
       toast.success(`Hatched a ${pet.rarity} ${pet.petId}!`, {
         description: 'Check your island to see your new pet!',
       });
+    } catch {
+      toast.error('Something went wrong');
     } finally {
       setHatching(false);
     }

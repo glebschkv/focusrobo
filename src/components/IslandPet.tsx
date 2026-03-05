@@ -51,8 +51,7 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
   const [imageError, setImageError] = useState(false);
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
   const { haptic } = useHaptics();
-  const affinityLevel = useLandStore((s) => s.getAffinityLevel)(cell.petId);
-  const isDev = affinityLevel === 'devoted';
+  const isDev = useLandStore((s) => (s.speciesAffinity[cell.petId] || 0) >= 10);
 
   useEffect(() => {
     if (isNew) haptic('medium');
@@ -160,7 +159,7 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, showTooltip, onTo
             {RARITY_LABELS[cell.rarity]}
           </span>
           <span className="island-pet__tooltip-detail">
-            {SIZE_LABELS[cell.size]} · {cell.sessionMinutes}min
+            {SIZE_LABELS[cell.size]}{cell.sessionMinutes > 0 ? ` · ${cell.sessionMinutes}min` : ' · Hatched'}
           </span>
         </div>
       )}

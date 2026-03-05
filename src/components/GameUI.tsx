@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useAppStateTracking } from "@/hooks/useAppStateTracking";
 import { AppStateProvider } from "@/contexts/AppStateContext";
 import { useRewardHandlers } from "@/hooks/useRewardHandlers";
@@ -20,7 +21,7 @@ import { AchievementTracker } from "@/components/AchievementTracker";
 import { TabContent, preloadTabComponents } from "@/components/TabContent";
 import { RewardModals } from "@/components/RewardModals";
 import { GlobalSoundToggle } from "@/components/GlobalSoundToggle";
-import { LAND_COMPLETE_BONUS_COINS } from "@/stores/landStore";
+import { LAND_COMPLETE_BONUS_COINS, useLandStore } from "@/stores/landStore";
 
 const TAB_STORAGE_KEY = 'botblock_currentTab';
 const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
@@ -77,6 +78,16 @@ export const GameUI = () => {
       window.removeEventListener('landCompleted', handleLandCompleted as EventListener);
     };
   }, [coinSystem]);
+
+  // Collect passive offline income on app load
+  const collectOfflineIncome = useLandStore((s) => s.collectOfflineIncome);
+  useEffect(() => {
+    const earned = collectOfflineIncome();
+    if (earned > 0) {
+      coinSystem.addCoins(earned, 'daily_reward');
+      toast.success(`Welcome back! Your pets earned ${earned} coins while you were away.`);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- run once on mount
 
   // Single instance of useAppStateTracking — shared via context with all children
   const appState = useAppStateTracking();

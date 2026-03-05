@@ -120,7 +120,7 @@ const landStoreSchema = z.object({
   selectedNextTheme: z.string().max(100),
   wishedSpecies: z.union([z.string().max(100), z.null()]).default(null),
   speciesAffinity: z.record(z.string(), z.number().int().min(0)).default({}),
-  lastOfflineCheck: z.number().min(0).default(0),
+  lastOfflineCheck: z.number().min(0).default(Date.now()),
 });
 
 // ============================================================================
