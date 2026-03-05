@@ -436,7 +436,7 @@ function generateSunDapples(count: number, seed: number): SunDapple[] {
     // Bias toward upper-right quadrant
     const r = 0.15 + seeded(seed + i * 11) * 0.45;
     const c = 0.4 + seeded(seed + i * 17) * 0.45;
-    const pt = diamondPt(Math.floor(r * GRID), Math.floor(c * GRID));
+    const pt = diamondPt(Math.floor(r * FULL_GRID), Math.floor(c * FULL_GRID));
     dapples.push({
       cx: pt.x,
       cy: pt.y,
