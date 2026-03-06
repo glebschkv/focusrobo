@@ -15,6 +15,7 @@
 import { useState, useMemo, useCallback, memo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { PET_DATABASE, type PetSpecies } from '@/data/PetDatabase';
 import { useLandStore, useWishedSpecies } from '@/stores/landStore';
 import { useXPStore } from '@/stores/xpStore';
@@ -137,7 +138,7 @@ export const PetCollectionBook = memo(() => {
     <div className="h-full flex flex-col collection-page">
       {/* ── Header ── */}
       <div className="collection-header-area">
-        {/* Title + discovery count */}
+        {/* Title + discovery count + info */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-[hsl(var(--primary)/0.12)] flex items-center justify-center">
@@ -145,9 +146,61 @@ export const PetCollectionBook = memo(() => {
             </div>
             <h1 className="text-lg font-bold tracking-tight text-[hsl(var(--foreground))]">Collection</h1>
           </div>
-          <span className="text-xs font-bold text-[hsl(var(--primary))]">
-            {stats.discovered}/{stats.total}
-          </span>
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="w-7 h-7 rounded-lg bg-[hsl(var(--muted)/0.4)] flex items-center justify-center transition-colors active:bg-[hsl(var(--muted)/0.6)]">
+                  <PixelIcon name="question-mark" size={14} />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" sideOffset={8} className="w-64 p-0 rounded-2xl border border-[hsl(var(--border))] shadow-lg overflow-hidden">
+                <div className="px-3.5 py-2.5 bg-[hsl(var(--muted)/0.3)] border-b border-[hsl(var(--border))]">
+                  <p className="text-[11px] font-bold text-[hsl(var(--foreground))]">How It Works</p>
+                </div>
+                <div className="p-3.5 space-y-3">
+                  <div className="flex gap-2.5">
+                    <span className="text-sm mt-px shrink-0">🎯</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Focus → Pet → Island</p>
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+                        Complete a session to earn a random pet placed on your floating island.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2.5">
+                    <span className="text-sm mt-px shrink-0">📏</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Pet Sizes</p>
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+                        Baby 25-45 min · Teen 60-90 min · Adult 120+ min
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2.5">
+                    <span className="text-sm mt-px shrink-0">✨</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Rarity Drops</p>
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+                        Common 45% · Uncommon 28% · Rare 17% · Epic 8% · Legendary 2%
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2.5">
+                    <span className="text-sm mt-px shrink-0">💫</span>
+                    <div>
+                      <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Wish List</p>
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+                        Wish for a species to boost its drop rate when rolled.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <span className="text-xs font-bold text-[hsl(var(--primary))]">
+              {stats.discovered}/{stats.total}
+            </span>
+          </div>
         </div>
 
         {/* Stats row */}
