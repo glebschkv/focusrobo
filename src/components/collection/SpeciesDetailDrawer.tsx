@@ -58,47 +58,49 @@ export const SpeciesDetailDrawer = memo(({
               </DrawerDescription>
             </DrawerHeader>
 
-            {/* 3 size variant panels */}
-            <div className="collection-detail__sizes">
-              {SIZE_ORDER.map((size) => {
-                const collected = sizesFound.includes(size);
-                return (
-                  <div
-                    key={size}
-                    className={cn(
-                      'collection-detail__size-panel',
-                      collected ? 'collection-detail__size-panel--collected' : 'collection-detail__size-panel--locked',
-                    )}
-                  >
-                    <img
-                      src={getSizeSpritePath(species.id, size)}
-                      alt={`${species.name} ${size}`}
+            {/* 3 size variant panels — only show when discovered */}
+            {catalogEntry ? (
+              <div className="collection-detail__sizes">
+                {SIZE_ORDER.map((size) => {
+                  const collected = sizesFound.includes(size);
+                  return (
+                    <div
+                      key={size}
                       className={cn(
-                        'collection-detail__size-sprite',
-                        !collected && 'collection-detail__size-sprite--locked',
+                        'collection-detail__size-panel',
+                        collected ? 'collection-detail__size-panel--collected' : 'collection-detail__size-panel--locked',
                       )}
-                      style={collected && glow ? { filter: `drop-shadow(0 0 6px ${glow})` } : undefined}
-                      draggable={false}
-                    />
-                    <p className="text-[10px] font-bold text-[hsl(var(--foreground))]">
-                      {SIZE_LABEL[size]}
-                    </p>
-                    <p className="text-[9px] text-[hsl(var(--muted-foreground))] mt-0.5">
-                      {SIZE_DURATION_HINT[size]}
-                    </p>
-                    {collected ? (
-                      <div className="mt-1.5 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <PixelIcon name="check" size={10} className="text-emerald-600" />
-                      </div>
-                    ) : (
-                      <div className="mt-1.5 w-4 h-4 rounded-full bg-[hsl(var(--muted)/0.3)] flex items-center justify-center">
-                        <PixelIcon name="lock" size={8} className="text-[hsl(var(--muted-foreground)/0.4)]" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                    >
+                      <img
+                        src={getSizeSpritePath(species.id, size)}
+                        alt={`${species.name} ${size}`}
+                        className={cn(
+                          'collection-detail__size-sprite',
+                          !collected && 'collection-detail__size-sprite--locked',
+                        )}
+                        style={collected && glow ? { filter: `drop-shadow(0 0 6px ${glow})` } : undefined}
+                        draggable={false}
+                      />
+                      <p className="text-[10px] font-bold text-[hsl(var(--foreground))]">
+                        {SIZE_LABEL[size]}
+                      </p>
+                      <p className="text-[9px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                        {SIZE_DURATION_HINT[size]}
+                      </p>
+                      {collected ? (
+                        <div className="mt-1.5 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                          <PixelIcon name="check" size={10} className="text-emerald-600" />
+                        </div>
+                      ) : (
+                        <div className="mt-1.5 w-4 h-4 rounded-full bg-[hsl(var(--muted)/0.3)] flex items-center justify-center">
+                          <PixelIcon name="lock" size={8} className="text-[hsl(var(--muted-foreground)/0.4)]" />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
 
             {/* Stats grid */}
             {catalogEntry ? (

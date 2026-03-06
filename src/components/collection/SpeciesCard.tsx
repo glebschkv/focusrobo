@@ -8,7 +8,6 @@ interface SpeciesCardProps {
   species: PetSpecies;
   discovered: boolean;
   timesFound: number;
-  bestSize: string | null;
   sizesFound: GrowthSize[];
   locked: boolean;
   isWished: boolean;

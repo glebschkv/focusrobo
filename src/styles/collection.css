@@ -65,7 +65,8 @@
   align-items: flex-end;
   justify-content: center;
   gap: 2px;
-  height: 40px;
+  height: 56px; /* Match h-14 of locked/undiscovered states */
+  padding-top: 8px;
   margin-bottom: 4px;
 }
 

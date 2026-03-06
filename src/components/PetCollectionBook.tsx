@@ -158,7 +158,7 @@ export const PetCollectionBook = memo(() => {
               <span className="absolute text-[9px] font-black text-[hsl(var(--foreground))]">{discoveryPct}%</span>
             </div>
             <p className="text-[11px] font-black text-[hsl(var(--foreground))]">{stats.discovered}/{stats.total}</p>
-            <p className="text-[8px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Species</p>
+            <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Species</p>
           </div>
           <div className="collection-stat-card gap-1">
             <div className="relative flex items-center justify-center flex-shrink-0">
@@ -166,11 +166,12 @@ export const PetCollectionBook = memo(() => {
               <span className="absolute text-[9px] font-black text-[hsl(var(--foreground))]">{stats.totalVariants}</span>
             </div>
             <p className="text-[11px] font-black text-[hsl(var(--foreground))]">{stats.totalVariants}/{stats.maxVariants}</p>
-            <p className="text-[8px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Variants</p>
+            <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Variants</p>
           </div>
-          <div className="collection-stat-card">
-            <p className="text-xl font-black text-[hsl(var(--foreground))] mb-0.5">{stats.landsCompleted}</p>
-            <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">Lands</p>
+          <div className="collection-stat-card gap-0.5">
+            <p className="text-lg font-black text-[hsl(var(--foreground))]">{stats.landsCompleted}</p>
+            <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Lands</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))]">{stats.totalFound} pets</p>
           </div>
         </div>
 
