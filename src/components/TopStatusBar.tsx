@@ -89,7 +89,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
-                      <PixelIcon name="compass" size={14} className="inline mr-1 align-middle" />
+                      <PixelIcon name="globe" size={14} className="inline mr-1 align-middle" />
                       Species Found
                     </span>
                     <span className="stat-val tabular-nums">{speciesFound}</span>
