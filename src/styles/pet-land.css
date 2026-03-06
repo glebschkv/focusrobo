@@ -1324,14 +1324,14 @@
   bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
   left: 12px;
   z-index: var(--z-buttons);
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.8);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1.5px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1342,9 +1342,9 @@
 }
 
 .pet-land__help-btn-icon {
-  font-size: 16px;
-  font-weight: 700;
-  color: hsl(var(--foreground) / 0.55);
+  font-size: 17px;
+  font-weight: 800;
+  color: hsl(142 40% 38%);
   line-height: 1;
   margin-top: -1px;
 }
@@ -1368,6 +1368,7 @@
 }
 
 .pet-land__help-sheet {
+  position: relative;
   width: 100%;
   max-width: 420px;
   max-height: 78vh;
@@ -1378,7 +1379,7 @@
   backdrop-filter: blur(20px);
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.15);
-  padding: 0 20px 28px;
+  padding: 0 20px calc(16px + env(safe-area-inset-bottom, 0px));
   cursor: default;
   animation: pet-land-help-slide-up 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -1400,7 +1401,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0 12px;
+  padding: 14px 0 10px;
 }
 
 .pet-land__help-title {
@@ -1412,11 +1413,11 @@
 }
 
 .pet-land__help-close {
-  width: 28px;
-  height: 28px;
-  padding: 6px;
+  width: 30px;
+  height: 30px;
+  padding: 7px;
   box-sizing: content-box;
-  margin: -6px;
+  margin: -7px;
   border-radius: 50%;
   border: none;
   background: rgba(0, 0, 0, 0.05);
@@ -1438,21 +1439,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 14px 0 18px;
+  gap: 8px;
+  padding: 12px 0 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .pet-land__help-flow-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .pet-land__help-flow-emoji {
-  font-size: 22px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -1464,28 +1465,27 @@
   letter-spacing: 0.3px;
 }
 
-.pet-land__help-flow-arrow {
-  font-size: 14px;
-  color: hsl(var(--muted-foreground) / 0.4);
-  font-weight: 300;
-  margin-top: -16px;
+.pet-land__help-flow-chevron {
+  color: hsl(var(--muted-foreground) / 0.3);
+  margin-top: -18px;
+  flex-shrink: 0;
 }
 
 /* Content sections */
 .pet-land__help-sections {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .pet-land__help-section {
   padding: 14px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .pet-land__help-section:last-child {
   border-bottom: none;
-  padding-bottom: 0;
+  padding-bottom: 4px;
 }
 
 .pet-land__help-section-header {
@@ -1513,6 +1513,14 @@
   margin: 0;
 }
 
+.pet-land__help-section-sub {
+  font-size: 12px;
+  line-height: 1.4;
+  color: hsl(var(--muted-foreground) / 0.7);
+  margin: 0 0 8px;
+  display: block;
+}
+
 .pet-land__help-section p b {
   font-weight: 600;
   color: hsl(var(--foreground) / 0.8);
@@ -1522,7 +1530,6 @@
 .pet-land__help-sizes {
   display: flex;
   gap: 8px;
-  margin-bottom: 6px;
 }
 
 .pet-land__help-size {
@@ -1531,7 +1538,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 8px 6px;
+  padding: 10px 6px;
   border-radius: 10px;
   background: hsl(var(--muted) / 0.35);
 }
@@ -1589,6 +1596,16 @@
   color: hsl(45 70% 35%);
 }
 
+/* Scroll fade hint */
+.pet-land__help-fade {
+  position: sticky;
+  bottom: 0;
+  height: 24px;
+  margin: 0 -20px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.98), transparent);
+  pointer-events: none;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    FOCUS-VISIBLE — keyboard navigation rings
    ═══════════════════════════════════════════════════════════════ */
@@ -1633,7 +1650,7 @@
     border-color: rgba(255, 255, 255, 0.1);
   }
   .pet-land__help-btn-icon {
-    color: rgba(255, 255, 255, 0.6);
+    color: hsl(142 40% 60%);
   }
 
   /* Nudge chip */
@@ -1660,11 +1677,17 @@
   .pet-land__help-flow {
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
+  .pet-land__help-flow-chevron {
+    color: rgba(255, 255, 255, 0.15);
+  }
   .pet-land__help-section {
-    border-bottom-color: rgba(255, 255, 255, 0.04);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
   }
   .pet-land__help-size {
     background: rgba(255, 255, 255, 0.06);
+  }
+  .pet-land__help-fade {
+    background: linear-gradient(to top, rgba(30, 30, 30, 0.98), transparent);
   }
   .pet-land__help-rarity--common {
     background: rgba(255, 255, 255, 0.08);
@@ -1724,7 +1747,7 @@
   border-color: rgba(255, 255, 255, 0.1);
 }
 .dark .pet-land__help-btn-icon {
-  color: rgba(255, 255, 255, 0.6);
+  color: hsl(142 40% 60%);
 }
 .dark .pet-land__nudge {
   background: rgba(20, 30, 25, 0.8);
@@ -1741,6 +1764,9 @@
 }
 .dark .pet-land__help-size {
   background: rgba(255, 255, 255, 0.06);
+}
+.dark .pet-land__help-fade {
+  background: linear-gradient(to top, rgba(30, 30, 30, 0.98), transparent);
 }
 .dark .pet-land__theme-strip {
   background: rgba(30, 30, 30, 0.95);

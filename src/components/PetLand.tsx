@@ -917,7 +917,7 @@ export const PetLand = () => {
             <div className="pet-land__help-header">
               <h2 className="pet-land__help-title">How to Play</h2>
               <button className="pet-land__help-close" onClick={() => setShowHowItWorks(false)} aria-label="Close">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M18 6L6 18" />
                   <path d="M6 6l12 12" />
                 </svg>
@@ -930,20 +930,20 @@ export const PetLand = () => {
                 <div className="pet-land__help-flow-emoji">🎯</div>
                 <div className="pet-land__help-flow-label">Focus</div>
               </div>
-              <div className="pet-land__help-flow-arrow">→</div>
+              <svg className="pet-land__help-flow-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18" /></svg>
               <div className="pet-land__help-flow-item">
                 <div className="pet-land__help-flow-emoji">🐣</div>
                 <div className="pet-land__help-flow-label">Get Pet</div>
               </div>
-              <div className="pet-land__help-flow-arrow">→</div>
+              <svg className="pet-land__help-flow-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18" /></svg>
               <div className="pet-land__help-flow-item">
                 <div className="pet-land__help-flow-emoji">🏝️</div>
                 <div className="pet-land__help-flow-label">Fill Island</div>
               </div>
-              <div className="pet-land__help-flow-arrow">→</div>
+              <svg className="pet-land__help-flow-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 6 15 12 9 18" /></svg>
               <div className="pet-land__help-flow-item">
                 <div className="pet-land__help-flow-emoji">🔄</div>
-                <div className="pet-land__help-flow-label">New Island</div>
+                <div className="pet-land__help-flow-label">Repeat</div>
               </div>
             </div>
 
@@ -954,7 +954,7 @@ export const PetLand = () => {
                   <span className="pet-land__help-section-icon">⏱️</span>
                   <strong>Focus Sessions</strong>
                 </div>
-                <p>Start a timer (25 min+) and stay focused. The app can block distracting apps while you work. Complete the session to earn <b>XP</b>, <b>coins</b>, and a <b>random pet</b>.</p>
+                <p>Set a timer (25 min+) and stay focused. The app blocks distracting apps while you work. Complete the session to earn <b>XP</b>, <b>coins</b>, and a <b>random pet</b>.</p>
               </div>
 
               <div className="pet-land__help-section">
@@ -962,6 +962,7 @@ export const PetLand = () => {
                   <span className="pet-land__help-section-icon">🐾</span>
                   <strong>Pet Sizes</strong>
                 </div>
+                <p className="pet-land__help-section-sub">Longer sessions grow bigger pets.</p>
                 <div className="pet-land__help-sizes">
                   <div className="pet-land__help-size">
                     <span className="pet-land__help-size-label">Baby</span>
@@ -990,7 +991,7 @@ export const PetLand = () => {
                   <span className="pet-land__help-rarity pet-land__help-rarity--epic">Epic</span>
                   <span className="pet-land__help-rarity pet-land__help-rarity--legendary">Legendary</span>
                 </div>
-                <p>41 species across 5 rarities. Level up to unlock rarer ones. Buy eggs in the shop for better odds.</p>
+                <p>Level up to unlock rarer species. Buy eggs in the shop for better odds.</p>
               </div>
 
               <div className="pet-land__help-section">
@@ -998,7 +999,7 @@ export const PetLand = () => {
                   <span className="pet-land__help-section-icon">🔥</span>
                   <strong>Streaks & XP</strong>
                 </div>
-                <p>Focus daily to build your streak. Longer streaks give bonus XP (up to +60%). Level up to unlock new species and earn more rewards.</p>
+                <p>Focus daily to build your streak. Longer streaks give up to <b>+60% bonus XP</b>. Level up to unlock new species.</p>
               </div>
 
               <div className="pet-land__help-section">
@@ -1006,9 +1007,12 @@ export const PetLand = () => {
                   <span className="pet-land__help-section-icon">🪙</span>
                   <strong>Coins & Shop</strong>
                 </div>
-                <p>Earn coins from focus sessions. Spend them on eggs (better rarity odds), island themes, and power-ups. Longer sessions earn more coins.</p>
+                <p>Earn coins from sessions. Spend on eggs, island themes, and power-ups. Longer sessions = more coins.</p>
               </div>
             </div>
+
+            {/* Bottom fade for scroll hint */}
+            <div className="pet-land__help-fade" />
           </div>
         </div>
       )}
