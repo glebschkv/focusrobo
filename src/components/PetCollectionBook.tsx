@@ -278,7 +278,7 @@ export const PetCollectionBook = memo(() => {
             )}
 
             {activeTab === 'achievements' && (
-              <div className="px-4 pt-3 pb-28">
+              <div className="px-4 pt-3 dock-clearance">
                 <Suspense fallback={
                   <div className="py-12 text-center text-xs text-[hsl(var(--muted-foreground))]">Loading achievements...</div>
                 }>

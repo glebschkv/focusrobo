@@ -823,3 +823,8 @@
     .badge-pop { animation: none; }
   }
 
+  /* Bottom padding to clear the floating dock */
+  .dock-clearance {
+    padding-bottom: calc(var(--dock-height, 82px) + env(safe-area-inset-bottom, 0px) + 16px);
+  }
+

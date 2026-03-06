@@ -136,7 +136,7 @@ export const TabContent = ({ currentTab, onXPReward, onCoinReward }: TabContentP
         animate="animate"
         exit="exit"
         transition={tabTransition}
-        className="h-full"
+        className="min-h-full"
       >
         <Suspense fallback={getTabSkeleton(currentTab)}>
           {content}

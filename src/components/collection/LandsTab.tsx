@@ -61,7 +61,7 @@ export const LandsTab = memo(({ currentLand, completedLands, filledCells }: Land
   }, []);
 
   return (
-    <div className="px-4 pt-3 pb-28">
+    <div className="px-4 pt-3 dock-clearance">
       {/* Current land card */}
       <div className="collection-land-current">
         <div className="flex items-center justify-between mb-3">
