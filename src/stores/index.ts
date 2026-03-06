@@ -58,6 +58,6 @@ export { useOnboardingStore, useHasCompletedOnboarding, useOnboardingSteps, useC
 export type { OnboardingStep } from './onboardingStore';
 
 // Land Store (Pet Collection Grid)
-export { useLandStore, useCurrentLand, useCompletedLands, useSpeciesCatalog, usePendingPet, useOwnedThemes } from './landStore';
-export type { LandCell, Land, PendingPet, SpeciesCatalogEntry } from './landStore';
+export { useLandStore, useCurrentLand, useCompletedLands, useSpeciesCatalog, usePendingPet, usePendingEgg, useOwnedThemes } from './landStore';
+export type { LandCell, Land, PendingPet, PendingEgg, SpeciesCatalogEntry } from './landStore';
 export { LAND_SIZE, LAND_COLS, LAND_ROWS, LAND_COMPLETE_BONUS_COINS } from './landStore';

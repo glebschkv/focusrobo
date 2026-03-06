@@ -47,12 +47,9 @@ export const UnifiedFocusTimer = () => {
     showSessionNotesModal,
     showSessionComplete,
     showBreakTransitionModal,
-    showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
-    petChoices,
-    petRewardMinutes,
-    petRewardLevel,
+    pendingSessionEgg,
     lastSessionXP,
     lastCoinsEarned,
     lastSessionTaskLabel,
@@ -66,7 +63,8 @@ export const UnifiedFocusTimer = () => {
     skipTimer,
     toggleSound,
     handleSessionNotesSave,
-    handleDismissPetReveal,
+    handleHatchEgg,
+    handleGoToIsland,
     handleSessionCompleteDismiss,
     handleSessionCompleteTakeBreak,
     handleStartBreak,
@@ -74,7 +72,6 @@ export const UnifiedFocusTimer = () => {
     toggleAutoBreak,
     setShowIntentionModal,
     setShowSessionNotesModal,
-    setShowPetRevealModal,
     setShowBreakTransitionModal,
     setShowLockScreen,
   } = useTimerLogic();
@@ -83,13 +80,8 @@ export const UnifiedFocusTimer = () => {
   const handleCloseIntentionModal = useCallback(() => setShowIntentionModal(false), [setShowIntentionModal]);
   const handleCloseSessionNotes = useCallback(() => {
     setShowSessionNotesModal(false);
-    // Show pet reveal if a pet was placed, otherwise go to break modal
-    if (lastPlacedPet) {
-      setTimeout(() => setShowPetRevealModal(true), 350);
-    } else {
-      setTimeout(() => setShowBreakTransitionModal(true), 350);
-    }
-  }, [setShowSessionNotesModal, setShowBreakTransitionModal, setShowPetRevealModal, lastPlacedPet]);
+    setTimeout(() => setShowBreakTransitionModal(true), 350);
+  }, [setShowSessionNotesModal, setShowBreakTransitionModal]);
   const handleReturnToApp = useCallback(() => setShowLockScreen(false), [setShowLockScreen]);
   const handleAbandonSession = useCallback(() => {
     setShowLockScreen(false);
@@ -145,14 +137,6 @@ export const UnifiedFocusTimer = () => {
               sessionDuration={timerState.sessionDuration}
               lastSessionXP={lastSessionXP}
               taskLabel={timerState.taskLabel}
-              // Pet reveal modal (legacy — kept for fallback)
-              showPetRevealModal={showPetRevealModal}
-              onDismissPetReveal={handleDismissPetReveal}
-              lastPlacedPet={lastPlacedPet}
-              lastPlacedCellIndex={lastPlacedCellIndex}
-              petChoices={petChoices}
-              petRewardMinutes={petRewardMinutes}
-              petRewardLevel={petRewardLevel}
               // Break transition modal
               showBreakTransitionModal={showBreakTransitionModal}
               onCloseBreakModal={handleSkipBreak}
@@ -179,6 +163,9 @@ export const UnifiedFocusTimer = () => {
               xpEarned={lastSessionXP}
               coinsEarned={lastCoinsEarned}
               lastPlacedPet={lastPlacedPet}
+              pendingSessionEgg={pendingSessionEgg}
+              onHatchEgg={handleHatchEgg}
+              onGoToIsland={handleGoToIsland}
               taskLabel={lastSessionTaskLabel}
               showBreakOption={autoBreakEnabled}
             />

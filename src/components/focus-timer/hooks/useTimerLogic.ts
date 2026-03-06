@@ -33,7 +33,8 @@ import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { widgetDataService } from "@/plugins/widget-data";
 import { DeviceActivity } from "@/plugins/device-activity";
 import { markBlockingStopped } from "@/hooks/useTimerExpiryGuard";
-import { useLandStore, type PendingPet } from "@/stores/landStore";
+import { useLandStore, type PendingPet, type PendingEgg } from "@/stores/landStore";
+import { useNavigationStore } from "@/stores/navigationStore";
 
 export const useTimerLogic = () => {
   const { awardXP, coinSystem, xpSystem } = useBackendAppState();
@@ -80,12 +81,9 @@ export const useTimerLogic = () => {
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [showSessionNotesModal, setShowSessionNotesModal] = useState(false);
   const [showSessionComplete, setShowSessionComplete] = useState(false);
-  const [showPetRevealModal, setShowPetRevealModal] = useState(false);
   const [lastPlacedPet, setLastPlacedPet] = useState<PendingPet | null>(null);
   const [lastPlacedCellIndex, setLastPlacedCellIndex] = useState(-1);
-  const [petChoices, setPetChoices] = useState<Array<{ species: { id: string; name: string; rarity: string; imagePath: string }; size: string }>>([]);
-  const [petRewardMinutes, setPetRewardMinutes] = useState(0);
-  const [petRewardLevel, setPetRewardLevel] = useState(1);
+  const [pendingSessionEgg, setPendingSessionEgg] = useState<PendingEgg | null>(null);
   const [lastSessionXP, setLastSessionXP] = useState(0);
   const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
   const [lastSessionTaskLabel, setLastSessionTaskLabel] = useState<string | undefined>();
@@ -337,24 +335,14 @@ export const useTimerLogic = () => {
         }
       }
 
-      // Prepare pet reward for work sessions — actual generation deferred to PetRevealModal
-      // so the user can choose between random roll and picking a pet
+      // Generate a session egg reward for work sessions (≥25 min)
       if (state.timerState.sessionType !== 'break' && completedMinutes >= 25) {
         try {
           const playerLevel = xpSystem?.currentLevel ?? 1;
-          // Generate choices for the "Pick" option
-          const choices = useLandStore.getState().generatePetChoices(completedMinutes, playerLevel, 4);
-          setPetChoices(choices);
-          setPetRewardMinutes(completedMinutes);
-          setPetRewardLevel(playerLevel);
-          // Pre-generate a random pet for the "Random" option, but do NOT place it yet.
-          // Placement is deferred to PetRevealModal so the user can choose between
-          // random roll and picking a specific pet.
-          const pending = useLandStore.getState().generateRandomPet(completedMinutes, playerLevel);
-          setLastPlacedPet(pending);
-          setLastPlacedCellIndex(0); // placeholder — actual cell assigned on placement
+          const egg = useLandStore.getState().generateSessionEgg(completedMinutes, playerLevel);
+          setPendingSessionEgg(egg);
         } catch (e) {
-          timerLogger.error('Failed to generate/place pet:', e);
+          timerLogger.error('Failed to generate session egg:', e);
         }
       }
 
@@ -511,13 +499,8 @@ export const useTimerLogic = () => {
     }
 
     setShowSessionNotesModal(false);
-    // Show pet reveal if a pet was placed, otherwise go straight to break modal
-    if (lastPlacedPet) {
-      setTimeout(() => setShowPetRevealModal(true), 350);
-    } else {
-      setTimeout(() => openBreakModal(), 350);
-    }
-  }, [saveSessionNote, lastSessionXP, openBreakModal, updateSessionMeta, lastPlacedPet]);
+    setTimeout(() => openBreakModal(), 350);
+  }, [saveSessionNote, lastSessionXP, openBreakModal, updateSessionMeta]);
 
   // ============================================================================
   // UNIFIED SESSION COMPLETE DISMISS
@@ -541,9 +524,10 @@ export const useTimerLogic = () => {
       });
     }
 
-    // Clean up pet state
+    // Clean up pet/egg state
     setLastPlacedPet(null);
     setLastPlacedCellIndex(-1);
+    setPendingSessionEgg(null);
     setShowSessionComplete(false);
   }, [saveSessionNote, lastSessionXP, updateSessionMeta]);
 
@@ -555,13 +539,31 @@ export const useTimerLogic = () => {
   // BREAK HANDLING
   // ============================================================================
 
-  const handleDismissPetReveal = useCallback(() => {
-    setShowPetRevealModal(false);
+  const handleHatchEgg = useCallback(() => {
+    const pet = useLandStore.getState().hatchSessionEgg();
+    if (pet) {
+      const cellIndex = useLandStore.getState().placePendingPet();
+      setLastPlacedPet(pet);
+      setLastPlacedCellIndex(cellIndex);
+      setPendingSessionEgg(null);
+    }
+  }, []);
+
+  const handleGoToIsland = useCallback(() => {
+    // Dismiss the session complete view
+    setShowSessionComplete(false);
     setLastPlacedPet(null);
+    setPendingSessionEgg(null);
+
+    // Switch to home tab and signal PetLand to focus on the new pet
+    useNavigationStore.getState().setActiveTab('home');
+    if (lastPlacedCellIndex >= 0) {
+      window.dispatchEvent(new CustomEvent('goToPet', {
+        detail: { cellIndex: lastPlacedCellIndex },
+      }));
+    }
     setLastPlacedCellIndex(-1);
-    // Proceed to break modal after pet reveal
-    setTimeout(() => openBreakModal(), 350);
-  }, [openBreakModal]);
+  }, [lastPlacedCellIndex]);
 
   const handleStartBreak = useCallback((duration: number) => {
     closeBreakModal();
@@ -616,12 +618,9 @@ export const useTimerLogic = () => {
     showSessionNotesModal,
     showSessionComplete,
     showBreakTransitionModal,
-    showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
-    petChoices,
-    petRewardMinutes,
-    petRewardLevel,
+    pendingSessionEgg,
     lastSessionXP,
     lastCoinsEarned,
     lastSessionTaskLabel,
@@ -637,7 +636,8 @@ export const useTimerLogic = () => {
     skipTimer,
     toggleSound,
     handleSessionNotesSave,
-    handleDismissPetReveal,
+    handleHatchEgg,
+    handleGoToIsland,
     handleSessionCompleteDismiss,
     handleSessionCompleteTakeBreak,
     handleStartBreak,
@@ -646,7 +646,6 @@ export const useTimerLogic = () => {
     setShowIntentionModal,
     setShowSessionNotesModal,
     setShowSessionComplete,
-    setShowPetRevealModal,
     setShowBreakTransitionModal: (show: boolean) => { if (show) openBreakModal(); else closeBreakModal(); },
     setShowLockScreen,
   };

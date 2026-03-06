@@ -158,6 +158,34 @@ export function getPetsByRarity(rarity: PetRarity): PetSpecies[] {
 }
 
 /**
+ * Session egg tier drop weights — determines probability of receiving
+ * each egg tier after completing a focus session.
+ */
+export type EggTier = 'common' | 'rare' | 'epic' | 'legendary';
+
+const SESSION_EGG_WEIGHTS: Record<EggTier, number> = {
+  common: 55,
+  rare: 30,
+  epic: 12,
+  legendary: 3,
+};
+
+/**
+ * Roll a random egg tier for a session reward using weighted random selection.
+ */
+export function rollEggTier(): EggTier {
+  const totalWeight = Object.values(SESSION_EGG_WEIGHTS).reduce((a, b) => a + b, 0);
+  let roll = Math.random() * totalWeight;
+
+  for (const [tier, weight] of Object.entries(SESSION_EGG_WEIGHTS) as [EggTier, number][]) {
+    roll -= weight;
+    if (roll <= 0) return tier;
+  }
+
+  return 'common';
+}
+
+/**
  * Randomly select a pet species from the available pool,
  * weighted by rarity. Optionally accepts custom rarity weights
  * (used by egg system to override default drop rates).

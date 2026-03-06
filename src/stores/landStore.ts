@@ -12,9 +12,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { z } from 'zod';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
-import type { GrowthSize, PetRarity } from '@/data/PetDatabase';
-import { getGrowthSize, rollRandomPet, getPetById } from '@/data/PetDatabase';
+import type { GrowthSize, PetRarity, EggTier } from '@/data/PetDatabase';
+import { getGrowthSize, rollRandomPet, getPetById, rollEggTier } from '@/data/PetDatabase';
 import type { EggType } from '@/data/EggData';
+import { EGG_TYPES } from '@/data/EggData';
 import {
   GRID_SIZE,
   ISLAND_POSITIONS,
@@ -65,6 +66,13 @@ export interface PendingPet {
   sessionMinutes: number;
 }
 
+export interface PendingEgg {
+  eggTier: EggTier;
+  size: GrowthSize;
+  sessionMinutes: number;
+  playerLevel: number;
+}
+
 // ============================================================================
 // Constants
 // ============================================================================
@@ -113,11 +121,19 @@ const pendingPetSchema = z.object({
   sessionMinutes: z.number().min(0).max(1000),
 });
 
+const pendingEggSchema = z.object({
+  eggTier: z.enum(['common', 'rare', 'epic', 'legendary']),
+  size: z.enum(['baby', 'adolescent', 'adult']),
+  sessionMinutes: z.number().min(0).max(1000),
+  playerLevel: z.number().int().min(0).max(50),
+});
+
 const landStoreSchema = z.object({
   currentLand: landSchema,
   completedLands: z.array(landSchema).max(1000),
   speciesCatalog: z.record(z.string(), speciesCatalogEntrySchema),
   pendingPet: z.union([pendingPetSchema, z.null()]),
+  pendingEgg: z.union([pendingEggSchema, z.null()]).default(null),
   ownedThemes: z.array(z.string().max(100)).max(50),
   selectedNextTheme: z.string().max(100),
   wishedSpecies: z.union([z.string().max(100), z.null()]).default(null),
@@ -218,6 +234,7 @@ interface LandStoreState {
   completedLands: Land[];
   speciesCatalog: Record<string, SpeciesCatalogEntry>;
   pendingPet: PendingPet | null;
+  pendingEgg: PendingEgg | null;
   ownedThemes: string[];
   selectedNextTheme: string;
   wishedSpecies: string | null;
@@ -238,6 +255,8 @@ interface LandStoreActions {
   generatePetChoices: (sessionMinutes: number, playerLevel: number, count?: number) => PetChoice[];
   choosePet: (speciesId: string, sessionMinutes: number) => PendingPet;
   hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
+  generateSessionEgg: (sessionMinutes: number, playerLevel: number) => PendingEgg;
+  hatchSessionEgg: () => PendingPet | null;
   selectSpecies: (speciesId: string) => PendingPet | null;
   placePendingPet: () => number;
   startNewLand: () => void;
@@ -264,6 +283,7 @@ const initialState: LandStoreState = {
   completedLands: [],
   speciesCatalog: {},
   pendingPet: null,
+  pendingEgg: null,
   ownedThemes: ['meadow'],
   selectedNextTheme: 'meadow',
   wishedSpecies: null,
@@ -341,6 +361,40 @@ export const useLandStore = create<LandStore>()(
           sessionMinutes: 0,
         };
         set({ pendingPet: pending });
+        return pending;
+      },
+
+      generateSessionEgg: (sessionMinutes: number, playerLevel: number) => {
+        const eggTier = rollEggTier();
+        const size = getGrowthSize(sessionMinutes);
+        const egg: PendingEgg = { eggTier, size, sessionMinutes, playerLevel };
+        set({ pendingEgg: egg });
+        return egg;
+      },
+
+      hatchSessionEgg: () => {
+        const { pendingEgg, wishedSpecies } = get();
+        if (!pendingEgg) return null;
+
+        // Look up the matching EggType to get its rarityWeights
+        const eggIdMap: Record<EggTier, string> = {
+          common: 'egg-common',
+          rare: 'egg-rare',
+          epic: 'egg-epic',
+          legendary: 'egg-legendary',
+        };
+        const eggType = EGG_TYPES.find(e => e.id === eggIdMap[pendingEgg.eggTier]);
+        const weights = eggType?.rarityWeights;
+
+        const species = rollRandomPet(pendingEgg.playerLevel, weights, wishedSpecies);
+        const pending: PendingPet = {
+          petId: species.id,
+          size: pendingEgg.size,
+          rarity: species.rarity,
+          sessionMinutes: pendingEgg.sessionMinutes,
+        };
+
+        set({ pendingPet: pending, pendingEgg: null });
         return pending;
       },
 
@@ -597,6 +651,7 @@ export const useLandStore = create<LandStore>()(
         completedLands: state.completedLands,
         speciesCatalog: state.speciesCatalog,
         pendingPet: state.pendingPet,
+        pendingEgg: state.pendingEgg,
         ownedThemes: state.ownedThemes,
         selectedNextTheme: state.selectedNextTheme,
         wishedSpecies: state.wishedSpecies,
@@ -636,6 +691,25 @@ export const useLandStore = create<LandStore>()(
             }
           }
         }
+        // Auto-hatch orphaned session eggs (user quit before hatching)
+        if (state.pendingEgg && !state.pendingPet) {
+          const eggIdMap: Record<EggTier, string> = {
+            common: 'egg-common',
+            rare: 'egg-rare',
+            epic: 'egg-epic',
+            legendary: 'egg-legendary',
+          };
+          const eggType = EGG_TYPES.find(e => e.id === eggIdMap[state.pendingEgg!.eggTier]);
+          const weights = eggType?.rarityWeights;
+          const species = rollRandomPet(state.pendingEgg.playerLevel, weights);
+          state.pendingPet = {
+            petId: species.id,
+            size: state.pendingEgg.size,
+            rarity: species.rarity,
+            sessionMinutes: state.pendingEgg.sessionMinutes,
+          };
+          state.pendingEgg = null;
+        }
       },
     }
   )
@@ -649,6 +723,7 @@ export const useCurrentLand = () => useLandStore((s) => s.currentLand);
 export const useCompletedLands = () => useLandStore((s) => s.completedLands);
 export const useSpeciesCatalog = () => useLandStore((s) => s.speciesCatalog);
 export const usePendingPet = () => useLandStore((s) => s.pendingPet);
+export const usePendingEgg = () => useLandStore((s) => s.pendingEgg);
 export const useOwnedThemes = () => useLandStore((s) => s.ownedThemes);
 export const useWishedSpecies = () => useLandStore((s) => s.wishedSpecies);
 
