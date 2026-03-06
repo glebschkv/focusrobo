@@ -446,6 +446,7 @@
 .egg-nest-card {
   border-radius: 16px;
   border: 1.5px solid #D4C4A0;
+  border-top: 3px solid #C9B896;
   background: linear-gradient(180deg, #FFFBF2 0%, #FFF6E8 100%);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(139,111,71,0.1), inset 0 1px 0 rgba(255,255,255,0.7);
@@ -463,23 +464,20 @@
 
 .egg-nest-card.legendary {
   border-color: #D4A84E;
+  border-top-color: #E8B84B;
   box-shadow: 0 2px 12px rgba(212,168,78,0.2), 0 0 20px rgba(234,179,8,0.08);
 }
 
 .egg-nest-card.epic {
   border-color: #B89ACA;
+  border-top-color: #9B72CF;
   box-shadow: 0 2px 12px rgba(168,85,247,0.12);
 }
 
 .egg-nest-card.rare {
   border-color: #8AB4D4;
+  border-top-color: #5B8FB9;
   box-shadow: 0 2px 12px rgba(59,130,246,0.1);
-}
-
-/* Rarity accent strip on egg cards */
-.egg-rarity-strip {
-  height: 3px;
-  border-radius: 0;
 }
 
 /* Egg icon area — nest feeling */

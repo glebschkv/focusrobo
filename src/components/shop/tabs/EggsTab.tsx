@@ -16,13 +16,13 @@ import { useCurrentLevel } from '@/stores/xpStore';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 
-import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
+import { RARITY_DOT_COLORS, RARITY_CARD_CLASS } from '../styles';
 
 const EGG_ICON_MAP: Record<string, string> = {
-  'common-egg': 'egg',
-  'rare-egg': 'egg-rare',
-  'epic-egg': 'egg-epic',
-  'legendary-egg': 'egg-legendary',
+  'egg-common': 'egg',
+  'egg-rare': 'egg-rare',
+  'egg-epic': 'egg-epic',
+  'egg-legendary': 'egg-legendary',
 };
 
 const RARITY_ORDER: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
@@ -138,8 +138,7 @@ function NestCard({
       'egg-nest-card',
       RARITY_CARD_CLASS[egg.rarity],
     )}>
-      {/* Rarity accent strip */}
-      <div className={cn('egg-rarity-strip', RARITY_STRIP_COLORS[egg.rarity])} />
+      {/* Rarity accent is now via border-top on the card itself */}
 
       {/* Egg display area */}
       <div className="egg-icon-area">
