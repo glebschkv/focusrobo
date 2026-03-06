@@ -30,7 +30,7 @@ export { useCoinStore, useCoinBalance, useTotalEarned, useTotalSpent } from './c
 export type { CoinState } from './coinStore';
 
 // Premium Store
-export { usePremiumStore, useTier, useIsPremium, useIsPremiumPlus, useIsLifetime, TIER_BENEFITS } from './premiumStore';
+export { usePremiumStore, useTier, useIsPremium, TIER_BENEFITS } from './premiumStore';
 export type { SubscriptionTier, PremiumState } from './premiumStore';
 
 // Streak Store

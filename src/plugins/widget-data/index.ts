@@ -496,11 +496,11 @@ class WidgetDataService {
       }
 
       if (xpSystemData?.unlockedPets) {
-        totalPetsCollected = xpSystemData.unlockedAnimals.length;
+        totalPetsCollected = xpSystemData.unlockedPets.length;
       }
 
       // Also count shop-bought pets
-      const shopData = localStorage.getItem('petIsland_shopInventory');
+      const shopData = localStorage.getItem('nomo_shop_inventory') || localStorage.getItem('petIsland_shopInventory');
       if (shopData) {
         try {
           const parsed = JSON.parse(shopData);
