@@ -93,12 +93,12 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
       </div>
 
       {/* Reset */}
-      <div className="settings-card" style={{ borderColor: 'rgba(196,100,100,0.2)' }}>
+      <div className="settings-card settings-card--danger">
         <div className="settings-section-title">
-          <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)' }}>
+          <div className="w-7 h-7 rounded-[8px] flex items-center justify-center bg-[hsl(var(--destructive)/0.08)]">
             <RotateCcw className="w-3.5 h-3.5 text-[hsl(var(--destructive))]" />
           </div>
-          <span className="text-[13px] font-bold text-[hsl(var(--destructive))]">Reset</span>
+          <span>Reset</span>
         </div>
 
         <button className="settings-btn-danger" onClick={() => setResetDialogOpen(true)}>

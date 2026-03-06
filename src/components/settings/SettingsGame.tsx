@@ -23,7 +23,7 @@ export const SettingsGame = ({ settings, onUpdate }: SettingsGameProps) => {
             <Smartphone className="w-4 h-4" />
           </div>
           <div>
-            <Label className="text-xs font-bold text-[hsl(var(--foreground))]">Haptic Feedback</Label>
+            <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Haptic Feedback</Label>
             <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Vibration on interactions</p>
           </div>
         </div>

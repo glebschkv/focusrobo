@@ -45,7 +45,7 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 </div>
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Short Break</span>
               </div>
-              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.shortBreakTime}m</span>
+              <span className="settings-slider-value text-[hsl(var(--muted-foreground))]">{settings.shortBreakTime}m</span>
             </div>
             <Slider min={3} max={15} step={1} value={[settings.shortBreakTime]}
               onValueChange={([value]) => onUpdate({ shortBreakTime: value })} className="w-full" />
@@ -60,7 +60,7 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 </div>
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Long Break</span>
               </div>
-              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.longBreakTime}m</span>
+              <span className="settings-slider-value text-[hsl(var(--muted-foreground))]">{settings.longBreakTime}m</span>
             </div>
             <Slider min={10} max={30} step={5} value={[settings.longBreakTime]}
               onValueChange={([value]) => onUpdate({ longBreakTime: value })} className="w-full" />
@@ -75,7 +75,7 @@ export const SettingsTimer = ({ settings, onUpdate }: SettingsTimerProps) => {
                 </div>
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Sessions Before Long Break</span>
               </div>
-              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{settings.longBreakInterval}</span>
+              <span className="settings-slider-value text-[hsl(var(--muted-foreground))]">{settings.longBreakInterval}</span>
             </div>
             <Slider min={2} max={8} step={1} value={[settings.longBreakInterval]}
               onValueChange={([value]) => onUpdate({ longBreakInterval: value })} className="w-full" />

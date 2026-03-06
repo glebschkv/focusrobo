@@ -11,7 +11,7 @@ import { SettingsProfile } from "@/components/settings/SettingsProfile";
 import { SettingsAnalytics } from "@/components/settings/SettingsAnalytics";
 import { SettingsFocusMode } from "@/components/settings/SettingsFocusMode";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Clock, Database, Heart, UserCircle, SlidersHorizontal, Settings as SettingsIcon } from "lucide-react";
+import { Loader2, Clock, Database, Heart, UserCircle, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -42,7 +42,7 @@ export const Settings = () => {
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center settings-page">
-        <div className="settings-card flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <Loader2 className="w-5 h-5 animate-spin text-[hsl(var(--primary))]" />
           <span className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Loading settings...</span>
         </div>
@@ -54,19 +54,11 @@ export const Settings = () => {
     <div className="h-full flex flex-col settings-page">
       {/* Header */}
       <div className="settings-header">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-[hsl(var(--primary)/0.12)]">
-            <SettingsIcon className="w-[18px] h-[18px] text-[hsl(var(--primary))]" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-[hsl(var(--foreground))] tracking-tight">Settings</h1>
-            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Customize Your Experience</p>
-          </div>
-        </div>
+        <h1 className="text-lg font-bold text-[hsl(var(--foreground))] tracking-tight">Settings</h1>
       </div>
 
       {/* Tab Navigation */}
-      <div className="px-3 py-2">
+      <div className="px-4 pb-2">
         <div
           ref={tabsRef}
           className="flex gap-1.5 overflow-x-auto py-1 -mx-1 px-1"
