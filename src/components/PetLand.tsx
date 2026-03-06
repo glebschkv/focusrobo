@@ -9,9 +9,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore } from '@/stores/landStore';
 import { IslandPet } from '@/components/IslandPet';
+import { PetDetailCard } from '@/components/PetDetailCard';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
 import { getIslandScale, getAvailableCellCount } from '@/data/islandPositions';
+import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
@@ -20,65 +22,129 @@ function getGrowthStage(count: number): string {
   return 'pet-land--paradise';
 }
 
-// Parallax tilt constants
-const MAX_OFFSET = 12; // max px shift for the deepest layer
+// Parallax tilt constants (used when zoom <= 1.0)
+const MAX_OFFSET = 12;
 const DRAG_SENSITIVITY = 0.5;
 const SPRING_STIFFNESS = 0.08;
 const SPRING_DAMPING = 0.8;
 const MOMENTUM_DECAY = 0.94;
 const MIN_VELOCITY = 0.05;
 
-// Parallax layer speeds (higher = moves more)
+// Parallax layer speeds
 const LAYER_SKY = 0.15;
 const LAYER_ISLAND = 0.5;
 const LAYER_PETS = 0.85;
 
 // Zoom constants
 const ZOOM_MIN = 0.8;
-const ZOOM_MAX = 2.0;
+const ZOOM_MAX = 3.0;
 const ZOOM_DEFAULT = 1.0;
-const ZOOM_WHEEL_STEP = 0.06;
-const ZOOM_DOUBLE_TAP = 1.5;
+const ZOOM_WHEEL_STEP = 0.08;
+const ZOOM_DOUBLE_TAP = 2.0;
 
-/** Ref-based parallax tilt + zoom — zero React re-renders during drag/pinch */
+// Pan constants (used when zoom > 1.0)
+const PAN_MOMENTUM_DECAY = 0.95;
+const PAN_SPRING_STIFFNESS = 0.12;
+const PAN_SPRING_DAMPING = 0.75;
+const PAN_MIN_VELOCITY = 0.3;
+
+/** Ref-based parallax tilt + zoom + pan — zero React re-renders */
 function useIslandParallax() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const skyRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const petsRef = useRef<HTMLDivElement>(null);
+  const scalerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const lastX = useRef(0);
+  const lastY = useRef(0);
   const velocity = useRef(0);
-  const currentOffset = useRef(0); // -MAX_OFFSET to +MAX_OFFSET
+  const velocityX = useRef(0);
+  const velocityY = useRef(0);
+  const currentOffset = useRef(0);
+  const panX = useRef(0);
+  const panY = useRef(0);
   const animFrameId = useRef<number>(0);
 
   // Zoom state
   const currentZoom = useRef(ZOOM_DEFAULT);
+  const targetZoom = useRef(ZOOM_DEFAULT);
   const isPinching = useRef(false);
   const pinchStartDist = useRef(0);
   const pinchStartZoom = useRef(ZOOM_DEFAULT);
+  const pinchCenterX = useRef(0);
+  const pinchCenterY = useRef(0);
   const lastTapTime = useRef(0);
+  const zoomAnimating = useRef(false);
 
   const clampZoom = (z: number) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
+
+  const isZoomed = () => currentZoom.current > 1.05;
+
+  /** Compute max pan bounds based on zoom level */
+  const getPanBounds = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return { maxX: 0, maxY: 0 };
+    const z = currentZoom.current;
+    const rect = wrapper.getBoundingClientRect();
+    const maxX = Math.max(0, (rect.width * (z - 1)) / 2);
+    const maxY = Math.max(0, (rect.height * (z - 1)) / 2);
+    return { maxX, maxY };
+  }, []);
+
+  const clampPan = useCallback(() => {
+    const { maxX, maxY } = getPanBounds();
+    panX.current = Math.max(-maxX, Math.min(maxX, panX.current));
+    panY.current = Math.max(-maxY, Math.min(maxY, panY.current));
+  }, [getPanBounds]);
 
   const updateCSS = useCallback(() => {
     const offset = currentOffset.current;
     const z = currentZoom.current;
+    const px = panX.current;
+    const py = panY.current;
+
     if (skyRef.current) {
       skyRef.current.style.transform = `translate3d(${offset * LAYER_SKY}px, 0, 0)`;
     }
+    if (scalerRef.current) {
+      // Apply zoom + pan on the scaler so it encompasses the island and pets together
+      scalerRef.current.style.transform = `translate3d(${px}px, ${py}px, 0) scale(${z})`;
+    }
     if (containerRef.current) {
-      containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, 0, 0) scale(${z})`;
+      containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, 0, 0)`;
     }
     if (petsRef.current) {
-      // Compensate for parent (containerRef) transform: pets layer is nested inside
-      // the island container, so its translate compounds with the parent's translate + scale.
-      // Dividing by z accounts for the parent's scale(z) which also scales child translations.
-      petsRef.current.style.transform = `translate3d(${offset * (LAYER_PETS - LAYER_ISLAND) / z}px, 0, 0)`;
+      petsRef.current.style.transform = `translate3d(${offset * (LAYER_PETS - LAYER_ISLAND)}px, 0, 0)`;
     }
   }, []);
 
-  const animateSpring = useCallback(() => {
+  /** Animate smooth zoom transition */
+  const animateZoom = useCallback(() => {
+    const diff = targetZoom.current - currentZoom.current;
+    if (Math.abs(diff) < 0.005) {
+      currentZoom.current = targetZoom.current;
+      zoomAnimating.current = false;
+      clampPan();
+      updateCSS();
+      return;
+    }
+    currentZoom.current += diff * 0.15;
+    clampPan();
+    updateCSS();
+    requestAnimationFrame(animateZoom);
+  }, [updateCSS, clampPan]);
+
+  const smoothZoomTo = useCallback((z: number) => {
+    targetZoom.current = clampZoom(z);
+    if (!zoomAnimating.current) {
+      zoomAnimating.current = true;
+      requestAnimationFrame(animateZoom);
+    }
+  }, [animateZoom]);
+
+  /** Parallax spring (zoom <= 1) */
+  const animateParallaxSpring = useCallback(() => {
     if (isDragging.current) return;
 
     velocity.current *= MOMENTUM_DECAY;
@@ -98,15 +164,78 @@ function useIslandParallax() {
       return;
     }
 
-    animFrameId.current = requestAnimationFrame(animateSpring);
+    animFrameId.current = requestAnimationFrame(animateParallaxSpring);
   }, [updateCSS]);
+
+  /** Pan momentum + bounce (zoom > 1) */
+  const animatePanSpring = useCallback(() => {
+    if (isDragging.current) return;
+
+    const { maxX, maxY } = getPanBounds();
+
+    // Apply momentum
+    panX.current += velocityX.current;
+    panY.current += velocityY.current;
+
+    // Rubber-band if out of bounds
+    if (panX.current > maxX) {
+      const overX = panX.current - maxX;
+      panX.current = maxX + overX * 0.5;
+      velocityX.current *= 0.5;
+    } else if (panX.current < -maxX) {
+      const overX = -maxX - panX.current;
+      panX.current = -maxX - overX * 0.5;
+      velocityX.current *= 0.5;
+    }
+    if (panY.current > maxY) {
+      const overY = panY.current - maxY;
+      panY.current = maxY + overY * 0.5;
+      velocityY.current *= 0.5;
+    } else if (panY.current < -maxY) {
+      const overY = -maxY - panY.current;
+      panY.current = -maxY - overY * 0.5;
+      velocityY.current *= 0.5;
+    }
+
+    // Spring back to bounds
+    if (panX.current > maxX) {
+      velocityX.current += (maxX - panX.current) * PAN_SPRING_STIFFNESS;
+    } else if (panX.current < -maxX) {
+      velocityX.current += (-maxX - panX.current) * PAN_SPRING_STIFFNESS;
+    }
+    if (panY.current > maxY) {
+      velocityY.current += (maxY - panY.current) * PAN_SPRING_STIFFNESS;
+    } else if (panY.current < -maxY) {
+      velocityY.current += (-maxY - panY.current) * PAN_SPRING_STIFFNESS;
+    }
+
+    velocityX.current *= PAN_MOMENTUM_DECAY;
+    velocityY.current *= PAN_MOMENTUM_DECAY;
+    velocityX.current *= PAN_SPRING_DAMPING;
+    velocityY.current *= PAN_SPRING_DAMPING;
+
+    updateCSS();
+
+    const speed = Math.abs(velocityX.current) + Math.abs(velocityY.current);
+    const inBounds = Math.abs(panX.current) <= maxX + 0.5 && Math.abs(panY.current) <= maxY + 0.5;
+    if (speed < PAN_MIN_VELOCITY && inBounds) {
+      clampPan();
+      updateCSS();
+      return;
+    }
+
+    animFrameId.current = requestAnimationFrame(animatePanSpring);
+  }, [updateCSS, getPanBounds, clampPan]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return;
     if (isPinching.current) return;
     isDragging.current = true;
     lastX.current = e.clientX;
+    lastY.current = e.clientY;
     velocity.current = 0;
+    velocityX.current = 0;
+    velocityY.current = 0;
     cancelAnimationFrame(animFrameId.current);
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   }, []);
@@ -114,29 +243,53 @@ function useIslandParallax() {
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging.current || isPinching.current) return;
     const dx = e.clientX - lastX.current;
+    const dy = e.clientY - lastY.current;
     lastX.current = e.clientX;
-    velocity.current = dx * DRAG_SENSITIVITY;
-    currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
-      currentOffset.current + dx * DRAG_SENSITIVITY
-    ));
-    updateCSS();
-  }, [updateCSS]);
+    lastY.current = e.clientY;
+
+    if (isZoomed()) {
+      // Pan mode when zoomed in
+      velocityX.current = dx;
+      velocityY.current = dy;
+      panX.current += dx;
+      panY.current += dy;
+      clampPan();
+      updateCSS();
+    } else {
+      // Parallax tilt mode when not zoomed
+      velocity.current = dx * DRAG_SENSITIVITY;
+      currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
+        currentOffset.current + dx * DRAG_SENSITIVITY
+      ));
+      updateCSS();
+    }
+  }, [updateCSS, clampPan]);
 
   const handlePointerUp = useCallback(() => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    animFrameId.current = requestAnimationFrame(animateSpring);
-  }, [animateSpring]);
+    if (isZoomed()) {
+      animFrameId.current = requestAnimationFrame(animatePanSpring);
+    } else {
+      animFrameId.current = requestAnimationFrame(animateParallaxSpring);
+    }
+  }, [animateParallaxSpring, animatePanSpring]);
 
   // Mouse wheel zoom
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? -ZOOM_WHEEL_STEP : ZOOM_WHEEL_STEP;
-    currentZoom.current = clampZoom(currentZoom.current + delta);
-    updateCSS();
-  }, [updateCSS]);
+    const newZoom = clampZoom(currentZoom.current + delta);
+    smoothZoomTo(newZoom);
 
-  // Touch pinch-to-zoom
+    // Reset pan when zooming back to 1x
+    if (newZoom <= 1.05) {
+      panX.current = 0;
+      panY.current = 0;
+    }
+  }, [smoothZoomTo]);
+
+  // Touch pinch-to-zoom + double-tap
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -146,20 +299,34 @@ function useIslandParallax() {
       return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
     }
 
+    function getTouchCenter(e: TouchEvent): { x: number; y: number } {
+      const [a, b] = [e.touches[0], e.touches[1]];
+      return { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 };
+    }
+
     function onTouchStart(e: TouchEvent) {
       if (e.touches.length === 2) {
         isPinching.current = true;
         isDragging.current = false;
         pinchStartDist.current = getTouchDist(e);
         pinchStartZoom.current = currentZoom.current;
+        const center = getTouchCenter(e);
+        pinchCenterX.current = center.x;
+        pinchCenterY.current = center.y;
         e.preventDefault();
       }
 
       if (e.touches.length === 1) {
         const now = Date.now();
         if (now - lastTapTime.current < 300) {
-          currentZoom.current = currentZoom.current > 1.1 ? ZOOM_DEFAULT : ZOOM_DOUBLE_TAP;
-          updateCSS();
+          // Double-tap: toggle between 1x and zoomed, smooth animation
+          if (currentZoom.current > 1.1) {
+            smoothZoomTo(ZOOM_DEFAULT);
+            panX.current = 0;
+            panY.current = 0;
+          } else {
+            smoothZoomTo(ZOOM_DOUBLE_TAP);
+          }
           lastTapTime.current = 0;
           e.preventDefault();
         } else {
@@ -172,7 +339,17 @@ function useIslandParallax() {
       if (isPinching.current && e.touches.length === 2) {
         const dist = getTouchDist(e);
         const ratio = dist / pinchStartDist.current;
-        currentZoom.current = clampZoom(pinchStartZoom.current * ratio);
+        const newZoom = clampZoom(pinchStartZoom.current * ratio);
+        currentZoom.current = newZoom;
+        targetZoom.current = newZoom;
+
+        // Reset pan when zooming back to 1x
+        if (newZoom <= 1.05) {
+          panX.current = 0;
+          panY.current = 0;
+        }
+
+        clampPan();
         updateCSS();
         e.preventDefault();
       }
@@ -181,6 +358,12 @@ function useIslandParallax() {
     function onTouchEnd(e: TouchEvent) {
       if (isPinching.current && e.touches.length < 2) {
         isPinching.current = false;
+        // Snap to 1.0 if close
+        if (currentZoom.current > 0.95 && currentZoom.current < 1.1) {
+          smoothZoomTo(ZOOM_DEFAULT);
+          panX.current = 0;
+          panY.current = 0;
+        }
       }
     }
 
@@ -195,7 +378,7 @@ function useIslandParallax() {
       wrapper.removeEventListener('touchend', onTouchEnd);
       wrapper.removeEventListener('touchcancel', onTouchEnd);
     };
-  }, [updateCSS]);
+  }, [updateCSS, smoothZoomTo, clampPan]);
 
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameId.current);
@@ -206,6 +389,7 @@ function useIslandParallax() {
     skyRef,
     containerRef,
     petsRef,
+    scalerRef,
     handlers: {
       onPointerDown: handlePointerDown,
       onPointerMove: handlePointerMove,
@@ -214,6 +398,7 @@ function useIslandParallax() {
       onWheel: handleWheel,
     },
     setZoom: (z: number) => {
+      targetZoom.current = clampZoom(z);
       currentZoom.current = clampZoom(z);
       updateCSS();
     },
@@ -236,14 +421,16 @@ export const PetLand = () => {
   const tierScale = getIslandScale(gridSize);
   const progressPct = (filledCount / tierCapacity) * 100;
 
-  const { wrapperRef, skyRef, containerRef, petsRef, handlers: parallaxHandlers, setZoom } = useIslandParallax();
+  const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom } = useIslandParallax();
 
   // Auto-zoom for larger islands so pets remain visible
   useEffect(() => {
     if (gridSize >= 17) setZoom(1.3);
     else if (gridSize >= 14) setZoom(1.15);
   }, [gridSize, setZoom]);
-  const [activeTooltipIndex, setActiveTooltipIndex] = useState<number | null>(null);
+
+  // Pet detail card state (replaces old tooltip)
+  const [selectedPet, setSelectedPet] = useState<{ cell: LandCell; index: number } | null>(null);
 
   // Clear new pet glow after 8 seconds
   useEffect(() => {
@@ -271,17 +458,21 @@ export const PetLand = () => {
     }
   }, [milestoneReached, clearMilestone, haptic]);
 
-  const handleToggleTooltip = useCallback((index: number) => {
-    setActiveTooltipIndex((prev) => (prev === index ? null : index));
+  const handlePetTap = useCallback((index: number) => {
+    const cell = currentLand.cells[index];
+    if (cell) {
+      setSelectedPet({ cell, index });
+    }
+  }, [currentLand.cells]);
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedPet(null);
   }, []);
 
-  const handleCloseTooltips = useCallback(() => {
-    setActiveTooltipIndex(null);
-  }, []);
+  // Determine how many pets for performance class
+  const petCount = filledCount;
 
-  // Build pet elements with stable callback — memo() on IslandPet ensures only
-  // pets whose props actually changed (showTooltip, isNew) re-render.
-  // handleToggleTooltip is stable (useCallback with [] deps).
+  // Build pet elements — memo() on IslandPet ensures minimal re-renders
   const slotElements = useMemo(() => {
     return currentLand.cells.map((cell, index) => {
       if (cell) {
@@ -292,14 +483,15 @@ export const PetLand = () => {
             index={index}
             gridSize={gridSize}
             isNew={index === lastPlacedIndex}
-            showTooltip={activeTooltipIndex === index}
-            onToggleTooltip={handleToggleTooltip}
+            showTooltip={false}
+            onToggleTooltip={handlePetTap}
+            reducedAnimations={petCount > 60}
           />
         );
       }
       return null;
     });
-  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, activeTooltipIndex, handleToggleTooltip]);
+  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount]);
 
   const growthClass = getGrowthStage(filledCount);
 
@@ -329,14 +521,15 @@ export const PetLand = () => {
     }));
   }, []);
 
+  // Performance class: disable heavy animations when many pets
+  const perfClass = petCount > 100 ? 'pet-land--perf-low' : petCount > 60 ? 'pet-land--perf-med' : '';
+
   return (
-    <div className={`pet-land ${growthClass}`}>
+    <div className={`pet-land ${growthClass} ${perfClass}`}>
       {/* Sky — parallax layer (slowest) */}
       <div className="pet-land__sky" ref={skyRef}>
-        {/* Sun with atmospheric glow */}
         <div className="pet-land__sun" />
 
-        {/* God rays from sun */}
         <div className="pet-land__rays">
           <div className="pet-land__ray pet-land__ray--1" />
           <div className="pet-land__ray pet-land__ray--2" />
@@ -345,19 +538,16 @@ export const PetLand = () => {
           <div className="pet-land__ray pet-land__ray--5" />
         </div>
 
-        {/* Clouds — 5 layers at varying depths */}
         <div className="pet-land__cloud pet-land__cloud--1" />
         <div className="pet-land__cloud pet-land__cloud--2" />
         <div className="pet-land__cloud pet-land__cloud--3" />
         <div className="pet-land__cloud pet-land__cloud--4" />
         <div className="pet-land__cloud pet-land__cloud--5" />
 
-        {/* Distant landscape silhouettes */}
         <div className="pet-land__mountains-far" />
         <div className="pet-land__mountains-near" />
         <div className="pet-land__treeline" />
 
-        {/* Warm horizon haze */}
         <div className="pet-land__haze" />
       </div>
 
@@ -366,7 +556,7 @@ export const PetLand = () => {
         ref={wrapperRef}
         className="pet-land__island-wrapper"
         {...parallaxHandlers}
-        style={{ touchAction: 'pan-y' }}
+        style={{ touchAction: 'none' }}
       >
         {/* Ambient dust motes */}
         {particles.map((p) => (
@@ -398,21 +588,23 @@ export const PetLand = () => {
           />
         ))}
 
-        {/* Island scaler — animates island growth between tiers */}
+        {/* Zoom + pan layer (controlled by ref) */}
         <div
-          className="pet-land__island-scaler"
-          style={{ transform: `scale(${tierScale})` }}
+          className="pet-land__zoom-layer"
+          ref={scalerRef}
         >
-          {/* Island container — parallax layer (medium) */}
-          <div className="pet-land__island-container" ref={containerRef}>
-            {/* Pixel-art island — SVG with flat fills */}
+          {/* Island scaler — tier growth animation */}
+          <div
+            className="pet-land__island-scaler"
+            style={{ transform: `scale(${tierScale})` }}
+          >
+            {/* Island container — parallax layer (medium) */}
+            <div className="pet-land__island-container" ref={containerRef}>
             <IslandSVG gridSize={gridSize} />
-
-            {/* Shadow beneath island */}
             <div className="pet-land__island-shadow" />
 
             {/* Pets layer — parallax layer (fastest) */}
-            <div className="pet-land__pets-layer" ref={petsRef} onClick={handleCloseTooltips} role="group" aria-label="Your pet island">
+            <div className="pet-land__pets-layer" ref={petsRef} role="group" aria-label="Your pet island">
               {slotElements}
 
               {filledCount === 0 && (
@@ -434,7 +626,18 @@ export const PetLand = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
+
+      {/* Pet detail card */}
+      {selectedPet && (
+        <PetDetailCard
+          cell={selectedPet.cell}
+          index={selectedPet.index}
+          landNumber={currentLand.number}
+          onClose={handleCloseDetail}
+        />
+      )}
 
       {/* Land completion overlay */}
       {landJustCompleted !== null && (
