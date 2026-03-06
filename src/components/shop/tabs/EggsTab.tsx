@@ -1,7 +1,7 @@
 /**
- * EggsTab — Shop tab for purchasing and hatching eggs.
- * Eggs are the primary coin sink, giving players a way to
- * spend coins on pet collection with weighted rarity pools.
+ * EggsTab — "The Hatchery"
+ * Eggs displayed as cozy nests with visual rarity meters.
+ * Framed as discovering new friends, not buying products.
  */
 
 import { useState } from 'react';
@@ -16,23 +16,7 @@ import { useCurrentLevel } from '@/stores/xpStore';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 
-const RARITY_COLORS: Record<PetRarity, string> = {
-  common: 'text-stone-500',
-  uncommon: 'text-green-600',
-  rare: 'text-blue-500',
-  epic: 'text-purple-500',
-  legendary: 'text-amber-500',
-};
-
-const RARITY_STRIPE: Record<PetRarity, string> = {
-  common: 'bg-stone-300',
-  uncommon: 'bg-green-400',
-  rare: 'bg-blue-400',
-  epic: 'bg-purple-400',
-  legendary: 'bg-amber-400',
-};
-
-const RARITY_LABELS: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
 
 const EGG_ICON_MAP: Record<string, string> = {
   'common-egg': 'egg',
@@ -40,6 +24,8 @@ const EGG_ICON_MAP: Record<string, string> = {
   'epic-egg': 'egg-epic',
   'legendary-egg': 'egg-legendary',
 };
+
+const RARITY_ORDER: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
 interface EggsTabProps {
   coinBalance: number;
@@ -71,7 +57,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       placePendingPet();
       playSoundEffect('purchase');
       toast.success(`Hatched a ${pet.rarity} ${pet.petId}!`, {
-        description: 'Check your island to see your new pet!',
+        description: 'A new friend has arrived on your island!',
       });
     } catch {
       toast.error('Something went wrong');
@@ -82,12 +68,18 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
 
   return (
     <div className="space-y-4">
-      {/* Egg cards */}
-      <div className="grid grid-cols-2 gap-3">
-        {EGG_TYPES.map((egg) => (
-          <EggCard
+      {/* Section intro */}
+      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
+        Choose an egg to discover a new companion for your island.
+      </p>
+
+      {/* Nest cards */}
+      <div className="grid grid-cols-2 gap-2.5">
+        {EGG_TYPES.map((egg, index) => (
+          <NestCard
             key={egg.id}
             egg={egg}
+            index={index}
             canAfford={canAfford(egg.coinPrice)}
             onHatch={() => handleHatch(egg)}
             hatching={hatching}
@@ -95,30 +87,32 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
         ))}
       </div>
 
-      {/* Species Selector */}
-      <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 shadow-sm">
-        <div className="flex items-center gap-2 mb-1.5">
-          <PixelIcon name="target" size={16} />
-          <span className="font-bold text-sm text-[hsl(var(--foreground))]">Species Selector</span>
+      {/* Wishing Well — Species Selector */}
+      <div className="wishing-well-card">
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="potion-icon-frame" style={{ borderColor: '#B8A8D4', background: 'linear-gradient(180deg, #F8F4FD 0%, #F0EAFA 100%)' }}>
+            <PixelIcon name="target" size={18} />
+          </div>
+          <div>
+            <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>Wishing Well</span>
+            <p className="text-[11px]" style={{ color: '#8B6F47' }}>
+              Toss your coins and choose your next companion.
+            </p>
+          </div>
         </div>
-        <p className="text-[11px] text-[hsl(var(--muted-foreground))] mb-2">
-          Pick your next pet instead of leaving it to chance.
-        </p>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex items-center gap-1.5">
             <PixelIcon name="coin" size={14} />
-            <span className="font-black text-sm text-amber-700">{SPECIES_SELECTOR_PRICE.toLocaleString()}</span>
+            <span className="font-black text-sm" style={{ color: '#7A5C20' }}>{SPECIES_SELECTOR_PRICE.toLocaleString()}</span>
           </div>
           <button
             className={cn(
-              'px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
-              canAfford(SPECIES_SELECTOR_PRICE)
-                ? 'bg-[hsl(var(--primary))] text-white active:scale-95'
-                : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed',
+              'hatch-button',
+              canAfford(SPECIES_SELECTOR_PRICE) ? 'affordable' : 'disabled',
             )}
             disabled={!canAfford(SPECIES_SELECTOR_PRICE)}
           >
-            Buy
+            Make a Wish
           </button>
         </div>
       </div>
@@ -126,44 +120,72 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   );
 };
 
-function EggCard({
+function NestCard({
   egg,
+  index,
   canAfford,
   onHatch,
   hatching,
 }: {
   egg: EggType;
+  index: number;
   canAfford: boolean;
   onHatch: () => void;
   hatching: boolean;
 }) {
   return (
     <div className={cn(
-      'rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] flex flex-col overflow-hidden shadow-sm',
-      egg.rarity === 'legendary' && 'ring-1 ring-amber-300',
+      'egg-nest-card',
+      RARITY_CARD_CLASS[egg.rarity],
     )}>
-      {/* Rarity stripe header */}
-      <div className={cn('h-1', RARITY_STRIPE[egg.rarity])} />
-      <div className="p-3 flex flex-col flex-1">
-        {/* Header */}
-        <div className="flex items-center gap-1.5 mb-1.5">
-          <PixelIcon name={EGG_ICON_MAP[egg.id] || 'egg'} size={18} />
-          <span className={cn('font-bold text-xs', RARITY_COLORS[egg.rarity])}>
+      {/* Rarity accent strip */}
+      <div className={cn('egg-rarity-strip', RARITY_STRIP_COLORS[egg.rarity])} />
+
+      {/* Egg display area */}
+      <div className="egg-icon-area">
+        <div className="egg-wobble" style={{ animationDelay: `${index * 0.6}s` }}>
+          <PixelIcon name={EGG_ICON_MAP[egg.id] || 'egg'} size={36} />
+        </div>
+        {/* Sparkle effects for epic/legendary */}
+        {(egg.rarity === 'legendary' || egg.rarity === 'epic') && (
+          <>
+            <span className="shop-sparkle" />
+            <span className="shop-sparkle" />
+            <span className="shop-sparkle" />
+          </>
+        )}
+      </div>
+
+      <div className="px-3 pb-3">
+        {/* Name */}
+        <div className="text-center mb-2">
+          <span className="font-bold text-xs" style={{ color: RARITY_DOT_COLORS[egg.rarity] }}>
             {egg.name}
           </span>
         </div>
 
-        {/* Rarity odds */}
-        <div className="space-y-0.5 mb-2.5">
-          {RARITY_LABELS.map((rarity) => {
+        {/* Visual rarity meter */}
+        <div className="space-y-1 mb-3">
+          {RARITY_ORDER.map((rarity) => {
             const weight = egg.rarityWeights[rarity];
             if (weight === 0) return null;
             return (
-              <div key={rarity} className="flex items-center justify-between">
-                <span className={cn('text-[10px] capitalize', RARITY_COLORS[rarity])}>
-                  {rarity}
-                </span>
-                <span className="text-[10px] font-mono font-bold text-[hsl(var(--muted-foreground))]">
+              <div key={rarity} className="flex items-center gap-2">
+                <div
+                  className="rarity-dot filled"
+                  style={{ backgroundColor: RARITY_DOT_COLORS[rarity], color: RARITY_DOT_COLORS[rarity] }}
+                />
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#E8E0D0' }}>
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${weight}%`,
+                      backgroundColor: RARITY_DOT_COLORS[rarity],
+                      opacity: 0.7,
+                    }}
+                  />
+                </div>
+                <span className="text-[10px] font-bold tabular-nums w-7 text-right" style={{ color: '#A0937E' }}>
                   {weight}%
                 </span>
               </div>
@@ -171,11 +193,11 @@ function EggCard({
           })}
         </div>
 
-        {/* Price + buy */}
-        <div className="mt-auto flex items-center justify-between">
+        {/* Price + hatch */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <PixelIcon name="coin" size={14} />
-            <span className="font-black text-sm text-amber-700">
+            <PixelIcon name="coin" size={13} />
+            <span className="font-black text-xs" style={{ color: '#7A5C20' }}>
               {egg.coinPrice.toLocaleString()}
             </span>
           </div>
@@ -183,13 +205,11 @@ function EggCard({
             onClick={onHatch}
             disabled={!canAfford || hatching}
             className={cn(
-              'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all',
-              canAfford && !hatching
-                ? 'bg-[hsl(var(--primary))] text-white active:scale-95'
-                : 'bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed',
+              'hatch-button text-[11px]',
+              canAfford && !hatching ? 'affordable' : 'disabled',
             )}
           >
-            {hatching ? '...' : 'Hatch!'}
+            {hatching ? '...' : 'Hatch'}
           </button>
         </div>
       </div>

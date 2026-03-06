@@ -1,9 +1,15 @@
-import { Snowflake, Zap, Clock, Image, Palette } from "lucide-react";
+/**
+ * InventoryTab — "My Collection"
+ * Owned items displayed as warm parchment inventory cards.
+ */
+
 import { cn } from "@/lib/utils";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useStreakFreezeCount } from "@/stores/streakStore";
 import { useOwnedBackgrounds, useEquippedBackground } from "@/stores/shopStore";
 import { PREMIUM_BACKGROUNDS } from "@/data/ShopData";
 import { useCoinBooster } from "@/hooks/useCoinBooster";
+import { Check } from "lucide-react";
 
 interface InventoryTabProps {
   equipBackground: (backgroundId: string | null) => boolean;
@@ -30,77 +36,75 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
   const hasAnyItems = streakFreezeCount > 0 || boosterActive || ownedBgData.length > 0;
 
   return (
-    <div className="space-y-5">
-      {/* Consumables Section */}
+    <div className="space-y-4">
+      {/* Section intro */}
+      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
+        Your treasures and discoveries, all in one place.
+      </p>
+
+      {/* Supplies */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Consumables</span>
+          <span className="shop-section-title">Supplies</span>
         </div>
         <div className="grid grid-cols-2 gap-2.5">
-          {/* Streak Freezes */}
+          {/* Time Crystals */}
           <div className={cn(
-            "retro-shop-card relative overflow-hidden",
-            streakFreezeCount > 0 ? "" : "opacity-50"
+            "shop-grid-card",
+            streakFreezeCount === 0 && "opacity-50"
           )}>
-            <div className="pt-3 pb-2.5 px-3">
-              <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-teal-500">
-                  <Snowflake className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-xs font-black uppercase tracking-tight">Streak Freeze</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">Protects your streak</span>
-                <span className={cn(
-                  "text-lg font-black tabular-nums",
-                  streakFreezeCount > 0 ? "text-teal-600 dark:text-teal-400" : "text-gray-400"
-                )}>
-                  {streakFreezeCount}
-                </span>
-              </div>
+            <div className="potion-icon-frame mx-auto mb-1.5" style={{ width: '36px', height: '36px' }}>
+              <PixelIcon name="ice-cube" size={18} />
+            </div>
+            <span className="text-[10px] font-bold block" style={{ color: '#5C3D1A' }}>Time Crystals</span>
+            <span className="text-[10px] block mt-0.5" style={{ color: '#8B6F47' }}>Protects your streaks</span>
+            <div className="mt-1.5">
+              <span className={cn(
+                "text-lg font-black tabular-nums",
+              )} style={{ color: streakFreezeCount > 0 ? '#5B8FB9' : '#A0937E' }}>
+                {streakFreezeCount}
+              </span>
             </div>
           </div>
 
-          {/* Active Booster */}
+          {/* Active Elixir */}
           <div className={cn(
-            "retro-shop-card relative overflow-hidden",
-            boosterActive ? "" : "opacity-50"
+            "shop-grid-card",
+            !boosterActive && "opacity-50"
           )}>
-            <div className="pt-3 pb-2.5 px-3">
-              <div className="flex items-center gap-2 mb-1.5">
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center",
-                  boosterActive ? "bg-purple-500" : "bg-gray-400"
-                )}>
-                  <Zap className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-xs font-black uppercase tracking-tight">Booster</span>
-              </div>
-              {boosterActive && boosterInfo ? (
-                <div>
-                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
-                    {getCurrentMultiplier()}x {boosterInfo.name}
-                  </span>
-                  <div className="flex items-center gap-1 text-[10px] text-purple-500 mt-0.5">
-                    <Clock className="w-3 h-3" />
-                    <span className="font-mono font-bold">{getTimeRemainingFormatted()}</span>
-                  </div>
-                </div>
-              ) : (
-                <span className="text-[10px] text-muted-foreground">None active</span>
-              )}
+            <div className="potion-icon-frame mx-auto mb-1.5" style={{
+              width: '36px', height: '36px',
+              borderColor: boosterActive ? '#9B72CF' : '#D4C4A0',
+            }}>
+              <PixelIcon name="lightning" size={18} />
             </div>
+            <span className="text-[10px] font-bold block" style={{ color: '#5C3D1A' }}>Focus Elixir</span>
+            {boosterActive && boosterInfo ? (
+              <div className="mt-1">
+                <span className="text-[10px] font-bold block" style={{ color: '#9B72CF' }}>
+                  {getCurrentMultiplier()}x {boosterInfo.name}
+                </span>
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <PixelIcon name="clock" size={10} />
+                  <span className="text-[10px] font-bold tabular-nums" style={{ color: '#9B72CF' }}>
+                    {getTimeRemainingFormatted()}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <span className="text-[10px] block mt-0.5" style={{ color: '#A0937E' }}>None active</span>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Owned Backgrounds */}
+      {/* Owned Worlds */}
       <div>
         <div className="shop-section-header">
           <span className="shop-section-title">
-            Backgrounds
+            Discovered Worlds
             {ownedBgData.length > 0 && (
-              <span className="ml-1.5 text-[10px] font-bold text-amber-700/50">({ownedBgData.length})</span>
+              <span className="ml-1.5 text-[10px] font-bold" style={{ color: '#A0937E' }}>({ownedBgData.length})</span>
             )}
           </span>
         </div>
@@ -119,12 +123,12 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                     }
                   }}
                   className={cn(
-                    "retro-shop-card relative overflow-hidden text-center transition-all active:scale-95",
-                    isEquipped && "retro-shop-card-owned"
+                    "world-portal transition-all active:scale-95",
+                    isEquipped && "ring-2 ring-[#9B72CF]"
                   )}
                 >
                   {bg.previewImage ? (
-                    <div className="w-full aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    <div className="w-full aspect-[4/3] overflow-hidden rounded-t-lg">
                       <img
                         src={bg.previewImage}
                         alt={bg.name}
@@ -133,16 +137,18 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
                       />
                     </div>
                   ) : (
-                    <div className="w-full aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-                      <Image className="w-5 h-5 text-gray-400" />
+                    <div className="w-full aspect-[4/3] flex items-center justify-center rounded-t-lg" style={{ background: 'linear-gradient(180deg, #E8DCC8 0%, #D4C4A0 100%)' }}>
+                      <PixelIcon name="island" size={20} />
                     </div>
                   )}
                   <div className="px-1.5 py-1.5">
-                    <span className="text-[10px] font-black block truncate uppercase tracking-tight">{bg.name}</span>
+                    <span className="text-[10px] font-bold block truncate" style={{ color: '#5C3D1A' }}>{bg.name}</span>
                   </div>
                   {isEquipped && (
-                    <div className="absolute top-1 right-1 retro-badge-owned">
-                      <Palette className="w-3 h-3 text-white" />
+                    <div className="absolute top-1 right-1">
+                      <span className="px-1.5 py-0.5 text-white text-[10px] font-bold rounded-full flex items-center gap-0.5" style={{ background: '#9B72CF' }}>
+                        <Check className="w-2 h-2" /> Active
+                      </span>
                     </div>
                   )}
                 </button>
@@ -151,7 +157,8 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
           </div>
         ) : (
           <div className="py-5 px-4 text-center">
-            <p className="text-xs font-bold text-muted-foreground">No backgrounds owned</p>
+            <p className="text-xs font-medium" style={{ color: '#A0937E' }}>No worlds discovered yet</p>
+            <p className="text-[10px] mt-1" style={{ color: '#C4B8A0' }}>Visit the Worlds tab to explore new lands</p>
           </div>
         )}
       </div>
@@ -159,7 +166,9 @@ export const InventoryTab = ({ equipBackground }: InventoryTabProps) => {
       {/* Empty state */}
       {!hasAnyItems && (
         <div className="py-8 text-center">
-          <p className="text-sm font-bold text-muted-foreground">Nothing here yet</p>
+          <PixelIcon name="compass" size={32} />
+          <p className="text-sm font-bold mt-3" style={{ color: '#8B6F47' }}>Your collection awaits</p>
+          <p className="text-xs mt-1" style={{ color: '#A0937E' }}>Explore the cart to find treasures</p>
         </div>
       )}
     </div>

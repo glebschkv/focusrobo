@@ -196,8 +196,8 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
 export const UTILITY_ITEMS: UtilityItem[] = [
   {
     id: 'streak-freeze-1',
-    name: 'Streak Freeze',
-    description: 'Protect your streak for one missed day.',
+    name: 'Time Crystal',
+    description: 'A shimmering crystal that freezes time for one day, protecting your streak.',
     category: 'utilities',
     coinPrice: 150,
     icon: 'ice-cube',
@@ -206,8 +206,8 @@ export const UTILITY_ITEMS: UtilityItem[] = [
   },
   {
     id: 'streak-freeze-3',
-    name: 'Streak Freeze Pack',
-    description: 'A pack of 3 streak freezes at a discount.',
+    name: 'Crystal Cluster',
+    description: 'A trio of time crystals — protection for three days.',
     category: 'utilities',
     coinPrice: 400,
     icon: 'ice-cube',
@@ -216,8 +216,8 @@ export const UTILITY_ITEMS: UtilityItem[] = [
   },
   {
     id: 'streak-freeze-7',
-    name: 'Streak Freeze Bundle',
-    description: 'A bundle of 7 streak freezes - best value!',
+    name: 'Crystal Cache',
+    description: 'A treasure trove of seven time crystals for the prepared adventurer.',
     category: 'utilities',
     coinPrice: 800,
     icon: 'ice-cube',
@@ -233,8 +233,8 @@ export const UTILITY_ITEMS: UtilityItem[] = [
 export const COIN_PACKS: CoinPack[] = [
   {
     id: 'coins-value',
-    name: 'Value Pack',
-    description: 'Great value for regular shoppers.',
+    name: 'Pouch of Coins',
+    description: 'A leather pouch filled with shiny coins.',
     category: 'coins',
     iapPrice: '€2,99',
     iapProductId: 'com.fonoinc.app.coins.value',
@@ -245,8 +245,8 @@ export const COIN_PACKS: CoinPack[] = [
   },
   {
     id: 'coins-premium',
-    name: 'Premium Pack',
-    description: 'For the serious collector.',
+    name: 'Treasure Sack',
+    description: 'A hefty sack bursting with coins and gems.',
     category: 'coins',
     iapPrice: '€7,99',
     iapProductId: 'com.fonoinc.app.coins.premium',
@@ -257,8 +257,8 @@ export const COIN_PACKS: CoinPack[] = [
   },
   {
     id: 'coins-mega',
-    name: 'Mega Pack',
-    description: 'The ultimate coin pack - best value!',
+    name: 'Golden Chest',
+    description: 'An ornate chest overflowing with riches.',
     category: 'coins',
     iapPrice: '€19,99',
     iapProductId: 'com.fonoinc.app.coins.mega',
@@ -269,8 +269,8 @@ export const COIN_PACKS: CoinPack[] = [
   },
   {
     id: 'coins-ultra',
-    name: 'Ultra Pack',
-    description: 'The VIP experience - maximum coins!',
+    name: "Dragon's Hoard",
+    description: 'A legendary stash worthy of a dragon.',
     category: 'coins',
     iapPrice: '€49,99',
     iapProductId: 'com.fonoinc.app.coins.ultra',
@@ -281,8 +281,8 @@ export const COIN_PACKS: CoinPack[] = [
   },
   {
     id: 'coins-legendary',
-    name: 'Legendary Pack',
-    description: 'The ultimate collection accelerator - massive coin haul!',
+    name: "King's Vault",
+    description: 'The entire royal treasury — an unimaginable fortune.',
     category: 'coins',
     iapPrice: '€99,99',
     iapProductId: 'com.fonoinc.app.coins.legendary',
@@ -301,8 +301,8 @@ export const COIN_PACKS: CoinPack[] = [
 export const STARTER_BUNDLES: StarterBundle[] = [
   {
     id: 'bundle-welcome',
-    name: 'Welcome Gift',
-    description: 'A perfect start to your journey! Coins, protection, and a boost.',
+    name: "Traveler's Gift",
+    description: 'A warm welcome from the merchant — coins, crystals, and a boost for your journey.',
     category: 'bundles',
     iapPrice: '€2,99',
     iapProductId: 'com.fonoinc.app.bundle.welcome',
@@ -317,8 +317,8 @@ export const STARTER_BUNDLES: StarterBundle[] = [
   },
   {
     id: 'bundle-starter',
-    name: 'Starter Bundle',
-    description: 'Perfect for new players! Includes coins, a booster, and an exclusive character.',
+    name: "Explorer's Kit",
+    description: 'Everything a new explorer needs — coins and a powerful focus elixir.',
     category: 'bundles',
     iapPrice: '€4,99',
     iapProductId: 'com.fonoinc.app.bundle.starter',
@@ -332,8 +332,8 @@ export const STARTER_BUNDLES: StarterBundle[] = [
   },
   {
     id: 'bundle-collector',
-    name: 'Collector Bundle',
-    description: 'For the dedicated collector - premium coins and exclusive rewards.',
+    name: "Keeper's Trove",
+    description: 'A curated collection for dedicated pet keepers — premium riches and rewards.',
     category: 'bundles',
     iapPrice: '€14,99',
     iapProductId: 'com.fonoinc.app.bundle.collector',
@@ -347,8 +347,8 @@ export const STARTER_BUNDLES: StarterBundle[] = [
   },
   {
     id: 'bundle-ultimate',
-    name: 'Ultimate Bundle',
-    description: 'The ultimate collection - exclusive bots, massive coins, and premium extras.',
+    name: "Merchant's Finest",
+    description: 'The merchant\'s most prized collection — an extraordinary treasure for true adventurers.',
     category: 'bundles',
     iapPrice: '€29,99',
     iapProductId: 'com.fonoinc.app.bundle.ultimate',
@@ -466,10 +466,10 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
   return getAllShopItems().filter(item => item.rarity === rarity);
 };
 
-// Shop categories for UI - 4 tabs: Eggs, Themes, Boosts, Premium
+// Shop categories for UI - 4 tabs: Hatchery, Worlds, Potions, Today's Finds
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
-  { id: 'eggs', name: 'Eggs', icon: 'egg' },
-  { id: 'customize', name: 'Themes', icon: 'palette' },
-  { id: 'powerups', name: 'Boosts', icon: 'lightning' },
-  { id: 'featured', name: 'Premium', icon: 'crown' },
+  { id: 'eggs', name: 'Hatchery', icon: 'egg' },
+  { id: 'customize', name: 'Worlds', icon: 'island' },
+  { id: 'powerups', name: 'Potions', icon: 'lightning' },
+  { id: 'featured', name: "Finds", icon: 'crown' },
 ];

@@ -24,7 +24,7 @@ import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
 const CATEGORY_ICONS: Record<string, string> = {
   eggs: 'egg',
   featured: 'crown',
-  customize: 'palette',
+  customize: 'island',
   powerups: 'lightning',
 };
 
@@ -153,10 +153,11 @@ export const Shop = () => {
 
   return (
     <div className="shop-container h-full flex flex-col">
-      {/* Compact Header Row */}
+      {/* Merchant Header */}
       <div className="shop-header">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base font-black uppercase tracking-tight text-amber-900">Shop</h1>
+        <div className="shop-title-banner">
+          <PixelIcon name="star" size={18} />
+          <span className="shop-title-text">Wandering Cart</span>
           {isBoosterActive() && activeBooster && (
             <div className="shop-booster-pill">
               <PixelIcon name="lightning" size={12} />
@@ -178,7 +179,7 @@ export const Shop = () => {
               "shop-inventory-btn",
               showInventory && "active"
             )}
-            aria-label="My Items"
+            aria-label="My Collection"
           >
             <PixelIcon name="backpack" size={16} />
           </button>
@@ -188,10 +189,10 @@ export const Shop = () => {
               setActiveCategory('powerups');
             }}
             className="shop-coin-badge"
-            aria-label="Buy Coins"
+            aria-label="View Coins"
           >
             <PixelIcon name="coin" size={16} />
-            <span className="font-black text-sm text-amber-800">
+            <span className="font-black text-sm" style={{ color: '#7A5C20' }}>
               {coinBalance.toLocaleString()}
             </span>
             <span className="shop-coin-plus">+</span>
@@ -199,7 +200,7 @@ export const Shop = () => {
         </div>
       </div>
 
-      {/* Horizontal pill tabs */}
+      {/* Wooden sign tabs */}
       {!showInventory && (
         <div className="shop-tabs-bar">
           {SHOP_CATEGORIES.map((category) => {
@@ -223,8 +224,8 @@ export const Shop = () => {
       {showInventory && (
         <div className="px-4 pt-2 pb-1 flex items-center gap-2">
           <PixelIcon name="backpack" size={16} />
-          <h2 className="text-sm font-black uppercase tracking-tight text-emerald-700">
-            My Items
+          <h2 className="text-sm font-black tracking-tight" style={{ color: '#5C3D1A' }}>
+            My Collection
           </h2>
         </div>
       )}
