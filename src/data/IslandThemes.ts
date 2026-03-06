@@ -43,7 +43,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   day: {
     id: 'day',
     name: 'Meadow',
-    sky: ['#6BB8E0', '#A5D8EF', '#D0EAF5', '#F0F4F8'],
+    sky: ['#6BB8E0', '#A5D8EF', '#D0EAF5', '#EEF4F0'],
     grassLight: ['#CCF080', '#B8E468'],
     grassDark: ['#96C444', '#84B438'],
     grassBase: ['#C4E87A', '#B0D85A', '#9CC84E', '#88B842'],
@@ -197,7 +197,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
 
   'sky-islands': {
     id: 'sky-islands',
-    name: 'Floating Archipelago',
+    name: 'Sky Islands',
     sky: ['#4A9ED6', '#72B8E4', '#A8D4F0', '#D8ECF8'],
     grassLight: ['#A8D8A0', '#98CC90'],
     grassDark: ['#78B470', '#68A460'],
@@ -222,7 +222,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
 
   'calm-seas': {
     id: 'calm-seas',
-    name: 'Serene Tides',
+    name: 'Calm Seas',
     sky: ['#3A8CC8', '#60A8D8', '#98CCE8', '#D0E8F4'],
     grassLight: ['#88C8A0', '#78BC90'],
     grassDark: ['#60A878', '#50986C'],
@@ -247,7 +247,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
 
   'twilight-clouds': {
     id: 'twilight-clouds',
-    name: 'Dusk Canopy',
+    name: 'Twilight Clouds',
     sky: ['#6A4C8C', '#9870B0', '#C8A0D0', '#E8D0E8'],
     grassLight: ['#A890C0', '#9880B0'],
     grassDark: ['#8068A0', '#705890'],
@@ -272,7 +272,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
 
   'aurora-horizon': {
     id: 'aurora-horizon',
-    name: 'Northern Glow',
+    name: 'Aurora Horizon',
     sky: ['#0C2840', '#1A4060', '#2C6878', '#5CA898'],
     grassLight: ['#60B898', '#50A888'],
     grassDark: ['#389878', '#288868'],
@@ -297,7 +297,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
 
   'sunset-clouds': {
     id: 'sunset-clouds',
-    name: 'Golden Hour',
+    name: 'Sunset Clouds',
     sky: ['#C85830', '#E08048', '#F0B878', '#F8E0C0'],
     grassLight: ['#D8C888', '#CCB878'],
     grassDark: ['#B8A060', '#A89050'],

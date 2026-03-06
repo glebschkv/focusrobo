@@ -1,7 +1,7 @@
 /**
- * BackgroundsTab — "Backgrounds"
- * Purchasable backgrounds displayed as themed previews.
- * Each background applies a unique island theme when equipped.
+ * BackgroundsTab — "Worlds"
+ * Backgrounds displayed as world portals your pets can explore.
+ * Immersive previews with warm, magical framing.
  */
 
 import { Check, Palette } from "lucide-react";
@@ -46,11 +46,11 @@ export const BackgroundsTab = ({
     e.stopPropagation();
     if (inventory.equippedBackground === bgId) {
       equipBackground(null);
-      toast.success("Background unequipped");
+      toast.success("World unequipped");
       setHomeBackground('day');
     } else {
       equipBackground(bgId);
-      toast.success("New background equipped!");
+      toast.success("New world equipped!");
       const background = PREMIUM_BACKGROUNDS.find(bg => bg.id === bgId);
       setHomeBackground(background?.theme || 'day');
     }
@@ -60,14 +60,14 @@ export const BackgroundsTab = ({
     <div className="space-y-4">
       {/* Section intro */}
       <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
-        Discover unique backgrounds for your island.
+        Discover new lands for your pets to call home.
       </p>
 
       {/* World Collections (Bundles) */}
       {BACKGROUND_BUNDLES.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Background Collections</span>
+            <span className="shop-section-title">World Collections</span>
           </div>
           <div className="space-y-2">
             {BACKGROUND_BUNDLES.map((bundle) => {
@@ -128,7 +128,7 @@ export const BackgroundsTab = ({
       {backgroundsWithPreviews.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Unique Backgrounds</span>
+            <span className="shop-section-title">Individual Worlds</span>
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             {backgroundsWithPreviews.map((bg) => {
