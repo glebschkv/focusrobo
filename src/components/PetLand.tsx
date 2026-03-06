@@ -908,75 +908,67 @@ export const PetLand = () => {
       )}
 
       {showHowItWorks && (
-        <div className="pet-land__help-overlay" onClick={() => setShowHowItWorks(false)}>
-          <div className="pet-land__help-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="pet-land__help-handle" />
-            <div className="pet-land__help-header">
-              <h2 className="pet-land__help-title">How to Play</h2>
-              <button className="pet-land__help-close" onClick={() => setShowHowItWorks(false)} aria-label="Close">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M18 6L6 18" />
-                  <path d="M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+        <div className="pet-land__help-overlay pet-land__help-overlay--center" onClick={() => setShowHowItWorks(false)}>
+          <div className="pet-land__help-popup" onClick={(e) => e.stopPropagation()}>
+            <button className="pet-land__help-close" onClick={() => setShowHowItWorks(false)} aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
 
-            <div className="pet-land__help-sections">
-              {/* The core loop */}
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-section-header">
-                  <strong>The idea is simple</strong>
+            <h2 className="pet-land__help-popup-title">How to Play</h2>
+
+            <div className="pet-land__help-steps">
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">1</span>
+                <div>
+                  <strong>Focus to earn pets</strong>
+                  <p>Complete a 25+ minute focus session and a random pet is placed on your island.</p>
                 </div>
-                <p>Focus for 25+ minutes. When you finish, you get a random pet placed on your island. Longer sessions grow bigger pets.</p>
               </div>
 
-              {/* Sizes */}
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-sizes">
-                  <div className="pet-land__help-size">
-                    <span className="pet-land__help-size-label">Baby</span>
-                    <span className="pet-land__help-size-time">25–45 min</span>
-                  </div>
-                  <div className="pet-land__help-size">
-                    <span className="pet-land__help-size-label">Teen</span>
-                    <span className="pet-land__help-size-time">60–90 min</span>
-                  </div>
-                  <div className="pet-land__help-size">
-                    <span className="pet-land__help-size-label">Adult</span>
-                    <span className="pet-land__help-size-time">120+ min</span>
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">2</span>
+                <div>
+                  <strong>Longer sessions, bigger pets</strong>
+                  <div className="pet-land__help-sizes">
+                    <span>🐣 Baby <em>25–45 min</em></span>
+                    <span>🐥 Teen <em>60–90 min</em></span>
+                    <span>🐾 Adult <em>120+ min</em></span>
                   </div>
                 </div>
               </div>
 
-              {/* Collecting */}
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-section-header">
-                  <strong>41 species to collect</strong>
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">3</span>
+                <div>
+                  <strong>Collect 41 species across 5 rarities</strong>
+                  <div className="pet-land__help-rarities">
+                    <span className="pet-land__help-rarity pet-land__help-rarity--common">Common</span>
+                    <span className="pet-land__help-rarity pet-land__help-rarity--uncommon">Uncommon</span>
+                    <span className="pet-land__help-rarity pet-land__help-rarity--rare">Rare</span>
+                    <span className="pet-land__help-rarity pet-land__help-rarity--epic">Epic</span>
+                    <span className="pet-land__help-rarity pet-land__help-rarity--legendary">Legendary</span>
+                  </div>
+                  <p>Level up to unlock rarer species. Buy eggs in the shop for better odds.</p>
                 </div>
-                <div className="pet-land__help-rarities">
-                  <span className="pet-land__help-rarity pet-land__help-rarity--common">Common</span>
-                  <span className="pet-land__help-rarity pet-land__help-rarity--uncommon">Uncommon</span>
-                  <span className="pet-land__help-rarity pet-land__help-rarity--rare">Rare</span>
-                  <span className="pet-land__help-rarity pet-land__help-rarity--epic">Epic</span>
-                  <span className="pet-land__help-rarity pet-land__help-rarity--legendary">Legendary</span>
-                </div>
-                <p>Higher levels unlock rarer pets. You can also buy eggs in the shop for better drop rates.</p>
               </div>
 
-              {/* Island */}
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-section-header">
-                  <strong>Fill your island</strong>
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">4</span>
+                <div>
+                  <strong>Grow your island</strong>
+                  <p>Fill every tile and your island expands (5×5 up to 20×20). Complete it to archive and start fresh.</p>
                 </div>
-                <p>Each pet takes one tile. Fill all tiles and the island grows, from 5x5 up to 20x20. Complete an island to archive it and start a new one.</p>
               </div>
 
-              {/* Progression */}
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-section-header">
-                  <strong>Keep it going</strong>
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">5</span>
+                <div>
+                  <strong>Build streaks for bonuses</strong>
+                  <p>Focus daily to maintain your streak — earn up to +60% bonus XP plus extra coins.</p>
                 </div>
-                <p>Focus every day to build a streak — up to +60% bonus XP. Earn coins from sessions and spend them on eggs, themes, and power-ups.</p>
               </div>
             </div>
           </div>

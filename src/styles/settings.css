@@ -236,9 +236,9 @@
 }
 
 .settings-badge--amber {
-  background: hsl(var(--warning) / 0.1);
-  border: 1px solid hsl(var(--warning) / 0.2);
-  color: hsl(var(--warning));
+  background: hsl(var(--warning) / 0.12);
+  border: 1px solid hsl(var(--warning) / 0.25);
+  color: hsl(35 70% 38%);
 }
 
 .settings-badge--red {
