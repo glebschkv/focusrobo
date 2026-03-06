@@ -232,7 +232,7 @@ export const Shop = () => {
 
       {/* Content */}
       <ScrollArea className="flex-1 min-h-0">
-        <div className="px-4 pt-3 pb-6">
+        <div className="px-4 pt-3 dock-clearance">
           {showInventory ? (
             <InventoryTab equipBackground={equipBackground} />
           ) : (

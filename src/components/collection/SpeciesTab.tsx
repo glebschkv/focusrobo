@@ -35,7 +35,7 @@ export const SpeciesTab = memo(({
   const hasAnyPets = Object.keys(speciesCatalog).length > 0;
 
   return (
-    <div className="px-4 pt-3 pb-28">
+    <div className="px-4 pt-3 dock-clearance">
       {/* Empty state for brand-new users */}
       {!hasAnyPets && (
         <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[hsl(var(--primary)/0.08)] border border-[hsl(var(--border))] mb-4">
