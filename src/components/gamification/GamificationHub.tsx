@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
+import { useQuestSystem } from '@/hooks/useQuestSystem';
 import { AchievementGallery } from '@/components/AchievementGallery';
 import { ChevronRight } from 'lucide-react';
 import { PixelIcon } from '@/components/ui/PixelIcon';
+import type { Quest } from '@/types/quest-system';
 
 interface GamificationHubProps {
   onXPReward?: (amount: number) => void;
@@ -19,6 +21,12 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
     getTotalAchievementPoints,
     getCompletionPercentage
   } = useAchievementSystem();
+
+  const {
+    dailyQuests,
+    weeklyQuests,
+    completeQuest,
+  } = useQuestSystem();
 
   const achievementPoints = getTotalAchievementPoints();
   const achievementPercent = getCompletionPercentage();
@@ -115,6 +123,34 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
             </div>
           </button>
 
+          {/* Daily Quests */}
+          {dailyQuests.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2 px-1">
+                Daily Quests
+              </h3>
+              <div className="space-y-2">
+                {dailyQuests.map((quest) => (
+                  <QuestCard key={quest.id} quest={quest} onClaim={completeQuest} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Weekly Quests */}
+          {weeklyQuests.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2 px-1">
+                Weekly Quests
+              </h3>
+              <div className="space-y-2">
+                {weeklyQuests.map((quest) => (
+                  <QuestCard key={quest.id} quest={quest} onClaim={completeQuest} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Info Panel */}
           <div
             className="rounded-xl p-4 border border-stone-200/50"
@@ -149,5 +185,78 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
     </div>
   );
 };
+
+function QuestCard({ quest, onClaim }: { quest: Quest; onClaim: (id: string) => void }) {
+  const objective = quest.objectives[0];
+  const progress = objective ? Math.min(100, (objective.current / objective.target) * 100) : 0;
+  const isReady = quest.objectives.every(o => o.current >= o.target) && !quest.isCompleted;
+  const rewardText = quest.rewards.map(r => r.description).join(' + ');
+
+  return (
+    <div
+      className="rounded-xl bg-white border border-stone-200/60 p-3.5 transition-all"
+      style={{
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        opacity: quest.isCompleted ? 0.5 : 1,
+      }}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{
+            background: quest.isCompleted
+              ? 'linear-gradient(135deg, #a3e635, #84cc16)'
+              : isReady
+                ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
+          }}
+        >
+          <PixelIcon
+            name={quest.isCompleted ? 'check' : isReady ? 'star' : 'target'}
+            size={16}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold text-stone-800 leading-tight">{quest.title}</p>
+          <p className="text-[11px] text-stone-400 mt-0.5">{quest.description}</p>
+          {/* Progress bar */}
+          {!quest.isCompleted && (
+            <div className="mt-2">
+              <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${progress}%`,
+                    background: isReady
+                      ? 'linear-gradient(90deg, #f59e0b, #eab308)'
+                      : 'linear-gradient(90deg, #60a5fa, #3b82f6)',
+                  }}
+                />
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[10px] text-stone-400">
+                  {objective ? `${objective.current}/${objective.target}` : ''}
+                </span>
+                <span className="text-[10px] font-semibold text-stone-500">{rewardText}</span>
+              </div>
+            </div>
+          )}
+        </div>
+        {isReady && (
+          <button
+            onClick={() => onClaim(quest.id)}
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-bold text-white active:scale-95 transition-transform"
+            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+          >
+            Claim
+          </button>
+        )}
+        {quest.isCompleted && (
+          <span className="flex-shrink-0 text-[10px] font-bold text-lime-600 uppercase">Done</span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default GamificationHub;

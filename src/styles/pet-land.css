@@ -1011,45 +1011,16 @@
 
 /* ── Pet Detail Card — bottom sheet style ─────────────────── */
 
-.pet-detail-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0);
-  transition: background 0.25s ease;
-  -webkit-tap-highlight-color: transparent;
+/* PetDetailCard — Drawer-based bottom sheet */
+.pet-detail-drawer {
+  max-height: 85vh;
 }
 
-.pet-detail-backdrop--visible {
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.pet-detail-card {
+.pet-detail-card__inner {
   position: relative;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 8px;
   padding: 0 20px 28px;
-  background: var(--rarity-bg), hsl(var(--card) / 0.97);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid var(--rarity-border);
-  border-bottom: none;
-  border-radius: 20px 20px 0 0;
-  box-shadow:
-    0 -4px 24px rgba(0, 0, 0, 0.12),
-    var(--rarity-glow, none);
-  transform: translateY(100%);
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-  overflow: hidden;
   padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
-}
-
-.pet-detail-card--visible {
-  transform: translateY(0);
+  overflow: hidden;
 }
 
 /* Rarity accent line at top */
@@ -1071,16 +1042,6 @@
 
 .pet-detail-card--common .pet-detail-card__accent {
   opacity: 0.3;
-}
-
-/* Drag handle */
-.pet-detail-card__handle {
-  width: 36px;
-  height: 4px;
-  margin: 10px auto 4px;
-  border-radius: 2px;
-  background: hsl(var(--muted-foreground) / 0.25);
-  cursor: pointer;
 }
 
 /* Sprite showcase */
@@ -1254,6 +1215,73 @@
   font-weight: 500;
 }
 
+/* ── Affinity section ────────────────────────────────────────── */
+
+.pet-detail-card__affinity {
+  padding: 8px 12px;
+  margin: 0 12px 8px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pet-detail-card__affinity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.pet-detail-card__affinity-level {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pet-detail-card__affinity-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+}
+
+.pet-detail-card__affinity-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.pet-detail-card__affinity-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.pet-detail-card__affinity-hint {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 3px;
+}
+
+.pet-detail-card__grow-btn {
+  margin-top: 6px;
+  width: 100%;
+  padding: 6px 0;
+  border-radius: 6px;
+  border: none;
+  background: linear-gradient(135deg, #66BB6A, #43A047);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s;
+}
+
+.pet-detail-card__grow-btn:active {
+  opacity: 0.85;
+}
+
 /* Legendary card gets shimmer animation */
 .pet-detail-card--legendary::before {
   content: '';
@@ -1295,7 +1323,6 @@
   .pet-land__particle { display: none; }
   .pet-land__sparkle { display: none; }
   .pet-land__milestone { animation: none; }
-  .pet-detail-card { transition: none; }
   .pet-detail-card__sprite { animation: none; opacity: 1; }
   .pet-detail-card__sprite-glow { animation: none; }
   .pet-detail-card--legendary::before { animation: none; }
