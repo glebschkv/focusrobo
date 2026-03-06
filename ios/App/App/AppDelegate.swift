@@ -463,7 +463,7 @@ final class AnimatedSplashViewController: UIViewController {
         titleLabel.textAlignment = .center
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let text = "BOTBLOCK"
+        let text = "PHONO"
         let attributed = NSMutableAttributedString(string: text)
         attributed.addAttribute(.kern, value: 12.0,
                                 range: NSRange(location: 0, length: text.count))
@@ -491,7 +491,7 @@ final class AnimatedSplashViewController: UIViewController {
         taglineLabel.textAlignment = .center
         taglineLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let text = "FOCUS  \u{00B7}  BUILD  \u{00B7}  COLLECT"
+        let text = "FOCUS  \u{00B7}  GROW  \u{00B7}  COLLECT"
         let attributed = NSMutableAttributedString(string: text)
         attributed.addAttribute(.kern, value: 4.0,
                                 range: NSRange(location: 0, length: text.count))
