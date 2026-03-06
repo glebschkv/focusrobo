@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { cn } from '@/lib/utils';
-import { Lock, Heart } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 import { type PetSpecies, RARITY_GLOW } from '@/data/PetDatabase';
 import { RARITY_ACCENT, SIZE_LABEL } from './constants';
 
@@ -27,7 +27,7 @@ export const SpeciesCard = memo(({
       <div className="collection-card collection-card--locked">
         <div className="h-14 flex items-center justify-center mb-1">
           <div className="w-12 h-12 rounded-2xl bg-[hsl(var(--muted)/0.4)] flex items-center justify-center">
-            <Lock className="w-4 h-4 text-[hsl(var(--muted-foreground)/0.5)]" />
+            <PixelIcon name="lock" size={16} className="opacity-50" />
           </div>
         </div>
         <p className="text-[11px] font-semibold text-[hsl(var(--muted-foreground)/0.5)] text-center truncate w-full">???</p>
@@ -72,7 +72,7 @@ export const SpeciesCard = memo(({
         )}
         aria-label={isWished ? 'Remove wish' : `Wish for ${species.name}`}
       >
-        <Heart className="w-3.5 h-3.5" fill={isWished ? 'currentColor' : 'none'} />
+        <PixelIcon name="heart" size={14} className={isWished ? 'opacity-100' : 'opacity-40'} />
       </span>
 
       <div className="h-14 flex items-center justify-center mb-1">

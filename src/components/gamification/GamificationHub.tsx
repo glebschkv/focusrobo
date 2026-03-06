@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
 import { AchievementGallery } from '@/components/AchievementGallery';
-import { Trophy, ChevronRight, Zap } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 
 interface GamificationHubProps {
   onXPReward?: (amount: number) => void;
@@ -46,7 +47,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
               boxShadow: '0 2px 8px hsla(38, 80%, 50%, 0.25), inset 0 1px 0 hsla(0,0%,100%,0.3)',
             }}
           >
-            <Trophy className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <PixelIcon name="trophy" size={20} />
           </div>
           <div>
             <h1 className="text-lg font-bold text-stone-900 tracking-tight">
@@ -90,7 +91,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
                     boxShadow: '0 3px 10px rgba(245,158,11,0.3), inset 0 1px 0 rgba(255,255,255,0.25)',
                   }}
                 >
-                  <Trophy className="w-7 h-7 text-white" />
+                  <PixelIcon name="trophy" size={28} />
                 </div>
 
                 {/* Text content */}
@@ -124,7 +125,7 @@ export const GamificationHub = ({ onXPReward: _onXPReward, onCoinReward: _onCoin
           >
             <h4 className="font-semibold text-stone-700 mb-3 flex items-center gap-2 text-[13px]">
               <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center">
-                <Zap className="w-3 h-3 text-emerald-500" strokeWidth={2.5} />
+                <PixelIcon name="lightning" size={12} />
               </div>
               How It Works
             </h4>

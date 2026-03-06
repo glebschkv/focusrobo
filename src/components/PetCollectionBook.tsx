@@ -20,7 +20,7 @@ import { useLandStore, useWishedSpecies } from '@/stores/landStore';
 import { useXPStore } from '@/stores/xpStore';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { cn } from '@/lib/utils';
-import { Leaf } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 
 import { SpeciesTab } from '@/components/collection/SpeciesTab';
 import { LandsTab } from '@/components/collection/LandsTab';
@@ -134,7 +134,7 @@ export const PetCollectionBook = memo(() => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-[hsl(var(--primary)/0.12)] flex items-center justify-center">
-              <Leaf className="w-4.5 h-4.5 text-[hsl(var(--primary))]" />
+              <PixelIcon name="leaf" size={18} />
             </div>
             <h1 className="text-lg font-bold tracking-tight text-[hsl(var(--foreground))]">Collection</h1>
           </div>

@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { Star, TreePine, Mountain } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 import type { Land } from '@/stores/landStore';
 import { getAvailableCellCount } from '@/data/islandPositions';
 
@@ -25,7 +25,7 @@ export const LandsTab = memo(({ currentLand, completedLands, filledCells }: Land
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-[hsl(var(--primary)/0.12)] flex items-center justify-center">
-              <TreePine className="w-4 h-4 text-[hsl(var(--primary))]" />
+              <PixelIcon name="sprout" size={16} />
             </div>
             <div>
               <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">Land {currentLand.number}</h3>
@@ -52,7 +52,7 @@ export const LandsTab = memo(({ currentLand, completedLands, filledCells }: Land
       {completedLands.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--muted)/0.4)] flex items-center justify-center mb-3">
-            <Mountain className="w-6 h-6 text-[hsl(var(--muted-foreground))]" />
+            <PixelIcon name="island" size={24} />
           </div>
           <p className="text-sm font-bold text-[hsl(var(--foreground))] mb-1">No lands completed yet</p>
           <p className="text-xs text-[hsl(var(--muted-foreground))] max-w-[220px]">Fill all cells to complete your first land!</p>
@@ -65,7 +65,7 @@ export const LandsTab = memo(({ currentLand, completedLands, filledCells }: Land
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
-                    <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                    <PixelIcon name="star" size={16} />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-[hsl(var(--foreground))]">Land {land.number}</h4>

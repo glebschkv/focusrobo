@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { Heart, Sparkles, Clock, Star } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 import {
   Drawer,
   DrawerContent,
@@ -83,19 +83,19 @@ export const SpeciesDetailDrawer = memo(({
             {catalogEntry ? (
               <div className="grid grid-cols-3 gap-2.5 mb-5">
                 <div className="collection-detail-stat">
-                  <Star className="w-3.5 h-3.5 text-[hsl(var(--primary))] mb-1" />
+                  <PixelIcon name="star" size={14} className="mb-1" />
                   <p className="text-sm font-black text-[hsl(var(--foreground))]">{catalogEntry.timesFound}</p>
                   <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Found</p>
                 </div>
                 <div className="collection-detail-stat">
-                  <Clock className="w-3.5 h-3.5 text-[hsl(var(--primary))] mb-1" />
+                  <PixelIcon name="clock" size={14} className="mb-1" />
                   <p className="text-sm font-black text-[hsl(var(--foreground))]">
                     {sizesFound.length > 0 ? sizesFound[0] : '—'}
                   </p>
                   <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Best Size</p>
                 </div>
                 <div className="collection-detail-stat">
-                  <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--primary))] mb-1" />
+                  <PixelIcon name="sparkles" size={14} className="mb-1" />
                   <p className="text-sm font-black text-[hsl(var(--foreground))]">
                     {new Date(catalogEntry.firstFoundAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </p>
@@ -117,7 +117,7 @@ export const SpeciesDetailDrawer = memo(({
                   : 'bg-[hsl(var(--primary)/0.10)] text-[hsl(var(--primary))] border border-[hsl(var(--border))]'
               }`}
             >
-              <Heart className="w-4 h-4 inline mr-1.5 -mt-0.5" fill={isWished ? 'currentColor' : 'none'} />
+              <PixelIcon name="heart" size={16} className={`inline mr-1.5 -mt-0.5 ${isWished ? 'opacity-100' : 'opacity-40'}`} />
               {isWished ? 'Remove Wish' : 'Add to Wishlist'}
             </button>
           </div>

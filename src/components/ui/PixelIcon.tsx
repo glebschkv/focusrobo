@@ -66,6 +66,16 @@ const ICON_NAMES = new Set([
   'mood-exhausted', 'mood-neutral', 'mood-content', 'mood-happy', 'mood-fire',
   // Avatar animals
   'koala',
+  // Egg icons
+  'egg', 'egg-rare', 'egg-epic', 'egg-legendary',
+  // Additional missing icons now generated
+  'palm-tree',
+  // Tab bar / navigation icons
+  'home', 'hourglass', 'gear', 'shield',
+  // Media control icons
+  'lock', 'play', 'pause', 'stop',
+  // Extra UI icons
+  'skip-forward', 'volume-on', 'volume-off', 'checkmark',
 ]);
 
 interface PixelIconProps {

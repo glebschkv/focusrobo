@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { DailyReward } from "@/hooks/useDailyLoginRewards";
-import { Gift, Flame, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
@@ -100,7 +100,7 @@ export const DailyLoginRewardModal = ({
                     boxShadow: '0 2px 0 hsl(25 55% 32%)',
                   }}
                 >
-                  <Flame className="w-3 h-3" />
+                  <PixelIcon name="fire" size={12} />
                   {currentStreak} day streak!
                 </div>
               </div>
@@ -242,7 +242,7 @@ export const DailyLoginRewardModal = ({
                   border: '1px solid hsl(25 40% 78%)',
                 }}
               >
-                <Flame className="w-4 h-4 text-orange-500" />
+                <PixelIcon name="fire" size={16} />
               </div>
               <div className="flex-1">
                 <span className="text-xs font-bold" style={{ color: 'hsl(25 60% 40%)' }}>
@@ -260,7 +260,7 @@ export const DailyLoginRewardModal = ({
             onClick={handleClaim}
             className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm tracking-wider touch-manipulation flex items-center justify-center gap-2"
           >
-            <Gift className="w-5 h-5" />
+            <PixelIcon name="gift" size={20} />
             Claim Reward!
           </button>
         </div>

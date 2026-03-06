@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Heart, Clock, Trophy, Sparkles } from "lucide-react";
 import { formatMinutes } from "@/lib/utils";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 
@@ -18,9 +17,9 @@ export const RewardModal = ({ isOpen, onClose, newPetsEarned, timeAwayMinutes }:
       <DialogContent className="bg-gradient-sky border-primary/20 shadow-glow">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-foreground flex items-center justify-center gap-2">
-            <Trophy className="w-6 h-6 text-accent" />
+            <PixelIcon name="trophy" size={24} />
             Welcome Back!
-            <Trophy className="w-6 h-6 text-accent" />
+            <PixelIcon name="trophy" size={24} />
           </DialogTitle>
         </DialogHeader>
         
@@ -29,7 +28,7 @@ export const RewardModal = ({ isOpen, onClose, newPetsEarned, timeAwayMinutes }:
           <Card className="bg-card border-border">
             <div className="p-4 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Clock className="w-5 h-5 text-primary" />
+                <PixelIcon name="clock" size={20} />
                 <span className="font-semibold text-foreground">Time Away</span>
               </div>
               <div className="text-3xl font-bold text-primary mb-1">
@@ -45,15 +44,15 @@ export const RewardModal = ({ isOpen, onClose, newPetsEarned, timeAwayMinutes }:
           <Card className="bg-card border-border">
             <div className="p-6 text-center">
               <div className="flex items-center justify-center gap-2 mb-3">
-                <Sparkles className="w-6 h-6 text-accent animate-pulse" />
+                <PixelIcon name="sparkles" size={24} />
                 <span className="text-lg font-bold text-foreground">New Pets Discovered!</span>
-                <Sparkles className="w-6 h-6 text-accent animate-pulse" />
+                <PixelIcon name="sparkles" size={24} />
               </div>
               
               <div className="flex items-center justify-center gap-3 mb-4">
-                <Heart className="w-8 h-8 text-accent" />
+                <PixelIcon name="heart" size={32} />
                 <span className="text-4xl font-bold text-secondary">+{newPetsEarned}</span>
-                <Heart className="w-8 h-8 text-accent" />
+                <PixelIcon name="heart" size={32} />
               </div>
               
               <div className="text-sm text-muted-foreground mb-4">
