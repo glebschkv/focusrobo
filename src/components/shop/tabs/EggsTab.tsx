@@ -19,10 +19,10 @@ import { playSoundEffect } from '@/hooks/useSoundEffects';
 import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
 
 const EGG_ICON_MAP: Record<string, string> = {
-  'common-egg': 'egg',
-  'rare-egg': 'egg-rare',
-  'epic-egg': 'egg-epic',
-  'legendary-egg': 'egg-legendary',
+  'egg-common': 'egg',
+  'egg-rare': 'egg-rare',
+  'egg-epic': 'egg-epic',
+  'egg-legendary': 'egg-legendary',
 };
 
 const RARITY_ORDER: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
