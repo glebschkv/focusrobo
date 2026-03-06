@@ -148,7 +148,7 @@ const STORY_QUESTS = [
 
 export const useQuestSystem = (): QuestSystemReturn => {
   const [quests, setQuests] = useState<Quest[]>([]);
-  const { addXP, addRobot } = useXPStore();
+  const { addXP, addPet } = useXPStore();
   const { addCoins } = useCoinStore();
 
   // Load quest data
@@ -313,7 +313,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
         case 'bot_unlock':
         case 'pet_unlock': // backward-compat
           if (reward.itemId) {
-            addRobot(reward.itemId);
+            addPet(reward.itemId);
             unlockedBots.push(reward.description || reward.itemId);
             questLogger.debug(`Unlocked bot ${reward.itemId} from quest ${questId}`);
           }
@@ -352,7 +352,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
       saveQuestData(updated);
       return updated;
     });
-  }, [quests, saveQuestData, addXP, addCoins, addRobot]);
+  }, [quests, saveQuestData, addXP, addCoins, addPet]);
 
   // Get quest by ID
   const getQuestById = useCallback((questId: string): Quest | undefined => {

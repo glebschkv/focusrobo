@@ -11,8 +11,8 @@ import { useStreakStore } from '@/stores/streakStore';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { useAuthStore } from '@/stores/authStore';
 
-const GUEST_ID_KEY = 'pet_paradise_guest_id';
-const GUEST_CHOSEN_KEY = 'pet_paradise_guest_chosen';
+const GUEST_ID_KEY = 'nomo_guest_id';
+const GUEST_CHOSEN_KEY = 'nomo_guest_chosen';
 
 /** Check if a Supabase user is an anonymous (guest) account */
 export function isAnonymousUser(user: User | null): boolean {
@@ -42,9 +42,6 @@ function clearUserData() {
     'nomo_streak_data',
     'nomo_quests',
     'nomo_quest_system',
-    'nomo_battle_pass',
-    'nomo_lucky_wheel',
-    'nomo_combo_system',
     'nomo_milestones',
     'nomo_bond_data',
     'nomo_favorites',
@@ -52,9 +49,6 @@ function clearUserData() {
     'nomo_analytics_sessions',
     'nomo_analytics_daily_stats',
     'nomo_analytics_records',
-    'nomo_boss_challenges',
-    'nomo_special_events',
-    'nomo_guild_data',
     'nomo_timer_state',
     'nomo_timer_persistence',
     'nomo_collection',
@@ -101,6 +95,21 @@ function clearUserData() {
   try { useStreakStore.setState({ currentStreak: 0, longestStreak: 0, lastSessionDate: '', totalSessions: 0, streakFreezeCount: 0 }); } catch { /* store may not be initialized */ }
   try { usePremiumStore.getState().clearPremium(); } catch { /* store may not be initialized */ }
 }
+
+// Migrate legacy guest keys to nomo_ prefix
+function migrateGuestKeys() {
+  const legacyId = localStorage.getItem('pet_paradise_guest_id');
+  if (legacyId && !localStorage.getItem(GUEST_ID_KEY)) {
+    localStorage.setItem(GUEST_ID_KEY, legacyId);
+    localStorage.removeItem('pet_paradise_guest_id');
+  }
+  const legacyChosen = localStorage.getItem('pet_paradise_guest_chosen');
+  if (legacyChosen && !localStorage.getItem(GUEST_CHOSEN_KEY)) {
+    localStorage.setItem(GUEST_CHOSEN_KEY, legacyChosen);
+    localStorage.removeItem('pet_paradise_guest_chosen');
+  }
+}
+migrateGuestKeys();
 
 // Generate or retrieve a persistent guest ID for offline mode
 const getGuestId = (): string => {

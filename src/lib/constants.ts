@@ -282,51 +282,6 @@ export const ACHIEVEMENT_CONFIG = {
 } as const;
 
 // ============================================================================
-// BATTLE PASS
-// ============================================================================
-
-export const BATTLE_PASS_CONFIG = {
-  /** XP required per tier (balanced for ~2 sessions/day completion) */
-  XP_PER_TIER: 400,
-
-  /** Total tiers per season */
-  TOTAL_TIERS: 50,
-
-  /** Premium tier unlock levels (major reward tiers) */
-  PREMIUM_EXCLUSIVE_TIERS: [10, 20, 30, 40, 50] as const,
-
-  /** Season duration in days */
-  SEASON_DURATION_DAYS: 90,
-
-  /** Daily XP target to complete pass: 400 * 50 / 90 = ~222 XP/day */
-  DAILY_XP_TARGET: 222,
-} as const;
-
-// ============================================================================
-// LUCKY WHEEL
-// ============================================================================
-
-export const LUCKY_WHEEL_CONFIG = {
-  /** Free spins per day */
-  FREE_SPINS_PER_DAY: 1,
-
-  /** Cost per additional spin */
-  SPIN_COST: 50,
-
-  /** Cooldown between spins in hours */
-  SPIN_COOLDOWN_HOURS: 24,
-
-  /** Wheel slice probabilities (must sum to 100) */
-  SLICE_PROBABILITIES: {
-    COMMON: 40,
-    UNCOMMON: 30,
-    RARE: 20,
-    EPIC: 8,
-    LEGENDARY: 2,
-  } as const,
-} as const;
-
-// ============================================================================
 // BOT SYSTEM
 // ============================================================================
 
