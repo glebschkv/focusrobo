@@ -9,8 +9,16 @@ import {
   DrawerDescription,
 } from '@/components/ui/drawer';
 import { type PetSpecies, type GrowthSize, RARITY_GLOW, getSizeSpritePath } from '@/data/PetDatabase';
+import { useLandStore } from '@/stores/landStore';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
 import { RARITY_LABEL, SIZE_LABEL, SIZE_ORDER, SIZE_DURATION_HINT } from './constants';
+
+const AFFINITY_INFO: Record<string, { label: string; color: string; description: string }> = {
+  none: { label: 'New', color: '#9E9E9E', description: 'Find 3 to become familiar' },
+  familiar: { label: 'Familiar', color: '#66BB6A', description: 'Find 5 total to bond' },
+  bonded: { label: 'Bonded', color: '#42A5F5', description: 'Can grow babies to teen! Find 10 to devote' },
+  devoted: { label: 'Devoted', color: '#AB47BC', description: 'Can grow any pet to adult!' },
+};
 
 interface SpeciesDetailDrawerProps {
   species: PetSpecies | null;
@@ -34,6 +42,9 @@ export const SpeciesDetailDrawer = memo(({
   const glow = species ? RARITY_GLOW[species.rarity] : null;
   const sizesFound = catalogEntry?.sizesFound ?? [];
   const variantCount = sizesFound.length;
+  const affinityLevel = useLandStore((s) => species ? s.getAffinityLevel(species.id) : 'none');
+  const affinityCount = useLandStore((s) => species ? (s.speciesAffinity[species.id] || 0) : 0);
+  const affinityInfo = AFFINITY_INFO[affinityLevel];
 
   return (
     <Drawer open={!!species} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -126,6 +137,36 @@ export const SpeciesDetailDrawer = memo(({
             ) : (
               <div className="py-4 text-center mb-5">
                 <p className="text-xs text-[hsl(var(--muted-foreground))]">Not yet discovered. Keep focusing!</p>
+              </div>
+            )}
+
+            {/* Affinity level */}
+            {catalogEntry && (
+              <div className="mb-4 p-3 rounded-xl bg-[hsl(var(--muted)/0.15)] border border-[hsl(var(--border))]">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <PixelIcon name="heart" size={12} />
+                    <span className="text-[11px] font-bold" style={{ color: affinityInfo.color }}>
+                      {affinityInfo.label}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-semibold text-[hsl(var(--muted-foreground))]">
+                    {affinityCount}x found
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div className="h-1 rounded-full bg-[hsl(var(--muted)/0.2)] overflow-hidden mb-1">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.min(100, (affinityCount / 10) * 100)}%`,
+                      backgroundColor: affinityInfo.color,
+                    }}
+                  />
+                </div>
+                <p className="text-[9px] text-[hsl(var(--muted-foreground))]">
+                  {affinityInfo.description}
+                </p>
               </div>
             )}
 

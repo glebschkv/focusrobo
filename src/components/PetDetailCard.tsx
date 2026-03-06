@@ -9,6 +9,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getPetById, RARITY_COLORS } from '@/data/PetDatabase';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useLandStore } from '@/stores/landStore';
 import type { LandCell } from '@/stores/landStore';
 
 interface PetDetailCardProps {
@@ -92,6 +93,19 @@ function formatDate(timestamp: number): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+const AFFINITY_LABELS: Record<string, { label: string; color: string }> = {
+  none: { label: 'New', color: '#9E9E9E' },
+  familiar: { label: 'Familiar', color: '#66BB6A' },
+  bonded: { label: 'Bonded', color: '#42A5F5' },
+  devoted: { label: 'Devoted', color: '#AB47BC' },
+};
+
+const AFFINITY_THRESHOLDS = [
+  { level: 'familiar', count: 3 },
+  { level: 'bonded', count: 5 },
+  { level: 'devoted', count: 10 },
+];
+
 export function PetDetailCard({ cell, index, landNumber, onClose }: PetDetailCardProps) {
   const [visible, setVisible] = useState(false);
   const [spriteError, setSpriteError] = useState(false);
@@ -99,6 +113,30 @@ export function PetDetailCard({ cell, index, landNumber, onClose }: PetDetailCar
   const { haptic } = useHaptics();
 
   const species = getPetById(cell.petId);
+  const affinityLevel = useLandStore((s) => s.getAffinityLevel)(cell.petId);
+  const affinityCount = useLandStore((s) => s.speciesAffinity[cell.petId] || 0);
+  const growPet = useLandStore((s) => s.growPet);
+
+  // Determine if this pet can be grown
+  const canGrowToAdolescent = cell.size === 'baby' && affinityCount >= 5;
+  const canGrowToAdult = (cell.size === 'baby' || cell.size === 'adolescent') && affinityCount >= 10;
+  const canGrow = canGrowToAdolescent || canGrowToAdult;
+  const growTarget = canGrowToAdult ? 'adult' as const : 'adolescent' as const;
+
+  // Next affinity threshold
+  const nextThreshold = AFFINITY_THRESHOLDS.find(t => affinityCount < t.count);
+  const progressToNext = nextThreshold
+    ? affinityCount / nextThreshold.count
+    : 1;
+
+  const handleGrow = () => {
+    const success = growPet(index, growTarget);
+    if (success) {
+      haptic('success');
+      // Close and reopen to refresh the card
+      onClose();
+    }
+  };
 
   useEffect(() => {
     haptic('medium');
@@ -224,6 +262,54 @@ export function PetDetailCard({ cell, index, landNumber, onClose }: PetDetailCar
             <span className="pet-detail-card__stat-value">{formatDate(cell.timestamp)}</span>
             <span className="pet-detail-card__stat-sub">Land {landNumber}</span>
           </div>
+        </div>
+
+        {/* Affinity & Growth */}
+        <div className="pet-detail-card__affinity" style={{ padding: '8px 12px', margin: '0 12px 8px', borderRadius: '8px', background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.05)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: AFFINITY_LABELS[affinityLevel].color }}>
+              {AFFINITY_LABELS[affinityLevel].label}
+            </span>
+            <span style={{ fontSize: '9px', fontWeight: 600, color: '#999' }}>
+              {affinityCount}x found
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div style={{ height: '3px', borderRadius: '2px', background: 'rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              borderRadius: '2px',
+              width: `${Math.min(100, progressToNext * 100)}%`,
+              background: AFFINITY_LABELS[affinityLevel].color,
+              transition: 'width 0.3s ease',
+            }} />
+          </div>
+          {nextThreshold && (
+            <p style={{ fontSize: '9px', color: '#aaa', marginTop: '3px' }}>
+              {nextThreshold.count - affinityCount} more to {nextThreshold.level}
+            </p>
+          )}
+          {canGrow && (
+            <button
+              onClick={handleGrow}
+              style={{
+                marginTop: '6px',
+                width: '100%',
+                padding: '6px 0',
+                borderRadius: '6px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #66BB6A, #43A047)',
+                color: 'white',
+                fontSize: '11px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Grow to {growTarget === 'adult' ? 'Adult' : 'Teen'}
+            </button>
+          )}
         </div>
 
         {/* Unlock level hint */}

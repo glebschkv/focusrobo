@@ -161,10 +161,13 @@ export function getPetsByRarity(rarity: PetRarity): PetSpecies[] {
  * Randomly select a pet species from the available pool,
  * weighted by rarity. Optionally accepts custom rarity weights
  * (used by egg system to override default drop rates).
+ * If wishedSpecies is provided, that species gets a +5% boost
+ * when its rarity tier is selected.
  */
 export function rollRandomPet(
   playerLevel: number,
   customWeights?: Partial<Record<PetRarity, number>>,
+  wishedSpecies?: string | null,
 ): PetSpecies {
   const pool = getAvailablePets(playerLevel);
   const weights = customWeights
@@ -203,8 +206,20 @@ export function rollRandomPet(
     }
   }
 
-  // Pick random pet from selected rarity group
+  // Pick random pet from selected rarity group, with optional wish boost
   const group = rarityGroups[selectedRarity] || pool;
+
+  if (wishedSpecies && group.length > 1) {
+    const wishedIndex = group.findIndex(p => p.id === wishedSpecies);
+    if (wishedIndex !== -1) {
+      // +5% boost: give wished species extra weight
+      const boostChance = 0.05;
+      if (Math.random() < boostChance) {
+        return group[wishedIndex];
+      }
+    }
+  }
+
   const randomIndex = Math.floor(Math.random() * group.length);
   return group[randomIndex];
 }

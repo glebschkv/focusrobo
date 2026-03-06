@@ -22,6 +22,9 @@ import { TabContent, preloadTabComponents } from "@/components/TabContent";
 import { RewardModals } from "@/components/RewardModals";
 import { GlobalSoundToggle } from "@/components/GlobalSoundToggle";
 import { LAND_COMPLETE_BONUS_COINS, useLandStore } from "@/stores/landStore";
+import { IslandExpansionModal } from "@/components/IslandExpansionModal";
+import { LandCompleteModal } from "@/components/LandCompleteModal";
+import { RewardModalErrorBoundary } from "@/components/FeatureErrorBoundary";
 
 const TAB_STORAGE_KEY = 'botblock_currentTab';
 const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
@@ -158,6 +161,14 @@ export const GameUI = () => {
             onDailyRewardClaim={handleDailyRewardClaim}
             onMilestoneClaim={handleMilestoneClaim}
           />
+
+          {/* Island celebration modals */}
+          <RewardModalErrorBoundary>
+            <IslandExpansionModal />
+          </RewardModalErrorBoundary>
+          <RewardModalErrorBoundary>
+            <LandCompleteModal />
+          </RewardModalErrorBoundary>
         </div>
       </AchievementTracker>
     </AppStateProvider>

@@ -1,10 +1,66 @@
-import { memo, useMemo, useCallback } from 'react';
+import { memo, useMemo, useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
-import { PET_DATABASE, type PetSpecies, type PetRarity } from '@/data/PetDatabase';
+import { PET_DATABASE, RARITY_WEIGHTS, type PetSpecies, type PetRarity } from '@/data/PetDatabase';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
 import { RARITY_ORDER, RARITY_LABEL, RARITY_ACCENT } from './constants';
 import { SpeciesCard } from './SpeciesCard';
+
+const HowItWorksPanel = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 w-full p-2.5 rounded-xl bg-[hsl(var(--muted)/0.12)] border border-[hsl(var(--border))] text-left transition-colors active:bg-[hsl(var(--muted)/0.2)]"
+      >
+        <PixelIcon name="sparkles" size={14} />
+        <span className="text-[11px] font-bold text-[hsl(var(--foreground))] flex-1">How It Works</span>
+        <PixelIcon name={open ? 'chevron-up' : 'chevron-down'} size={12} className="text-[hsl(var(--muted-foreground))]" />
+      </button>
+      {open && (
+        <div className="mt-2 p-3 rounded-xl bg-[hsl(var(--muted)/0.08)] border border-[hsl(var(--border))] space-y-2.5">
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Focus → Pet → Island</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Complete a focus session to earn a random pet. Pets are placed on your floating island. Fill the island to archive it and start a new one!
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Pet Sizes</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Longer sessions = bigger pets. Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min).
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Rarity Drops</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Common 45% · Uncommon 28% · Rare 17% · Epic 8% · Legendary 2%. Higher rarity pets glow!
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Affinity & Growth</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Find the same species multiple times to build affinity. Familiar (3×), Bonded (5×), Devoted (10×). Higher affinity lets you grow pets to larger sizes!
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Island Expansion</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Your island starts small (5×5) and grows as you fill it: 5→6→7→8→9→10→12→14→17→20. Fill all 400 cells to complete the island!
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Wish List</p>
+            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Wish for a species to get a small drop rate boost (+5%) when its rarity tier is rolled.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface SpeciesTabProps {
   speciesCatalog: Record<string, SpeciesCatalogEntry>;
@@ -59,6 +115,9 @@ export const SpeciesTab = memo(({
         </div>
       )}
 
+      {/* How It Works — collapsible */}
+      <HowItWorksPanel />
+
       {/* Species grouped by rarity */}
       {RARITY_ORDER.map((rarity) => {
         const species = speciesByRarity[rarity];
@@ -76,6 +135,9 @@ export const SpeciesTab = memo(({
               </span>
               <span className="text-[10px] font-semibold text-[hsl(var(--muted-foreground))]">
                 {discoveredInGroup}/{species.length}
+              </span>
+              <span className="text-[9px] font-medium text-[hsl(var(--muted-foreground)/0.5)]">
+                {RARITY_WEIGHTS[rarity]}% drop
               </span>
               <div className="h-px flex-1 bg-[hsl(var(--border))]" />
             </div>

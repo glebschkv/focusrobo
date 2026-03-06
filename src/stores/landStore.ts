@@ -13,7 +13,7 @@ import { persist } from 'zustand/middleware';
 import { z } from 'zod';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 import type { GrowthSize, PetRarity } from '@/data/PetDatabase';
-import { getGrowthSize, rollRandomPet } from '@/data/PetDatabase';
+import { getGrowthSize, rollRandomPet, getPetById } from '@/data/PetDatabase';
 import type { EggType } from '@/data/EggData';
 import {
   GRID_SIZE,
@@ -231,6 +231,7 @@ interface LandStoreState {
 interface LandStoreActions {
   generateRandomPet: (sessionMinutes: number, playerLevel: number) => PendingPet;
   hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
+  selectSpecies: (speciesId: string) => PendingPet | null;
   placePendingPet: () => number;
   startNewLand: () => void;
   isLandComplete: () => boolean;
@@ -272,7 +273,8 @@ export const useLandStore = create<LandStore>()(
       ...initialState,
 
       generateRandomPet: (sessionMinutes: number, playerLevel: number) => {
-        const species = rollRandomPet(playerLevel);
+        const { wishedSpecies } = get();
+        const species = rollRandomPet(playerLevel, undefined, wishedSpecies);
         const size = getGrowthSize(sessionMinutes);
 
         const pending: PendingPet = {
@@ -288,7 +290,30 @@ export const useLandStore = create<LandStore>()(
 
       hatchEgg: (egg: EggType, playerLevel: number) => {
         const species = rollRandomPet(playerLevel, egg.rarityWeights);
-        // Egg hatches always produce baby-size pets
+        // Egg size scales by egg rarity tier:
+        // common→baby, rare→baby/adolescent (50/50), epic→adolescent, legendary→adult
+        let size: GrowthSize = 'baby';
+        if (egg.rarity === 'legendary') {
+          size = 'adult';
+        } else if (egg.rarity === 'epic') {
+          size = 'adolescent';
+        } else if (egg.rarity === 'rare') {
+          size = Math.random() < 0.5 ? 'adolescent' : 'baby';
+        }
+        const pending: PendingPet = {
+          petId: species.id,
+          size,
+          rarity: species.rarity,
+          sessionMinutes: 0,
+        };
+        set({ pendingPet: pending });
+        return pending;
+      },
+
+      selectSpecies: (speciesId: string) => {
+        const { speciesCatalog } = get();
+        const species = getPetById(speciesId);
+        if (!species || !speciesCatalog[speciesId]) return null;
         const pending: PendingPet = {
           petId: species.id,
           size: 'baby',
@@ -310,9 +335,14 @@ export const useLandStore = create<LandStore>()(
         if (cellIndex === -1) {
           const nextTier = getNextTier(currentLand.gridSize);
           if (nextTier !== null) {
+            const oldTier = currentLand.gridSize;
             currentLand = { ...currentLand, gridSize: nextTier };
             set({ currentLand });
             cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
+            // Emit expansion event so UI can celebrate
+            window.dispatchEvent(new CustomEvent('islandExpanded', {
+              detail: { oldTier, newTier, newCells: getAvailableCellCount(nextTier) - getAvailableCellCount(oldTier) },
+            }));
           }
         }
 

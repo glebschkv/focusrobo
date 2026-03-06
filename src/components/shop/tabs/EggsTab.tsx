@@ -15,6 +15,7 @@ import { useCoinSystem } from '@/hooks/useCoinSystem';
 import { useCurrentLevel } from '@/stores/xpStore';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
+import { SpeciesSelectorModal } from '../SpeciesSelectorModal';
 
 import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
 
@@ -34,10 +35,34 @@ interface EggsTabProps {
 
 export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const [hatching, setHatching] = useState(false);
+  const [selectorOpen, setSelectorOpen] = useState(false);
   const hatchEgg = useLandStore((s) => s.hatchEgg);
+  const selectSpecies = useLandStore((s) => s.selectSpecies);
   const placePendingPet = useLandStore((s) => s.placePendingPet);
+  const speciesCatalog = useLandStore((s) => s.speciesCatalog);
   const coinSystem = useCoinSystem();
   const currentLevel = useCurrentLevel();
+
+  const handleSelectSpecies = async (speciesId: string) => {
+    if (!canAfford(SPECIES_SELECTOR_PRICE)) {
+      toast.error('Not enough coins!');
+      return;
+    }
+    const spent = await coinSystem.spendCoins(SPECIES_SELECTOR_PRICE, 'shop_purchase');
+    if (!spent) {
+      toast.error('Purchase failed!');
+      return;
+    }
+    const pet = selectSpecies(speciesId);
+    if (pet) {
+      placePendingPet();
+      playSoundEffect('purchase');
+      toast.success(`${pet.petId} has answered your wish!`, {
+        description: 'A new friend has arrived on your island!',
+      });
+    }
+    setSelectorOpen(false);
+  };
 
   const handleHatch = async (egg: EggType) => {
     if (hatching) return;
@@ -96,7 +121,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
           <div>
             <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>Wishing Well</span>
             <p className="text-[11px]" style={{ color: '#8B6F47' }}>
-              Toss your coins and choose your next companion.
+              Choose from species you've already discovered.
             </p>
           </div>
         </div>
@@ -111,11 +136,20 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
               canAfford(SPECIES_SELECTOR_PRICE) ? 'affordable' : 'disabled',
             )}
             disabled={!canAfford(SPECIES_SELECTOR_PRICE)}
+            onClick={() => setSelectorOpen(true)}
           >
             Make a Wish
           </button>
         </div>
       </div>
+
+      {/* Species Selector Modal */}
+      <SpeciesSelectorModal
+        open={selectorOpen}
+        onClose={() => setSelectorOpen(false)}
+        onSelect={handleSelectSpecies}
+        speciesCatalog={speciesCatalog}
+      />
     </div>
   );
 };
