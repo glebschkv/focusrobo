@@ -18,6 +18,7 @@ interface PetTooltipProps {
   cell: LandCell;
   index: number;
   gridSize: number;
+  petRect?: DOMRect;
   onClose: () => void;
 }
 
@@ -26,7 +27,7 @@ function getSpritePath(petId: string, size: string, basePath: string): string {
   return `${dir}/${petId}-${size}.png`;
 }
 
-export function PetTooltip({ cell, index, gridSize, onClose }: PetTooltipProps) {
+export function PetTooltip({ cell, index, gridSize, petRect, onClose }: PetTooltipProps) {
   const [spriteError, setSpriteError] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const { haptic } = useHaptics();
@@ -49,24 +50,39 @@ export function PetTooltip({ cell, index, gridSize, onClose }: PetTooltipProps) 
   const stars = RARITY_STARS[cell.rarity];
   const spritePath = getSpritePath(cell.petId, cell.size, species.imagePath);
 
-  // Position tooltip above or below pet based on vertical position
-  const showBelow = pos.y < 30;
-  const tooltipStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: `${Math.max(15, Math.min(85, pos.x))}%`,
-    top: showBelow ? `${pos.y + 8}%` : `${pos.y - 5}%`,
-    transform: showBelow
-      ? 'translate(-50%, 0)'
-      : 'translate(-50%, -100%)',
-    zIndex: 1000,
-  };
+  // Position tooltip using pixel-accurate pet rect (accounts for zoom/pan)
+  // Falls back to percentage-based positioning if rect unavailable
+  let tooltipStyle: React.CSSProperties;
+
+  if (petRect) {
+    const showBelow = petRect.top < window.innerHeight * 0.3;
+    const centerX = petRect.left + petRect.width / 2;
+    // Clamp horizontally so tooltip doesn't overflow
+    const clampedX = Math.max(100, Math.min(window.innerWidth - 100, centerX));
+    tooltipStyle = {
+      position: 'fixed',
+      left: clampedX,
+      top: showBelow ? petRect.bottom + 8 : petRect.top - 8,
+      transform: showBelow ? 'translate(-50%, 0)' : 'translate(-50%, -100%)',
+      zIndex: 1000,
+    };
+  } else {
+    const showBelow = pos.y < 30;
+    tooltipStyle = {
+      position: 'absolute',
+      left: `${Math.max(15, Math.min(85, pos.x))}%`,
+      top: showBelow ? `${pos.y + 8}%` : `${pos.y - 5}%`,
+      transform: showBelow ? 'translate(-50%, 0)' : 'translate(-50%, -100%)',
+      zIndex: 1000,
+    };
+  }
 
   return (
     <div
       className="pet-tooltip__backdrop"
       onClick={handleBackdropClick}
       style={{
-        position: 'absolute',
+        position: petRect ? 'fixed' : 'absolute',
         inset: 0,
         zIndex: 999,
         cursor: 'pointer', // Required for iOS touch events on non-interactive elements
