@@ -387,8 +387,11 @@
 }
 
 @keyframes pet-land-island-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-3px) rotate(0.3deg); }
+  50% { transform: translateY(-5px) rotate(0deg); }
+  75% { transform: translateY(-3px) rotate(-0.3deg); }
+  100% { transform: translateY(0) rotate(0deg); }
 }
 
 /* ── Zoom + pan layer (controlled via JS ref) ───── */
@@ -1038,6 +1041,125 @@
   30% { opacity: 0.8; transform: scale(1.2); }
   50% { opacity: 1; transform: scale(1); }
   70% { opacity: 0.6; transform: scale(0.8); }
+}
+
+/* ── Celebration burst particles ─────────────────────────────── */
+
+.pet-land__burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.pet-land__burst-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--burst-color, #FFD700);
+  box-shadow: 0 0 6px 1px var(--burst-color, #FFD700);
+  animation: pet-land-burst 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--burst-delay, 0s) forwards;
+  opacity: 0;
+}
+
+@keyframes pet-land-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(
+        calc(cos(var(--burst-angle)) * var(--burst-dist)),
+        calc(sin(var(--burst-angle)) * var(--burst-dist))
+      )
+      scale(0.3);
+  }
+}
+
+/* Fallback for browsers without trig functions — stagger via nth-child */
+.pet-land__burst-particle:nth-child(1)  { transform: translate(60px, 0); }
+.pet-land__burst-particle:nth-child(2)  { transform: translate(42px, 42px); }
+.pet-land__burst-particle:nth-child(3)  { transform: translate(0, 60px); }
+.pet-land__burst-particle:nth-child(4)  { transform: translate(-42px, 42px); }
+.pet-land__burst-particle:nth-child(5)  { transform: translate(-60px, 0); }
+.pet-land__burst-particle:nth-child(6)  { transform: translate(-42px, -42px); }
+.pet-land__burst-particle:nth-child(7)  { transform: translate(0, -60px); }
+.pet-land__burst-particle:nth-child(8)  { transform: translate(42px, -42px); }
+.pet-land__burst-particle:nth-child(9)  { transform: translate(55px, 20px); }
+.pet-land__burst-particle:nth-child(10) { transform: translate(20px, 55px); }
+.pet-land__burst-particle:nth-child(11) { transform: translate(-20px, 55px); }
+.pet-land__burst-particle:nth-child(12) { transform: translate(-55px, 20px); }
+.pet-land__burst-particle:nth-child(13) { transform: translate(-55px, -20px); }
+.pet-land__burst-particle:nth-child(14) { transform: translate(-20px, -55px); }
+.pet-land__burst-particle:nth-child(15) { transform: translate(20px, -55px); }
+.pet-land__burst-particle:nth-child(16) { transform: translate(55px, -20px); }
+
+/* Animate outward with fade */
+@keyframes pet-land-burst-out {
+  0% { opacity: 1; scale: 1; }
+  100% { opacity: 0; scale: 0.3; }
+}
+
+.pet-land__burst-particle {
+  animation: pet-land-burst-out 1.2s ease-out var(--burst-delay, 0s) forwards;
+}
+
+/* ── Progress ring (bottom-right) ──────────────────────────── */
+
+.pet-land__progress-ring {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 94px);
+  right: 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.pet-land__progress-ring-text {
+  position: absolute;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.02em;
+}
+
+/* ── Time-of-day tinting overlays ──────────────────────────── */
+
+.pet-land--dawn::after,
+.pet-land--dusk::after,
+.pet-land--nighttime::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+  transition: opacity 1s ease;
+}
+
+/* Dawn: warm golden cast */
+.pet-land--dawn::after {
+  background: linear-gradient(180deg, rgba(255, 180, 80, 0.15) 0%, rgba(255, 140, 50, 0.08) 100%);
+}
+
+/* Dusk: warm amber/pink cast */
+.pet-land--dusk::after {
+  background: linear-gradient(180deg, rgba(255, 120, 80, 0.12) 0%, rgba(200, 100, 150, 0.1) 100%);
+}
+
+/* Nighttime: cool blue cast */
+.pet-land--nighttime::after {
+  background: linear-gradient(180deg, rgba(30, 50, 100, 0.2) 0%, rgba(20, 30, 60, 0.15) 100%);
 }
 
 /* ── Performance modes — reduce GPU load with many pets ────── */
@@ -1717,6 +1839,17 @@
   align-items: center;
   justify-content: center;
   margin-top: 1px;
+}
+
+.pet-land__info-step-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: hsl(var(--muted) / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pet-land__info-step-body {

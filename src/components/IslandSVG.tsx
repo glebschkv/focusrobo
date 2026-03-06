@@ -770,6 +770,65 @@ export const IslandSVG = ({ gridSize = 20, themeId = 'day' }: IslandSVGProps) =>
       ))}
     </g>
 
+    {/* ═══ TIER DECORATIONS — flowers, rocks, mushrooms along edges ═══ */}
+    <g clipPath="url(#ig-diamond-clip)" opacity={0.7}>
+      {gridSize >= 7 && <>
+        {/* Small flowers along edges at higher tiers */}
+        {Array.from({ length: Math.min(gridSize - 4, 12) }, (_, i) => {
+          const s = seeded(i * 37 + 11);
+          const t = 0.05 + s * 0.9;
+          const edge = i % 2 === 0
+            ? lerp(TOP, LEFT, t)
+            : lerp(TOP, RIGHT, t);
+          const colors = ['#FF9EAA', '#FFD166', '#A8E6CF', '#DDA0DD', '#87CEEB'];
+          return (
+            <g key={`deco-${i}`}>
+              <circle cx={edge.x} cy={edge.y - 2} r={2} fill={colors[i % colors.length]} opacity={0.6} />
+              <line x1={edge.x} y1={edge.y - 1} x2={edge.x} y2={edge.y + 2}
+                stroke="rgba(60,100,30,0.4)" strokeWidth={0.6} />
+            </g>
+          );
+        })}
+      </>}
+      {gridSize >= 10 && <>
+        {/* Small rocks at larger tiers */}
+        {Array.from({ length: Math.min(gridSize - 8, 6) }, (_, i) => {
+          const s = seeded(i * 53 + 77);
+          const t = 0.15 + s * 0.7;
+          const edge = i % 2 === 0
+            ? lerp(LEFT, BOTTOM, t)
+            : lerp(BOTTOM, RIGHT, t);
+          return (
+            <ellipse key={`rock-${i}`}
+              cx={edge.x + (s - 0.5) * 8} cy={edge.y - 1}
+              rx={2.5 + s} ry={1.5 + s * 0.5}
+              fill="rgba(140,130,110,0.3)"
+            />
+          );
+        })}
+      </>}
+      {gridSize >= 14 && <>
+        {/* Tiny mushrooms at large tiers */}
+        {Array.from({ length: Math.min(gridSize - 12, 4) }, (_, i) => {
+          const s = seeded(i * 71 + 33);
+          const t = 0.2 + s * 0.6;
+          const pos = lerp(
+            diamondPtNorm(0.1 + s * 0.3, 0.8 + s * 0.15),
+            diamondPtNorm(0.8 + s * 0.15, 0.1 + s * 0.3),
+            t
+          );
+          return (
+            <g key={`mush-${i}`}>
+              <rect x={pos.x - 0.5} y={pos.y - 1} width={1} height={3}
+                fill="rgba(180,160,130,0.4)" rx={0.3} />
+              <ellipse cx={pos.x} cy={pos.y - 1.5} rx={2.5} ry={1.5}
+                fill="rgba(200,80,80,0.35)" />
+            </g>
+          );
+        })}
+      </>}
+    </g>
+
     {/* Depth shading overlays */}
     <path d={DIAMOND_SMOOTH} fill="url(#ig-shadow)" />
     <path d={DIAMOND_SMOOTH} fill="url(#ig-sun)" />

@@ -38,9 +38,14 @@ const LAYER_SKY = 0.25;
 const LAYER_ISLAND = 0.7;
 const LAYER_PETS = 1.0;
 
+// Vertical parallax wobble
+const MAX_OFFSET_Y = 12;
+
 // Auto-drift: slow idle sine wave when not touching
 const AUTO_DRIFT_AMPLITUDE = 5; // ±5px
+const AUTO_DRIFT_AMPLITUDE_Y = 3; // ±3px vertical
 const AUTO_DRIFT_PERIOD = 8000; // 8 seconds full cycle
+const AUTO_DRIFT_PERIOD_Y = 11000; // slightly different period for organic feel
 
 // Zoom constants
 const ZOOM_MIN = 0.8;
@@ -66,9 +71,11 @@ function useIslandParallax() {
   const lastX = useRef(0);
   const lastY = useRef(0);
   const velocity = useRef(0);
+  const velocityVert = useRef(0); // vertical parallax velocity
   const velocityX = useRef(0);
   const velocityY = useRef(0);
   const currentOffset = useRef(0);
+  const currentOffsetY = useRef(0); // vertical parallax offset
   const panX = useRef(0);
   const panY = useRef(0);
   const animFrameId = useRef<number>(0);
@@ -107,22 +114,23 @@ function useIslandParallax() {
 
   const updateCSS = useCallback(() => {
     const offset = currentOffset.current;
+    const offY = currentOffsetY.current;
     const z = currentZoom.current;
     const px = panX.current;
     const py = panY.current;
 
     if (skyRef.current) {
-      skyRef.current.style.transform = `translate3d(${offset * LAYER_SKY}px, 0, 0)`;
+      skyRef.current.style.transform = `translate3d(${offset * LAYER_SKY}px, ${offY * LAYER_SKY}px, 0)`;
     }
     if (scalerRef.current) {
       // Apply zoom + pan on the scaler so it encompasses the island and pets together
       scalerRef.current.style.transform = `translate3d(${px}px, ${py}px, 0) scale(${z})`;
     }
     if (containerRef.current) {
-      containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, 0, 0)`;
+      containerRef.current.style.transform = `translate3d(${offset * LAYER_ISLAND}px, ${offY * LAYER_ISLAND * 0.5}px, 0)`;
     }
     if (petsRef.current) {
-      petsRef.current.style.transform = `translate3d(${offset * (LAYER_PETS - LAYER_ISLAND)}px, 0, 0)`;
+      petsRef.current.style.transform = `translate3d(${offset * (LAYER_PETS - LAYER_ISLAND)}px, ${offY * 0.15}px, 0)`;
     }
   }, []);
 
@@ -150,23 +158,37 @@ function useIslandParallax() {
     }
   }, [animateZoom]);
 
-  /** Parallax spring (zoom <= 1) */
+  /** Parallax spring (zoom <= 1) — handles both X and Y axes */
   const animateParallaxSpring = useCallback(() => {
     if (isDragging.current) return;
 
+    // Horizontal spring
     velocity.current *= MOMENTUM_DECAY;
     const springForce = -currentOffset.current * SPRING_STIFFNESS;
     velocity.current += springForce;
     velocity.current *= SPRING_DAMPING;
-
     currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
       currentOffset.current + velocity.current
     ));
+
+    // Vertical spring
+    velocityVert.current *= MOMENTUM_DECAY;
+    const springForceY = -currentOffsetY.current * SPRING_STIFFNESS;
+    velocityVert.current += springForceY;
+    velocityVert.current *= SPRING_DAMPING;
+    currentOffsetY.current = Math.max(-MAX_OFFSET_Y, Math.min(MAX_OFFSET_Y,
+      currentOffsetY.current + velocityVert.current
+    ));
+
     updateCSS();
 
-    if (Math.abs(currentOffset.current) < 0.2 && Math.abs(velocity.current) < MIN_VELOCITY) {
+    const settled = Math.abs(currentOffset.current) < 0.2 && Math.abs(velocity.current) < MIN_VELOCITY
+      && Math.abs(currentOffsetY.current) < 0.2 && Math.abs(velocityVert.current) < MIN_VELOCITY;
+    if (settled) {
       currentOffset.current = 0;
+      currentOffsetY.current = 0;
       velocity.current = 0;
+      velocityVert.current = 0;
       updateCSS();
       return;
     }
@@ -263,10 +285,14 @@ function useIslandParallax() {
       clampPan();
       updateCSS();
     } else {
-      // Parallax tilt mode when not zoomed
+      // Parallax tilt mode when not zoomed — X + Y axes
       velocity.current = dx * DRAG_SENSITIVITY;
+      velocityVert.current = dy * DRAG_SENSITIVITY * 0.6;
       currentOffset.current = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET,
         currentOffset.current + dx * DRAG_SENSITIVITY
+      ));
+      currentOffsetY.current = Math.max(-MAX_OFFSET_Y, Math.min(MAX_OFFSET_Y,
+        currentOffsetY.current + dy * DRAG_SENSITIVITY * 0.6
       ));
       updateCSS();
     }
@@ -414,7 +440,9 @@ function useIslandParallax() {
 
       const elapsed = Date.now() - startTime;
       const drift = Math.sin((elapsed / AUTO_DRIFT_PERIOD) * Math.PI * 2) * AUTO_DRIFT_AMPLITUDE;
+      const driftY = Math.sin((elapsed / AUTO_DRIFT_PERIOD_Y) * Math.PI * 2) * AUTO_DRIFT_AMPLITUDE_Y;
       currentOffset.current = drift;
+      currentOffsetY.current = driftY;
       updateCSS();
       driftFrameId = requestAnimationFrame(driftTick);
     }
@@ -448,7 +476,9 @@ function useIslandParallax() {
       panX.current = 0;
       panY.current = 0;
       currentOffset.current = 0;
+      currentOffsetY.current = 0;
       velocity.current = 0;
+      velocityVert.current = 0;
       velocityX.current = 0;
       velocityY.current = 0;
       updateCSS();
@@ -472,6 +502,7 @@ export const PetLand = () => {
   const theme = getIslandTheme(themeId);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [celebrationBurst, setCelebrationBurst] = useState(false);
 
   const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
@@ -497,21 +528,25 @@ export const PetLand = () => {
     }
   }, [lastPlacedIndex, clearLastPlaced]);
 
-  // Auto-dismiss land completion
+  // Auto-dismiss land completion + burst particles
   useEffect(() => {
     if (landJustCompleted !== null) {
       haptic('heavy');
+      setCelebrationBurst(true);
+      const burstTimer = setTimeout(() => setCelebrationBurst(false), 2000);
       const timer = setTimeout(clearLandCompleted, 3500);
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); clearTimeout(burstTimer); };
     }
   }, [landJustCompleted, clearLandCompleted, haptic]);
 
-  // Auto-dismiss milestone
+  // Auto-dismiss milestone + burst particles
   useEffect(() => {
     if (milestoneReached !== null) {
       haptic('success');
+      setCelebrationBurst(true);
+      const burstTimer = setTimeout(() => setCelebrationBurst(false), 2000);
       const timer = setTimeout(clearMilestone, 2500);
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); clearTimeout(burstTimer); };
     }
   }, [milestoneReached, clearMilestone, haptic]);
 
@@ -578,10 +613,19 @@ export const PetLand = () => {
   // Performance class: disable heavy animations when many pets
   const perfClass = petCount > 100 ? 'pet-land--perf-low' : petCount > 60 ? 'pet-land--perf-med' : '';
 
+  // Time-of-day tinting — subtle color temperature overlay
+  const timeOfDayClass = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 8) return 'pet-land--dawn';
+    if (hour >= 18 && hour < 20) return 'pet-land--dusk';
+    if (hour >= 20 || hour < 6) return 'pet-land--nighttime';
+    return '';
+  }, []);
+
   const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[1]} 35%, ${theme.sky[2]} 65%, ${theme.sky[3]} 100%)`;
 
   return (
-    <div className={`pet-land ${growthClass} ${perfClass}`} style={{ background: skyGradient }}>
+    <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass}`} style={{ background: skyGradient }}>
       {/* Sky — parallax layer (slowest), theme-responsive cloud/sun colors */}
       <div
         className="pet-land__sky"
@@ -650,6 +694,24 @@ export const PetLand = () => {
             }}
           />
         ))}
+
+        {/* Celebration burst particles */}
+        {celebrationBurst && (
+          <div className="pet-land__burst" aria-hidden>
+            {Array.from({ length: 16 }, (_, i) => (
+              <div
+                key={i}
+                className="pet-land__burst-particle"
+                style={{
+                  '--burst-angle': `${(i / 16) * 360}deg`,
+                  '--burst-dist': `${60 + Math.random() * 40}px`,
+                  '--burst-color': ['#FFD700', '#FF6B6B', '#4ADE80', '#60A5FA', '#F472B6', '#FBBF24'][i % 6],
+                  '--burst-delay': `${Math.random() * 0.15}s`,
+                } as React.CSSProperties}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Zoom + pan layer (controlled by ref) */}
         <div
@@ -727,6 +789,31 @@ export const PetLand = () => {
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
+      )}
+
+      {/* Island progress ring */}
+      {filledCount > 0 && (
+        <div className="pet-land__progress-ring" aria-label={`Island ${Math.round(progressPct)}% full`}>
+          <svg viewBox="0 0 36 36" width="36" height="36">
+            <circle
+              cx="18" cy="18" r="15.5"
+              fill="none"
+              stroke="rgba(255,255,255,0.15)"
+              strokeWidth="3"
+            />
+            <circle
+              cx="18" cy="18" r="15.5"
+              fill="none"
+              stroke="hsl(142 60% 50%)"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeDasharray={`${progressPct * 0.974} ${97.4 - progressPct * 0.974}`}
+              transform="rotate(-90 18 18)"
+              style={{ transition: 'stroke-dasharray 0.5s ease' }}
+            />
+          </svg>
+          <span className="pet-land__progress-ring-text">{Math.round(progressPct)}%</span>
+        </div>
       )}
 
       {/* Compact pet tooltip */}
@@ -835,38 +922,64 @@ export const PetLand = () => {
 
             <div className="pet-land__info-steps">
               <div className="pet-land__info-step">
-                <span className="pet-land__info-step-num">1</span>
+                <div className="pet-land__info-step-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(142 60% 45%)" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
                 <div className="pet-land__info-step-body">
                   <strong>Start a Focus Session</strong>
-                  <span>Set a timer (25 min or longer) and focus on your task. The app blocks distracting apps while you work.</span>
+                  <span>Set a timer (25 min+) and focus. The app blocks distracting apps while you work.</span>
                 </div>
               </div>
               <div className="pet-land__info-step">
-                <span className="pet-land__info-step-num">2</span>
+                <div className="pet-land__info-step-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(30 80% 55%)" strokeWidth="2" strokeLinecap="round">
+                    <ellipse cx="12" cy="14" rx="8" ry="9" />
+                    <path d="M9 7c1-3 5-3 6 0" />
+                    <circle cx="10" cy="16" r="1.2" fill="hsl(30 80% 75%)" stroke="none" />
+                  </svg>
+                </div>
                 <div className="pet-land__info-step-body">
                   <strong>Discover a Pet</strong>
-                  <span>Complete the session to receive a random pet. Longer sessions give you bigger pets (baby, adolescent, or adult).</span>
+                  <span>Complete the session to receive a random pet. Longer sessions = bigger pets.</span>
                 </div>
               </div>
               <div className="pet-land__info-step">
-                <span className="pet-land__info-step-num">3</span>
+                <div className="pet-land__info-step-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(142 60% 45%)" strokeWidth="2" strokeLinecap="round">
+                    <polygon points="12 2 22 12 12 22 2 12" fill="hsl(142 60% 85%)" stroke="hsl(142 50% 55%)" />
+                    <line x1="8" y1="8" x2="16" y2="16" strokeOpacity="0.3" />
+                    <line x1="12" y1="6" x2="12" y2="18" strokeOpacity="0.3" />
+                  </svg>
+                </div>
                 <div className="pet-land__info-step-body">
                   <strong>Grow Your Island</strong>
-                  <span>Each pet is placed on your floating island. Fill it up and the island expands automatically, from 5x5 up to 20x20 tiles.</span>
+                  <span>Each pet fills a tile. Fill them all and the island expands, from 5×5 up to 20×20.</span>
                 </div>
               </div>
               <div className="pet-land__info-step">
-                <span className="pet-land__info-step-num">4</span>
+                <div className="pet-land__info-step-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(270 60% 55%)" strokeWidth="2" strokeLinecap="round">
+                    <polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9" fill="hsl(270 60% 90%)" stroke="hsl(270 50% 55%)" />
+                  </svg>
+                </div>
                 <div className="pet-land__info-step-body">
                   <strong>Collect Rare Pets</strong>
-                  <span>There are 41 species across 5 rarities. Level up to unlock rarer pets. Buy eggs in the shop for better odds.</span>
+                  <span>41 species across 5 rarities. Level up to unlock rarer ones. Buy eggs for better odds.</span>
                 </div>
               </div>
               <div className="pet-land__info-step">
-                <span className="pet-land__info-step-num">5</span>
+                <div className="pet-land__info-step-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(45 80% 50%)" strokeWidth="2" strokeLinecap="round">
+                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                </div>
                 <div className="pet-land__info-step-body">
                   <strong>Complete &amp; Archive</strong>
-                  <span>When your island is completely full, it gets archived and you start a fresh one. Keep collecting!</span>
+                  <span>Full island → archived forever. Start fresh and keep collecting!</span>
                 </div>
               </div>
             </div>
