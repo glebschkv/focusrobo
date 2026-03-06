@@ -18,7 +18,7 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
     <div className="settings-card">
       <div className="settings-section-title">
         <div className="settings-section-icon"><Sun /></div>
-        <span>Color Scheme</span>
+        <span>Appearance</span>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
@@ -37,16 +37,16 @@ export const SettingsAppearance = ({ settings, onUpdate }: SettingsAppearancePro
                 </div>
               )}
               <div className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center border",
+                "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
                 isSelected
-                  ? "bg-[hsl(var(--primary)/0.12)] border-[rgba(76,167,113,0.3)] text-[hsl(var(--primary))]"
-                  : "bg-[rgba(26,46,35,0.5)] border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
+                  ? "bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]"
+                  : "bg-[hsl(var(--muted)/0.5)] text-[hsl(var(--muted-foreground))]"
               )}>
                 <Icon className="w-5 h-5" />
               </div>
               <div className="text-center">
                 <div className="text-xs font-semibold text-[hsl(var(--foreground))]">{option.label}</div>
-                <div className="text-[11px] text-[hsl(var(--muted-foreground))]">{option.description}</div>
+                <div className="text-[10px] text-[hsl(var(--muted-foreground))]">{option.description}</div>
               </div>
             </button>
           );

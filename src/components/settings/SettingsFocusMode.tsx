@@ -77,13 +77,13 @@ export const SettingsFocusMode = () => {
             <div className="settings-divider" />
 
             {/* Block Notifications */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {settings.blockNotifications
-                  ? <BellOff className="w-4 h-4 text-[hsl(var(--primary))]" />
-                  : <Bell className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />}
+                <div className={cn("settings-icon-box w-8 h-8 rounded-lg", settings.blockNotifications ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+                  {settings.blockNotifications ? <BellOff className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Block Notifications</p>
+                  <p className="text-sm font-bold text-[hsl(var(--foreground))]">Block Notifications</p>
                   <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Enable Do Not Disturb</p>
                 </div>
               </div>
@@ -91,13 +91,13 @@ export const SettingsFocusMode = () => {
             </div>
 
             {/* Strict Mode */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between mt-3">
               <div className="flex items-center gap-3">
-                {settings.strictMode
-                  ? <Lock className="w-4 h-4 text-[hsl(var(--destructive))]" />
-                  : <Unlock className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />}
+                <div className={cn("settings-icon-box w-8 h-8 rounded-lg", settings.strictMode ? "bg-[hsl(var(--destructive))] text-white shadow-[0_2px_8px_hsl(var(--destructive)/0.25)]" : "settings-icon-box--inactive")}>
+                  {settings.strictMode ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Strict Mode</p>
+                  <p className="text-sm font-bold text-[hsl(var(--foreground))]">Strict Mode</p>
                   <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Session locked until timer ends</p>
                 </div>
               </div>
@@ -105,7 +105,7 @@ export const SettingsFocusMode = () => {
             </div>
 
             {settings.strictMode && (
-              <div className="mt-2 p-2 rounded-lg" style={{ background: 'hsl(var(--destructive) / 0.08)', border: '1px solid rgba(196,100,100,0.2)' }}>
+              <div className="mt-2 p-2 rounded-lg bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.12)]">
                 <div className="flex items-center gap-2 text-[hsl(var(--destructive))]">
                   <AlertTriangle className="w-3 h-3" />
                   <p className="text-[11px] font-medium">Focus mode stays active until the timer completes</p>
@@ -191,7 +191,7 @@ export const SettingsFocusMode = () => {
                   </div>
 
                   {!isPremium ? (
-                    <div className="settings-info" style={{ borderStyle: 'dashed', borderColor: 'rgba(197,160,51,0.25)', background: 'rgba(197,160,51,0.06)' }}>
+                    <div className="p-3 rounded-xl bg-[hsl(var(--warning)/0.05)] border border-dashed border-[hsl(var(--warning)/0.2)]">
                       <p className="text-[11px] text-[hsl(var(--muted-foreground))] mb-2">
                         Block distracting websites like Instagram, TikTok & more during focus sessions.
                       </p>

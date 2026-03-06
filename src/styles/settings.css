@@ -1,28 +1,28 @@
 /* ============================================
-   SETTINGS PAGE — Light theme (unified with app)
-   Uses design system tokens from base.css
+   SETTINGS PAGE — iOS-Native Grouped List Style
+   Unified with BotBlock Sage Focus design system
    ============================================ */
 
-/* Page background — matches app */
+/* Page background */
 .settings-page {
   background: hsl(var(--background));
 }
 
 /* Header area */
 .settings-header {
-  padding: 16px 16px 12px;
+  padding: 16px 16px 8px;
 }
 
-/* Card */
+/* ── Cards ── */
 .settings-card {
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 16px;
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   box-shadow: var(--shadow-sm);
 }
 
-/* Section title inside card */
+/* ── Section Title (inside card) ── */
 .settings-section-title {
   display: flex;
   align-items: center;
@@ -33,11 +33,11 @@
 .settings-section-title .settings-section-icon {
   width: 28px;
   height: 28px;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--primary) / 0.12);
+  background: hsl(var(--primary) / 0.1);
 }
 
 .settings-section-title .settings-section-icon svg {
@@ -49,22 +49,22 @@
 .settings-section-title span {
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: hsl(var(--foreground));
 }
 
-/* Row item (toggle row, info row) */
+/* ── Toggle Row (standard setting row) ── */
 .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 12px;
-  border-radius: 14px;
-  background: hsl(var(--muted) / 0.3);
-  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  background: hsl(var(--muted) / 0.25);
+  border: 1px solid hsl(var(--border) / 0.6);
 }
 
-/* Icon box */
+/* ── Icon Boxes ── */
 .settings-icon-box {
   width: 34px;
   height: 34px;
@@ -73,12 +73,13 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .settings-icon-box--active {
   background: hsl(var(--primary));
   color: white;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
 }
 
 .settings-icon-box--inactive {
@@ -87,24 +88,35 @@
   color: hsl(var(--muted-foreground));
 }
 
-/* Divider */
+/* ── Divider ── */
 .settings-divider {
   height: 1px;
   background: hsl(var(--border));
   margin: 12px 0;
 }
 
-/* Primary action button */
+/* ── Section Label (uppercase group header) ── */
+.settings-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  padding: 0 4px;
+  margin-bottom: 6px;
+}
+
+/* ── Buttons ── */
 .settings-btn-primary {
   width: 100%;
-  padding: 10px 16px;
-  border-radius: 14px;
+  padding: 11px 16px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 700;
   color: white;
   background: hsl(var(--primary));
   border: none;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,11 +130,10 @@
   box-shadow: 0 1px 4px hsl(var(--primary) / 0.2);
 }
 
-/* Secondary / outline button */
 .settings-btn-secondary {
   width: 100%;
-  padding: 10px 16px;
-  border-radius: 14px;
+  padding: 11px 16px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   color: hsl(var(--foreground));
@@ -138,19 +149,18 @@
 
 .settings-btn-secondary:active {
   transform: scale(0.97);
-  background: hsl(var(--muted) / 0.5);
+  background: hsl(var(--muted) / 0.4);
 }
 
-/* Danger / destructive button */
 .settings-btn-danger {
   width: 100%;
-  padding: 10px 16px;
-  border-radius: 14px;
+  padding: 11px 16px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 700;
   color: hsl(var(--destructive));
-  background: hsl(var(--destructive) / 0.08);
-  border: 1.5px solid hsl(var(--destructive) / 0.2);
+  background: hsl(var(--destructive) / 0.06);
+  border: 1.5px solid hsl(var(--destructive) / 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,20 +171,19 @@
 
 .settings-btn-danger:active {
   transform: scale(0.97);
-  background: hsl(var(--destructive) / 0.12);
+  background: hsl(var(--destructive) / 0.1);
 }
 
-/* Gold / premium button */
 .settings-btn-gold {
   width: 100%;
-  padding: 10px 16px;
-  border-radius: 14px;
+  padding: 11px 16px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 700;
   color: white;
   background: var(--gradient-gold);
-  border: 1.5px solid hsl(var(--warning) / 0.4);
-  box-shadow: 0 2px 8px hsl(var(--warning) / 0.25);
+  border: 1.5px solid hsl(var(--warning) / 0.35);
+  box-shadow: 0 2px 8px hsl(var(--warning) / 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,16 +196,16 @@
   transform: scale(0.97);
 }
 
-/* Link-style row (nav item) */
+/* ── Link Row (nav item) ── */
 .settings-link-row {
   width: 100%;
   padding: 12px;
-  border-radius: 14px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 12px;
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.2);
+  border: 1px solid hsl(var(--border) / 0.6);
   color: hsl(var(--foreground));
   font-size: 13px;
   font-weight: 600;
@@ -209,7 +218,7 @@
   background: hsl(var(--muted) / 0.4);
 }
 
-/* Info badges */
+/* ── Badges ── */
 .settings-badge {
   display: inline-flex;
   align-items: center;
@@ -222,23 +231,23 @@
 
 .settings-badge--green {
   background: hsl(var(--primary) / 0.1);
-  border: 1px solid hsl(var(--primary) / 0.25);
+  border: 1px solid hsl(var(--primary) / 0.2);
   color: hsl(var(--primary));
 }
 
 .settings-badge--amber {
   background: hsl(var(--warning) / 0.1);
-  border: 1px solid hsl(var(--warning) / 0.25);
+  border: 1px solid hsl(var(--warning) / 0.2);
   color: hsl(var(--warning));
 }
 
 .settings-badge--red {
-  background: hsl(var(--destructive) / 0.08);
-  border: 1px solid hsl(var(--destructive) / 0.2);
+  background: hsl(var(--destructive) / 0.06);
+  border: 1px solid hsl(var(--destructive) / 0.15);
   color: hsl(var(--destructive));
 }
 
-/* Premium tag */
+/* ── Premium Tag ── */
 .settings-premium-tag {
   display: inline-flex;
   align-items: center;
@@ -250,33 +259,32 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: var(--gradient-gold);
-  border: 1px solid hsl(var(--warning) / 0.5);
+  border: 1px solid hsl(var(--warning) / 0.4);
   color: white;
 }
 
-/* Warning box */
+/* ── Info/Warning Boxes ── */
 .settings-warning {
   padding: 10px 12px;
   border-radius: 12px;
-  background: hsl(var(--warning) / 0.08);
-  border: 1px solid hsl(var(--warning) / 0.2);
+  background: hsl(var(--warning) / 0.06);
+  border: 1px solid hsl(var(--warning) / 0.15);
 }
 
-/* Info box */
 .settings-info {
   padding: 10px 12px;
   border-radius: 12px;
-  background: hsl(var(--primary) / 0.06);
-  border: 1px solid hsl(var(--primary) / 0.15);
+  background: hsl(var(--primary) / 0.05);
+  border: 1px solid hsl(var(--primary) / 0.12);
 }
 
-/* Tab pills */
+/* ── Tab Navigation Pills ── */
 .settings-tab {
   display: flex;
   align-items: center;
   gap: 5px;
   padding: 7px 12px;
-  border-radius: 12px;
+  border-radius: 10px;
   white-space: nowrap;
   font-size: 12px;
   font-weight: 600;
@@ -292,16 +300,16 @@
 .settings-tab--active {
   background: hsl(var(--primary));
   color: white;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
 }
 
 .settings-tab--inactive {
-  background: hsl(var(--card));
+  background: hsl(var(--muted) / 0.35);
   color: hsl(var(--muted-foreground));
-  border: 1px solid hsl(var(--border));
+  border: 1px solid hsl(var(--border) / 0.6);
 }
 
-/* Confirm dialog overlay */
+/* ── Confirm Dialog ── */
 .settings-dialog-overlay {
   position: fixed;
   inset: 0;
@@ -316,9 +324,9 @@
 .settings-dialog-scrim {
   position: absolute;
   inset: 0;
-  background: hsla(var(--foreground) / 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: hsla(var(--foreground) / 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .settings-dialog-card {
@@ -326,13 +334,13 @@
   max-width: 320px;
   width: 100%;
   padding: 24px;
-  border-radius: 22px;
+  border-radius: 20px;
   background: hsl(var(--card));
-  border: 1.5px solid hsl(var(--border));
+  border: 1px solid hsl(var(--border));
   box-shadow: var(--shadow-xl);
 }
 
-/* Slider helpers */
+/* ── Slider Helpers ── */
 .settings-slider-label {
   display: flex;
   align-items: center;
@@ -344,6 +352,7 @@
   font-size: 14px;
   font-weight: 700;
   color: hsl(var(--primary));
+  font-variant-numeric: tabular-nums;
 }
 
 .settings-slider-range {
@@ -354,7 +363,7 @@
   margin-top: 4px;
 }
 
-/* Avatar */
+/* ── Avatar ── */
 .settings-avatar-ring {
   width: 72px;
   height: 72px;
@@ -362,9 +371,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(var(--primary) / 0.08);
-  border: 2.5px solid hsl(var(--primary) / 0.25);
-  box-shadow: 0 0 16px hsl(var(--primary) / 0.1);
+  background: hsl(var(--primary) / 0.06);
+  border: 2.5px solid hsl(var(--primary) / 0.2);
+  box-shadow: 0 0 16px hsl(var(--primary) / 0.08);
 }
 
 .settings-avatar-option {
@@ -386,16 +395,16 @@
 }
 
 .settings-avatar-option--unselected {
-  background: hsl(var(--muted) / 0.5);
+  background: hsl(var(--muted) / 0.4);
   border: 1px solid hsl(var(--border));
   color: hsl(var(--muted-foreground));
 }
 
-/* Theme selector cards */
+/* ── Theme Selector Cards ── */
 .settings-theme-card {
   position: relative;
-  padding: 12px;
-  border-radius: 14px;
+  padding: 12px 8px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -409,20 +418,20 @@
 }
 
 .settings-theme-card--selected {
-  background: hsl(var(--primary) / 0.1);
-  border: 1.5px solid hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.08);
+  border: 1.5px solid hsl(var(--primary) / 0.25);
 }
 
 .settings-theme-card--unselected {
-  background: hsl(var(--card));
-  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.2);
+  border: 1.5px solid hsl(var(--border) / 0.6);
 }
 
-/* Sound theme pills */
+/* ── Sound Theme Pills ── */
 .settings-sound-pill {
   flex: 1;
   padding: 10px 8px;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -438,26 +447,26 @@
 .settings-sound-pill--selected {
   background: hsl(var(--primary));
   color: white;
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.3);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.25);
 }
 
 .settings-sound-pill--unselected {
-  background: hsl(var(--card));
-  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.3);
+  border: 1.5px solid hsl(var(--border) / 0.6);
   color: hsl(var(--muted-foreground));
 }
 
-/* About hero */
+/* ── About Hero ── */
 .settings-about-hero {
   position: relative;
   padding: 28px 20px;
   text-align: center;
-  border-radius: 18px;
+  border-radius: 16px;
   background: linear-gradient(
     170deg,
-    hsl(var(--primary) / 0.08) 0%,
-    hsl(var(--card)) 60%,
-    hsl(var(--primary) / 0.04) 100%
+    hsl(var(--primary) / 0.06) 0%,
+    hsl(var(--card)) 50%,
+    hsl(var(--primary) / 0.03) 100%
   );
   border: 1px solid hsl(var(--border));
   overflow: hidden;
@@ -472,6 +481,54 @@
   align-items: center;
   justify-content: center;
   background: hsl(var(--primary));
-  border: 3px solid hsl(var(--primary) / 0.3);
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.25);
+  border: 3px solid hsl(var(--primary) / 0.25);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+}
+
+/* ── Inline Toggle Row (compact, no background) ── */
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.settings-toggle-row + .settings-toggle-row {
+  border-top: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* ── Disabled state ── */
+.settings-btn-primary:disabled,
+.settings-btn-secondary:disabled,
+.settings-btn-danger:disabled,
+.settings-btn-gold:disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── Danger Card modifier ── */
+.settings-card--danger {
+  border-color: hsl(var(--destructive) / 0.15);
+}
+
+.settings-card--danger .settings-section-title span {
+  color: hsl(var(--destructive));
+}
+
+/* ── Compact info text ── */
+.settings-hint {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+}
+
+/* ── Version badge ── */
+.settings-version-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: hsl(var(--muted) / 0.3);
+  border: 1px solid hsl(var(--border) / 0.6);
 }

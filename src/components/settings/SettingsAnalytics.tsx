@@ -50,7 +50,7 @@ export const SettingsAnalytics = () => {
                 </div>
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">Weekly Goal</span>
               </div>
-              <span className="text-sm font-bold text-[hsl(var(--muted-foreground))]">{formatDuration(settings.weeklyGoalMinutes * 60)}</span>
+              <span className="settings-slider-value text-[hsl(var(--muted-foreground))]">{formatDuration(settings.weeklyGoalMinutes * 60)}</span>
             </div>
             <Slider min={60} max={2400} step={60} value={[settings.weeklyGoalMinutes]}
               onValueChange={([value]) => updateSettings({ weeklyGoalMinutes: value })} className="w-full" />
@@ -60,10 +60,10 @@ export const SettingsAnalytics = () => {
       </div>
 
       {/* Reset Analytics */}
-      <div className="settings-card">
+      <div className="settings-card settings-card--danger">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)', border: '1px solid rgba(196,100,100,0.2)' }}>
+            <div className="w-8 h-8 rounded-[8px] flex items-center justify-center bg-[hsl(var(--destructive)/0.08)]">
               <Trash2 className="w-4 h-4 text-[hsl(var(--destructive))]" />
             </div>
             <div>
@@ -72,8 +72,7 @@ export const SettingsAnalytics = () => {
             </div>
           </div>
           <button
-            className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95"
-            style={{ background: 'hsl(var(--destructive) / 0.08)', border: '1px solid hsl(var(--destructive) / 0.2)', color: 'hsl(var(--destructive))' }}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))]"
             onClick={() => setResetDialogOpen(true)}
           >
             Reset

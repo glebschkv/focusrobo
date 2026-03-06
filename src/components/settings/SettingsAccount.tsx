@@ -153,7 +153,7 @@ export const SettingsAccount = () => {
 
           <button onClick={handleRestorePurchases} disabled={isRestoring} className="settings-btn-secondary">
             <RefreshCw className={`w-4 h-4 ${isRestoring ? 'animate-spin' : ''}`} />
-            <span className="text-sm font-semibold">{isRestoring ? 'Restoring...' : 'Restore Purchases'}</span>
+            <span>{isRestoring ? 'Restoring...' : 'Restore Purchases'}</span>
           </button>
 
           <p className="text-[11px] text-[hsl(var(--muted-foreground))] text-center">
@@ -173,7 +173,7 @@ export const SettingsAccount = () => {
           <div className="settings-row">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                isGuestMode ? 'settings-icon-box--inactive' : 'bg-[hsl(var(--primary))] shadow-[0_2px_8px_rgba(76,167,113,0.3)]'
+                isGuestMode ? 'settings-icon-box--inactive' : 'settings-icon-box--active'
               }`}>
                 {isGuestMode ? <User className="w-5 h-5" /> : <Mail className="w-5 h-5 text-white" />}
               </div>
@@ -223,7 +223,7 @@ export const SettingsAccount = () => {
         </div>
         <button className="settings-btn-secondary" disabled={isSigningOut} onClick={() => setSignOutDialogOpen(true)}>
           <LogOut className="w-4 h-4" />
-          <span className="text-sm font-semibold">{isLocalOnlyGuest ? 'Exit Guest Mode' : 'Sign Out'}</span>
+          <span>{isLocalOnlyGuest ? 'Exit Guest Mode' : 'Sign Out'}</span>
         </button>
       </div>
 
@@ -241,12 +241,12 @@ export const SettingsAccount = () => {
 
       {/* Danger Zone */}
       {!!session && (
-        <div className="settings-card" style={{ borderColor: 'rgba(196,100,100,0.25)' }}>
+        <div className="settings-card settings-card--danger">
           <div className="settings-section-title">
-            <div className="w-7 h-7 rounded-[10px] flex items-center justify-center" style={{ background: 'rgba(196,100,100,0.12)' }}>
+            <div className="w-7 h-7 rounded-[8px] flex items-center justify-center bg-[hsl(var(--destructive)/0.08)]">
               <Trash2 className="w-3.5 h-3.5 text-[hsl(var(--destructive))]" />
             </div>
-            <span className="text-[13px] font-bold text-[hsl(var(--destructive))]">Danger Zone</span>
+            <span>Danger Zone</span>
           </div>
           <button className="settings-btn-danger" disabled={isDeleting} onClick={() => setDeleteDialogOpen(true)}>
             {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
