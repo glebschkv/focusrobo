@@ -7,13 +7,13 @@
     transition: opacity 0.6s ease-out;
   }
 
-  /* Cloud drift - slow for distant clouds */
+  /* Cloud drift - slow for distant clouds (smaller movement = farther away) */
   @keyframes cloud-drift-slow {
     0%, 100% {
       transform: translateX(0);
     }
     50% {
-      transform: translateX(20px);
+      transform: translateX(12px);
     }
   }
 
@@ -21,13 +21,13 @@
     animation: cloud-drift-slow 30s ease-in-out infinite;
   }
 
-  /* Cloud drift - faster for closer clouds */
+  /* Cloud drift - faster for closer clouds (larger movement = closer) */
   @keyframes cloud-drift {
     0%, 100% {
       transform: translateX(0);
     }
     50% {
-      transform: translateX(15px);
+      transform: translateX(25px);
     }
   }
 
@@ -51,22 +51,30 @@
     animation: pulse-subtle 4s ease-in-out infinite;
   }
 
-  /* Bird silhouette drift */
+  /* Bird silhouette drift — starts off-screen left, exits off-screen right, seamless loop */
   @keyframes bird-drift {
     0% {
-      transform: translateX(0) translateY(0);
+      transform: translateX(-60px) translateY(0);
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
     }
     25% {
-      transform: translateX(30px) translateY(-5px);
+      transform: translateX(20vw) translateY(-5px);
     }
     50% {
-      transform: translateX(60px) translateY(0);
+      transform: translateX(45vw) translateY(0);
     }
     75% {
-      transform: translateX(90px) translateY(-3px);
+      transform: translateX(70vw) translateY(-3px);
+    }
+    95% {
+      opacity: 1;
     }
     100% {
-      transform: translateX(120px) translateY(0);
+      transform: translateX(calc(100vw + 60px)) translateY(0);
+      opacity: 0;
     }
   }
 
@@ -83,19 +91,17 @@
     0%, 100% {
       opacity: 1;
       transform: scale(1);
-      filter: brightness(1);
     }
     25% {
-      opacity: 0.7;
+      opacity: 0.6;
       transform: scale(0.9);
     }
     50% {
-      opacity: 0.3;
+      opacity: 0.2;
       transform: scale(0.75);
-      filter: brightness(0.8);
     }
     75% {
-      opacity: 0.8;
+      opacity: 0.7;
       transform: scale(0.95);
     }
   }
@@ -254,11 +260,11 @@
   @keyframes neon-pulse {
     0%, 100% {
       opacity: 0.6;
-      filter: brightness(1);
+      transform: scale(1);
     }
     50% {
-      opacity: 0.8;
-      filter: brightness(1.2);
+      opacity: 0.9;
+      transform: scale(1.02);
     }
   }
 
@@ -310,12 +316,410 @@
     animation: car-right 18s linear infinite;
   }
 
-  /* GPU acceleration for smooth animations on mobile */
+  /* ============================================
+     NEW ENHANCED THEME ANIMATIONS
+     ============================================ */
+
+  /* --- SKY THEME --- */
+
+  /* Pollen / dust motes floating upward */
+  @keyframes pollen-float {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: var(--pollen-opacity, 0.5); }
+    50% { transform: translateY(-50vh) translateX(var(--drift, 10px)); opacity: calc(var(--pollen-opacity, 0.5) * 0.8); }
+    100% { transform: translateY(-100vh) translateX(0); opacity: 0; }
+  }
+
+  .animate-pollen-float {
+    animation: pollen-float var(--pollen-duration, 18s) ease-in-out infinite;
+  }
+
+  /* Grass blade sway */
+  @keyframes grass-sway {
+    0%, 100% { transform: skewX(0deg); }
+    25% { transform: skewX(3deg); }
+    75% { transform: skewX(-2deg); }
+  }
+
+  .animate-grass-sway {
+    animation: grass-sway 6s ease-in-out infinite;
+  }
+
+  /* Butterfly path + wing flap */
+  @keyframes butterfly-path {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(60px, -25px) rotate(5deg); }
+    40% { transform: translate(120px, 5px) rotate(-3deg); }
+    60% { transform: translate(80px, -35px) rotate(4deg); }
+    80% { transform: translate(40px, -10px) rotate(-2deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  @keyframes wing-flap {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.3); }
+  }
+
+  .animate-butterfly-path {
+    animation: butterfly-path 30s ease-in-out infinite;
+  }
+
+  .animate-wing-flap {
+    animation: wing-flap 0.4s ease-in-out infinite;
+  }
+
+  /* Lens flare sway */
+  @keyframes flare-sway {
+    0%, 100% { transform: rotate(0deg) translateY(0); opacity: 0.15; }
+    50% { transform: rotate(2deg) translateY(3px); opacity: 0.22; }
+  }
+
+  .animate-flare-sway {
+    animation: flare-sway 20s ease-in-out infinite;
+  }
+
+  /* --- SUNSET THEME --- */
+
+  /* Light leak drift - cinematic lens effect */
+  @keyframes light-leak {
+    0%, 100% { transform: translateX(0) scale(1); opacity: 0.1; }
+    50% { transform: translateX(30px) scale(1.1); opacity: 0.15; }
+  }
+
+  .animate-light-leak {
+    animation: light-leak 20s ease-in-out infinite;
+  }
+
+  /* Water ripple shimmer */
+  @keyframes water-ripple {
+    0%, 100% { transform: scaleX(1) translateY(0); }
+    50% { transform: scaleX(1.02) translateY(1px); }
+  }
+
+  .animate-water-ripple {
+    animation: water-ripple 4s ease-in-out infinite;
+  }
+
+  /* Palm tree sway */
+  @keyframes palm-sway {
+    0%, 100% { transform: skewX(0deg) rotate(0deg); }
+    50% { transform: skewX(1.5deg) rotate(0.5deg); }
+  }
+
+  .animate-palm-sway {
+    animation: palm-sway 8s ease-in-out infinite;
+  }
+
+  /* Stars appearing / fading in */
+  @keyframes star-fade-in {
+    0%, 40% { opacity: 0; }
+    60%, 100% { opacity: var(--star-max-opacity, 0.3); }
+  }
+
+  .animate-star-fade-in {
+    animation: star-fade-in 60s ease-in-out infinite alternate;
+  }
+
+  /* Bird wing flap (SVG path version) */
+  @keyframes bird-wing-flap {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.4); }
+  }
+
+  .animate-bird-wing-flap {
+    animation: bird-wing-flap 0.8s ease-in-out infinite;
+  }
+
+  /* --- NIGHT THEME --- */
+
+  /* Nebula cloud drift */
+  @keyframes nebula-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(10px, -5px) scale(1.05); }
+    66% { transform: translate(-8px, 3px) scale(0.97); }
+  }
+
+  .animate-nebula-drift {
+    animation: nebula-drift 40s ease-in-out infinite;
+  }
+
+  /* Owl head turn */
+  @keyframes owl-head {
+    0%, 40%, 100% { transform: rotate(0deg); }
+    45% { transform: rotate(10deg); }
+    55% { transform: rotate(10deg); }
+    60% { transform: rotate(0deg); }
+    80% { transform: rotate(-8deg); }
+    90% { transform: rotate(-8deg); }
+    95% { transform: rotate(0deg); }
+  }
+
+  .animate-owl-head {
+    animation: owl-head 8s ease-in-out infinite;
+  }
+
+  /* Cricket bioluminescence pulse */
+  @keyframes cricket-pulse {
+    0%, 15%, 100% { opacity: 0; }
+    5% { opacity: 0.7; }
+    10% { opacity: 0; }
+    12% { opacity: 0.5; }
+  }
+
+  .animate-cricket-pulse {
+    animation: cricket-pulse 6s ease-in-out infinite;
+  }
+
+  /* Shooting star variant 2 - different angle */
+  @keyframes shooting-star-2 {
+    0% { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 0; }
+    4% { opacity: 1; }
+    12% { transform: translateX(120px) translateY(70px) rotate(-35deg); opacity: 1; }
+    18% { transform: translateX(180px) translateY(105px) rotate(-35deg); opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .animate-shooting-star-2 {
+    animation: shooting-star-2 15s ease-out infinite;
+  }
+
+  /* Shooting star variant 3 - steeper */
+  @keyframes shooting-star-3 {
+    0% { transform: translateX(0) translateY(0) rotate(-55deg); opacity: 0; }
+    3% { opacity: 1; }
+    10% { transform: translateX(80px) translateY(90px) rotate(-55deg); opacity: 1; }
+    15% { transform: translateX(120px) translateY(135px) rotate(-55deg); opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .animate-shooting-star-3 {
+    animation: shooting-star-3 22s ease-out infinite;
+  }
+
+  /* --- FOREST THEME --- */
+
+  /* Falling leaf tumble */
+  @keyframes leaf-tumble {
+    0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    50% { transform: translateY(50vh) translateX(var(--leaf-drift, 20px)) rotate(360deg); }
+    100% { transform: translateY(105vh) translateX(0) rotate(720deg); opacity: 0; }
+  }
+
+  .animate-leaf-tumble {
+    animation: leaf-tumble var(--leaf-duration, 20s) ease-in-out infinite;
+  }
+
+  /* Mushroom bioluminescent glow */
+  @keyframes mushroom-glow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.15); }
+  }
+
+  .animate-mushroom-glow {
+    animation: mushroom-glow 3s ease-in-out infinite;
+  }
+
+  /* Creek / stream glint */
+  @keyframes creek-glint {
+    0%, 85%, 100% { opacity: 0; }
+    90% { opacity: 0.7; }
+    95% { opacity: 0; }
+  }
+
+  .animate-creek-glint {
+    animation: creek-glint var(--glint-duration, 6s) ease-in-out infinite;
+  }
+
+  /* Canopy shadow drift */
+  @keyframes canopy-shadow-drift {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(var(--shadow-drift-x, 3px), var(--shadow-drift-y, 2px)); }
+  }
+
+  .animate-canopy-shadow {
+    animation: canopy-shadow-drift 15s ease-in-out infinite;
+  }
+
+  /* --- SNOW THEME --- */
+
+  /* Snowfall drift down with sway */
+  @keyframes snowfall {
+    0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translateY(50vh) translateX(var(--sway, 15px)); }
+    100% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  }
+
+  .animate-snowfall {
+    animation: snowfall var(--snowfall-duration, 8s) ease-in-out infinite;
+  }
+
+  /* Full aurora borealis wave */
+  @keyframes aurora-wave {
+    0% { transform: translateX(-20px) scaleY(0.8); opacity: 0.12; }
+    25% { transform: translateX(10px) scaleY(1.2); opacity: 0.25; }
+    50% { transform: translateX(30px) scaleY(0.9); opacity: 0.18; }
+    75% { transform: translateX(-5px) scaleY(1.1); opacity: 0.22; }
+    100% { transform: translateX(-20px) scaleY(0.8); opacity: 0.12; }
+  }
+
+  .animate-aurora-wave {
+    animation: aurora-wave var(--aurora-duration, 10s) ease-in-out infinite;
+  }
+
+  /* Ice crystal sparkle */
+  @keyframes crystal-sparkle {
+    0%, 90%, 100% { opacity: 1; transform: scale(1); }
+    95% { opacity: 1; transform: scale(1.3); }
+  }
+
+  .animate-crystal-sparkle {
+    animation: crystal-sparkle var(--sparkle-duration, 5s) ease-in-out infinite;
+  }
+
+  /* Breath fog effect */
+  @keyframes breath-fog {
+    0% { transform: scale(0.5) translateY(0); opacity: 0; }
+    20% { opacity: 0.15; }
+    60% { transform: scale(1.2) translateY(-5px); opacity: 0.08; }
+    100% { transform: scale(1.5) translateY(-10px); opacity: 0; }
+  }
+
+  .animate-breath-fog {
+    animation: breath-fog 4s ease-out infinite;
+  }
+
+  /* Cabin firelight flicker */
+  @keyframes firelight-flicker {
+    0%, 100% { opacity: 0.8; }
+    20% { opacity: 0.9; }
+    40% { opacity: 0.7; }
+    60% { opacity: 1; }
+    80% { opacity: 0.75; }
+  }
+
+  .animate-firelight-flicker {
+    animation: firelight-flicker 2s ease-in-out infinite;
+  }
+
+  /* --- CITY THEME --- */
+
+  /* Rain fall */
+  @keyframes rain-fall {
+    0% { transform: translateY(-20px); opacity: 0; }
+    10% { opacity: var(--rain-opacity, 0.3); }
+    90% { opacity: var(--rain-opacity, 0.3); }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .animate-rain-fall {
+    animation: rain-fall var(--rain-duration, 2s) linear infinite;
+  }
+
+  /* Helicopter traverse */
+  @keyframes heli-traverse {
+    0% { transform: translateX(-30px) translateY(0); }
+    48% { transform: translateX(calc(100vw + 30px)) translateY(-10px); }
+    49% { opacity: 0; }
+    99% { opacity: 0; transform: translateX(-30px); }
+    100% { opacity: 1; transform: translateX(-30px) translateY(0); }
+  }
+
+  .animate-heli-traverse {
+    animation: heli-traverse 40s linear infinite;
+  }
+
+  /* Searchlight sweep */
+  @keyframes searchlight-sweep {
+    0%, 100% { transform: skewX(-15deg); }
+    50% { transform: skewX(15deg); }
+  }
+
+  .animate-searchlight-sweep {
+    animation: searchlight-sweep 3s ease-in-out infinite;
+  }
+
+  /* Manhole steam rise — starts invisible, fades in then out to avoid pop at loop reset */
+  @keyframes steam-rise {
+    0% { transform: translateY(0) scale(0.8); opacity: 0; }
+    10% { opacity: 0.2; }
+    100% { transform: translateY(-20px) scale(1.3); opacity: 0; }
+  }
+
+  .animate-steam-rise {
+    animation: steam-rise 4s ease-out infinite;
+  }
+
+  /* Antenna FAA blink */
+  @keyframes antenna-blink {
+    0%, 4%, 100% { opacity: 1; }
+    5%, 95% { opacity: 0; }
+  }
+
+  .animate-antenna-blink {
+    animation: antenna-blink 2s steps(1) infinite;
+  }
+
+  /* Billboard color cycle */
+  @keyframes billboard-cycle {
+    0% { fill: hsl(200 80% 55%); }
+    25% { fill: hsl(330 70% 55%); }
+    50% { fill: hsl(0 0% 95%); }
+    75% { fill: hsl(180 75% 50%); }
+    100% { fill: hsl(200 80% 55%); }
+  }
+
+  .animate-billboard-cycle {
+    animation: billboard-cycle 4s ease-in-out infinite;
+  }
+
+  /* Airplane crossing sky */
+  @keyframes airplane-cross {
+    0% { transform: translate(0, 0); opacity: 0; }
+    2% { opacity: 1; }
+    98% { opacity: 1; }
+    100% { transform: translate(calc(100vw + 40px), calc(30vh)); opacity: 0; }
+  }
+
+  .animate-airplane-cross {
+    animation: airplane-cross 30s linear infinite;
+  }
+
+  /* Airplane beacon blink */
+  @keyframes beacon-blink {
+    0%, 45%, 55%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  .animate-beacon-blink {
+    animation: beacon-blink 1s steps(1) infinite;
+  }
+
+  /* --- CROSS-CUTTING --- */
+
+  /* Progress ring head glow pulse */
+  @keyframes ring-head-pulse {
+    0%, 100% { opacity: 0.8; r: 6; }
+    50% { opacity: 1; r: 8; }
+  }
+
+  .animate-ring-head-pulse {
+    animation: ring-head-pulse 2s ease-in-out infinite;
+  }
+
+  /* ============================================
+     GPU ACCELERATION FOR SMOOTH ANIMATIONS
+     ============================================ */
+
   .animate-cloud-drift,
   .animate-cloud-drift-slow,
   .animate-twinkle,
   .animate-shooting-star,
+  .animate-shooting-star-2,
+  .animate-shooting-star-3,
   .animate-aurora,
+  .animate-aurora-wave,
   .animate-ray-sway,
   .animate-mist-drift,
   .animate-firefly,
@@ -325,18 +729,53 @@
   .animate-car-left,
   .animate-car-right,
   .animate-bird-drift,
-  .animate-pulse-subtle {
+  .animate-bird-wing-flap,
+  .animate-pulse-subtle,
+  .animate-pollen-float,
+  .animate-grass-sway,
+  .animate-butterfly-path,
+  .animate-wing-flap,
+  .animate-flare-sway,
+  .animate-light-leak,
+  .animate-water-ripple,
+  .animate-palm-sway,
+  .animate-star-fade-in,
+  .animate-nebula-drift,
+  .animate-owl-head,
+  .animate-cricket-pulse,
+  .animate-leaf-tumble,
+  .animate-mushroom-glow,
+  .animate-creek-glint,
+  .animate-canopy-shadow,
+  .animate-crystal-sparkle,
+  .animate-breath-fog,
+  .animate-firelight-flicker,
+  .animate-rain-fall,
+  .animate-heli-traverse,
+  .animate-searchlight-sweep,
+  .animate-steam-rise,
+  .animate-antenna-blink,
+  .animate-billboard-cycle,
+  .animate-airplane-cross,
+  .animate-beacon-blink,
+  .animate-ring-head-pulse {
     will-change: transform, opacity;
     backface-visibility: hidden;
   }
 
-  /* Reduced motion support for accessibility */
+  /* ============================================
+     REDUCED MOTION SUPPORT FOR ACCESSIBILITY
+     ============================================ */
+
   @media (prefers-reduced-motion: reduce) {
     .animate-cloud-drift,
     .animate-cloud-drift-slow,
     .animate-twinkle,
     .animate-shooting-star,
+    .animate-shooting-star-2,
+    .animate-shooting-star-3,
     .animate-aurora,
+    .animate-aurora-wave,
     .animate-ray-sway,
     .animate-mist-drift,
     .animate-firefly,
@@ -346,7 +785,36 @@
     .animate-car-left,
     .animate-car-right,
     .animate-bird-drift,
-    .animate-pulse-subtle {
+    .animate-bird-wing-flap,
+    .animate-pulse-subtle,
+    .animate-pollen-float,
+    .animate-grass-sway,
+    .animate-butterfly-path,
+    .animate-wing-flap,
+    .animate-flare-sway,
+    .animate-light-leak,
+    .animate-water-ripple,
+    .animate-palm-sway,
+    .animate-star-fade-in,
+    .animate-nebula-drift,
+    .animate-owl-head,
+    .animate-cricket-pulse,
+    .animate-leaf-tumble,
+    .animate-mushroom-glow,
+    .animate-creek-glint,
+    .animate-canopy-shadow,
+    .animate-crystal-sparkle,
+    .animate-breath-fog,
+    .animate-firelight-flicker,
+    .animate-rain-fall,
+    .animate-heli-traverse,
+    .animate-searchlight-sweep,
+    .animate-steam-rise,
+    .animate-antenna-blink,
+    .animate-billboard-cycle,
+    .animate-airplane-cross,
+    .animate-beacon-blink,
+    .animate-ring-head-pulse {
       animation: none !important;
     }
 
@@ -391,4 +859,3 @@
     );
     animation: xp-shine 2s ease-in-out infinite;
   }
-
