@@ -487,7 +487,7 @@ export const PetLand = () => {
   }, [gridSize, setZoom]);
 
   // Pet detail card state (replaces old tooltip)
-  const [selectedPet, setSelectedPet] = useState<{ cell: LandCell; index: number } | null>(null);
+  const [selectedPet, setSelectedPet] = useState<{ cell: LandCell; index: number; rect?: DOMRect } | null>(null);
 
   // Clear new pet glow after 8 seconds
   useEffect(() => {
@@ -515,10 +515,10 @@ export const PetLand = () => {
     }
   }, [milestoneReached, clearMilestone, haptic]);
 
-  const handlePetTap = useCallback((index: number) => {
+  const handlePetTap = useCallback((index: number, rect?: DOMRect) => {
     const cell = currentLand.cells[index];
     if (cell) {
-      setSelectedPet({ cell, index });
+      setSelectedPet({ cell, index, rect });
     }
   }, [currentLand.cells]);
 
@@ -582,8 +582,15 @@ export const PetLand = () => {
 
   return (
     <div className={`pet-land ${growthClass} ${perfClass}`} style={{ background: skyGradient }}>
-      {/* Sky — parallax layer (slowest) */}
-      <div className="pet-land__sky" ref={skyRef}>
+      {/* Sky — parallax layer (slowest), theme-responsive cloud/sun colors */}
+      <div
+        className="pet-land__sky"
+        ref={skyRef}
+        style={{
+          '--cloud-color': theme.cloudColor,
+          '--sun-color': theme.sunColor,
+        } as React.CSSProperties}
+      >
         <div className="pet-land__sun" />
 
         <div className="pet-land__rays">
@@ -665,8 +672,21 @@ export const PetLand = () => {
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">
+                  <div className="pet-land__empty-egg">
+                    <svg width="48" height="56" viewBox="0 0 48 56" fill="none">
+                      <ellipse cx="24" cy="32" rx="18" ry="22" fill="white" fillOpacity="0.9" stroke="hsl(150 40% 45%)" strokeWidth="2"/>
+                      <ellipse cx="24" cy="28" rx="12" ry="14" fill="hsl(150 40% 90%)" fillOpacity="0.6"/>
+                      <path d="M18 20c2-4 10-4 12 0" stroke="hsl(150 40% 60%)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                      <circle cx="20" cy="36" r="2" fill="hsl(150 40% 75%)" fillOpacity="0.5"/>
+                      <circle cx="28" cy="38" r="1.5" fill="hsl(150 40% 75%)" fillOpacity="0.4"/>
+                    </svg>
+                    <div className="pet-land__empty-sparkle-ring" />
+                  </div>
+                  <span className="pet-land__empty-title">
+                    Your island awaits!
+                  </span>
                   <span className="pet-land__empty-hint-text">
-                    Complete a focus session<br />to discover your first pet!
+                    Complete a focus session to<br />discover your first pet
                   </span>
                   <button
                     className="pet-land__empty-cta"
@@ -675,6 +695,10 @@ export const PetLand = () => {
                       window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'timer' }));
                     }}
                   >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     Start Focusing
                   </button>
                 </div>
@@ -685,12 +709,33 @@ export const PetLand = () => {
         </div>
       </div>
 
+      {/* Contextual nudge chip */}
+      {filledCount > 0 && filledCount < tierCapacity && (
+        <button
+          className="pet-land__nudge"
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'timer' }));
+          }}
+        >
+          <span className="pet-land__nudge-text">
+            {tierCapacity - filledCount <= 3
+              ? `Almost full! ${tierCapacity - filledCount} more to expand`
+              : `${filledCount}/${tierCapacity} pets · Focus to discover more`
+            }
+          </span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      )}
+
       {/* Compact pet tooltip */}
       {selectedPet && (
         <PetTooltip
           cell={selectedPet.cell}
           index={selectedPet.index}
           gridSize={gridSize}
+          petRect={selectedPet.rect}
           onClose={handleCloseDetail}
         />
       )}
@@ -752,7 +797,7 @@ export const PetLand = () => {
                 >
                   <div
                     className="pet-land__theme-swatch"
-                    style={{ background: `linear-gradient(135deg, ${t.grassLight[0]}, ${t.grassDark[0]})` }}
+                    style={{ background: `linear-gradient(180deg, ${t.sky[0]} 0%, ${t.sky[2]} 40%, ${t.grassLight[0]} 65%, ${t.grassDark[0]} 100%)` }}
                   />
                   <span className="pet-land__theme-name">{t.name}</span>
                 </button>

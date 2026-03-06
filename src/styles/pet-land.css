@@ -171,7 +171,7 @@
   pointer-events: none;
 }
 
-/* Clouds — soft, volumetric puffs with multiple bumps and warm highlights */
+/* Clouds — soft, volumetric puffs, theme-responsive via --cloud-color */
 .pet-land__cloud {
   position: absolute;
   border-radius: 50px;
@@ -187,14 +187,13 @@
   border-radius: 50%;
 }
 
-/* Cloud 1 — large, fluffy, sage-tinted */
+/* Cloud 1 — large, fluffy */
 .pet-land__cloud--1 {
   top: 9%;
   left: -120px;
   width: 90px;
   height: 28px;
-  background: rgba(240, 255, 245, 0.6);
-  box-shadow: inset 0 -4px 8px rgba(160, 200, 170, 0.12);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.6));
   animation-duration: 80s;
 }
 .pet-land__cloud--1::before {
@@ -202,24 +201,24 @@
   left: 18px;
   width: 36px;
   height: 28px;
-  background: rgba(240, 255, 245, 0.65);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.65));
 }
 .pet-land__cloud--1::after {
   top: -8px;
   left: 48px;
   width: 26px;
   height: 20px;
-  background: rgba(240, 255, 245, 0.5);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.5));
 }
 
-/* Cloud 2 — big and wide, slightly transparent */
+/* Cloud 2 — big and wide */
 .pet-land__cloud--2 {
   top: 18%;
   left: -140px;
   width: 110px;
   height: 30px;
-  background: rgba(240, 255, 245, 0.45);
-  box-shadow: inset 0 -4px 8px rgba(160, 200, 170, 0.1);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.45));
+  opacity: 0.75;
   animation-duration: 100s;
   animation-delay: -40s;
 }
@@ -228,14 +227,14 @@
   left: 24px;
   width: 42px;
   height: 30px;
-  background: rgba(240, 255, 245, 0.5);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.5));
 }
 .pet-land__cloud--2::after {
   top: -10px;
   left: 62px;
   width: 30px;
   height: 22px;
-  background: rgba(240, 255, 245, 0.35);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.35));
 }
 
 /* Cloud 3 — small, high, wispy */
@@ -244,7 +243,8 @@
   left: -80px;
   width: 50px;
   height: 14px;
-  background: rgba(240, 255, 245, 0.3);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.3));
+  opacity: 0.6;
   animation-duration: 60s;
   animation-delay: -20s;
 }
@@ -253,14 +253,14 @@
   left: 10px;
   width: 20px;
   height: 14px;
-  background: rgba(240, 255, 245, 0.3);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.3));
 }
 .pet-land__cloud--3::after {
   top: -4px;
   left: 28px;
   width: 14px;
   height: 10px;
-  background: rgba(240, 255, 245, 0.2);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.2));
 }
 
 /* Cloud 4 — distant, very soft */
@@ -269,7 +269,7 @@
   left: -100px;
   width: 70px;
   height: 18px;
-  background: rgba(240, 255, 245, 0.25);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.25));
   animation-duration: 120s;
   animation-delay: -55s;
   filter: blur(1px);
@@ -279,14 +279,14 @@
   left: 14px;
   width: 28px;
   height: 18px;
-  background: rgba(240, 255, 245, 0.25);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.25));
 }
 .pet-land__cloud--4::after {
   top: -5px;
   left: 38px;
   width: 18px;
   height: 12px;
-  background: rgba(240, 255, 245, 0.18);
+  background: var(--cloud-color, rgba(240, 255, 245, 0.18));
 }
 
 /* Cloud 5 — near horizon, warm sage-tinted */
@@ -295,7 +295,7 @@
   left: -130px;
   width: 100px;
   height: 22px;
-  background: rgba(230, 245, 235, 0.3);
+  background: var(--cloud-color, rgba(230, 245, 235, 0.3));
   box-shadow: inset 0 -3px 6px rgba(160, 200, 170, 0.06);
   animation-duration: 110s;
   animation-delay: -70s;
@@ -306,14 +306,14 @@
   left: 20px;
   width: 32px;
   height: 20px;
-  background: rgba(230, 245, 235, 0.3);
+  background: var(--cloud-color, rgba(230, 245, 235, 0.3));
 }
 .pet-land__cloud--5::after {
   top: -6px;
   left: 52px;
   width: 22px;
   height: 14px;
-  background: rgba(230, 245, 235, 0.22);
+  background: var(--cloud-color, rgba(230, 245, 235, 0.22));
 }
 
 @keyframes pet-land-cloud-drift {
@@ -815,6 +815,74 @@
 @keyframes pet-land-empty-pulse {
   0%, 100% { opacity: 0.85; }
   50% { opacity: 1; }
+}
+
+/* Egg illustration wrapper */
+.pet-land__empty-egg {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+/* Sparkle ring around the egg */
+.pet-land__empty-sparkle-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+  animation: pet-land-sparkle-spin 12s linear infinite;
+}
+
+@keyframes pet-land-sparkle-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Title text above hint */
+.pet-land__empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.02em;
+}
+
+/* ── Contextual nudge chip ─────────────────────────────────────── */
+
+.pet-land__nudge {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 94px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(30, 50, 35, 0.7);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid rgba(200, 235, 210, 0.15);
+  border-radius: 20px;
+  color: rgba(240, 255, 245, 0.95);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
+  transition: transform 0.15s var(--ease-ios), background 0.15s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.pet-land__nudge:active {
+  transform: translateX(-50%) scale(0.95);
+  background: rgba(30, 50, 35, 0.85);
+}
+
+.pet-land__nudge-text {
+  white-space: nowrap;
 }
 
 /* ── Land completion overlay ──────────────────────────────────── */

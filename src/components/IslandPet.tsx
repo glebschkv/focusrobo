@@ -29,7 +29,7 @@ interface IslandPetProps {
   gridSize: number;
   isNew?: boolean;
   showTooltip: boolean;
-  onToggleTooltip: (index: number) => void;
+  onToggleTooltip: (index: number, rect?: DOMRect) => void;
   reducedAnimations?: boolean;
 }
 
@@ -39,7 +39,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    onToggleTooltip(index);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    onToggleTooltip(index, rect);
   }, [onToggleTooltip, index]);
 
   const species = getPetById(cell.petId);
