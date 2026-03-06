@@ -703,16 +703,18 @@
 .pet-land__empty-cta {
   display: inline-flex;
   align-items: center;
-  padding: 10px 24px;
+  gap: 8px;
+  padding: 12px 24px;
+  min-height: 44px;
   background: hsl(var(--primary));
   color: white;
-  font-size: var(--text-body);
+  font-size: 14px;
   font-weight: 600;
   border-radius: var(--radius-md);
   border: none;
   box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
   cursor: pointer;
-  transition: transform 0.15s var(--ease-ios), box-shadow 0.15s ease;
+  transition: transform 0.15s var(--ease-ios, ease-out), box-shadow 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -796,7 +798,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   pointer-events: auto;
-  transition: transform 0.15s var(--ease-ios), background 0.15s ease;
+  transition: transform 0.15s var(--ease-ios, ease-out), background 0.15s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
@@ -1076,9 +1078,6 @@
 .pet-land--perf-low .island-pet__shimmer {
   display: none;
 }
-.pet-land--perf-low .island-pet--devoted::before {
-  display: none;
-}
 .pet-land--perf-low .island-pet::before {
   display: none;
 }
@@ -1272,7 +1271,8 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px;
+  padding: 8px 10px;
+  min-height: 44px;
   border-radius: 10px;
   border: 2px solid transparent;
   background: rgba(0, 0, 0, 0.04);
@@ -1397,8 +1397,12 @@
 }
 
 .pet-land__info-close {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  /* 44px effective tap area via padding */
+  padding: 6px;
+  box-sizing: content-box;
+  margin: -6px;
   border-radius: 50%;
   border: none;
   background: rgba(0, 0, 0, 0.06);
