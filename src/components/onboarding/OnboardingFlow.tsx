@@ -15,7 +15,6 @@ interface OnboardingFlowProps {
 
 const PRELOAD_SRCS = [
   '/assets/sprites/humanoid/star-wizard-walk.png',
-  '/assets/worlds/snowbiome1.png',
   '/assets/icons/clock.png',
   '/assets/icons/star.png',
   '/assets/icons/paw.png',
@@ -44,7 +43,7 @@ interface ParticleConfig {
   opacity: number;
   animDuration: string;
   animDelay: string;
-  type: 'star' | 'snow';
+  type: 'sparkle' | 'leaf';
 }
 
 function generateParticles(): ParticleConfig[] {
@@ -55,7 +54,7 @@ function generateParticles(): ParticleConfig[] {
     opacity: 0.4 + Math.random() * 0.4,
     animDuration: `${8 + Math.random() * 10}s`,
     animDelay: `${-Math.random() * 12}s`,
-    type: (i % 2 === 0 ? 'star' : 'snow') as 'star' | 'snow',
+    type: (i % 2 === 0 ? 'sparkle' : 'leaf') as 'sparkle' | 'leaf',
   }));
 }
 
@@ -76,12 +75,12 @@ const FloatingParticles = memo(() => {
             width: p.size,
             height: p.size,
             opacity: p.opacity,
-            borderRadius: '50%',
-            background: p.type === 'star'
-              ? 'radial-gradient(circle, rgba(255,220,150,0.9) 0%, rgba(255,180,80,0) 70%)'
-              : 'rgba(255,255,255,0.6)',
-            boxShadow: p.type === 'star'
-              ? `0 0 ${p.size * 2}px rgba(255,200,100,0.25)`
+            borderRadius: p.type === 'leaf' ? '50% 0 50% 0' : '50%',
+            background: p.type === 'sparkle'
+              ? 'radial-gradient(circle, rgba(64,133,106,0.6) 0%, rgba(64,133,106,0) 70%)'
+              : 'rgba(64,133,106,0.2)',
+            boxShadow: p.type === 'sparkle'
+              ? `0 0 ${p.size * 2}px rgba(64,133,106,0.15)`
               : 'none',
             animationName: 'onboarding-fall',
             animationDuration: p.animDuration,
@@ -139,8 +138,8 @@ const SparkleRing = memo(() => {
               height: s.size,
               borderRadius: '50%',
               background:
-                'radial-gradient(circle, rgba(255,220,120,1) 0%, rgba(255,180,60,0) 70%)',
-              boxShadow: '0 0 6px rgba(255,200,100,0.5)',
+                'radial-gradient(circle, rgba(64,133,106,0.8) 0%, rgba(64,133,106,0) 70%)',
+              boxShadow: '0 0 6px rgba(64,133,106,0.35)',
               // Custom properties drive the CSS keyframes
               '--sparkle-tx': `${tx}px`,
               '--sparkle-ty': `${ty}px`,
@@ -176,10 +175,12 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
         style={{
           backgroundColor:
             i === current
-              ? 'rgba(255,255,255,0.95)'
-              : 'rgba(255,255,255,0.4)',
+              ? '#40856A'
+              : i < current
+                ? 'rgba(64,133,106,0.4)'
+                : 'rgba(64,133,106,0.2)',
           boxShadow:
-            i === current ? '0 0 8px rgba(255,255,255,0.4)' : 'none',
+            i === current ? '0 0 8px rgba(64,133,106,0.3)' : 'none',
         }}
       />
     ))}
@@ -345,40 +346,26 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       {/* Inject CSS keyframes once */}
       <OnboardingKeyframes />
 
-      {/* Immersive background — dark sky fading to assembly line zone feel */}
+      {/* Immersive background — warm sage sky matching PetLand */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(180deg, hsl(230 35% 14%) 0%, hsl(225 30% 22%) 25%, hsl(220 28% 32%) 50%, hsl(215 25% 45%) 70%, hsl(210 30% 60%) 85%, hsl(200 35% 75%) 100%)',
+            'linear-gradient(180deg, #8FBFA5 0%, #C4DBC8 35%, #E4EFE6 65%, #F4F8F4 100%)',
         }}
       />
 
-      {/* Snow biome ground image at bottom */}
+      {/* Warm sun glow — upper right, echoing PetLand sun */}
       <div
-        className="absolute bottom-0 left-0 right-0"
+        className="absolute pointer-events-none"
         style={{
-          height: '35%',
-          opacity: 0.3,
-          backgroundImage: 'url(/assets/worlds/snowbiome1.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center bottom',
-          maskImage:
-            'linear-gradient(to bottom, transparent 0%, black 40%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, transparent 0%, black 40%)',
-        }}
-      />
-
-      {/* Atmospheric glow — uses box-shadow trick instead of filter:blur */}
-      <div
-        className="absolute top-[20%] left-1/2 -translate-x-1/2 pointer-events-none"
-        style={{
-          width: 200,
-          height: 200,
+          top: '6%',
+          right: '14%',
+          width: 120,
+          height: 120,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(140,120,255,0.12) 0%, rgba(100,80,200,0.05) 50%, transparent 70%)',
+            'radial-gradient(circle, rgba(255,250,230,0.5) 0%, rgba(255,220,100,0.15) 40%, transparent 70%)',
         }}
       />
 
@@ -440,7 +427,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                   : 'opacity-100'
               }`}
               style={{
-                color: 'rgba(255,255,255,0.6)',
+                color: 'rgba(28,33,30,0.5)',
                 minHeight: 44,
                 minWidth: 44,
                 padding: '0 12px',
@@ -459,10 +446,10 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               className="font-semibold tracking-wide border-0 min-w-[160px] active:scale-[0.97] transition-transform duration-150"
               style={{
                 background:
-                  'linear-gradient(180deg, hsl(260 65% 62%) 0%, hsl(265 55% 48%) 100%)',
-                border: '1px solid rgba(255,255,255,0.15)',
+                  'linear-gradient(180deg, #5DA888 0%, #367256 100%)',
+                border: '1px solid rgba(255,255,255,0.2)',
                 boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(120,60,220,0.35), 0 2px 4px rgba(0,0,0,0.2)',
+                  'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(64,133,106,0.3), 0 2px 4px rgba(0,0,0,0.1)',
                 color: 'white',
                 minHeight: 48,
                 WebkitTapHighlightColor: 'transparent',
@@ -487,7 +474,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               }}
               className="w-full text-center text-xs transition-opacity duration-150 active:opacity-30"
               style={{
-                color: 'rgba(255,255,255,0.35)',
+                color: 'rgba(28,33,30,0.4)',
                 minHeight: 44,
                 lineHeight: '44px',
                 WebkitTapHighlightColor: 'transparent',
@@ -524,7 +511,7 @@ const OnboardingKeyframes = memo(() => (
 OnboardingKeyframes.displayName = 'OnboardingKeyframes';
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Step 1: Welcome — "Your adventure begins"
+// Step 1: Welcome — "Your Focus, Protected"
 // ═════════════════════════════════════════════════════════════════════════════
 
 const StepWelcome = () => (
@@ -538,18 +525,17 @@ const StepWelcome = () => (
       <h1
         className="text-4xl font-extrabold tracking-tight"
         style={{
-          color: 'rgba(255,255,255,0.95)',
-          textShadow:
-            '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
+          color: '#1C211E',
+          textShadow: '0 1px 2px rgba(0,0,0,0.06)',
         }}
       >
-        Welcome to PhoNo
+        Your Focus, Protected
       </h1>
       <p
         className="text-lg px-2 leading-relaxed font-medium"
-        style={{ color: 'rgba(220,225,245,0.85)' }}
+        style={{ color: '#535D57' }}
       >
-        Put your phone down.{'\n'}Watch your world come alive.
+        PhoNo helps you put your phone down{'\n'}and stay present. Every focused minute{'\n'}brings your island to life.
       </p>
     </motion.div>
 
@@ -567,7 +553,7 @@ const StepWelcome = () => (
           height: 180,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(160,120,255,0.18) 0%, transparent 65%)',
+            'radial-gradient(circle, rgba(64,133,106,0.15) 0%, transparent 65%)',
         }}
       />
       <div className="relative">
@@ -594,7 +580,7 @@ const StepWelcome = () => (
 
     <motion.p
       className="text-base px-6 leading-relaxed"
-      style={{ color: 'rgba(200,210,235,0.75)' }}
+      style={{ color: '#535D57' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.5 }}
@@ -605,33 +591,33 @@ const StepWelcome = () => (
 );
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Step 2: How It Works — glass cards with stagger
+// Step 2: How It Works — warm cards with stagger
 // ═════════════════════════════════════════════════════════════════════════════
 
 const howItWorksSteps = [
   {
     icon: '/assets/icons/clock.png',
     fallback: '\u23F1',
-    label: 'Set a focus timer',
-    sub: 'Choose 25 min to 3 hours and put your phone down',
-    color: 'rgba(100,180,255,0.15)',
-    borderColor: 'rgba(100,180,255,0.2)',
+    label: 'Set Your Timer',
+    sub: 'Choose how long you want to focus. Start with 25 minutes — you\u2019ve got this.',
+    color: 'rgba(64,133,106,0.10)',
+    borderColor: 'rgba(64,133,106,0.18)',
   },
   {
     icon: '/assets/icons/star.png',
     fallback: '\u2B50',
-    label: 'Earn XP & coins',
-    sub: 'Level up and unlock rewards every session',
-    color: 'rgba(255,200,80,0.12)',
-    borderColor: 'rgba(255,200,80,0.2)',
+    label: 'Stay Present',
+    sub: 'PhoNo blocks distracting apps so you can focus on what matters.',
+    color: 'rgba(196,160,51,0.08)',
+    borderColor: 'rgba(196,160,51,0.15)',
   },
   {
     icon: '/assets/icons/paw.png',
     fallback: '\uD83D\uDC3E',
-    label: 'Collect cute pets',
-    sub: '41 species to discover — longer sessions = bigger pets',
-    color: 'rgba(200,120,255,0.12)',
-    borderColor: 'rgba(200,120,255,0.2)',
+    label: 'Earn Rewards',
+    sub: 'Complete sessions to earn XP, coins, and discover new pets for your island.',
+    color: 'rgba(55,162,112,0.08)',
+    borderColor: 'rgba(55,162,112,0.15)',
   },
 ];
 
@@ -646,14 +632,13 @@ const StepHowItWorks = () => (
       <h1
         className="text-4xl font-extrabold tracking-tight"
         style={{
-          color: 'rgba(255,255,255,0.95)',
-          textShadow:
-            '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
+          color: '#1C211E',
+          textShadow: '0 1px 2px rgba(0,0,0,0.06)',
         }}
       >
-        How it works
+        How It Works
       </h1>
-      <p className="text-base" style={{ color: 'rgba(210,218,240,0.7)' }}>
+      <p className="text-base" style={{ color: '#535D57' }}>
         Three simple steps to get started
       </p>
     </motion.div>
@@ -677,7 +662,7 @@ const StepHowItWorks = () => (
               background: step.color,
               border: `1px solid ${step.borderColor}`,
               boxShadow:
-                '0 2px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
+                '0 2px 12px rgba(64,133,106,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
             }}
           >
             {/* Step number */}
@@ -685,7 +670,7 @@ const StepHowItWorks = () => (
               className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
               style={{
                 background: step.borderColor,
-                color: 'rgba(255,255,255,0.9)',
+                color: 'white',
               }}
             >
               {i + 1}
@@ -700,13 +685,13 @@ const StepHowItWorks = () => (
             <div className="text-left min-w-0 flex-1">
               <p
                 className="text-[15px] font-semibold leading-snug"
-                style={{ color: 'rgba(255,255,255,0.92)' }}
+                style={{ color: '#1C211E' }}
               >
                 {step.label}
               </p>
               <p
-                className="text-[13px] leading-snug mt-0.5"
-                style={{ color: 'rgba(210,218,240,0.6)' }}
+                className="text-[14px] leading-snug mt-0.5"
+                style={{ color: '#535D57' }}
               >
                 {step.sub}
               </p>
@@ -733,18 +718,17 @@ const StepMeetCompanion = () => (
       <h1
         className="text-4xl font-extrabold tracking-tight"
         style={{
-          color: 'rgba(255,255,255,0.95)',
-          textShadow:
-            '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
+          color: '#1C211E',
+          textShadow: '0 1px 2px rgba(0,0,0,0.06)',
         }}
       >
-        Your first pet!
+        Your First Friend
       </h1>
       <p
         className="text-base px-4 leading-relaxed"
-        style={{ color: 'rgba(210,218,240,0.8)' }}
+        style={{ color: '#535D57' }}
       >
-        Star Wizard will join your island. Start focusing to collect more!
+        Every focus session brings a new companion to your island. This one's been waiting for you.
       </p>
     </motion.div>
 
@@ -771,7 +755,7 @@ const StepMeetCompanion = () => (
           height: 220,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(160,120,255,0.22) 0%, rgba(120,80,220,0.08) 40%, transparent 70%)',
+            'radial-gradient(circle, rgba(64,133,106,0.18) 0%, rgba(64,133,106,0.06) 40%, transparent 70%)',
         }}
       />
 
@@ -802,10 +786,10 @@ const StepMeetCompanion = () => (
     <motion.div
       className="mx-auto max-w-[260px] rounded-2xl px-5 py-4"
       style={{
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255,255,255,0.88)',
+        border: '1px solid rgba(64,133,106,0.15)',
         boxShadow:
-          '0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05)',
+          '0 4px 20px rgba(64,133,106,0.08), 0 1px 3px rgba(0,0,0,0.04)',
       }}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
@@ -815,16 +799,16 @@ const StepMeetCompanion = () => (
         <PixelIcon src="/assets/icons/wizard.png" fallback="" size={20} />
         <p
           className="text-lg font-bold"
-          style={{ color: 'rgba(255,255,255,0.9)' }}
+          style={{ color: '#1C211E' }}
         >
           Star Wizard
         </p>
         <span
-          className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+          className="text-[12px] font-semibold px-2 py-0.5 rounded-full"
           style={{
-            background: 'rgba(160,120,255,0.2)',
-            color: 'rgba(200,180,255,0.9)',
-            border: '1px solid rgba(160,120,255,0.25)',
+            background: 'rgba(59,130,246,0.12)',
+            color: 'rgba(59,130,246,0.9)',
+            border: '1px solid rgba(59,130,246,0.2)',
           }}
         >
           RARE
@@ -832,7 +816,7 @@ const StepMeetCompanion = () => (
       </div>
       <p
         className="text-sm leading-relaxed"
-        style={{ color: 'rgba(210,218,240,0.65)' }}
+        style={{ color: '#535D57' }}
       >
         A young wizard in training who casts spells of concentration.
       </p>
@@ -842,11 +826,11 @@ const StepMeetCompanion = () => (
         {['Magic Focus', 'Star Spell', 'Wizard Wisdom'].map((ability) => (
           <span
             key={ability}
-            className="text-[11px] px-2 py-0.5 rounded-full"
+            className="text-[12px] px-2 py-0.5 rounded-full"
             style={{
-              background: 'rgba(255,255,255,0.06)',
-              color: 'rgba(200,210,240,0.6)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(64,133,106,0.06)',
+              color: '#535D57',
+              border: '1px solid rgba(64,133,106,0.1)',
             }}
           >
             {ability}
@@ -864,24 +848,24 @@ const StepMeetCompanion = () => (
 const shieldBenefits = [
   {
     icon: Shield,
-    label: 'Blocks distracting apps',
-    sub: 'Instagram, TikTok, and more — blocked while you focus',
-    color: 'rgba(160,120,255,0.15)',
-    borderColor: 'rgba(160,120,255,0.25)',
+    label: 'Blocks Distracting Apps',
+    sub: 'Instagram, TikTok, and more stay locked while you focus',
+    color: 'rgba(64,133,106,0.10)',
+    borderColor: 'rgba(64,133,106,0.18)',
   },
   {
     icon: Lock,
-    label: 'Turns off automatically',
-    sub: 'Everything goes back to normal when your timer ends',
-    color: 'rgba(120,100,220,0.12)',
-    borderColor: 'rgba(120,100,220,0.2)',
+    label: 'Turns Off Automatically',
+    sub: 'Everything unlocks the moment your session ends',
+    color: 'rgba(64,133,106,0.06)',
+    borderColor: 'rgba(64,133,106,0.12)',
   },
   {
     icon: Sparkles,
-    label: '+25% bonus XP',
-    sub: 'Extra rewards when you stay distraction-free',
-    color: 'rgba(200,120,255,0.12)',
-    borderColor: 'rgba(200,120,255,0.2)',
+    label: 'Earns You Bonus XP',
+    sub: 'Stay focused the entire session for extra rewards',
+    color: 'rgba(55,162,112,0.08)',
+    borderColor: 'rgba(55,162,112,0.15)',
   },
 ];
 
@@ -912,19 +896,18 @@ const StepFocusShield = () => {
         <h1
           className="text-4xl font-extrabold tracking-tight"
           style={{
-            color: 'rgba(255,255,255,0.95)',
-            textShadow:
-              '0 0 30px rgba(160,120,255,0.3), 0 2px 4px rgba(0,0,0,0.3)',
+            color: '#1C211E',
+            textShadow: '0 1px 2px rgba(0,0,0,0.06)',
           }}
         >
           Focus Shield
         </h1>
-        <p className="text-base" style={{ color: 'rgba(210,218,240,0.7)' }}>
-          Stay focused by blocking distracting apps
+        <p className="text-base" style={{ color: '#535D57' }}>
+          Block distracting apps during your sessions. You'll focus better — and earn bonus XP.
         </p>
       </motion.div>
 
-      {/* Shield icon with cosmic glow — matches sprite glow in Welcome/MeetCompanion */}
+      {/* Shield icon with sage glow */}
       <motion.div
         className="py-4 relative flex justify-center"
         initial={{ opacity: 0, scale: 0.8 }}
@@ -939,28 +922,28 @@ const StepFocusShield = () => {
             height: 180,
             borderRadius: '50%',
             background: isPermissionGranted
-              ? 'radial-gradient(circle, rgba(140,180,255,0.2) 0%, transparent 65%)'
-              : 'radial-gradient(circle, rgba(160,120,255,0.18) 0%, transparent 65%)',
+              ? 'radial-gradient(circle, rgba(55,162,112,0.2) 0%, transparent 65%)'
+              : 'radial-gradient(circle, rgba(64,133,106,0.15) 0%, transparent 65%)',
           }}
         />
         <div
           className="relative w-24 h-24 rounded-3xl flex items-center justify-center"
           style={{
             background: isPermissionGranted
-              ? 'linear-gradient(180deg, rgba(140,180,255,0.25) 0%, rgba(120,100,220,0.15) 100%)'
-              : 'linear-gradient(180deg, rgba(160,120,255,0.25) 0%, rgba(120,80,220,0.1) 100%)',
-            border: `2px solid ${isPermissionGranted ? 'rgba(140,180,255,0.35)' : 'rgba(160,120,255,0.3)'}`,
-            boxShadow: `0 4px 20px ${isPermissionGranted ? 'rgba(140,180,255,0.2)' : 'rgba(160,120,255,0.15)'}, inset 0 1px 0 rgba(255,255,255,0.05)`,
+              ? 'linear-gradient(180deg, rgba(55,162,112,0.2) 0%, rgba(55,162,112,0.08) 100%)'
+              : 'linear-gradient(180deg, rgba(64,133,106,0.2) 0%, rgba(64,133,106,0.08) 100%)',
+            border: `2px solid ${isPermissionGranted ? 'rgba(55,162,112,0.3)' : 'rgba(64,133,106,0.25)'}`,
+            boxShadow: `0 4px 20px ${isPermissionGranted ? 'rgba(55,162,112,0.15)' : 'rgba(64,133,106,0.1)'}, inset 0 1px 0 rgba(255,255,255,0.3)`,
           }}
         >
           <Shield
             className="w-12 h-12"
-            style={{ color: isPermissionGranted ? 'rgba(180,200,255,0.9)' : 'rgba(200,180,255,0.8)' }}
+            style={{ color: isPermissionGranted ? '#37A270' : '#40856A' }}
           />
         </div>
       </motion.div>
 
-      {/* Benefits — staggered glass cards matching StepHowItWorks pattern */}
+      {/* Benefits — staggered cards matching StepHowItWorks pattern */}
       <div className="space-y-3 px-1">
         {shieldBenefits.map((step, i) => {
           const Icon = step.icon;
@@ -982,7 +965,7 @@ const StepFocusShield = () => {
                   background: step.color,
                   border: `1px solid ${step.borderColor}`,
                   boxShadow:
-                    '0 2px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
+                    '0 2px 12px rgba(64,133,106,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
                 }}
               >
                 <div
@@ -991,18 +974,18 @@ const StepFocusShield = () => {
                     background: step.borderColor,
                   }}
                 >
-                  <Icon className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.9)' }} />
+                  <Icon className="w-4 h-4" style={{ color: 'white' }} />
                 </div>
                 <div className="text-left min-w-0 flex-1">
                   <p
                     className="text-[15px] font-semibold leading-snug"
-                    style={{ color: 'rgba(255,255,255,0.92)' }}
+                    style={{ color: '#1C211E' }}
                   >
                     {step.label}
                   </p>
                   <p
-                    className="text-[13px] leading-snug mt-0.5"
-                    style={{ color: 'rgba(210,218,240,0.6)' }}
+                    className="text-[14px] leading-snug mt-0.5"
+                    style={{ color: '#535D57' }}
                   >
                     {step.sub}
                   </p>
@@ -1027,32 +1010,32 @@ const StepFocusShield = () => {
               disabled={isLoading}
               className="w-full py-4 px-5 rounded-2xl font-black text-base tracking-wide transition-all active:scale-[0.97]"
               style={{
-                background: 'linear-gradient(180deg, hsl(260 65% 62%) 0%, hsl(265 55% 48%) 100%)',
+                background: 'linear-gradient(180deg, #5DA888 0%, #367256 100%)',
                 border: '2px solid rgba(255,255,255,0.2)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 20px rgba(120,60,220,0.45), 0 2px 4px rgba(0,0,0,0.2)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 20px rgba(64,133,106,0.35), 0 2px 4px rgba(0,0,0,0.1)',
                 color: 'white',
                 opacity: isLoading ? 0.6 : 1,
                 letterSpacing: '0.02em',
               }}
             >
               <Lock className="w-4 h-4 inline mr-2" />
-              {isLoading ? 'Requesting...' : 'Continue'}
+              {isLoading ? 'Requesting...' : 'Enable Focus Shield'}
             </button>
             {hasAttempted && (
               <button
                 onClick={() => openSettings()}
                 className="w-full py-3 px-4 rounded-2xl font-medium text-sm transition-all active:scale-[0.97]"
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(200,210,240,0.7)',
+                  background: 'rgba(64,133,106,0.08)',
+                  border: '1px solid rgba(64,133,106,0.15)',
+                  color: '#535D57',
                 }}
               >
                 <Settings className="w-4 h-4 inline mr-2" />
                 Open Settings
               </button>
             )}
-            <p className="text-xs" style={{ color: 'rgba(200,210,240,0.4)' }}>
+            <p className="text-xs" style={{ color: 'rgba(28,33,30,0.4)' }}>
               You can set this up later in Settings
             </p>
           </div>
@@ -1061,10 +1044,10 @@ const StepFocusShield = () => {
             <div
               className="py-3 px-4 rounded-2xl text-sm font-semibold"
               style={{
-                background: 'rgba(140,180,255,0.12)',
-                border: '1px solid rgba(140,180,255,0.25)',
-                color: 'rgba(180,200,255,0.9)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
+                background: 'rgba(55,162,112,0.1)',
+                border: '1px solid rgba(55,162,112,0.2)',
+                color: '#37A270',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
               }}
             >
               Focus Shield enabled
@@ -1073,9 +1056,9 @@ const StepFocusShield = () => {
               onClick={() => openAppPicker()}
               className="w-full py-3 px-4 rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
               style={{
-                background: 'linear-gradient(180deg, hsl(260 65% 62%) 0%, hsl(265 55% 48%) 100%)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(120,60,220,0.35)',
+                background: 'linear-gradient(180deg, #5DA888 0%, #367256 100%)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(64,133,106,0.3)',
                 color: 'white',
               }}
             >
