@@ -88,6 +88,8 @@ export const useTimerLogic = () => {
   const [petRewardLevel, setPetRewardLevel] = useState(1);
   const [lastSessionXP, setLastSessionXP] = useState(0);
   const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
+  const [lastSessionTaskLabel, setLastSessionTaskLabel] = useState<string | undefined>();
+  const [lastSessionDuration, setLastSessionDuration] = useState(0);
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
   // them from timerState before the notes modal opens, so we snapshot here.
   const lastSessionMetaRef = useRef<{ category?: string; taskLabel?: string; sessionDuration: number; sessionId?: string }>({
@@ -197,10 +199,15 @@ export const useTimerLogic = () => {
     });
 
     try {
-      // For countup mode, use elapsed time; for countdown, use full session duration
-      // (sessionDuration is preserved at the original planned value across pause/resume)
+      // For countup mode, compute elapsed from startTime directly (the periodically-
+      // saved elapsedTime can be up to 4s stale). For countdown, use full session duration.
       const actualSeconds = state.timerState.isCountup
-        ? (state.timerState.elapsedTime || 0)
+        ? Math.min(
+            state.timerState.startTime
+              ? Math.floor((Date.now() - state.timerState.startTime) / 1000)
+              : (state.timerState.elapsedTime || 0),
+            MAX_COUNTUP_DURATION
+          )
         : state.timerState.sessionDuration;
       const completedMinutes = actualSeconds / 60;
 
@@ -406,6 +413,8 @@ export const useTimerLogic = () => {
         };
         setLastSessionXP(xpEarned);
         setLastCoinsEarned(coinsEarned);
+        setLastSessionTaskLabel(state.timerState.taskLabel);
+        setLastSessionDuration(actualSeconds);
         setShowSessionComplete(true);
       } else {
         toast.info('Break Complete!', {
@@ -615,6 +624,8 @@ export const useTimerLogic = () => {
     petRewardLevel,
     lastSessionXP,
     lastCoinsEarned,
+    lastSessionTaskLabel,
+    lastSessionDuration,
     autoBreakEnabled,
 
     // Actions

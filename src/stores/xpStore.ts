@@ -30,20 +30,12 @@ import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 /** Maximum achievable level in the game */
 export const MAX_LEVEL = 50;
 
-export const calculateLevelRequirement = (level: number): number => {
-  if (level <= 0) return 0;
-  if (level === 1) return 15;
-  return Math.floor(15 * Math.pow(1.15, level - 1));
-};
-
-/** Calculate level from total XP - ensures level matches XP */
-export const calculateLevelFromXP = (totalXP: number): number => {
-  let level = 0;
-  while (level < MAX_LEVEL && totalXP >= calculateLevelRequirement(level + 1)) {
-    level++;
-  }
-  return level;
-};
+/**
+ * Reuse the canonical LEVEL_REQUIREMENTS table and level calculation from
+ * the XP hook module so that the store and the hook always agree on what
+ * level corresponds to a given XP total.
+ */
+export { calculateLevelRequirement, calculateLevel as calculateLevelFromXP } from '@/hooks/xp/xpUtils';
 
 export interface XPState {
   currentXP: number;
@@ -83,11 +75,22 @@ export const useXPStore = create<XPStore>()(
       (set, get) => ({
         ...initialState,
         setXP: (xp) => set({ currentXP: xp }),
-        addXP: (amount) => set((s) => ({ currentXP: s.currentXP + amount })),
+        addXP: (amount) => set((s) => {
+          const newXP = s.currentXP + amount;
+          const newLevel = calculateLevelFromXP(newXP);
+          const currentLevelXP = calculateLevelRequirement(newLevel);
+          const nextLevelXP = newLevel >= MAX_LEVEL ? currentLevelXP : calculateLevelRequirement(newLevel + 1);
+          return {
+            currentXP: newXP,
+            currentLevel: newLevel,
+            totalXPForCurrentLevel: currentLevelXP,
+            xpToNextLevel: newLevel >= MAX_LEVEL ? 0 : Math.max(0, nextLevelXP - newXP),
+          };
+        }),
         setLevel: (level) => {
           const xpRequired = calculateLevelRequirement(level);
           const nextLevelXP = level >= MAX_LEVEL ? xpRequired : calculateLevelRequirement(level + 1);
-          set({ currentLevel: level, totalXPForCurrentLevel: xpRequired, xpToNextLevel: nextLevelXP - get().currentXP });
+          set({ currentLevel: level, totalXPForCurrentLevel: xpRequired, xpToNextLevel: Math.max(0, nextLevelXP - get().currentXP) });
         },
         addPet: (name) => {
           const { unlockedPets } = get();
@@ -115,37 +118,34 @@ export const useXPStore = create<XPStore>()(
         }),
         onRehydrateStorage: () => (state) => {
           if (!state) {
-            // Try to recover from legacy storage key
+            // Try to recover from legacy storage key — mutate the store
+            // directly since Zustand ignores the return value from this callback.
             try {
               const legacy = localStorage.getItem('botblock_xpSystem');
               if (legacy) {
                 let parsed = JSON.parse(legacy);
-                // Handle Zustand's wrapped format
                 if (parsed && typeof parsed === 'object' && 'state' in parsed) {
                   parsed = parsed.state;
                 }
-
                 const validated = xpSystemSchema.safeParse(parsed);
                 if (validated.success) {
                   xpLogger.debug('Migrated XP data from legacy storage');
-                  // Clean up legacy key after migration
                   localStorage.removeItem('botblock_xpSystem');
-                  return validated.data;
+                  useXPStore.setState(validated.data);
                 }
               }
             } catch {
               xpLogger.warn('Failed to parse legacy XP data');
             }
+            return;
           }
-          if (state) {
-            // Validate the rehydrated level makes sense for the XP
-            const expectedLevel = calculateLevelFromXP(state.currentXP);
-            if (state.currentLevel < expectedLevel) {
-              xpLogger.warn(`Level mismatch: stored ${state.currentLevel}, expected ${expectedLevel}. Fixing.`);
-              state.currentLevel = expectedLevel;
-            }
-            xpLogger.debug('XP store rehydrated and validated');
+          // Validate the rehydrated level makes sense for the XP (fix both directions)
+          const expectedLevel = calculateLevelFromXP(state.currentXP);
+          if (state.currentLevel !== expectedLevel) {
+            xpLogger.warn(`Level mismatch: stored ${state.currentLevel}, expected ${expectedLevel}. Fixing.`);
+            state.currentLevel = expectedLevel;
           }
+          xpLogger.debug('XP store rehydrated and validated');
         },
       }
     )

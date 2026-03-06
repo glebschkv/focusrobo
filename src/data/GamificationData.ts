@@ -41,9 +41,9 @@ export const MILESTONES: Milestone[] = [
   { id: 'hours-500', type: 'focus_hours', threshold: 500, title: 'Time Master', description: '500 hours of focus!', icon: 'clock', celebrationType: 'rainbow', rewards: { xp: 6000, coins: 10000, badge: 'time-master' } },
 
   // Collection milestones
-  { id: 'bots-5', type: 'collection', threshold: 5, title: 'Bot Builder', description: 'Collected 5 bots!', icon: 'robot', celebrationType: 'confetti', rewards: { coins: 400 } },
-  { id: 'bots-15', type: 'collection', threshold: 15, title: 'Workshop Manager', description: 'Collected 15 bots!', icon: 'robot', celebrationType: 'stars', rewards: { xp: 600, coins: 1000 } },
-  { id: 'bots-25', type: 'collection', threshold: 25, title: 'Fleet Commander', description: 'Collected 25 bots!', icon: 'robot', celebrationType: 'fireworks', rewards: { xp: 1500, coins: 2000, badge: 'fleet-commander' } },
+  { id: 'pets-5', type: 'collection', threshold: 5, title: 'Pet Collector', description: 'Collected 5 pets!', icon: 'heart', celebrationType: 'confetti', rewards: { coins: 400 } },
+  { id: 'pets-15', type: 'collection', threshold: 15, title: 'Island Keeper', description: 'Collected 15 pets!', icon: 'heart', celebrationType: 'stars', rewards: { xp: 600, coins: 1000 } },
+  { id: 'pets-25', type: 'collection', threshold: 25, title: 'Pet Master', description: 'Collected 25 pets!', icon: 'heart', celebrationType: 'fireworks', rewards: { xp: 1500, coins: 2000, badge: 'pet-master' } },
 ];
 
 export const getMilestoneForValue = (type: Milestone['type'], value: number): Milestone | null => {
