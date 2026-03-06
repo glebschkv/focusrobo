@@ -995,14 +995,6 @@ export const PetLand = () => {
 
               <div className="pet-land__help-section">
                 <div className="pet-land__help-section-header">
-                  <span className="pet-land__help-section-icon">🏝️</span>
-                  <strong>Your Island</strong>
-                </div>
-                <p>Each pet fills one tile. The island starts at 5×5 and expands as you fill it, up to 20×20. Once full, it gets archived forever and you start fresh.</p>
-              </div>
-
-              <div className="pet-land__help-section">
-                <div className="pet-land__help-section-header">
                   <span className="pet-land__help-section-icon">🔥</span>
                   <strong>Streaks & XP</strong>
                 </div>
