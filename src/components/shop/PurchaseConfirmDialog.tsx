@@ -1,10 +1,22 @@
+/**
+ * PurchaseConfirmDialog — Warm ritual modal
+ * Framed as "claiming" an item, not "purchasing" a product.
+ * Warm parchment tones with cozy RPG merchant feel.
+ */
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Lock, Sparkles, Star, Loader2 } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, Bundle } from "@/data/ShopData";
 import { BackgroundPreview, BundlePreviewCarousel } from "./ShopPreviewComponents";
-import { RARITY_COLORS } from "./styles";
+
+const RARITY_BADGE_COLORS: Record<string, string> = {
+  common: '#8B6F47',
+  rare: '#5B8FB9',
+  epic: '#9B72CF',
+  legendary: '#D4A040',
+};
 
 interface PurchaseConfirmDialogProps {
   open: boolean;
@@ -25,26 +37,17 @@ export const PurchaseConfirmDialog = ({
   coinBalance,
   isPurchasing = false,
 }: PurchaseConfirmDialogProps) => {
-  const getRarityStars = (rarity: string) => {
-    const count = rarity === 'common' ? 1 : rarity === 'rare' ? 2 : rarity === 'epic' ? 3 : 4;
-    return [...Array(count)].map((_, i) => (
-      <Star
-        key={i}
-        className={cn(
-          "w-3 h-3",
-          "text-amber-400 fill-amber-400"
-        )}
-      />
-    ));
-  };
 
   if (!selectedItem) return null;
 
+  const price = 'coinPrice' in selectedItem ? selectedItem.coinPrice || 0 : 0;
+  const affordable = canAfford(price);
+
   return (
     <Dialog open={open && !!selectedItem} onOpenChange={onOpenChange}>
-      <DialogContent className="retro-modal max-w-[280px] p-0 overflow-hidden border-0">
+      <DialogContent className="shop-modal max-w-[280px] p-0 overflow-hidden border-0">
         <>
-          <div className="retro-modal-header p-4 text-center">
+          <div className="shop-modal-header p-4 text-center">
             <div className="h-28 mb-2 flex items-center justify-center overflow-hidden">
               {'previewImages' in selectedItem && (selectedItem as Bundle).previewImages ? (
                 <div className="w-full">
@@ -57,84 +60,79 @@ export const PurchaseConfirmDialog = ({
               )}
             </div>
             <DialogHeader>
-              <DialogTitle className="text-lg font-black uppercase tracking-tight">
+              <DialogTitle className="text-lg font-black tracking-tight" style={{ color: '#5C3D1A' }}>
                 {selectedItem.name}
               </DialogTitle>
             </DialogHeader>
             {'rarity' in selectedItem && selectedItem.rarity && (
               <div className="flex justify-center mt-2">
-                <span className={cn(
-                  "retro-rarity-badge",
-                  `bg-gradient-to-r ${RARITY_COLORS[selectedItem.rarity]}`
-                )}>
-                  {getRarityStars(selectedItem.rarity)}
-                  <span className="ml-1 text-xs font-black uppercase">
-                    {selectedItem.rarity}
-                  </span>
+                <span
+                  className="shop-rarity-badge"
+                  style={{ background: RARITY_BADGE_COLORS[selectedItem.rarity] || '#8B6F47' }}
+                >
+                  {selectedItem.rarity}
                 </span>
               </div>
             )}
             {'itemIds' in selectedItem && (
-              <div className="mt-1 text-xs text-muted-foreground">
+              <div className="mt-1 text-xs" style={{ color: '#8B6F47' }}>
                 Includes {(selectedItem as Bundle).itemIds.length} items
               </div>
             )}
           </div>
 
-          <div className="p-3 space-y-3 bg-card">
-            <p className="text-xs text-muted-foreground text-center leading-relaxed">
+          <div className="p-3 space-y-3" style={{ background: '#FFF8EE' }}>
+            <p className="text-xs text-center leading-relaxed" style={{ color: '#8B6F47' }}>
               {selectedItem.description}
             </p>
 
             {'totalValue' in selectedItem && (
               <div className="flex items-center justify-center gap-2 text-sm">
-                <span className="text-muted-foreground line-through">
+                <span className="line-through" style={{ color: '#A0937E' }}>
                   {(selectedItem as Bundle).totalValue.toLocaleString()}
                 </span>
-                <span className="px-2 py-0.5 bg-green-500 text-white text-[10px] font-bold rounded">
-                  SAVE {(selectedItem as Bundle).savings}
+                <span className="px-2 py-0.5 text-white text-[10px] font-bold rounded" style={{ background: '#6B9E58' }}>
+                  Save {(selectedItem as Bundle).savings}
                 </span>
               </div>
             )}
 
             <div className="retro-price-display py-2">
-              <span className="text-muted-foreground text-xs">Price:</span>
+              <span className="text-xs" style={{ color: '#8B6F47' }}>Cost</span>
               <div className="flex items-center gap-1.5">
                 <PixelIcon name="coin" size={16} />
-                <span className="text-lg font-black text-amber-600 dark:text-amber-400">
-                  {('coinPrice' in selectedItem ? selectedItem.coinPrice : 0)?.toLocaleString()}
+                <span className="text-lg font-black" style={{ color: '#7A5C20' }}>
+                  {price.toLocaleString()}
                 </span>
               </div>
             </div>
 
-            <div className="text-center text-[10px] text-muted-foreground">
-              Balance after: <span className="font-bold">{(coinBalance - ('coinPrice' in selectedItem ? selectedItem.coinPrice || 0 : 0)).toLocaleString()}</span> coins
+            <div className="text-center text-[10px]" style={{ color: '#A0937E' }}>
+              Remaining: <span className="font-bold">{(coinBalance - price).toLocaleString()}</span> coins
             </div>
 
             <button
               onClick={onPurchase}
-              disabled={isPurchasing || !canAfford('coinPrice' in selectedItem ? selectedItem.coinPrice || 0 : 0)}
+              disabled={isPurchasing || !affordable}
               className={cn(
-                "retro-purchase-button w-full py-2.5",
-                !isPurchasing && canAfford('coinPrice' in selectedItem ? selectedItem.coinPrice || 0 : 0)
-                  ? "retro-purchase-button-active"
-                  : "retro-purchase-button-disabled"
+                "shop-modal-claim-btn",
+                isPurchasing ? "processing" : affordable ? "affordable" : "cant-afford"
               )}
             >
               {isPurchasing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="font-black uppercase tracking-wide text-sm">Processing...</span>
+                  <span>Claiming...</span>
                 </>
-              ) : canAfford('coinPrice' in selectedItem ? selectedItem.coinPrice || 0 : 0) ? (
+              ) : affordable ? (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  <span className="font-black uppercase tracking-wide text-sm">Purchase</span>
+                  <PixelIcon name="sparkles" size={16} />
+                  <span>Claim</span>
                 </>
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  <span className="font-black uppercase tracking-wide text-sm">Not Enough</span>
+                  <span>Not Enough Coins</span>
                 </>
               )}
             </button>
@@ -143,11 +141,11 @@ export const PurchaseConfirmDialog = ({
               onClick={() => onOpenChange(false)}
               disabled={isPurchasing}
               className={cn(
-                "retro-cancel-button w-full py-2",
+                "shop-modal-cancel-btn",
                 isPurchasing && "opacity-50 cursor-not-allowed"
               )}
             >
-              <span className="text-xs font-bold uppercase">Cancel</span>
+              Maybe Later
             </button>
           </div>
         </>

@@ -1,3 +1,9 @@
+/**
+ * PowerUpsTab — "Potions & Charms"
+ * Utility items displayed as RPG potions on a warm wooden shelf.
+ * Coin packs displayed as treasure chests.
+ */
+
 import { useState } from "react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
@@ -32,7 +38,6 @@ export const PowerUpsTab = ({
   const coins = COIN_PACKS;
   const storeKit = useStoreKit();
 
-  // State for coin pack confirmation dialog
   const [selectedPack, setSelectedPack] = useState<CoinPack | null>(null);
   const [showPackConfirm, setShowPackConfirm] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -47,19 +52,17 @@ export const PowerUpsTab = ({
     try {
       const result = await storeKit.purchaseProduct(selectedPack.iapProductId);
       if (result.success && result.validationResult?.success) {
-        // Coins are granted server-side and synced via iap:coinsGranted event
-        // Just show success toast with the amount from server
         const coinsGranted = result.validationResult.coinPack?.coinsGranted ||
           (selectedPack.coinAmount + (selectedPack.bonusCoins || 0));
-        toast.success(`Successfully purchased ${selectedPack.name}! +${coinsGranted.toLocaleString()} coins`);
+        toast.success(`Claimed ${selectedPack.name}! +${coinsGranted.toLocaleString()} coins`);
         setShowPackConfirm(false);
       } else if (result.cancelled) {
-        // User cancelled - no toast needed
+        // User cancelled
       } else {
-        toast.error(result.message || "Purchase failed");
+        toast.error(result.message || "Something went wrong");
       }
     } catch (_error) {
-      toast.error("Unable to complete purchase");
+      toast.error("Unable to complete transaction");
     } finally {
       setIsPurchasing(false);
     }
@@ -67,7 +70,6 @@ export const PowerUpsTab = ({
 
   return (
     <div className="space-y-4">
-      {/* Coin Pack Confirmation Dialog */}
       <BundleConfirmDialog
         open={showPackConfirm}
         onOpenChange={(open) => {
@@ -81,10 +83,15 @@ export const PowerUpsTab = ({
         isPurchasing={isPurchasing}
       />
 
-      {/* Coin Boosters */}
+      {/* Section intro */}
+      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
+        Elixirs, crystals, and treasures to aid your journey.
+      </p>
+
+      {/* Focus Elixirs (Boosters) */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Coin Boosters</span>
+          <span className="shop-section-title">Focus Elixirs</span>
         </div>
         <div className="space-y-2">
           {boosters.map((booster) => {
@@ -100,21 +107,21 @@ export const PowerUpsTab = ({
                 }}
                 disabled={boosterActive}
                 className={cn(
-                  "shop-list-card",
+                  "potion-shelf-item",
                   boosterActive && "disabled"
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <PixelIcon name={booster.icon} size={24} />
-                  <div className="flex-1">
-                    <span className="font-bold text-sm">{booster.name}</span>
-                    <p className="text-xs text-muted-foreground">{booster.description}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-1 text-amber-600 font-bold text-sm">
-                      <PixelIcon name="coin" size={14} />
-                      {booster.coinPrice?.toLocaleString()}
-                    </div>
+                <div className="potion-icon-frame">
+                  <PixelIcon name={booster.icon} size={20} />
+                </div>
+                <div className="flex-1">
+                  <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{booster.name}</span>
+                  <p className="text-xs" style={{ color: '#8B6F47' }}>{booster.description}</p>
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1 font-bold text-sm" style={{ color: '#7A5C20' }}>
+                    <PixelIcon name="coin" size={14} />
+                    {booster.coinPrice?.toLocaleString()}
                   </div>
                 </div>
               </button>
@@ -123,10 +130,10 @@ export const PowerUpsTab = ({
         </div>
       </div>
 
-      {/* Utility Items */}
+      {/* Time Crystals (Streak Protection) */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Streak Protection</span>
+          <span className="shop-section-title">Time Crystals</span>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {utilities.map((item) => {
@@ -140,12 +147,13 @@ export const PowerUpsTab = ({
                 }}
                 className="shop-grid-card"
               >
-                <PixelIcon name={item.icon} size={24} className="block mb-1 mx-auto" />
-                <span className="text-[10px] font-bold block">{item.name}</span>
+                <div className="potion-icon-frame mx-auto mb-1.5" style={{ width: '32px', height: '32px' }}>
+                  <PixelIcon name={item.icon} size={16} />
+                </div>
+                <span className="text-[10px] font-bold block" style={{ color: '#5C3D1A' }}>{item.name}</span>
                 <div className={cn(
                   "flex items-center justify-center gap-0.5 mt-1 text-xs font-bold",
-                  affordable ? "text-amber-600" : "text-red-500"
-                )}>
+                )} style={{ color: affordable ? '#7A5C20' : '#8B4040' }}>
                   <PixelIcon name="coin" size={12} />
                   {item.coinPrice?.toLocaleString()}
                 </div>
@@ -155,10 +163,10 @@ export const PowerUpsTab = ({
         </div>
       </div>
 
-      {/* Coin Packs */}
+      {/* Treasure Chests (Coin Packs) */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Buy Coins</span>
+          <span className="shop-section-title">Treasure Chests</span>
         </div>
         <div className="grid grid-cols-2 gap-2.5">
           {coins.map((pack) => (
@@ -169,17 +177,22 @@ export const PowerUpsTab = ({
                 setShowPackConfirm(true);
               }}
               className={cn(
-                "shop-grid-card text-left",
+                "treasure-card text-left",
                 pack.isBestValue && "best-value"
               )}
             >
-              <PixelIcon name={pack.icon} size={28} className="block mb-1.5" />
-              <span className="font-bold text-xs block">{pack.name}</span>
-              <div className="flex items-center gap-1 mt-0.5">
+              <div className="potion-icon-frame mx-auto mb-2" style={{
+                width: '36px', height: '36px',
+                borderColor: pack.isBestValue ? '#D4A84E' : '#D4C4A0',
+              }}>
+                <PixelIcon name={pack.icon} size={20} />
+              </div>
+              <span className="font-bold text-xs block text-center" style={{ color: '#5C3D1A' }}>{pack.name}</span>
+              <div className="flex items-center justify-center gap-1 mt-0.5">
                 <PixelIcon name="coin" size={11} />
-                <span className="text-amber-600 font-bold text-[11px]">{pack.coinAmount.toLocaleString()}</span>
+                <span className="font-bold text-[11px]" style={{ color: '#7A5C20' }}>{pack.coinAmount.toLocaleString()}</span>
                 {pack.bonusCoins && (
-                  <span className="text-green-600 text-[10px] font-semibold">+{pack.bonusCoins.toLocaleString()}</span>
+                  <span className="text-[10px] font-semibold" style={{ color: '#6B9E58' }}>+{pack.bonusCoins.toLocaleString()}</span>
                 )}
               </div>
               <div className="iap-price-button mt-2 w-full text-center text-xs">

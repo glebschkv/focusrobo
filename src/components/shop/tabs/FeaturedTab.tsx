@@ -1,3 +1,9 @@
+/**
+ * FeaturedTab — "Today's Finds"
+ * The merchant's curated selection with personality and warmth.
+ * Premium, bundles, and special offerings framed as discoveries.
+ */
+
 import { useState } from "react";
 import { Crown, ChevronRight, Check } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
@@ -57,21 +63,21 @@ export const FeaturedTab = ({
       if (result.success && result.validationResult?.success) {
         if (isStarterBundle && result.validationResult.bundle) {
           if (result.validationResult.bundle.alreadyOwned) {
-            toast.info("You already own this bundle!");
+            toast.info("You already own this!");
             setShowBundleConfirm(false);
             return;
           }
           const bundle = result.validationResult.bundle;
           const items: string[] = [];
           if (bundle.coinsGranted > 0) items.push(`${bundle.coinsGranted.toLocaleString()} coins`);
-          if (bundle.boosterId) items.push('Booster');
-          if (bundle.streakFreezes > 0) items.push(`${bundle.streakFreezes} Streak Freeze${bundle.streakFreezes > 1 ? 's' : ''}`);
-          toast.success(`${selectedBundle.name} purchased! Received: ${items.join(', ')}`);
+          if (bundle.boosterId) items.push('Focus Elixir');
+          if (bundle.streakFreezes > 0) items.push(`${bundle.streakFreezes} Time Crystal${bundle.streakFreezes > 1 ? 's' : ''}`);
+          toast.success(`Claimed ${selectedBundle.name}! Received: ${items.join(', ')}`);
         } else if (result.validationResult.coinPack) {
           const coinsGranted = result.validationResult.coinPack.coinsGranted;
-          toast.success(`${coinsGranted.toLocaleString()} coins added to your balance!`);
+          toast.success(`${coinsGranted.toLocaleString()} coins added to your purse!`);
         } else {
-          toast.success(`Successfully purchased ${selectedBundle.name}!`);
+          toast.success(`Successfully claimed ${selectedBundle.name}!`);
         }
         setShowBundleConfirm(false);
       } else if (result.alreadyOwned) {
@@ -79,10 +85,10 @@ export const FeaturedTab = ({
       } else if (result.cancelled) {
         // User cancelled
       } else if (!result.pending) {
-        toast.error(result.message || "Purchase failed");
+        toast.error(result.message || "Something went wrong");
       }
     } catch (_error) {
-      toast.error("Unable to complete purchase");
+      toast.error("Unable to complete transaction");
     } finally {
       setIsPurchasing(false);
     }
@@ -103,6 +109,11 @@ export const FeaturedTab = ({
         isPurchasing={isPurchasing}
       />
 
+      {/* Section intro */}
+      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
+        The merchant has curated something special for you today.
+      </p>
+
       {/* Premium Hero Card */}
       {!isPremium ? (
         <button
@@ -115,7 +126,7 @@ export const FeaturedTab = ({
             </div>
             <div className="flex-1">
               <h3 className="font-black text-white text-[15px] tracking-tight">
-                Premium
+                Premium Pass
               </h3>
               <p className="text-[10px] text-white/70 mt-1">2x coins, all sounds, exclusive perks</p>
             </div>
@@ -125,30 +136,30 @@ export const FeaturedTab = ({
             </div>
           </div>
           <div className="flex items-center justify-center gap-1.5 mt-2.5 pt-2 border-t border-white/10">
-            <span className="text-white/80 text-[11px] font-bold tracking-wide uppercase">View plans</span>
+            <span className="text-white/80 text-[11px] font-bold tracking-wide">View plans</span>
             <ChevronRight className="w-3.5 h-3.5 text-white/50" />
           </div>
         </button>
       ) : (
         <div className="shop-list-card green">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#6B9E58' }}>
               <Check className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="font-bold text-sm text-green-700 dark:text-green-400">
+              <span className="font-bold text-sm" style={{ color: '#4A6B30' }}>
                 {currentPlan?.name || 'Premium'} Active
               </span>
-              <p className="text-xs text-muted-foreground">You have full access</p>
+              <p className="text-xs" style={{ color: '#8B6F47' }}>You have full access to all perks</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Background Bundles */}
+      {/* World Bundles */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Background Bundles</span>
+          <span className="shop-section-title">World Collections</span>
         </div>
         <div className="space-y-3">
           {BACKGROUND_BUNDLES.map((bundle) => {
@@ -169,25 +180,25 @@ export const FeaturedTab = ({
                   {bundle.previewImages && <BundlePreviewCarousel images={bundle.previewImages} />}
                   {owned && (
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5" /> OWNED
+                      <span className="px-3 py-1 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                        <Check className="w-2.5 h-2.5" /> Collected
                       </span>
                     </div>
                   )}
                 </div>
                 <div className="px-3 py-2.5 flex items-center justify-between">
                   <div className="min-w-0">
-                    <span className="font-bold text-sm block">{bundle.name}</span>
-                    <span className="text-[10px] text-muted-foreground">{bundle.itemIds.length} backgrounds</span>
+                    <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bundle.name}</span>
+                    <span className="text-[10px] block" style={{ color: '#8B6F47' }}>{bundle.itemIds.length} worlds to explore</span>
                   </div>
                   {!owned && (
                     <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="text-[10px] text-muted-foreground line-through">
+                      <span className="text-[10px] line-through" style={{ color: '#A0937E' }}>
                         {bundle.totalValue.toLocaleString()}
                       </span>
                       <div className={cn(
                         "flex items-center gap-1 text-xs font-bold",
-                        affordable ? "text-amber-600" : "text-red-500"
+                        affordable ? "text-[#7A5C20]" : "text-[#8B4040]"
                       )}>
                         <PixelIcon name="coin" size={12} />
                         {bundle.coinPrice?.toLocaleString()}
@@ -201,10 +212,10 @@ export const FeaturedTab = ({
         </div>
       </div>
 
-      {/* Special Bundles (IAP) */}
+      {/* Special Offerings (IAP) */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Special Bundles</span>
+          <span className="shop-section-title">Merchant's Offerings</span>
         </div>
         <div className="space-y-2">
           {STARTER_BUNDLES.map((bundle) => {
@@ -215,7 +226,7 @@ export const FeaturedTab = ({
                 key={bundle.id}
                 onClick={() => {
                   if (alreadyPurchased) {
-                    toast.info("You already own this bundle!");
+                    toast.info("You already own this!");
                     return;
                   }
                   setSelectedBundle(bundle);
@@ -227,17 +238,19 @@ export const FeaturedTab = ({
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <PixelIcon name={bundle.icon} size={30} />
+                  <div className="potion-icon-frame">
+                    <PixelIcon name={bundle.icon} size={22} />
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{bundle.name}</span>
+                      <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bundle.name}</span>
                       {alreadyPurchased && (
-                        <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
-                          <Check className="w-2.5 h-2.5" /> OWNED
+                        <span className="px-2 py-0.5 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                          <Check className="w-2.5 h-2.5" /> Claimed
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                    <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#8B6F47' }}>
                       {bundle.description}
                     </p>
                   </div>
@@ -253,10 +266,10 @@ export const FeaturedTab = ({
         </div>
       </div>
 
-      {/* Best Value Coin Pack */}
+      {/* Best Value Treasure */}
       <div>
         <div className="shop-section-header">
-          <span className="shop-section-title">Best Value</span>
+          <span className="shop-section-title">Merchant's Pick</span>
         </div>
         <button
           onClick={() => {
@@ -266,14 +279,16 @@ export const FeaturedTab = ({
           className="shop-list-card best-value"
         >
           <div className="flex items-center gap-3">
-            <PixelIcon name="trophy" size={36} />
+            <div className="potion-icon-frame" style={{ borderColor: '#D4A84E', background: 'linear-gradient(180deg, #FFF8EE 0%, #F7EDCF 100%)' }}>
+              <PixelIcon name="trophy" size={24} />
+            </div>
             <div className="flex-1">
-              <span className="font-bold text-sm">{bestValuePack.name}</span>
+              <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bestValuePack.name}</span>
               <div className="flex items-center gap-1 mt-0.5">
                 <PixelIcon name="coin" size={12} />
-                <span className="text-amber-600 font-bold text-xs">{bestValuePack.coinAmount.toLocaleString()}</span>
+                <span className="font-bold text-xs" style={{ color: '#7A5C20' }}>{bestValuePack.coinAmount.toLocaleString()}</span>
                 {bestValuePack.bonusCoins && bestValuePack.bonusCoins > 0 && (
-                  <span className="text-green-600 text-xs font-semibold">+{bestValuePack.bonusCoins.toLocaleString()}</span>
+                  <span className="text-xs font-semibold" style={{ color: '#6B9E58' }}>+{bestValuePack.bonusCoins.toLocaleString()}</span>
                 )}
               </div>
             </div>
@@ -284,12 +299,12 @@ export const FeaturedTab = ({
         </button>
       </div>
 
-      {/* Browse Backgrounds link */}
+      {/* Browse Worlds link */}
       <div className="flex items-center justify-between">
-        <span className="shop-section-title">Backgrounds</span>
+        <span className="shop-section-title">Explore Worlds</span>
         <button
           onClick={() => setActiveCategory('customize')}
-          className="text-xs text-amber-600 font-bold"
+          className="text-xs font-bold" style={{ color: '#C87941' }}
         >
           See All →
         </button>

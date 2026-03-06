@@ -1,8 +1,7 @@
 /**
- * BackgroundsTab Component
- *
- * Shows background bundles and individual backgrounds for purchase.
- * Replaces the old CollectionTab which mixed robots and backgrounds.
+ * BackgroundsTab — "Worlds"
+ * Backgrounds displayed as world portals your pets can explore.
+ * Immersive previews with warm, magical framing.
  */
 
 import { Check, Palette } from "lucide-react";
@@ -17,7 +16,6 @@ import {
 } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
 import { BackgroundPreview, BundlePreviewCarousel } from "../ShopPreviewComponents";
-import { RARITY_BG } from "../styles";
 import { useThemeStore } from "@/stores";
 import { useCallback } from "react";
 import { toast } from "sonner";
@@ -48,11 +46,11 @@ export const BackgroundsTab = ({
     e.stopPropagation();
     if (inventory.equippedBackground === bgId) {
       equipBackground(null);
-      toast.success("Background unequipped");
+      toast.success("World unequipped");
       setHomeBackground('day');
     } else {
       equipBackground(bgId);
-      toast.success("Background equipped!");
+      toast.success("New world equipped!");
       const background = PREMIUM_BACKGROUNDS.find(bg => bg.id === bgId);
       const imagePath = background?.previewImage || 'day';
       setHomeBackground(imagePath);
@@ -61,11 +59,16 @@ export const BackgroundsTab = ({
 
   return (
     <div className="space-y-4">
-      {/* Background Bundles */}
+      {/* Section intro */}
+      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
+        Discover new lands for your pets to call home.
+      </p>
+
+      {/* World Collections (Bundles) */}
       {BACKGROUND_BUNDLES.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Background Bundles</span>
+            <span className="shop-section-title">World Collections</span>
           </div>
           <div className="space-y-2">
             {BACKGROUND_BUNDLES.map((bundle) => {
@@ -84,29 +87,29 @@ export const BackgroundsTab = ({
                   className={cn("shop-list-card", owned && "green")}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-20">
+                    <div className="flex-shrink-0 w-20 rounded-lg overflow-hidden" style={{ border: '1.5px solid #C9B896' }}>
                       {bundle.previewImages && <BundlePreviewCarousel images={bundle.previewImages} />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm">{bundle.name}</span>
+                        <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bundle.name}</span>
                         {owned && (
-                          <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center gap-1">
-                            <Check className="w-2.5 h-2.5" /> OWNED
+                          <span className="px-2 py-0.5 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                            <Check className="w-2.5 h-2.5" /> Collected
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#8B6F47' }}>
                         {bundle.description}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] text-muted-foreground line-through">
+                        <span className="text-[10px] line-through" style={{ color: '#A0937E' }}>
                           {bundle.totalValue.toLocaleString()}
                         </span>
                         {!owned && (
                           <div className={cn(
                             "flex items-center gap-1 text-xs font-bold",
-                            affordable ? "text-amber-600" : "text-red-500"
+                            affordable ? "text-[#7A5C20]" : "text-[#8B4040]"
                           )}>
                             <PixelIcon name="coin" size={12} />
                             {bundle.coinPrice?.toLocaleString()}
@@ -122,13 +125,13 @@ export const BackgroundsTab = ({
         </div>
       )}
 
-      {/* Individual Backgrounds */}
+      {/* Individual Worlds */}
       {backgroundsWithPreviews.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Backgrounds</span>
+            <span className="shop-section-title">Individual Worlds</span>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {backgroundsWithPreviews.map((bg) => {
               const owned = isOwned(bg.id, 'customize');
               const affordable = canAfford(bg.coinPrice || 0);
@@ -145,44 +148,43 @@ export const BackgroundsTab = ({
                     }
                   }}
                   className={cn(
-                    "shop-bg-card",
+                    "world-portal",
                     isEquipped && "equipped",
                     owned && !isEquipped && "owned"
                   )}
                 >
-                  <div className="relative h-20 overflow-hidden">
+                  <div className="relative h-24 overflow-hidden">
                     <BackgroundPreview imagePath={bg.previewImage!} size="large" className="border-0 rounded-none" />
+                    <div className="world-portal-overlay" />
                     {isEquipped && (
-                      <div className="absolute inset-0 bg-purple-500/30 flex items-center justify-center">
-                        <div className="bg-purple-500 rounded-full px-2 py-0.5 flex items-center gap-1">
+                      <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(155,114,207,0.25)' }}>
+                        <div className="rounded-full px-2.5 py-1 flex items-center gap-1" style={{ background: '#9B72CF' }}>
                           <Palette className="w-3 h-3 text-white" />
-                          <span className="text-[10px] font-bold text-white">EQUIPPED</span>
+                          <span className="text-[10px] font-bold text-white">Active</span>
                         </div>
                       </div>
                     )}
                     {owned && !isEquipped && (
-                      <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
-                        <div className="bg-green-500 rounded-full p-1">
-                          <Check className="w-4 h-4 text-white" />
+                      <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(107,158,88,0.2)' }}>
+                        <div className="rounded-full p-1.5" style={{ background: '#6B9E58' }}>
+                          <Check className="w-3.5 h-3.5 text-white" />
                         </div>
                       </div>
                     )}
+                    {/* World name overlay */}
+                    <div className="world-portal-info">
+                      <span className="text-[11px] font-bold block leading-tight drop-shadow-md">{bg.name}</span>
+                    </div>
                   </div>
-                  <div className={cn(
-                    "p-2",
-                    isEquipped ? "bg-purple-50 dark:bg-purple-900/20" :
-                    owned ? "bg-green-50 dark:bg-green-900/20" : RARITY_BG[bg.rarity || 'common']
-                  )}>
-                    <span className="text-[10px] font-bold block leading-tight truncate">{bg.name}</span>
+                  <div className="p-2 text-center" style={{ background: isEquipped ? '#F2EAFA' : owned ? '#F0F5E0' : '#FFF6E8' }}>
                     {owned ? (
-                      <div className="text-[9px] font-medium text-center mt-1 text-purple-600 dark:text-purple-400">
+                      <div className="text-[9px] font-medium" style={{ color: isEquipped ? '#9B72CF' : '#6B9E58' }}>
                         {isEquipped ? "Tap to unequip" : "Tap to equip"}
                       </div>
                     ) : (
                       <div className={cn(
-                        "flex items-center justify-center gap-0.5 mt-1 text-[9px] font-bold",
-                        affordable ? "text-amber-600" : "text-red-500"
-                      )}>
+                        "flex items-center justify-center gap-1 text-[10px] font-bold",
+                      )} style={{ color: affordable ? '#7A5C20' : '#8B4040' }}>
                         <PixelIcon name="coin" size={10} />
                         {bg.coinPrice?.toLocaleString()}
                       </div>

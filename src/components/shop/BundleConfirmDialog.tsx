@@ -1,11 +1,23 @@
+/**
+ * BundleConfirmDialog — Warm merchant offering modal
+ * IAP bundles and coin packs displayed with RPG warmth.
+ */
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Sparkles, Zap, Shield, Star, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { StarterBundle, CoinPack } from "@/data/ShopData";
 import { BOOSTER_TYPES } from "@/hooks/useCoinBooster";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useStoreKit } from "@/hooks/useStoreKit";
+
+const RARITY_BADGE_COLORS: Record<string, string> = {
+  common: '#8B6F47',
+  rare: '#5B8FB9',
+  epic: '#9B72CF',
+  legendary: '#D4A040',
+};
 
 interface BundleConfirmDialogProps {
   open: boolean;
@@ -31,7 +43,7 @@ export const BundleConfirmDialog = ({
   const localizedPrice = storeKit.getLocalizedPrice(bundle.iapProductId, bundle.iapPrice);
 
   // Build contents list for starter bundles
-  const contentItems: { icon: React.ReactNode; label: string; sublabel?: string; highlight?: boolean; variant?: 'legendary' | 'epic' }[] = [];
+  const contentItems: { icon: React.ReactNode; label: string; sublabel?: string; highlight?: boolean }[] = [];
 
   if (isStarterBundle) {
     const starterBundle = bundle as StarterBundle;
@@ -41,7 +53,6 @@ export const BundleConfirmDialog = ({
         icon: <PixelIcon name="coin" size={16} />,
         label: `${starterBundle.contents.coins.toLocaleString()} Coins`,
         highlight: true,
-        variant: 'legendary',
       });
     }
 
@@ -49,7 +60,7 @@ export const BundleConfirmDialog = ({
       const booster = BOOSTER_TYPES.find(b => b.id === starterBundle.contents.boosterId);
       if (booster) {
         contentItems.push({
-          icon: <Zap className="w-4 h-4 text-yellow-400" />,
+          icon: <PixelIcon name="lightning" size={16} />,
           label: booster.name,
           sublabel: booster.description,
         });
@@ -58,8 +69,8 @@ export const BundleConfirmDialog = ({
 
     if (starterBundle.contents.streakFreezes && starterBundle.contents.streakFreezes > 0) {
       contentItems.push({
-        icon: <Shield className="w-4 h-4 text-teal-400" />,
-        label: `${starterBundle.contents.streakFreezes} Streak Freeze${starterBundle.contents.streakFreezes > 1 ? 's' : ''}`,
+        icon: <PixelIcon name="ice-cube" size={16} />,
+        label: `${starterBundle.contents.streakFreezes} Time Crystal${starterBundle.contents.streakFreezes > 1 ? 's' : ''}`,
         sublabel: 'Protect your streaks',
       });
     }
@@ -69,88 +80,88 @@ export const BundleConfirmDialog = ({
       icon: <PixelIcon name="coin" size={16} />,
       label: `${coinPack.coinAmount.toLocaleString()} Coins`,
       highlight: true,
-      variant: 'legendary',
     });
     if (coinPack.bonusCoins && coinPack.bonusCoins > 0) {
       contentItems.push({
-        icon: <Sparkles className="w-4 h-4 text-green-400" />,
+        icon: <PixelIcon name="sparkles" size={16} />,
         label: `+${coinPack.bonusCoins.toLocaleString()} Bonus`,
-        sublabel: 'Free extra coins!',
+        sublabel: 'Extra treasure!',
         highlight: true,
-        variant: 'legendary',
       });
     }
   }
 
   return (
     <Dialog open={open && !!bundle} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[300px] p-0 overflow-hidden border border-stone-200 rounded-2xl bg-white shadow-lg">
+      <DialogContent className="shop-modal max-w-[300px] p-0 overflow-hidden border-0">
         <VisuallyHidden>
           <DialogTitle>{bundle.name}</DialogTitle>
         </VisuallyHidden>
         <>
           {/* Header */}
-          <div className="p-4 text-center border-b border-stone-100 bg-stone-50">
+          <div className="shop-modal-header p-4 text-center">
             <div className="h-24 mb-2 flex items-center justify-center">
               <PixelIcon name={bundle.icon} size={64} />
             </div>
 
-            {/* Bundle name */}
-            <h2 className="text-lg font-bold text-stone-900">
+            <h2 className="text-lg font-bold" style={{ color: '#5C3D1A' }}>
               {bundle.name}
             </h2>
 
             {/* Savings badge */}
             {'savings' in bundle && bundle.savings && (
               <div className="mt-2 inline-flex items-center gap-1.5">
-                <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full uppercase tracking-wider bg-emerald-500">
+                <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full tracking-wider" style={{ background: '#6B9E58' }}>
                   Save {bundle.savings}
                 </span>
               </div>
             )}
 
-            {/* Rarity stars */}
+            {/* Rarity badge */}
             {'rarity' in bundle && bundle.rarity && (
-              <div className="flex justify-center mt-2 gap-1">
-                {[...Array(bundle.rarity === 'common' ? 1 : bundle.rarity === 'rare' ? 2 : bundle.rarity === 'epic' ? 3 : 4)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 text-amber-400 fill-amber-400"
-                  />
-                ))}
+              <div className="flex justify-center mt-2">
+                <span
+                  className="shop-rarity-badge text-[10px]"
+                  style={{ background: RARITY_BADGE_COLORS[bundle.rarity] || '#8B6F47' }}
+                >
+                  {bundle.rarity}
+                </span>
               </div>
             )}
           </div>
 
           {/* Contents section */}
-          <div className="p-4 space-y-3">
-            <p className="text-[11px] text-center leading-relaxed text-stone-400">
+          <div className="p-4 space-y-3" style={{ background: '#FFF8EE' }}>
+            <p className="text-[11px] text-center leading-relaxed" style={{ color: '#8B6F47' }}>
               {bundle.description}
             </p>
 
             {/* Contents list */}
             <div className="space-y-1.5">
-              <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-center text-stone-300">
-                Includes
+              <div className="text-[9px] font-bold tracking-[0.2em] text-center" style={{ color: '#A0937E' }}>
+                Contains
               </div>
               <div className="space-y-1.5">
                 {contentItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2.5 p-2 rounded-xl bg-stone-50 border border-stone-100"
+                    className="flex items-center gap-2.5 p-2 rounded-xl"
+                    style={{
+                      background: 'linear-gradient(180deg, #F5EBD6 0%, #EDE4D2 100%)',
+                      border: '1px solid #D4C4A0',
+                    }}
                   >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-white border border-stone-200">
+                    <div className="potion-icon-frame" style={{ width: '28px', height: '28px', minWidth: '28px' }}>
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className={cn(
                         "text-sm font-semibold",
-                        item.highlight ? "text-amber-500" : "text-stone-900"
-                      )}>
+                      )} style={{ color: item.highlight ? '#7A5C20' : '#5C3D1A' }}>
                         {item.label}
                       </div>
                       {item.sublabel && (
-                        <div className="text-[10px] leading-tight text-stone-400">
+                        <div className="text-[10px] leading-tight" style={{ color: '#A0937E' }}>
                           {item.sublabel}
                         </div>
                       )}
@@ -165,21 +176,19 @@ export const BundleConfirmDialog = ({
               onClick={onPurchase}
               disabled={isPurchasing}
               className={cn(
-                "w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95",
-                isPurchasing
-                  ? "bg-stone-100 text-stone-400 cursor-not-allowed"
-                  : "bg-emerald-500 text-white hover:bg-emerald-600"
+                "shop-modal-claim-btn",
+                isPurchasing ? "processing" : "affordable"
               )}
             >
               {isPurchasing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Processing...</span>
+                  <span>Claiming...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>Buy for {localizedPrice}</span>
+                  <PixelIcon name="sparkles" size={16} />
+                  <span>Claim for {localizedPrice}</span>
                 </>
               )}
             </button>
@@ -189,11 +198,11 @@ export const BundleConfirmDialog = ({
               onClick={() => onOpenChange(false)}
               disabled={isPurchasing}
               className={cn(
-                "w-full py-2.5 rounded-xl flex items-center justify-center text-xs font-medium text-stone-400 border border-stone-200 transition-all",
+                "shop-modal-cancel-btn",
                 isPurchasing && "opacity-50 cursor-not-allowed"
               )}
             >
-              Cancel
+              Maybe Later
             </button>
           </div>
         </>
