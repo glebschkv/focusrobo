@@ -93,7 +93,14 @@ export const PetCollectionBook = memo(() => {
     const total = PET_DATABASE.length;
     const totalFound = Object.values(speciesCatalog).reduce((sum, e) => sum + e.timesFound, 0);
     const filledCells = currentLand.cells.filter(c => c !== null).length;
-    return { discovered, total, totalFound, filledCells, landsCompleted: completedLands.length };
+    const totalVariants = Object.values(speciesCatalog).reduce((sum, e) => sum + (e.sizesFound?.length ?? 0), 0);
+    const maxVariants = discovered * 3;
+    const completedSpecies = Object.values(speciesCatalog).filter(e => e.sizesFound?.length === 3).length;
+    return {
+      discovered, total, totalFound, filledCells,
+      landsCompleted: completedLands.length,
+      totalVariants, maxVariants, completedSpecies,
+    };
   }, [speciesCatalog, currentLand.cells, completedLands.length]);
 
   const discoveryPct = stats.total > 0 ? Math.round((stats.discovered / stats.total) * 100) : 0;
@@ -145,15 +152,21 @@ export const PetCollectionBook = memo(() => {
 
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-2.5 mb-4">
-          <div className="collection-stat-card col-span-2 flex-row gap-3">
+          <div className="collection-stat-card gap-1">
             <div className="relative flex items-center justify-center flex-shrink-0">
-              <ProgressRing percent={discoveryPct} size={42} stroke={3.5} />
-              <span className="absolute text-[10px] font-black text-[hsl(var(--foreground))]">{discoveryPct}%</span>
+              <ProgressRing percent={discoveryPct} size={36} stroke={3} />
+              <span className="absolute text-[9px] font-black text-[hsl(var(--foreground))]">{discoveryPct}%</span>
             </div>
-            <div>
-              <p className="text-sm font-black text-[hsl(var(--foreground))]">{stats.discovered}/{stats.total} species</p>
-              <p className="text-[9px] font-semibold text-[hsl(var(--muted-foreground))]">{stats.totalFound} pets found</p>
+            <p className="text-[11px] font-black text-[hsl(var(--foreground))]">{stats.discovered}/{stats.total}</p>
+            <p className="text-[8px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Species</p>
+          </div>
+          <div className="collection-stat-card gap-1">
+            <div className="relative flex items-center justify-center flex-shrink-0">
+              <ProgressRing percent={stats.maxVariants > 0 ? Math.round((stats.totalVariants / stats.maxVariants) * 100) : 0} size={36} stroke={3} color="hsl(40, 90%, 50%)" />
+              <span className="absolute text-[9px] font-black text-[hsl(var(--foreground))]">{stats.totalVariants}</span>
             </div>
+            <p className="text-[11px] font-black text-[hsl(var(--foreground))]">{stats.totalVariants}/{stats.maxVariants}</p>
+            <p className="text-[8px] font-semibold text-[hsl(var(--muted-foreground))] uppercase">Variants</p>
           </div>
           <div className="collection-stat-card">
             <p className="text-xl font-black text-[hsl(var(--foreground))] mb-0.5">{stats.landsCompleted}</p>

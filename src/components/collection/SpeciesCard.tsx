@@ -1,25 +1,32 @@
 import { memo } from 'react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
-import { type PetSpecies, RARITY_GLOW } from '@/data/PetDatabase';
-import { RARITY_ACCENT, SIZE_LABEL } from './constants';
+import { type PetSpecies, type GrowthSize, RARITY_GLOW, getSizeSpritePath } from '@/data/PetDatabase';
+import { RARITY_ACCENT, SIZE_ORDER } from './constants';
 
 interface SpeciesCardProps {
   species: PetSpecies;
   discovered: boolean;
   timesFound: number;
   bestSize: string | null;
+  sizesFound: GrowthSize[];
   locked: boolean;
   isWished: boolean;
   onWish: () => void;
   onTap: () => void;
 }
 
+const SPRITE_SIZE_CLASS: Record<string, string> = {
+  baby: 'collection-card__size-sprite--baby',
+  adolescent: 'collection-card__size-sprite--adolescent',
+};
+
 export const SpeciesCard = memo(({
-  species, discovered, timesFound, bestSize, locked, isWished, onWish, onTap,
+  species, discovered, timesFound, sizesFound, locked, isWished, onWish, onTap,
 }: SpeciesCardProps) => {
   const glow = RARITY_GLOW[species.rarity];
   const accent = RARITY_ACCENT[species.rarity];
+  const isComplete = sizesFound.length === 3;
 
   // Locked & undiscovered
   if (!discovered && locked) {
@@ -50,15 +57,26 @@ export const SpeciesCard = memo(({
     );
   }
 
-  // Discovered
+  // Discovered — show 3 size variants
   return (
     <button
       type="button"
       onClick={onTap}
-      className={cn('collection-card collection-card--discovered', accent.cardBg, accent.cardBorder)}
+      className={cn(
+        'collection-card collection-card--discovered',
+        accent.cardBg,
+        accent.cardBorder,
+        isComplete && 'collection-card--complete',
+      )}
     >
-      {/* Rarity pip */}
-      <div className={cn('absolute top-2 left-2 w-2 h-2 rounded-full', accent.dot)} />
+      {/* Top-left: rarity pip or completion check */}
+      {isComplete ? (
+        <div className="absolute top-2 left-2 w-3.5 h-3.5 rounded-full bg-amber-400/80 flex items-center justify-center">
+          <PixelIcon name="check" size={8} className="text-white" />
+        </div>
+      ) : (
+        <div className={cn('absolute top-2 left-2 w-2 h-2 rounded-full', accent.dot)} />
+      )}
 
       {/* Wish heart */}
       <span
@@ -75,20 +93,46 @@ export const SpeciesCard = memo(({
         <PixelIcon name="heart" size={14} className={isWished ? 'opacity-100' : 'opacity-40'} />
       </span>
 
-      <div className="h-14 flex items-center justify-center mb-1">
-        <img
-          src={species.imagePath}
-          alt={species.name}
-          className="w-14 h-14 object-contain"
-          style={{ imageRendering: 'pixelated', filter: glow ? `drop-shadow(0 0 4px ${glow})` : undefined }}
-          draggable={false}
-        />
+      {/* 3 size variant sprites */}
+      <div className="collection-card__sizes">
+        {SIZE_ORDER.map((size) => {
+          const collected = sizesFound.includes(size);
+          return (
+            <img
+              key={size}
+              src={getSizeSpritePath(species.id, size)}
+              alt={`${species.name} ${size}`}
+              className={cn(
+                'collection-card__size-sprite',
+                SPRITE_SIZE_CLASS[size],
+                !collected && 'collection-card__size-sprite--locked',
+              )}
+              style={collected && glow ? { filter: `drop-shadow(0 0 3px ${glow})` } : undefined}
+              draggable={false}
+              loading="lazy"
+            />
+          );
+        })}
       </div>
+
+      {/* Name */}
       <p className="text-[11px] font-bold text-[hsl(var(--foreground))] text-center truncate w-full">{species.name}</p>
+
+      {/* Dots + count */}
       {timesFound > 0 && (
-        <div className="flex items-center gap-1 mt-0.5 text-[9px] font-semibold text-[hsl(var(--muted-foreground))]">
-          <span>{timesFound}x</span>
-          {bestSize && <><span className="text-[hsl(var(--border))]">/</span><span>{SIZE_LABEL[bestSize] ?? bestSize}</span></>}
+        <div className={cn('collection-card__meta text-[9px] font-semibold', accent.label)}>
+          <div className="collection-card__dots">
+            {SIZE_ORDER.map((size) => (
+              <span
+                key={size}
+                className={cn(
+                  'collection-card__dot',
+                  sizesFound.includes(size) ? 'collection-card__dot--filled' : 'collection-card__dot--empty',
+                )}
+              />
+            ))}
+          </div>
+          <span className="text-[hsl(var(--muted-foreground))]">{timesFound}x</span>
         </div>
       )}
     </button>

@@ -142,6 +142,11 @@ export function getPetById(id: string): PetSpecies | undefined {
   return PET_DATABASE.find(p => p.id === id);
 }
 
+/** Get the sprite path for a specific species + size variant */
+export function getSizeSpritePath(speciesId: string, size: GrowthSize): string {
+  return `/assets/pets/${speciesId}-${size}.png`;
+}
+
 /** Get all pets available at a given player level */
 export function getAvailablePets(playerLevel: number): PetSpecies[] {
   return PET_DATABASE.filter(p => p.unlockLevel <= playerLevel);

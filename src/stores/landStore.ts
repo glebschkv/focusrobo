@@ -54,6 +54,7 @@ export interface Land {
 export interface SpeciesCatalogEntry {
   timesFound: number;
   bestSize: GrowthSize;
+  sizesFound: GrowthSize[];
   firstFoundAt: number;
 }
 
@@ -101,6 +102,7 @@ const landSchema = z.object({
 const speciesCatalogEntrySchema = z.object({
   timesFound: z.number().int().min(0),
   bestSize: z.enum(['baby', 'adolescent', 'adult']),
+  sizesFound: z.array(z.enum(['baby', 'adolescent', 'adult'])).max(3).default([]),
   firstFoundAt: z.number().min(0),
 });
 
@@ -353,17 +355,28 @@ export const useLandStore = create<LandStore>()(
         const newCatalog = { ...speciesCatalog };
         const existing = newCatalog[pendingPet.petId];
         if (existing) {
+          const newSizesFound = existing.sizesFound.includes(pendingPet.size)
+            ? existing.sizesFound
+            : [...existing.sizesFound, pendingPet.size];
           newCatalog[pendingPet.petId] = {
             ...existing,
             timesFound: existing.timesFound + 1,
             bestSize: SIZE_RANK[pendingPet.size] > SIZE_RANK[existing.bestSize]
               ? pendingPet.size
               : existing.bestSize,
+            sizesFound: newSizesFound,
           };
+          // Emit event when all 3 sizes collected for the first time
+          if (newSizesFound.length === 3 && existing.sizesFound.length < 3) {
+            window.dispatchEvent(new CustomEvent('speciesCompleted', {
+              detail: { speciesId: pendingPet.petId, rarity: pendingPet.rarity },
+            }));
+          }
         } else {
           newCatalog[pendingPet.petId] = {
             timesFound: 1,
             bestSize: pendingPet.size,
+            sizesFound: [pendingPet.size],
             firstFoundAt: Date.now(),
           };
         }
@@ -523,6 +536,30 @@ export const useLandStore = create<LandStore>()(
         if (state.completedLands) {
           state.completedLands = state.completedLands.map(migrateLand);
         }
+        // Migrate: rebuild sizesFound from all historical land cells
+        if (state.speciesCatalog) {
+          const allCells = [
+            ...(state.currentLand?.cells ?? []),
+            ...(state.completedLands ?? []).flatMap(l => l.cells),
+          ].filter(Boolean) as LandCell[];
+
+          const sizeMap: Record<string, Set<GrowthSize>> = {};
+          for (const cell of allCells) {
+            if (!sizeMap[cell.petId]) sizeMap[cell.petId] = new Set();
+            sizeMap[cell.petId].add(cell.size);
+          }
+
+          for (const [id, entry] of Object.entries(state.speciesCatalog)) {
+            if (!entry.sizesFound || entry.sizesFound.length === 0) {
+              const found = sizeMap[id] ?? new Set<GrowthSize>();
+              found.add(entry.bestSize);
+              state.speciesCatalog[id] = {
+                ...entry,
+                sizesFound: Array.from(found),
+              };
+            }
+          }
+        }
       },
     }
   )
@@ -538,3 +575,13 @@ export const useSpeciesCatalog = () => useLandStore((s) => s.speciesCatalog);
 export const usePendingPet = () => useLandStore((s) => s.pendingPet);
 export const useOwnedThemes = () => useLandStore((s) => s.ownedThemes);
 export const useWishedSpecies = () => useLandStore((s) => s.wishedSpecies);
+
+export const useSpeciesCompletion = () => useLandStore((s) => {
+  let totalVariants = 0;
+  let completedSpecies = 0;
+  for (const entry of Object.values(s.speciesCatalog)) {
+    totalVariants += (entry.sizesFound?.length ?? 0);
+    if (entry.sizesFound?.length === 3) completedSpecies++;
+  }
+  return { totalVariants, completedSpecies };
+});
