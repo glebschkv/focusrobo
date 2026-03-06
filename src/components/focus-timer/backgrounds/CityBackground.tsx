@@ -54,7 +54,7 @@ export const CityBackground = memo(() => {
   const generateWindows = (
     bx: number, by: number, bw: number, bh: number, startIdx: number
   ) => {
-    const ww = 4, wh = 6, px = 6, py = 8, gx = 8, gy = 12;
+    const ww = 4, wh = 6, px = 6, py = 8, gx = 12, gy = 16;
     const cols = Math.floor((bw - px * 2) / (ww + gx));
     const rows = Math.floor((bh - py * 2) / (wh + gy));
     const windows = [];
@@ -91,11 +91,11 @@ export const CityBackground = memo(() => {
         style={{
           background: `
             linear-gradient(180deg,
-              hsl(250 55% 8%) 0%,
-              hsl(255 50% 12%) 25%,
-              hsl(265 45% 16%) 50%,
-              hsl(275 40% 20%) 75%,
-              hsl(285 35% 25%) 100%
+              hsl(235 55% 7%) 0%,
+              hsl(230 50% 11%) 25%,
+              hsl(240 45% 15%) 50%,
+              hsl(255 40% 20%) 75%,
+              hsl(270 38% 26%) 100%
             )
           `
         }}
@@ -267,7 +267,7 @@ export const CityBackground = memo(() => {
           <rect x="370" y="150" width="65" height="140" fill="url(#cityBuildingFront)" />
           {generateWindows(370, 150, 65, 140, 390)}
           {/* Billboard on front building */}
-          <rect x="380" y="155" width="12" height="8" className="animate-billboard-cycle" opacity="0.7" />
+          <rect x="380" y="155" width="12" height="8" fill="hsl(200 80% 55%)" className="animate-billboard-cycle" opacity="0.7" />
 
           <rect x="540" y="160" width="55" height="130" fill="url(#cityBuildingFront)" />
           {generateWindows(540, 160, 55, 130, 415)}
@@ -275,7 +275,7 @@ export const CityBackground = memo(() => {
           <rect x="630" y="145" width="60" height="145" fill="url(#cityBuildingFront)" />
           {generateWindows(630, 145, 60, 145, 435)}
           {/* Billboard */}
-          <rect x="642" y="150" width="10" height="6" className="animate-billboard-cycle" opacity="0.6" style={{ animationDelay: '-1.5s' }} />
+          <rect x="642" y="150" width="10" height="6" fill="hsl(330 70% 55%)" className="animate-billboard-cycle" opacity="0.6" style={{ animationDelay: '-1.5s' }} />
 
           <rect x="790" y="165" width="50" height="125" fill="url(#cityBuildingFront)" />
           {generateWindows(790, 165, 50, 125, 460)}
@@ -286,7 +286,7 @@ export const CityBackground = memo(() => {
           <rect x="1030" y="170" width="60" height="120" fill="url(#cityBuildingFront)" />
           {generateWindows(1030, 170, 60, 120, 505)}
           {/* Billboard with scrolling bar */}
-          <rect x="1042" y="175" width="14" height="8" className="animate-billboard-cycle" opacity="0.65" style={{ animationDelay: '-3s' }} />
+          <rect x="1042" y="175" width="14" height="8" fill="hsl(180 75% 50%)" className="animate-billboard-cycle" opacity="0.65" style={{ animationDelay: '-3s' }} />
 
           <rect x="1120" y="160" width="50" height="130" fill="url(#cityBuildingFront)" />
           {generateWindows(1120, 160, 50, 130, 525)}

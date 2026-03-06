@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { TimerPreset, formatTime, MAX_COUNTUP_DURATION } from "./constants";
 import { ariaLabel, formatTimeForScreenReader } from "@/lib/accessibility";
-import { useThemeColors } from "./backgrounds/ThemeContext";
+import { useThemeColors, withAlpha } from "./backgrounds/ThemeContext";
 
 interface TimerDisplayProps {
   preset: TimerPreset;
@@ -65,7 +65,7 @@ export const TimerDisplay = ({
           onClick={onToggleSound}
           aria-label={ariaLabel.toggle('Sound', soundEnabled)}
           className="w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-90"
-          style={{ background: `${colors.text}10` }}
+          style={{ background: withAlpha(colors.text, 0.06) }}
         >
           {soundEnabled ? (
             <Volume2 className="w-4 h-4" style={{ color: colors.text }} aria-hidden="true" />
@@ -145,7 +145,7 @@ export const TimerDisplay = ({
                 height: 12,
                 borderRadius: '50%',
                 backgroundColor: colors.ringPulseColor,
-                boxShadow: `0 0 12px 4px ${colors.ringPulseColor}80`,
+                boxShadow: `0 0 12px 4px ${withAlpha(colors.ringPulseColor, 0.5)}`,
               }}
             />
           )}

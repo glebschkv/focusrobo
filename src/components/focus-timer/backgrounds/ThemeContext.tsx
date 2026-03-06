@@ -187,6 +187,10 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 export const useThemeColors = () => useContext(ThemeContext);
 
+/** Add alpha channel to an HSL color: hsl(h s% l%) → hsl(h s% l% / alpha) */
+export const withAlpha = (color: string, alpha: number) =>
+  color.replace(')', ` / ${alpha})`);
+
 interface ThemeProviderProps {
   theme: string;
   children: ReactNode;

@@ -21,8 +21,8 @@ export const SkyBackground = memo(() => {
 
   // Grass blades
   const grassBlades = useMemo(() =>
-    Array.from({ length: 40 }, (_, i) => ({
-      x: (i / 40) * 100,
+    Array.from({ length: 25 }, (_, i) => ({
+      x: (i / 25) * 100,
       height: 8 + (i % 5) * 2,
       delay: `${(i * 0.15) % 3}s`,
     })), []

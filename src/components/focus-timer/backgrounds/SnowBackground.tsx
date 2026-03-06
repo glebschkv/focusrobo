@@ -91,7 +91,7 @@ export const SnowBackground = memo(() => {
       {/* Soft clouds */}
       <div className="absolute top-[5%] left-[3%] w-36 h-14 rounded-full bg-white/30 blur-lg pointer-events-none" />
       <div className="absolute top-[10%] left-[28%] w-28 h-10 rounded-full bg-white/25 blur-lg pointer-events-none" />
-      <div className="absolute top-[3%] right-[25%] w-40 h-12 rounded-full bg-white/28 blur-lg pointer-events-none" />
+      <div className="absolute top-[3%] right-[25%] w-40 h-12 rounded-full bg-white/[0.28] blur-lg pointer-events-none" />
 
       {/* Ice crystal snowflakes */}
       {crystals.map((c, i) => (
