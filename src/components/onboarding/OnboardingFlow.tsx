@@ -474,7 +474,7 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               }}
               className="w-full text-center text-xs transition-opacity duration-150 active:opacity-30"
               style={{
-                color: 'rgba(28,33,30,0.4)',
+                color: 'rgba(28,33,30,0.55)',
                 minHeight: 44,
                 lineHeight: '44px',
                 WebkitTapHighlightColor: 'transparent',
@@ -1035,7 +1035,7 @@ const StepFocusShield = () => {
                 Open Settings
               </button>
             )}
-            <p className="text-xs" style={{ color: 'rgba(28,33,30,0.4)' }}>
+            <p className="text-xs" style={{ color: 'rgba(28,33,30,0.55)' }}>
               You can set this up later in Settings
             </p>
           </div>
