@@ -26,25 +26,25 @@ function getGrowthStage(count: number): string {
 }
 
 // Parallax tilt constants (used when zoom <= 1.0)
-const MAX_OFFSET = 14;
-const DRAG_SENSITIVITY = 0.6;
+const MAX_OFFSET = 20;
+const DRAG_SENSITIVITY = 0.7;
 const SPRING_STIFFNESS = 0.08;
 const SPRING_DAMPING = 0.8;
 const MOMENTUM_DECAY = 0.94;
 const MIN_VELOCITY = 0.05;
 
 // Parallax layer speeds (increased for more noticeable effect)
-const LAYER_SKY = 0.2;
-const LAYER_ISLAND = 0.65;
+const LAYER_SKY = 0.25;
+const LAYER_ISLAND = 0.7;
 const LAYER_PETS = 1.0;
 
 // Auto-drift: slow idle sine wave when not touching
-const AUTO_DRIFT_AMPLITUDE = 2.5; // ±2.5px
-const AUTO_DRIFT_PERIOD = 10000; // 10 seconds full cycle
+const AUTO_DRIFT_AMPLITUDE = 5; // ±5px
+const AUTO_DRIFT_PERIOD = 8000; // 8 seconds full cycle
 
 // Zoom constants
 const ZOOM_MIN = 0.8;
-const ZOOM_MAX = 3.0;
+const ZOOM_MAX = 4.0;
 const ZOOM_DEFAULT = 1.0;
 const ZOOM_WHEEL_STEP = 0.08;
 const ZOOM_DOUBLE_TAP = 2.0;
@@ -324,6 +324,10 @@ function useIslandParallax() {
       }
 
       if (e.touches.length === 1) {
+        // Skip double-tap zoom when tapping on a pet element
+        const target = e.target as HTMLElement;
+        if (target.closest('.island-pet')) return;
+
         const now = Date.now();
         if (now - lastTapTime.current < 300) {
           // Double-tap: toggle between 1x and zoomed, smooth animation
@@ -437,6 +441,18 @@ function useIslandParallax() {
       currentZoom.current = clampZoom(z);
       updateCSS();
     },
+    resetView: () => {
+      cancelAnimationFrame(animFrameId.current);
+      targetZoom.current = ZOOM_DEFAULT;
+      currentZoom.current = ZOOM_DEFAULT;
+      panX.current = 0;
+      panY.current = 0;
+      currentOffset.current = 0;
+      velocity.current = 0;
+      velocityX.current = 0;
+      velocityY.current = 0;
+      updateCSS();
+    },
   };
 }
 
@@ -455,13 +471,14 @@ export const PetLand = () => {
   const ownedBackgrounds = useShopStore((s) => s.ownedBackgrounds);
   const theme = getIslandTheme(themeId);
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
   const tierScale = getIslandScale(gridSize);
   const progressPct = (filledCount / tierCapacity) * 100;
 
-  const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom } = useIslandParallax();
+  const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom, resetView } = useIslandParallax();
 
   // Auto-zoom for larger islands so pets remain visible
   useEffect(() => {
@@ -703,7 +720,11 @@ export const PetLand = () => {
       {/* Theme switcher */}
       <button
         className="pet-land__theme-btn"
-        onClick={() => setShowThemePicker(!showThemePicker)}
+        onClick={() => {
+          const opening = !showThemePicker;
+          setShowThemePicker(opening);
+          if (opening) resetView();
+        }}
         aria-label="Change island theme"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -719,35 +740,95 @@ export const PetLand = () => {
         <div className="pet-land__theme-picker" onClick={() => setShowThemePicker(false)}>
           <div className="pet-land__theme-strip" onClick={(e) => e.stopPropagation()}>
             {Object.values(ISLAND_THEMES).map((t) => {
-              const isOwned = t.id === 'day' || ownedBackgrounds.includes(t.id);
               const isActive = t.id === themeId;
               return (
                 <button
                   key={t.id}
-                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''} ${!isOwned ? 'pet-land__theme-chip--locked' : ''}`}
+                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''}`}
                   onClick={() => {
-                    if (isOwned) {
-                      setTheme(t.id);
-                      haptic('light');
-                    }
+                    setTheme(t.id);
+                    haptic('light');
                   }}
-                  disabled={!isOwned}
                 >
                   <div
                     className="pet-land__theme-swatch"
                     style={{ background: `linear-gradient(135deg, ${t.grassLight[0]}, ${t.grassDark[0]})` }}
                   />
                   <span className="pet-land__theme-name">{t.name}</span>
-                  {!isOwned && (
-                    <span className="pet-land__theme-lock">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                        <path d="M12 2C9.24 2 7 4.24 7 7v3H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2V7c0-2.76-2.24-5-5-5zm-3 5c0-1.66 1.34-3 3-3s3 1.34 3 3v3H9V7z"/>
-                      </svg>
-                    </span>
-                  )}
                 </button>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* How it works info button */}
+      <button
+        className="pet-land__info-btn"
+        onClick={() => setShowHowItWorks(true)}
+        aria-label="How it works"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+      </button>
+
+      {showHowItWorks && (
+        <div className="pet-land__info-overlay" onClick={() => setShowHowItWorks(false)}>
+          <div className="pet-land__info-card" onClick={(e) => e.stopPropagation()}>
+            <div className="pet-land__info-header">
+              <span className="pet-land__info-title">How BotBlock Works</span>
+              <button className="pet-land__info-close" onClick={() => setShowHowItWorks(false)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6L6 18" />
+                  <path d="M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="pet-land__info-steps">
+              <div className="pet-land__info-step">
+                <span className="pet-land__info-step-num">1</span>
+                <div className="pet-land__info-step-body">
+                  <strong>Start a Focus Session</strong>
+                  <span>Set a timer (25 min or longer) and focus on your task. The app blocks distracting apps while you work.</span>
+                </div>
+              </div>
+              <div className="pet-land__info-step">
+                <span className="pet-land__info-step-num">2</span>
+                <div className="pet-land__info-step-body">
+                  <strong>Discover a Pet</strong>
+                  <span>Complete the session to receive a random pet. Longer sessions give you bigger pets (baby, adolescent, or adult).</span>
+                </div>
+              </div>
+              <div className="pet-land__info-step">
+                <span className="pet-land__info-step-num">3</span>
+                <div className="pet-land__info-step-body">
+                  <strong>Grow Your Island</strong>
+                  <span>Each pet is placed on your floating island. Fill it up and the island expands automatically, from 5x5 up to 20x20 tiles.</span>
+                </div>
+              </div>
+              <div className="pet-land__info-step">
+                <span className="pet-land__info-step-num">4</span>
+                <div className="pet-land__info-step-body">
+                  <strong>Collect Rare Pets</strong>
+                  <span>There are 41 species across 5 rarities. Level up to unlock rarer pets. Buy eggs in the shop for better odds.</span>
+                </div>
+              </div>
+              <div className="pet-land__info-step">
+                <span className="pet-land__info-step-num">5</span>
+                <div className="pet-land__info-step-body">
+                  <strong>Complete &amp; Archive</strong>
+                  <span>When your island is completely full, it gets archived and you start a fresh one. Keep collecting!</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pet-land__info-tip">
+              Tip: Maintain a daily streak for bonus XP and coins. Check the shop for eggs, themes, and power-ups!
+            </div>
           </div>
         </div>
       )}
