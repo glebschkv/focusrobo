@@ -15,8 +15,9 @@ import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
 import { getIslandScale, getAvailableCellCount, getIslandPosition } from '@/data/islandPositions';
-import { getIslandTheme, ISLAND_THEMES, FREE_THEME_IDS } from '@/data/IslandThemes';
-import { PREMIUM_BACKGROUNDS } from '@/data/ShopData';
+import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
+import { usePremiumStore } from '@/stores/premiumStore';
+import { PremiumSubscription } from '@/components/PremiumSubscription';
 import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
@@ -500,8 +501,13 @@ export const PetLand = () => {
   const themeId = useThemeStore((s) => s.homeBackground);
   const setTheme = useThemeStore((s) => s.setHomeBackground);
   const ownedBackgrounds = useShopStore((s) => s.ownedBackgrounds);
-  const theme = getIslandTheme(themeId);
+  const isPremium = usePremiumStore((s) => s.isPremium());
+
+  // Fall back to default theme if user has a premium theme but lost premium
+  const effectiveThemeId = (!isPremium && ISLAND_THEMES[themeId]?.premiumOnly) ? 'day' : themeId;
+  const theme = getIslandTheme(effectiveThemeId);
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [celebrationBurst, setCelebrationBurst] = useState(false);
 
@@ -623,7 +629,7 @@ export const PetLand = () => {
       background: colors[i % colors.length],
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [themeId]);
+  }, [effectiveThemeId]);
 
   const sparkles = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => ({
@@ -755,7 +761,7 @@ export const PetLand = () => {
           >
             {/* Island container — parallax layer (medium) */}
             <div className="pet-land__island-container" ref={containerRef}>
-            <IslandSVG gridSize={gridSize} themeId={themeId} />
+            <IslandSVG gridSize={gridSize} themeId={effectiveThemeId} />
             <div className="pet-land__island-shadow" />
 
             {/* Pets layer — parallax layer (fastest) */}
@@ -901,16 +907,19 @@ export const PetLand = () => {
       {showThemePicker && (
         <div className="pet-land__theme-picker" onClick={() => setShowThemePicker(false)}>
           <div className="pet-land__theme-strip" onClick={(e) => e.stopPropagation()}>
-            {Object.values(ISLAND_THEMES).filter((t) => FREE_THEME_IDS.includes(t.id) || ownedBackgrounds.some((bgId: string) => {
-              const bg = PREMIUM_BACKGROUNDS.find(b => b.id === bgId);
-              return bg?.theme === t.id;
-            })).map((t) => {
-              const isActive = t.id === themeId;
+            {Object.values(ISLAND_THEMES).map((t) => {
+              const isActive = t.id === effectiveThemeId;
+              const isLocked = t.premiumOnly && !isPremium;
               return (
                 <button
                   key={t.id}
-                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''}`}
+                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''} ${isLocked ? 'pet-land__theme-chip--locked' : ''}`}
                   onClick={() => {
+                    if (isLocked) {
+                      setShowThemePicker(false);
+                      setShowPremiumDialog(true);
+                      return;
+                    }
                     setTheme(t.id);
                     haptic('light');
                   }}
@@ -919,6 +928,13 @@ export const PetLand = () => {
                     className="pet-land__theme-swatch"
                     style={{ background: `linear-gradient(180deg, ${t.sky[0]} 0%, ${t.sky[2]} 40%, ${t.grassLight[0]} 65%, ${t.grassDark[0]} 100%)` }}
                   />
+                  {isLocked && (
+                    <div className="pet-land__theme-lock">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C9.24 2 7 4.24 7 7v3H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-2V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3z"/>
+                      </svg>
+                    </div>
+                  )}
                   <span className="pet-land__theme-name">{t.name}</span>
                 </button>
               );
@@ -1005,6 +1021,10 @@ export const PetLand = () => {
 
       {/* Progress bar moved to TopStatusBar */}
 
+      {/* Premium subscription dialog (triggered by locked theme tap) */}
+      {showPremiumDialog && (
+        <PremiumSubscription isOpen={showPremiumDialog} onClose={() => setShowPremiumDialog(false)} />
+      )}
     </div>
   );
 };

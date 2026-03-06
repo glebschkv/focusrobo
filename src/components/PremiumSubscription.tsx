@@ -5,7 +5,7 @@ import {
   Sparkles,
   Zap,
   RefreshCw,
-  Music,
+  Palette,
   Snowflake,
   Loader2,
   Egg,
@@ -80,7 +80,7 @@ const PREMIUM_FEATURES = [
   { icon: <Egg className="w-4 h-4" />, label: '15% Off All Eggs' },
   { icon: <Snowflake className="w-4 h-4" />, label: '3 Streak Shields / Month' },
   { icon: <BarChart3 className="w-4 h-4" />, label: 'Advanced Analytics' },
-  { icon: <Music className="w-4 h-4" />, label: 'Ambient Sound Layering' },
+  { icon: <Palette className="w-4 h-4" />, label: 'Exclusive Island Themes' },
 ];
 
 export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProps) => {

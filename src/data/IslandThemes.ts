@@ -8,6 +8,8 @@
 export interface IslandTheme {
   id: string;
   name: string;
+  /** Whether this theme requires premium subscription */
+  premiumOnly?: boolean;
   /** 4-stop sky gradient (top → bottom) */
   sky: [string, string, string, string];
   /** Checkerboard tile colors */
@@ -66,6 +68,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   winter: {
     id: 'winter',
     name: 'Winter',
+    premiumOnly: true,
     sky: ['#7BA8C4', '#A4C4D8', '#C8DBE8', '#E4EDF2'],
     grassLight: ['#E8F0F8', '#D8E8F0'],
     grassDark: ['#C4D8E8', '#B0CCE0'],
@@ -116,6 +119,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   sakura: {
     id: 'sakura',
     name: 'Sakura',
+    premiumOnly: true,
     sky: ['#E8A0B8', '#F0B8C8', '#F8D0DC', '#FFF0F4'],
     grassLight: ['#FFD4E0', '#F8C4D0'],
     grassDark: ['#F0A0B8', '#E890A8'],
@@ -141,6 +145,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   night: {
     id: 'night',
     name: 'Night Garden',
+    premiumOnly: true,
     sky: ['#0F1B2E', '#1A2840', '#253550', '#304260'],
     grassLight: ['#2A5A3A', '#246048'],
     grassDark: ['#1E4030', '#183828'],
@@ -166,6 +171,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   desert: {
     id: 'desert',
     name: 'Desert',
+    premiumOnly: true,
     sky: ['#D4A050', '#E0B868', '#E8D098', '#F4E8D0'],
     grassLight: ['#F0D898', '#E8CC88'],
     grassDark: ['#D4B870', '#C8AC60'],
@@ -324,5 +330,5 @@ export function getIslandTheme(themeId: string): IslandTheme {
 /** List of all available theme IDs */
 export const ISLAND_THEME_IDS = Object.keys(ISLAND_THEMES);
 
-/** Free built-in theme IDs (always available in the picker) */
-export const FREE_THEME_IDS = ['day', 'winter', 'beach', 'sakura', 'night', 'desert'];
+/** Free built-in theme IDs (always available without premium) */
+export const FREE_THEME_IDS = ['day', 'beach'];
