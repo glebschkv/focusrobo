@@ -2,8 +2,8 @@ import { useRef } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { XPReward } from "@/hooks/useXPSystem";
-import { Star, Gift, Zap, Trophy, Flame, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 
 interface XPRewardModalProps {
   isOpen: boolean;
@@ -50,7 +50,7 @@ export const XPRewardModal = ({
                 boxShadow: '0 2px 0 hsl(42 55% 36%)',
               }}
             >
-              <Zap className="w-7 h-7 text-white" />
+              <PixelIcon name="lightning" size={28} />
             </div>
 
             <h2 className="text-xl font-black uppercase tracking-tight" style={{ color: 'hsl(150 10% 12%)' }}>
@@ -80,14 +80,14 @@ export const XPRewardModal = ({
                   color: 'white',
                 }}
               >
-                <Flame className="w-3 h-3" />
+                <PixelIcon name="fire" size={12} />
                 {displayReward.bonusType === 'mega_bonus' && 'MEGA BONUS! 2x XP'}
                 {displayReward.bonusType === 'super_lucky' && 'SUPER LUCKY! 1.5x XP'}
                 {displayReward.bonusType === 'lucky' && 'LUCKY! +25% XP'}
               </div>
             )}
             <div className="flex items-center justify-center gap-2">
-              <Star className="w-5 h-5 text-amber-500" />
+              <PixelIcon name="star" size={20} />
               <span className="text-2xl font-black tabular-nums text-amber-600">
                 +{displayReward.xpGained}
               </span>
@@ -137,11 +137,11 @@ export const XPRewardModal = ({
               }}
             >
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Trophy className="w-6 h-6 text-white" />
+                <PixelIcon name="trophy" size={24} />
                 <span className="text-lg font-black uppercase tracking-wide text-white">
                   Level Up!
                 </span>
-                <Sparkles className="w-5 h-5 text-white/80 animate-spin" style={{ animationDuration: '3s' }} />
+                <PixelIcon name="sparkles" size={20} />
               </div>
               <p className="text-sm text-white/90 font-bold">
                 You reached Level {displayReward.newLevel}!
@@ -156,7 +156,7 @@ export const XPRewardModal = ({
                 className="text-[9px] font-black uppercase tracking-[0.2em] text-center"
                 style={{ color: 'hsl(150 10% 40%)' }}
               >
-                <Gift className="w-3 h-3 inline mr-1" />
+                <PixelIcon name="gift" size={12} className="inline mr-1" />
                 New Unlocks
               </div>
 

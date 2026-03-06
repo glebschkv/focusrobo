@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import { Timer, Home, ShoppingBag, PawPrint, Settings, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useClickSound } from "@/hooks/useClickSound";
 import { useHaptics } from "@/hooks/useHaptics";
 
@@ -15,11 +15,11 @@ interface TabBarProps {
 
 // Tab configuration with notification support
 const tabs = [
-  { id: "home", icon: Home, label: "Home" },
-  { id: "collection", icon: PawPrint, label: "Pets" },
-  { id: "timer", icon: Timer, label: "Focus", isCenter: true },
-  { id: "shop", icon: ShoppingBag, label: "Shop" },
-  { id: "settings", icon: Settings, label: "Settings" },
+  { id: "home", icon: "home", label: "Home" },
+  { id: "collection", icon: "paw", label: "Pets" },
+  { id: "timer", icon: "hourglass", label: "Focus", isCenter: true },
+  { id: "shop", icon: "shopping-bag", label: "Shop" },
+  { id: "settings", icon: "gear", label: "Settings" },
 ];
 
 // Tabs already in order: Home, Pets, Focus (center), Shop, Settings
@@ -88,7 +88,6 @@ export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompact
     <div className={cn("dock-container", isCompact && "compact")}>
       <nav className={cn("dock-bar", isCompact && "compact")} role="tablist" aria-label="Main navigation">
         {orderedTabs.map((tab) => {
-          const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           const isPressed = pressedTab === tab.id;
           const isCenter = tab.isCenter;
@@ -129,13 +128,10 @@ export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompact
                   isCompact && "compact"
                 )}
               >
-                <Icon className="dock-item-icon" strokeWidth={2.5} />
+                <PixelIcon name={tab.icon} size={22} className="dock-item-icon" />
                 {/* Expand indicator when compact */}
                 {isCompact && (
-                  <ChevronUp
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-4 text-emerald-500 animate-bounce"
-                    strokeWidth={2.5}
-                  />
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 text-emerald-500 animate-bounce text-xs">▲</span>
                 )}
               </button>
             );
@@ -161,7 +157,7 @@ export const IOSTabBar = ({ activeTab, onTabChange, isCompact = false, onCompact
                 isCompact && "dock-item-hidden"
               )}
             >
-              <Icon className="dock-item-icon" strokeWidth={isActive ? 2.5 : 2} />
+              <PixelIcon name={tab.icon} size={22} className="dock-item-icon" />
               <span className="dock-item-label">{tab.label}</span>
 
               {/* Active indicator dot */}

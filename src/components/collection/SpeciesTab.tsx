@@ -1,6 +1,6 @@
 import { memo, useMemo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Heart, Sparkles } from 'lucide-react';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 import { PET_DATABASE, type PetSpecies, type PetRarity } from '@/data/PetDatabase';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
 import { RARITY_ORDER, RARITY_LABEL, RARITY_ACCENT } from './constants';
@@ -39,7 +39,7 @@ export const SpeciesTab = memo(({
       {/* Empty state for brand-new users */}
       {!hasAnyPets && (
         <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-[hsl(var(--primary)/0.08)] border border-[hsl(var(--border))] mb-4">
-          <Sparkles className="w-4 h-4 text-[hsl(var(--primary))] flex-shrink-0" />
+          <PixelIcon name="sparkles" size={16} />
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-bold text-[hsl(var(--foreground))]">Start collecting!</p>
             <p className="text-[10px] text-[hsl(var(--muted-foreground))]">Complete a focus session to discover your first pet.</p>
@@ -50,7 +50,7 @@ export const SpeciesTab = memo(({
       {/* Wished species banner */}
       {wishedPet && (
         <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-50 border border-rose-200 mb-4">
-          <Heart className="w-4 h-4 text-rose-400 flex-shrink-0" fill="currentColor" />
+          <PixelIcon name="heart" size={16} />
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-bold text-rose-700">Wishing for {wishedPet.name}</p>
             <p className="text-[10px] text-rose-400">Focus to find this pet!</p>

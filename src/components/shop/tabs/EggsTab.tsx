@@ -5,7 +5,6 @@
  */
 
 import { useState } from 'react';
-import { Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { EGG_TYPES, SPECIES_SELECTOR_PRICE } from '@/data/EggData';
@@ -99,7 +98,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       {/* Species Selector */}
       <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 shadow-sm">
         <div className="flex items-center gap-2 mb-1.5">
-          <Target className="w-4 h-4 text-[hsl(var(--primary))]" />
+          <PixelIcon name="target" size={16} />
           <span className="font-bold text-sm text-[hsl(var(--foreground))]">Species Selector</span>
         </div>
         <p className="text-[11px] text-[hsl(var(--muted-foreground))] mb-2">

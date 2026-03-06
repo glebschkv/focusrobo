@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Zap, Clock, Backpack, Star, Palette, Zap as ZapIcon, Egg, Crown } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { useShop } from "@/hooks/useShop";
@@ -22,11 +21,11 @@ import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { EggsTab } from "@/components/shop/tabs/EggsTab";
 import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
 
-const CATEGORY_ICONS: Record<string, typeof Star> = {
-  eggs: Egg,
-  featured: Crown,
-  customize: Palette,
-  powerups: ZapIcon,
+const CATEGORY_ICONS: Record<string, string> = {
+  eggs: 'egg',
+  featured: 'crown',
+  customize: 'palette',
+  powerups: 'lightning',
 };
 
 export const Shop = () => {
@@ -160,12 +159,12 @@ export const Shop = () => {
           <h1 className="text-base font-black uppercase tracking-tight text-amber-900">Shop</h1>
           {isBoosterActive() && activeBooster && (
             <div className="shop-booster-pill">
-              <Zap className="w-3 h-3 text-purple-600" />
+              <PixelIcon name="lightning" size={12} />
               <span className="text-[10px] font-bold text-purple-700">
                 {getCurrentMultiplier()}x
               </span>
               <div className="flex items-center gap-0.5 text-[9px] text-purple-500">
-                <Clock className="w-2.5 h-2.5" />
+                <PixelIcon name="clock" size={10} />
                 <span className="font-mono font-bold">{getTimeRemainingFormatted()}</span>
               </div>
             </div>
@@ -181,7 +180,7 @@ export const Shop = () => {
             )}
             aria-label="My Items"
           >
-            <Backpack className="w-4 h-4" />
+            <PixelIcon name="backpack" size={16} />
           </button>
           <button
             onClick={() => {
@@ -204,7 +203,7 @@ export const Shop = () => {
       {!showInventory && (
         <div className="shop-tabs-bar">
           {SHOP_CATEGORIES.map((category) => {
-            const Icon = CATEGORY_ICONS[category.id] || Star;
+            const iconName = CATEGORY_ICONS[category.id] || 'star';
             const isActive = activeCategory === category.id;
             return (
               <button
@@ -212,7 +211,7 @@ export const Shop = () => {
                 onClick={() => setActiveCategory(category.id)}
                 className={cn("shop-tab-pill", isActive && "active")}
               >
-                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.5 : 2} />
+                <PixelIcon name={iconName} size={14} />
                 <span>{category.name}</span>
               </button>
             );
@@ -223,7 +222,7 @@ export const Shop = () => {
       {/* Inventory header */}
       {showInventory && (
         <div className="px-4 pt-2 pb-1 flex items-center gap-2">
-          <Backpack className="w-4 h-4 text-emerald-600" />
+          <PixelIcon name="backpack" size={16} />
           <h2 className="text-sm font-black uppercase tracking-tight text-emerald-700">
             My Items
           </h2>
