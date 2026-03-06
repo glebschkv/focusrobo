@@ -94,9 +94,14 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   return (
     <div className="space-y-4">
       {/* Section intro */}
-      <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
-        Choose an egg to discover a new companion for your island.
-      </p>
+      <div className="px-1 space-y-1">
+        <p className="text-xs font-medium" style={{ color: '#8B6F47' }}>
+          Choose an egg to discover a new companion for your island.
+        </p>
+        <p className="text-[11px] leading-relaxed" style={{ color: '#A0937E' }}>
+          Each egg has different chances of hatching common to legendary pets. Rarer eggs cost more coins but give better odds for rare species!
+        </p>
+      </div>
 
       {/* Nest cards */}
       <div className="grid grid-cols-2 gap-2.5">
