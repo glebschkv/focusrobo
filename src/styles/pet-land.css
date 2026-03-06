@@ -1317,95 +1317,110 @@
   line-height: 1;
 }
 
-/* ── How it works info button ────────────────────────────────────── */
+/* ── Help button ────────────────────────────────────────────────── */
 
-.pet-land__info-btn {
+.pet-land__help-btn {
   position: absolute;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
   left: 12px;
   z-index: var(--z-buttons);
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  border: 1.5px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(var(--foreground));
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
-.pet-land__info-btn:active {
-  transform: scale(0.92);
+.pet-land__help-btn-icon {
+  font-size: 17px;
+  font-weight: 800;
+  color: hsl(142 40% 38%);
+  line-height: 1;
+  margin-top: -1px;
 }
 
-/* ── How it works overlay ────────────────────────────────────────── */
+.pet-land__help-btn:active {
+  transform: scale(0.9);
+}
 
-.pet-land__info-overlay {
+/* ── Help overlay (bottom sheet style) ──────────────────────────── */
+
+.pet-land__help-overlay {
   position: absolute;
   inset: 0;
   z-index: var(--z-info-overlay);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  padding: 24px 20px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.35);
   animation: pet-land-picker-backdrop 0.2s ease-out;
   cursor: pointer;
 }
 
-.pet-land__info-card {
+.pet-land__help-sheet {
+  position: relative;
   width: 100%;
-  max-width: 340px;
-  max-height: 80vh;
+  max-width: 420px;
+  max-height: 78vh;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.97);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
-  padding: 20px;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(255, 255, 255, 0.98);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.15);
+  padding: 0 20px calc(16px + env(safe-area-inset-bottom, 0px));
   cursor: default;
-  animation: pet-land-info-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  animation: pet-land-help-slide-up 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@keyframes pet-land-info-in {
-  from { opacity: 0; transform: scale(0.92) translateY(16px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes pet-land-help-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.pet-land__info-header {
+.pet-land__help-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 10px auto 0;
+}
+
+.pet-land__help-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  padding: 14px 0 10px;
 }
 
-.pet-land__info-title {
-  font-size: 18px;
-  font-weight: 800;
+.pet-land__help-title {
+  font-size: 17px;
+  font-weight: 700;
   color: hsl(var(--foreground));
   letter-spacing: -0.3px;
+  margin: 0;
 }
 
-.pet-land__info-close {
-  width: 32px;
-  height: 32px;
-  /* 44px effective tap area via padding */
-  padding: 6px;
+.pet-land__help-close {
+  width: 30px;
+  height: 30px;
+  padding: 7px;
   box-sizing: content-box;
-  margin: -6px;
+  margin: -7px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1415,76 +1430,180 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.pet-land__info-close:active {
-  background: rgba(0, 0, 0, 0.12);
+.pet-land__help-close:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 
-.pet-land__info-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.pet-land__info-step {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.pet-land__info-step-num {
-  flex-shrink: 0;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: hsl(150 40% 45%);
-  color: white;
-  font-size: 13px;
-  font-weight: 800;
+/* Core loop flow diagram */
+.pet-land__help-flow {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1px;
+  gap: 8px;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 2px;
 }
 
-.pet-land__info-step-icon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: hsl(var(--muted) / 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pet-land__info-step-body {
+.pet-land__help-flow-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 5px;
 }
 
-.pet-land__info-step-body strong {
+.pet-land__help-flow-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.pet-land__help-flow-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pet-land__help-flow-chevron {
+  color: hsl(var(--muted-foreground) / 0.3);
+  margin-top: -18px;
+  flex-shrink: 0;
+}
+
+/* Content sections */
+.pet-land__help-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pet-land__help-section {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pet-land__help-section:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.pet-land__help-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pet-land__help-section-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.pet-land__help-section-header strong {
   font-size: 14px;
   font-weight: 700;
   color: hsl(var(--foreground));
 }
 
-.pet-land__info-step-body span {
-  font-size: 12px;
-  line-height: 1.45;
+.pet-land__help-section p {
+  font-size: 13px;
+  line-height: 1.5;
   color: hsl(var(--muted-foreground));
+  margin: 0;
 }
 
-.pet-land__info-tip {
-  margin-top: 16px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: hsl(150 30% 95%);
-  border: 1px solid hsl(150 30% 88%);
+.pet-land__help-section-sub {
   font-size: 12px;
   line-height: 1.4;
-  color: hsl(150 30% 30%);
+  color: hsl(var(--muted-foreground) / 0.7);
+  margin: 0 0 8px;
+  display: block;
+}
+
+.pet-land__help-section p b {
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.8);
+}
+
+/* Pet sizes mini table */
+.pet-land__help-sizes {
+  display: flex;
+  gap: 8px;
+}
+
+.pet-land__help-size {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border-radius: 10px;
+  background: hsl(var(--muted) / 0.35);
+}
+
+.pet-land__help-size-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.pet-land__help-size-time {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
   font-weight: 500;
+}
+
+/* Rarity pills */
+.pet-land__help-rarities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pet-land__help-rarity {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  line-height: 1.3;
+}
+
+.pet-land__help-rarity--common {
+  background: hsl(0 0% 93%);
+  color: hsl(0 0% 40%);
+}
+
+.pet-land__help-rarity--uncommon {
+  background: hsl(142 30% 90%);
+  color: hsl(142 40% 35%);
+}
+
+.pet-land__help-rarity--rare {
+  background: hsl(217 50% 92%);
+  color: hsl(217 55% 40%);
+}
+
+.pet-land__help-rarity--epic {
+  background: hsl(270 40% 92%);
+  color: hsl(270 45% 40%);
+}
+
+.pet-land__help-rarity--legendary {
+  background: hsl(45 70% 90%);
+  color: hsl(45 70% 35%);
+}
+
+/* Scroll fade hint */
+.pet-land__help-fade {
+  position: sticky;
+  bottom: 0;
+  height: 24px;
+  margin: 0 -20px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.98), transparent);
+  pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1492,10 +1611,10 @@
    ═══════════════════════════════════════════════════════════════ */
 
 .pet-land__theme-btn:focus-visible,
-.pet-land__info-btn:focus-visible,
+.pet-land__help-btn:focus-visible,
 .pet-land__nudge:focus-visible,
 .pet-land__empty-cta:focus-visible,
-.pet-land__info-close:focus-visible,
+.pet-land__help-close:focus-visible,
 .pet-land__theme-chip:focus-visible {
   outline: 2px solid hsl(142 60% 45%);
   outline-offset: 2px;
@@ -1524,12 +1643,14 @@
     color: rgba(255, 255, 255, 0.55);
   }
 
-  /* Theme & info buttons */
+  /* Theme & help buttons */
   .pet-land__theme-btn,
-  .pet-land__info-btn {
+  .pet-land__help-btn {
     background: rgba(40, 40, 40, 0.85);
     border-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+  }
+  .pet-land__help-btn-icon {
+    color: hsl(142 40% 60%);
   }
 
   /* Nudge chip */
@@ -1538,25 +1659,55 @@
     border-color: rgba(255, 255, 255, 0.08);
   }
 
-  /* Info overlay card */
-  .pet-land__info-card {
-    background: rgba(30, 30, 30, 0.97);
-    border-color: rgba(255, 255, 255, 0.08);
+  /* Help sheet */
+  .pet-land__help-sheet {
+    background: rgba(30, 30, 30, 0.98);
+    box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.4);
   }
-  .pet-land__info-close {
+  .pet-land__help-handle {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .pet-land__help-close {
     background: rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.6);
   }
-  .pet-land__info-close:active {
+  .pet-land__help-close:active {
     background: rgba(255, 255, 255, 0.15);
   }
-  .pet-land__info-step-icon {
+  .pet-land__help-flow {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+  .pet-land__help-flow-chevron {
+    color: rgba(255, 255, 255, 0.15);
+  }
+  .pet-land__help-section {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+  .pet-land__help-size {
     background: rgba(255, 255, 255, 0.06);
   }
-  .pet-land__info-tip {
-    background: hsl(150 30% 12%);
-    border-color: hsl(150 30% 20%);
-    color: hsl(150 30% 75%);
+  .pet-land__help-fade {
+    background: linear-gradient(to top, rgba(30, 30, 30, 0.98), transparent);
+  }
+  .pet-land__help-rarity--common {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .pet-land__help-rarity--uncommon {
+    background: hsl(142 30% 18%);
+    color: hsl(142 40% 70%);
+  }
+  .pet-land__help-rarity--rare {
+    background: hsl(217 40% 18%);
+    color: hsl(217 55% 70%);
+  }
+  .pet-land__help-rarity--epic {
+    background: hsl(270 30% 18%);
+    color: hsl(270 45% 75%);
+  }
+  .pet-land__help-rarity--legendary {
+    background: hsl(45 50% 18%);
+    color: hsl(45 60% 70%);
   }
 
   /* Theme picker strip */
@@ -1591,26 +1742,31 @@
   color: rgba(255, 255, 255, 0.55);
 }
 .dark .pet-land__theme-btn,
-.dark .pet-land__info-btn {
+.dark .pet-land__help-btn {
   background: rgba(40, 40, 40, 0.85);
   border-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
+}
+.dark .pet-land__help-btn-icon {
+  color: hsl(142 40% 60%);
 }
 .dark .pet-land__nudge {
   background: rgba(20, 30, 25, 0.8);
   border-color: rgba(255, 255, 255, 0.08);
 }
-.dark .pet-land__info-card {
-  background: rgba(30, 30, 30, 0.97);
-  border-color: rgba(255, 255, 255, 0.08);
+.dark .pet-land__help-sheet {
+  background: rgba(30, 30, 30, 0.98);
 }
-.dark .pet-land__info-step-icon {
+.dark .pet-land__help-handle {
+  background: rgba(255, 255, 255, 0.15);
+}
+.dark .pet-land__help-close {
+  background: rgba(255, 255, 255, 0.08);
+}
+.dark .pet-land__help-size {
   background: rgba(255, 255, 255, 0.06);
 }
-.dark .pet-land__info-tip {
-  background: hsl(150 30% 12%);
-  border-color: hsl(150 30% 20%);
-  color: hsl(150 30% 75%);
+.dark .pet-land__help-fade {
+  background: linear-gradient(to top, rgba(30, 30, 30, 0.98), transparent);
 }
 .dark .pet-land__theme-strip {
   background: rgba(30, 30, 30, 0.95);
