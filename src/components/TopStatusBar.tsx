@@ -10,6 +10,7 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
+import { usePassiveIncome } from "@/hooks/usePassiveIncome";
 
 interface TopStatusBarProps {
   currentTab: string;
@@ -32,6 +33,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const gridSize = currentLand.gridSize;
   const tierCapacity = getAvailableCellCount(gridSize);
   const islandProgressPct = tierCapacity > 0 ? (filledCount / tierCapacity) * 100 : 0;
+  const { dailyIncomeRate, accumulatedCoins, justCollected, collect } = usePassiveIncome();
 
   if (currentTab !== "home") return null;
 
@@ -108,6 +110,15 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                     </span>
                     <span className="stat-val tabular-nums">{streakData.longestStreak} days</span>
                   </div>
+                  {dailyIncomeRate > 0 && (
+                    <div className="stat-row">
+                      <span className="stat-label">
+                        <PixelIcon name="coin" size={14} className="inline mr-1 align-middle" />
+                        Pet Income
+                      </span>
+                      <span className="stat-val tabular-nums">{dailyIncomeRate}/day</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* XP Progress Bar */}
@@ -139,6 +150,25 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <span className="chip-value">{coinSystem.balance.toLocaleString()}</span>
           <span className="coin-plus-badge">+</span>
         </button>
+
+        {/* Passive income collect button */}
+        {accumulatedCoins > 0 && (
+          <button
+            className="income-collect-btn"
+            onClick={collect}
+            aria-label={`Collect ${accumulatedCoins} coins from pets`}
+          >
+            <PixelIcon name="coin" size={14} className="income-collect-icon" />
+            <span className="income-collect-amount">+{accumulatedCoins}</span>
+          </button>
+        )}
+
+        {/* Coin float-up animation after collection */}
+        {justCollected != null && (
+          <span className="income-coin-float" key={justCollected}>
+            +{justCollected}
+          </span>
+        )}
 
         {/* Right section: Streak + Help */}
         <div className="top-bar-right">

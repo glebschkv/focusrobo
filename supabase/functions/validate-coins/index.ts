@@ -19,7 +19,7 @@ const RATE_LIMIT_MAX_EARN = 15; // Max earn operations per minute (increased to 
 const RATE_LIMIT_MAX_SPEND = 20; // Max spend operations per minute
 
 // PHASE 2: Sources that bypass rate limiting (trusted game events)
-const RATE_EXEMPT_SOURCES = ['daily_reward', 'achievement', 'quest_reward', 'subscription_bonus'] as const;
+const RATE_EXEMPT_SOURCES = ['daily_reward', 'achievement', 'quest_reward', 'subscription_bonus', 'passive_income'] as const;
 type RateExemptSource = typeof RATE_EXEMPT_SOURCES[number];
 
 function checkRateLimit(
@@ -79,6 +79,7 @@ const VALID_EARN_SOURCES = [
   'referral',
   'admin_grant',
   'iap_purchase', // In-app purchase (coin packs, bundles) - validated by StoreKit client-side
+  'passive_income', // Passive income from placed pets on island
 ] as const;
 
 type EarnSource = typeof VALID_EARN_SOURCES[number];

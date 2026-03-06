@@ -821,6 +821,65 @@
     .dock-indicator { transition: none; }
     .energy-pulse { animation: none; }
     .badge-pop { animation: none; }
+    .income-collect-btn { animation: none; }
+    .income-coin-float { animation: none; display: none; }
+  }
+
+  /* ── Passive Income Collect Button ────────────────── */
+
+  .income-collect-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 1px 8px rgba(245, 158, 11, 0.3);
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    animation: income-pulse 2s ease-in-out infinite;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .income-collect-btn:active {
+    transform: scale(0.93);
+  }
+
+  .income-collect-icon {
+    filter: brightness(1.3);
+  }
+
+  .income-collect-amount {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  @keyframes income-pulse {
+    0%, 100% { box-shadow: 0 1px 8px rgba(245, 158, 11, 0.3); }
+    50% { box-shadow: 0 1px 16px rgba(245, 158, 11, 0.5); }
+  }
+
+  /* Float-up animation after coin collection */
+  .income-coin-float {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: 800;
+    color: #FBBF24;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    animation: income-float-up 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  @keyframes income-float-up {
+    0% { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+    100% { opacity: 0; transform: translate(-50%, -50%) translateY(-40px); }
   }
 
   /* Bottom padding to clear the floating dock */

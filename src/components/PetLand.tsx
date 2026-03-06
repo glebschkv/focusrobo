@@ -990,6 +990,14 @@ export const PetLand = () => {
                   <p>Focus daily to maintain your streak — earn up to +60% bonus XP plus extra coins.</p>
                 </div>
               </div>
+
+              <div className="pet-land__help-step">
+                <span className="pet-land__help-step-num">6</span>
+                <div>
+                  <strong>Earn passive income</strong>
+                  <p>Your pets generate coins daily based on their rarity and size. Tap the golden button in the top bar to collect!</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

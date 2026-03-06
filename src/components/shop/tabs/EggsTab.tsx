@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
-import { EGG_TYPES, SPECIES_SELECTOR_PRICE } from '@/data/EggData';
+import { EGG_TYPES, SPECIES_SELECTOR_DISCOVERED_PRICE, SPECIES_SELECTOR_UNDISCOVERED_PRICE } from '@/data/EggData';
 import type { EggType } from '@/data/EggData';
 import type { PetRarity } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
@@ -47,12 +47,13 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const { getEggDiscountPercent, isPremium } = usePremiumStatus();
   const discountPercent = getEggDiscountPercent();
 
-  const handleSelectSpecies = async (speciesId: string) => {
-    if (!canAfford(SPECIES_SELECTOR_PRICE)) {
+  const handleSelectSpecies = async (speciesId: string, isDiscovered: boolean) => {
+    const price = isDiscovered ? SPECIES_SELECTOR_DISCOVERED_PRICE : SPECIES_SELECTOR_UNDISCOVERED_PRICE;
+    if (!canAfford(price)) {
       toast.error('Not enough coins!');
       return;
     }
-    const spent = await coinSystem.spendCoins(SPECIES_SELECTOR_PRICE, 'shop_purchase');
+    const spent = await coinSystem.spendCoins(price, 'shop_purchase');
     if (!spent) {
       toast.error('Purchase failed!');
       return;
@@ -62,7 +63,9 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       placePendingPet();
       playSoundEffect('purchase');
       toast.success(`${pet.petId} has answered your wish!`, {
-        description: 'A new friend has arrived on your island!',
+        description: isDiscovered
+          ? 'A familiar friend has arrived on your island!'
+          : 'A brand new species has arrived on your island!',
       });
     }
     setSelectorOpen(false);
@@ -136,21 +139,24 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
           <div>
             <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>Wishing Well</span>
             <p className="text-[11px]" style={{ color: '#8B6F47' }}>
-              Choose from species you've already discovered.
+              Pick any unlocked species — discovered or new!
             </p>
           </div>
         </div>
         <div className="flex items-center justify-between mt-1">
           <div className="flex items-center gap-1.5">
             <PixelIcon name="coin" size={14} />
-            <span className="font-black text-sm" style={{ color: '#7A5C20' }}>{SPECIES_SELECTOR_PRICE.toLocaleString()}</span>
+            <span className="font-black text-sm" style={{ color: '#7A5C20' }}>
+              {SPECIES_SELECTOR_DISCOVERED_PRICE.toLocaleString()}
+              <span className="text-[10px] font-medium" style={{ color: '#A0937E' }}> – {SPECIES_SELECTOR_UNDISCOVERED_PRICE.toLocaleString()}</span>
+            </span>
           </div>
           <button
             className={cn(
               'hatch-button',
-              canAfford(SPECIES_SELECTOR_PRICE) ? 'affordable' : 'disabled',
+              canAfford(SPECIES_SELECTOR_DISCOVERED_PRICE) ? 'affordable' : 'disabled',
             )}
-            disabled={!canAfford(SPECIES_SELECTOR_PRICE)}
+            disabled={!canAfford(SPECIES_SELECTOR_DISCOVERED_PRICE)}
             onClick={() => setSelectorOpen(true)}
           >
             Make a Wish
@@ -164,6 +170,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
         onClose={() => setSelectorOpen(false)}
         onSelect={handleSelectSpecies}
         speciesCatalog={speciesCatalog}
+        playerLevel={currentLevel}
       />
     </div>
   );

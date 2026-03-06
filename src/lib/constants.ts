@@ -207,15 +207,43 @@ export const COIN_CONFIG = {
     LUCKY_WHEEL_SPIN: 0,       // Free
   },
 
-  /** Shop item price ranges (rebalanced for accessibility) */
+  /** Shop item price ranges (rebalanced for passive income economy) */
   PRICE_RANGES: {
-    COMMON: { min: 100, max: 250 },      // 2-4 sessions
-    UNCOMMON: { min: 250, max: 500 },    // 4-8 sessions
-    RARE: { min: 500, max: 1000 },       // 8-15 sessions
-    EPIC: { min: 1000, max: 2500 },      // 15-40 sessions
-    LEGENDARY: { min: 2500, max: 5000 }, // 40-80 sessions
+    COMMON: { min: 150, max: 375 },      // 2-4 sessions
+    UNCOMMON: { min: 375, max: 750 },    // 4-8 sessions
+    RARE: { min: 750, max: 1500 },       // 8-15 sessions
+    EPIC: { min: 1500, max: 3750 },      // 15-40 sessions
+    LEGENDARY: { min: 3750, max: 7500 }, // 40-80 sessions
   },
 } as const;
+
+// ============================================================================
+// PASSIVE PET INCOME
+// ============================================================================
+
+/** Coins per pet per day, indexed by rarity and growth size */
+export const PASSIVE_INCOME_CONFIG = {
+  RATES: {
+    common:    { baby: 2, adolescent: 3, adult: 4 },
+    uncommon:  { baby: 3, adolescent: 5, adult: 7 },
+    rare:      { baby: 5, adolescent: 7, adult: 11 },
+    epic:      { baby: 7, adolescent: 11, adult: 16 },
+    legendary: { baby: 12, adolescent: 16, adult: 24 },
+  },
+  /** Maximum days of uncollected income that can accumulate */
+  MAX_ACCUMULATION_DAYS: 3,
+  /** Minimum hours before income is claimable */
+  MIN_HOURS_FOR_CLAIM: 1,
+  /** Premium tier multiplier for passive income */
+  PREMIUM_MULTIPLIER: 1.5,
+} as const;
+
+/** Get the daily passive coin rate for a pet based on rarity and size */
+export function getPetPassiveRate(rarity: string, size: string): number {
+  const rarityRates = PASSIVE_INCOME_CONFIG.RATES[rarity as keyof typeof PASSIVE_INCOME_CONFIG.RATES];
+  if (!rarityRates) return 0;
+  return rarityRates[size as keyof typeof rarityRates] ?? 0;
+}
 
 // ============================================================================
 // STREAK SYSTEM
