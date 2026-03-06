@@ -627,9 +627,11 @@ export const PetLand = () => {
   return (
     <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass}`} style={{ background: skyGradient }}>
       {/* Sky — parallax layer (slowest), theme-responsive cloud/sun colors */}
+      {/* Sky — parallax layer (slowest), all decorative */}
       <div
         className="pet-land__sky"
         ref={skyRef}
+        aria-hidden="true"
         style={{
           '--cloud-color': theme.cloudColor,
           '--sun-color': theme.sunColor,
@@ -697,19 +699,23 @@ export const PetLand = () => {
 
         {/* Celebration burst particles */}
         {celebrationBurst && (
-          <div className="pet-land__burst" aria-hidden>
-            {Array.from({ length: 16 }, (_, i) => (
-              <div
-                key={i}
-                className="pet-land__burst-particle"
-                style={{
-                  '--burst-angle': `${(i / 16) * 360}deg`,
-                  '--burst-dist': `${60 + Math.random() * 40}px`,
-                  '--burst-color': ['#FFD700', '#FF6B6B', '#4ADE80', '#60A5FA', '#F472B6', '#FBBF24'][i % 6],
-                  '--burst-delay': `${Math.random() * 0.15}s`,
-                } as React.CSSProperties}
-              />
-            ))}
+          <div className="pet-land__burst" aria-hidden="true">
+            {Array.from({ length: 16 }, (_, i) => {
+              const angle = (i / 16) * Math.PI * 2;
+              const dist = 60 + Math.random() * 40;
+              return (
+                <div
+                  key={i}
+                  className="pet-land__burst-particle"
+                  style={{
+                    '--burst-tx': `${Math.round(Math.cos(angle) * dist)}px`,
+                    '--burst-ty': `${Math.round(Math.sin(angle) * dist)}px`,
+                    '--burst-color': ['#FFD700', '#FF6B6B', '#4ADE80', '#60A5FA', '#F472B6', '#FBBF24'][i % 6],
+                    '--burst-delay': `${Math.random() * 0.15}s`,
+                  } as React.CSSProperties}
+                />
+              );
+            })}
           </div>
         )}
 
