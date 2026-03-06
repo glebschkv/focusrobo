@@ -330,13 +330,16 @@ export const useXPSystem = () => {
   }, [sortedDurations]);
 
   const awardXP = useCallback((sessionMinutes: number, sessionId?: string): XPReward => {
+    // Read from the ref so rapid successive calls always see the latest state
+    const current = xpStateRef.current || xpState;
+
     if (!canAwardXP()) {
-      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: current.currentLevel, newLevel: current.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const effectiveSessionId = sessionId || `xp_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     if (!markSessionRewarded(effectiveSessionId)) {
-      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: current.currentLevel, newLevel: current.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const validMinutes = validateSessionMinutes(sessionMinutes);
@@ -348,8 +351,8 @@ export const useXPSystem = () => {
     const xpGained = Math.round(xpAfterSubscription * bonus.bonusMultiplier);
     const bonusXP = xpGained - baseXP;
 
-    const oldLevel = xpState.currentLevel;
-    const newTotalXP = xpState.currentXP + xpGained;
+    const oldLevel = current.currentLevel;
+    const newTotalXP = current.currentXP + xpGained;
     const newLevel = calculateLevel(newTotalXP);
     const leveledUp = newLevel > oldLevel;
 
@@ -357,7 +360,7 @@ export const useXPSystem = () => {
     const nextLevelXP = newLevel >= MAX_LEVEL
       ? calculateLevelRequirement(newLevel)
       : calculateLevelRequirement(newLevel + 1);
-    const xpToNextLevel = newLevel >= MAX_LEVEL ? 0 : nextLevelXP - newTotalXP;
+    const xpToNextLevel = newLevel >= MAX_LEVEL ? 0 : Math.max(0, nextLevelXP - newTotalXP);
 
     const unlockedRewards: typeof UNLOCKS_BY_LEVEL[number] = [];
     if (leveledUp) {
@@ -368,14 +371,14 @@ export const useXPSystem = () => {
       }
     }
 
-    const newPets = [...xpState.unlockedPets];
+    const newPets = [...current.unlockedPets];
     unlockedRewards.forEach(reward => {
       if (reward.type === 'pet' && !newPets.includes(reward.name)) {
         newPets.push(reward.name);
       }
     });
 
-    const newTotalStudyMinutes = (xpState.totalStudyMinutes || 0) + validMinutes;
+    const newTotalStudyMinutes = (current.totalStudyMinutes || 0) + validMinutes;
 
     saveState({
       currentXP: newTotalXP,
@@ -399,17 +402,19 @@ export const useXPSystem = () => {
   }, [xpState, calculateXPFromDuration, saveState, getSubscriptionMultiplier, syncToBackend]);
 
   const addDirectXP = useCallback((xpAmount: number): XPReward => {
+    const current = xpStateRef.current || xpState;
+
     if (!canAwardXP()) {
-      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: current.currentLevel, newLevel: current.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
     const validAmount = validateXPAmount(xpAmount);
     if (validAmount <= 0) {
-      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: xpState.currentLevel, newLevel: xpState.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
+      return { xpGained: 0, baseXP: 0, bonusXP: 0, bonusMultiplier: 1, hasBonusXP: false, bonusType: 'none', oldLevel: current.currentLevel, newLevel: current.currentLevel, leveledUp: false, unlockedRewards: [], subscriptionMultiplier: 1 };
     }
 
-    const oldLevel = xpState.currentLevel;
-    const newTotalXP = xpState.currentXP + validAmount;
+    const oldLevel = current.currentLevel;
+    const newTotalXP = current.currentXP + validAmount;
     const newLevel = calculateLevel(newTotalXP);
     const leveledUp = newLevel > oldLevel;
 
@@ -417,7 +422,7 @@ export const useXPSystem = () => {
     const nextLevelXP = newLevel >= MAX_LEVEL
       ? calculateLevelRequirement(newLevel)
       : calculateLevelRequirement(newLevel + 1);
-    const xpToNextLevel = newLevel >= MAX_LEVEL ? 0 : nextLevelXP - newTotalXP;
+    const xpToNextLevel = newLevel >= MAX_LEVEL ? 0 : Math.max(0, nextLevelXP - newTotalXP);
 
     const unlockedRewards: typeof UNLOCKS_BY_LEVEL[number] = [];
     if (leveledUp) {
@@ -428,7 +433,7 @@ export const useXPSystem = () => {
       }
     }
 
-    const newPets = [...xpState.unlockedPets];
+    const newPets = [...current.unlockedPets];
     unlockedRewards.forEach(reward => {
       if (reward.type === 'pet' && !newPets.includes(reward.name)) {
         newPets.push(reward.name);

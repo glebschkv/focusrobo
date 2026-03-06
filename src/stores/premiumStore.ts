@@ -55,18 +55,33 @@ export const usePremiumStore = create<PremiumStore>()(
         defaultState: initialState,
         name: 'premium-store',
       }),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state, error) => {
         if (!state) {
           try {
             const legacy = localStorage.getItem('petIsland_premium');
             if (legacy) {
               const parsed = JSON.parse(legacy);
               const validated = premiumStatusSchema.safeParse(parsed);
-              if (validated.success) return validated.data;
+              if (validated.success) {
+                usePremiumStore.setState(validated.data);
+                logger.debug('Premium store migrated from legacy storage');
+                return;
+              }
             }
           } catch { /* ignore */ }
         }
-        if (state) logger.debug('Premium store rehydrated and validated');
+        if (state) {
+          // Check if subscription has expired and downgrade
+          if (state.tier !== 'free' && state.tier !== 'lifetime' && state.expiresAt) {
+            const expiresAt = new Date(state.expiresAt).getTime();
+            if (!isNaN(expiresAt) && expiresAt < Date.now()) {
+              usePremiumStore.setState({ tier: 'free', expiresAt: null, planId: null });
+              logger.info('Premium subscription expired, downgraded to free tier');
+              return;
+            }
+          }
+          logger.debug('Premium store rehydrated and validated');
+        }
       },
     }
   )

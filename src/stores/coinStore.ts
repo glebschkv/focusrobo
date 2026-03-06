@@ -106,20 +106,26 @@ export const useCoinStore = create<CoinStore>()(
             coinLogger.warn('Invalid coin amount to spend:', amount);
             return false;
           }
-          const currentBalance = get().balance;
-          if (currentBalance < validAmount) {
-            coinLogger.warn('Insufficient balance for spend', { balance: currentBalance, required: validAmount });
-            return false;
+          // Use an atomic check-and-deduct via the updater to prevent TOCTOU
+          // races where two rapid spends both pass the balance check.
+          let succeeded = false;
+          set((s) => {
+            if (s.balance < validAmount) {
+              coinLogger.warn('Insufficient balance for spend', { balance: s.balance, required: validAmount });
+              succeeded = false;
+              return s; // No change
+            }
+            succeeded = true;
+            return {
+              balance: s.balance - validAmount,
+              totalSpent: s.totalSpent + validAmount,
+              pendingServerValidation: true,
+            };
+          });
+          if (succeeded) {
+            coinLogger.debug('Coins spent locally, pending server validation', { amount: validAmount });
           }
-          // SECURITY: Mark as pending server validation
-          // The actual server validation should be done via validate-coins edge function
-          set((s) => ({
-            balance: s.balance - validAmount,
-            totalSpent: s.totalSpent + validAmount,
-            pendingServerValidation: true,
-          }));
-          coinLogger.debug('Coins spent locally, pending server validation', { amount: validAmount });
-          return true;
+          return succeeded;
         },
         setBalance: (balance) => {
           const validBalance = validateCoinAmount(balance);
@@ -152,7 +158,8 @@ export const useCoinStore = create<CoinStore>()(
         }),
         onRehydrateStorage: () => (state) => {
           if (!state) {
-            // Try to migrate from legacy storage key
+            // Zustand ignores the return value from this callback, so
+            // apply migrated data via setState instead.
             try {
               const legacy = localStorage.getItem('petIsland_coinSystem');
               if (legacy) {
@@ -160,14 +167,14 @@ export const useCoinStore = create<CoinStore>()(
                 const validated = coinSystemSchema.safeParse(parsed);
                 if (validated.success) {
                   coinLogger.debug('Migrated coin data from legacy storage');
-                  // Clean up legacy key after migration
                   localStorage.removeItem('petIsland_coinSystem');
-                  return validated.data;
+                  useCoinStore.setState(validated.data);
                 }
               }
             } catch { /* ignore */ }
+            return;
           }
-          if (state) coinLogger.debug('Coin store rehydrated and validated');
+          coinLogger.debug('Coin store rehydrated and validated');
         },
       }
     )

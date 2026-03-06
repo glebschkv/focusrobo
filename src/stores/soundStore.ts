@@ -73,7 +73,13 @@ export const useSoundStore = create<SoundStore>()(
             if (mixer || ambient) {
               const m = mixer ? JSON.parse(mixer) : {};
               const a = ambient ? JSON.parse(ambient) : {};
-              return { mixer: { layers: m.layers || [], masterVolume: m.masterVolume ?? 70 }, ambient: { selectedSoundId: a.selectedSoundId || null, volume: a.volume ?? 70 }, isPlaying: false };
+              useSoundStore.setState({
+                mixer: { layers: Array.isArray(m.layers) ? m.layers : [], masterVolume: m.masterVolume ?? 70 },
+                ambient: { selectedSoundId: a.selectedSoundId || null, volume: a.volume ?? 70 },
+                isPlaying: false,
+              });
+              soundLogger.debug('Sound store migrated from legacy storage');
+              return;
             }
           } catch { /* ignore */ }
         }

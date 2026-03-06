@@ -497,23 +497,24 @@ export const useCoinSystem = () => {
       subscriptionMultiplier,
       bonusType: bonus.bonusType,
     }).then((response) => {
+      // Read latest values from the store to avoid stale closure data
+      const latestState = useCoinStore.getState();
       if (response.success && response.newBalance !== undefined) {
-        // SECURITY: Use server balance as source of truth
         storeSyncFromServer(
           response.newBalance,
-          response.totalEarned || totalEarned + finalCoins,
-          response.totalSpent || totalSpent
+          response.totalEarned || latestState.totalEarned,
+          response.totalSpent || latestState.totalSpent
         );
         coinLogger.debug('Server validated coin earn:', response.newBalance);
       } else if (response.duplicate) {
-        // Session already rewarded - sync from server to get correct state
         coinLogger.warn('Duplicate session reward detected, syncing from server');
         serverGetBalance().then((balanceResponse) => {
+          const s = useCoinStore.getState();
           if (balanceResponse.success && balanceResponse.newBalance !== undefined) {
             storeSyncFromServer(
               balanceResponse.newBalance,
-              balanceResponse.totalEarned || totalEarned,
-              balanceResponse.totalSpent || totalSpent
+              balanceResponse.totalEarned || s.totalEarned,
+              balanceResponse.totalSpent || s.totalSpent
             );
           }
         }).catch((err) => {
@@ -521,13 +522,13 @@ export const useCoinSystem = () => {
         });
       } else if (!response.success) {
         coinLogger.warn('Server validation failed, syncing balance from server');
-        // Sync from server to correct local state
         serverGetBalance().then((balanceResponse) => {
+          const s = useCoinStore.getState();
           if (balanceResponse.success && balanceResponse.newBalance !== undefined) {
             storeSyncFromServer(
               balanceResponse.newBalance,
-              balanceResponse.totalEarned || totalEarned,
-              balanceResponse.totalSpent || totalSpent
+              balanceResponse.totalEarned || s.totalEarned,
+              balanceResponse.totalSpent || s.totalSpent
             );
           }
         }).catch((syncErr) => {
@@ -586,11 +587,11 @@ export const useCoinSystem = () => {
     // SECURITY: Validate with server asynchronously
     serverEarnCoins(validAmount, source).then((response) => {
       if (response.success && response.newBalance !== undefined) {
-        // SECURITY: Use server balance as source of truth
+        const s = useCoinStore.getState();
         storeSyncFromServer(
           response.newBalance,
-          response.totalEarned || totalEarned + validAmount,
-          response.totalSpent || totalSpent
+          response.totalEarned || s.totalEarned,
+          response.totalSpent || s.totalSpent
         );
         coinLogger.debug('Server validated coin add:', response.newBalance);
       }
@@ -646,12 +647,12 @@ export const useCoinSystem = () => {
     const response = await serverSpendCoins(validAmount, purpose, itemId);
 
     if (response.success) {
-      // SECURITY: Use server-provided balance as source of truth
       if (response.newBalance !== undefined) {
+        const s = useCoinStore.getState();
         storeSyncFromServer(
           response.newBalance,
-          response.totalEarned ?? totalEarned,
-          response.totalSpent ?? totalSpent + validAmount
+          response.totalEarned ?? s.totalEarned,
+          response.totalSpent ?? s.totalSpent
         );
       } else {
         // For unauthenticated users, update local store
@@ -661,15 +662,14 @@ export const useCoinSystem = () => {
       return true;
     } else {
       coinLogger.warn('Server rejected coin spend:', response.error);
-      // If server says insufficient balance, sync local state
       if (response.error?.includes('Insufficient')) {
-        // Sync balance from server
         serverGetBalance().then((balanceResponse) => {
+          const s = useCoinStore.getState();
           if (balanceResponse.success && balanceResponse.newBalance !== undefined) {
             storeSyncFromServer(
               balanceResponse.newBalance,
-              balanceResponse.totalEarned ?? totalEarned,
-              balanceResponse.totalSpent ?? totalSpent
+              balanceResponse.totalEarned ?? s.totalEarned,
+              balanceResponse.totalSpent ?? s.totalSpent
             );
           }
         });

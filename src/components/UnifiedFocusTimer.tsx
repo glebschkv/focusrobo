@@ -55,6 +55,8 @@ export const UnifiedFocusTimer = () => {
     petRewardLevel,
     lastSessionXP,
     lastCoinsEarned,
+    lastSessionTaskLabel,
+    lastSessionDuration,
     autoBreakEnabled,
     setPreset,
     requestStartTimer,
@@ -173,11 +175,11 @@ export const UnifiedFocusTimer = () => {
               isVisible={showSessionComplete}
               onDismiss={handleSessionCompleteDismiss}
               onTakeBreak={handleSessionCompleteTakeBreak}
-              sessionDuration={timerState.sessionDuration}
+              sessionDuration={lastSessionDuration || timerState.sessionDuration}
               xpEarned={lastSessionXP}
               coinsEarned={lastCoinsEarned}
               lastPlacedPet={lastPlacedPet}
-              taskLabel={timerState.taskLabel}
+              taskLabel={lastSessionTaskLabel}
               showBreakOption={autoBreakEnabled}
             />
           </>

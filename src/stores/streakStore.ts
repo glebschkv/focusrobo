@@ -87,7 +87,7 @@ export const useStreakStore = create<StreakStore>()(
       },
       updateState: (partial) => set((s) => ({ ...s, ...partial })),
       getNextMilestone: () => STREAK_REWARDS.find(r => r.milestone > get().currentStreak) || null,
-      resetAll: () => set({ ...initialState, streakFreezeCount: 3 }),
+      resetAll: () => set(initialState),
     }),
     {
       name: 'nomo_streak_data',
@@ -98,16 +98,23 @@ export const useStreakStore = create<StreakStore>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) {
+          // Zustand ignores the return value from this callback, so
+          // apply migrated data via setState instead.
           try {
             const legacy = localStorage.getItem('pet_paradise_streak_data');
             if (legacy) {
               const parsed = JSON.parse(legacy);
               const validated = streakDataSchema.safeParse(parsed);
-              if (validated.success) return validated.data;
+              if (validated.success) {
+                streakLogger.debug('Migrated streak data from legacy storage');
+                localStorage.removeItem('pet_paradise_streak_data');
+                useStreakStore.setState(validated.data);
+              }
             }
           } catch { /* ignore */ }
+          return;
         }
-        if (state) streakLogger.debug('Streak store rehydrated and validated');
+        streakLogger.debug('Streak store rehydrated and validated');
       },
     }
   )

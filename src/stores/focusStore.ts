@@ -106,7 +106,21 @@ export const useFocusStore = create<FocusStore>()(
         if (!state) {
           try {
             const legacy = localStorage.getItem('petIsland_focusMode');
-            if (legacy) return { ...initialState, ...JSON.parse(legacy) };
+            if (legacy) {
+              const parsed = JSON.parse(legacy);
+              // Only spread known safe keys from legacy data
+              const safeKeys: (keyof FocusModeSettings)[] = [
+                'enabled', 'strictMode', 'blockNotifications',
+                'blockedApps', 'allowEmergencyBypass', 'bypassCooldown',
+              ];
+              const migrated: Partial<FocusModeSettings> = {};
+              for (const key of safeKeys) {
+                if (key in parsed) (migrated as Record<string, unknown>)[key] = parsed[key];
+              }
+              useFocusStore.setState({ ...initialState, ...migrated });
+              focusModeLogger.debug('Focus store migrated from legacy storage');
+              return;
+            }
           } catch { /* ignore */ }
         }
         if (state) focusModeLogger.debug('Focus store rehydrated');
