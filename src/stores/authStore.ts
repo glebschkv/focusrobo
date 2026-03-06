@@ -37,7 +37,15 @@ export const useAuthStore = create<AuthStore>()(
           try {
             const legacyId = localStorage.getItem('pet_paradise_guest_id');
             const legacyChosen = localStorage.getItem('pet_paradise_guest_chosen') === 'true';
-            if (legacyId || legacyChosen) return { guestId: legacyId, isGuestMode: legacyChosen, hasChosenGuestMode: legacyChosen };
+            if (legacyId || legacyChosen) {
+              useAuthStore.setState({
+                guestId: legacyId,
+                isGuestMode: legacyChosen,
+                hasChosenGuestMode: legacyChosen,
+              });
+              authLogger.debug('Auth store migrated from legacy storage');
+              return;
+            }
           } catch { /* ignore */ }
         }
         if (state) authLogger.debug('Auth store rehydrated');

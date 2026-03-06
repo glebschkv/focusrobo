@@ -87,7 +87,16 @@ export const useQuestStore = create<QuestStore>()(
         if (!state) {
           try {
             const legacy = localStorage.getItem('quest-system-data') || localStorage.getItem('botblock_quest_system');
-            if (legacy) { const parsed = JSON.parse(legacy); return { quests: parsed.quests || [], lastDailyReset: null, lastWeeklyReset: null }; }
+            if (legacy) {
+              const parsed = JSON.parse(legacy);
+              useQuestStore.setState({
+                quests: Array.isArray(parsed.quests) ? parsed.quests : [],
+                lastDailyReset: null,
+                lastWeeklyReset: null,
+              });
+              questLogger.debug('Quest store migrated from legacy storage');
+              return;
+            }
           } catch { /* ignore */ }
         }
         if (state) questLogger.debug('Quest store rehydrated');

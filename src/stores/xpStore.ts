@@ -26,6 +26,7 @@ import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { xpLogger } from '@/lib/logger';
 import { xpSystemSchema } from '@/lib/storage-validation';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
+import { calculateLevelRequirement, calculateLevel as calculateLevelFromXP } from '@/hooks/xp/xpUtils';
 
 /** Maximum achievable level in the game */
 export const MAX_LEVEL = 50;
@@ -35,7 +36,7 @@ export const MAX_LEVEL = 50;
  * the XP hook module so that the store and the hook always agree on what
  * level corresponds to a given XP total.
  */
-export { calculateLevelRequirement, calculateLevel as calculateLevelFromXP } from '@/hooks/xp/xpUtils';
+export { calculateLevelRequirement, calculateLevelFromXP };
 
 export interface XPState {
   currentXP: number;

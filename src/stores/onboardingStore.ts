@@ -61,7 +61,13 @@ export const useOnboardingStore = create<OnboardingStore>()(
         if (!state) {
           try {
             if (localStorage.getItem('pet_paradise_onboarding_completed') === 'true') {
-              return { ...initialState, hasCompletedOnboarding: true, completedAt: new Date().toISOString() };
+              useOnboardingStore.setState({
+                ...initialState,
+                hasCompletedOnboarding: true,
+                completedAt: new Date().toISOString(),
+              });
+              logger.debug('Onboarding store migrated from legacy storage');
+              return;
             }
           } catch { /* ignore */ }
         }

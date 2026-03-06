@@ -371,7 +371,6 @@ export const useLandStore = create<LandStore>()(
           if (nextTier !== null) {
             const oldTier = currentLand.gridSize;
             currentLand = { ...currentLand, gridSize: nextTier };
-            set({ currentLand });
             cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
             // Emit expansion event so UI can celebrate
             window.dispatchEvent(new CustomEvent('islandExpanded', {
@@ -456,7 +455,7 @@ export const useLandStore = create<LandStore>()(
           ...currentLand,
           cells: newCells,
           totalFocusMinutes: currentLand.totalFocusMinutes + pendingPet.sessionMinutes,
-          completedAt: newCells.every(c => c !== null) ? Date.now() : null,
+          completedAt: currentLand.gridSize >= MAX_GRID_TIER && newCells.every(c => c !== null) ? Date.now() : null,
         };
 
         // Check for tier completion or milestones
@@ -487,7 +486,13 @@ export const useLandStore = create<LandStore>()(
       },
 
       isLandComplete: () => {
-        return get().currentLand.cells.every(c => c !== null);
+        const { currentLand } = get();
+        if (currentLand.gridSize < MAX_GRID_TIER) return false;
+        const available = getAvailableCellIndices(currentLand.gridSize);
+        for (const idx of available) {
+          if (currentLand.cells[idx] === null) return false;
+        }
+        return true;
       },
 
       isTierFull: () => {
