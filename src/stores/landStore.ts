@@ -361,7 +361,14 @@ export const useLandStore = create<LandStore>()(
             landJustCompleted: completedLandNumber,
           });
           // Emit event so GameUI can award land completion bonus coins
-          window.dispatchEvent(new CustomEvent('landCompleted', { detail: completedLandNumber }));
+          // Pass full archived land data so consumers don't need to look up state
+          window.dispatchEvent(new CustomEvent('landCompleted', {
+            detail: {
+              landNumber: completedLandNumber,
+              cells: archivedLand.cells,
+              totalFocusMinutes: archivedLand.totalFocusMinutes,
+            },
+          }));
           cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
           if (cellIndex === -1) return -1;
         }

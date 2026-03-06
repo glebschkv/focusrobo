@@ -79,7 +79,7 @@ export const IslandExpansionModal = () => {
               <p className="text-2xl font-black text-[hsl(var(--muted-foreground))]">
                 {displayData.oldTier}×{displayData.oldTier}
               </p>
-              <p className="text-[10px] font-semibold text-[hsl(var(--muted-foreground)/0.5)]">
+              <p className="text-[11px] font-semibold text-[hsl(var(--muted-foreground)/0.5)]">
                 {displayData.oldTier * displayData.oldTier} cells
               </p>
             </div>
@@ -88,7 +88,7 @@ export const IslandExpansionModal = () => {
               <p className="text-2xl font-black text-emerald-600">
                 {displayData.newTier}×{displayData.newTier}
               </p>
-              <p className="text-[10px] font-semibold text-emerald-500/70">
+              <p className="text-[11px] font-semibold text-emerald-500/70">
                 {displayData.newTier * displayData.newTier} cells
               </p>
             </div>
@@ -102,7 +102,7 @@ export const IslandExpansionModal = () => {
                 +{displayData.newCells} new spots
               </span>
             </div>
-            <p className="text-[10px] text-[hsl(var(--muted-foreground)/0.6)]">
+            <p className="text-[11px] text-[hsl(var(--muted-foreground)/0.6)]">
               More room for your pets to explore!
             </p>
           </div>

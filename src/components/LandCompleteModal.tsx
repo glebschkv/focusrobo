@@ -10,8 +10,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { PixelIcon } from '@/components/ui/PixelIcon';
-import { useLandStore, LAND_COMPLETE_BONUS_COINS } from '@/stores/landStore';
+import { LAND_COMPLETE_BONUS_COINS } from '@/stores/landStore';
 import type { PetRarity } from '@/data/PetDatabase';
+import { RARITY_HEX, RARITY_LABEL } from '@/components/collection/constants';
 
 interface LandStats {
   landNumber: number;
@@ -20,68 +21,41 @@ interface LandStats {
   rarityBreakdown: Record<PetRarity, number>;
 }
 
-const RARITY_COLORS: Record<PetRarity, string> = {
-  common: '#9E9E9E',
-  uncommon: '#66BB6A',
-  rare: '#42A5F5',
-  epic: '#AB47BC',
-  legendary: '#FFA726',
-};
-
-const RARITY_LABELS: Record<PetRarity, string> = {
-  common: 'Common',
-  uncommon: 'Uncommon',
-  rare: 'Rare',
-  epic: 'Epic',
-  legendary: 'Legendary',
-};
+interface LandCompletedEvent {
+  landNumber: number;
+  cells: (unknown | null)[];
+  totalFocusMinutes: number;
+}
 
 export const LandCompleteModal = () => {
   const [stats, setStats] = useState<LandStats | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const lastStatsRef = useRef<LandStats | null>(null);
-  const completedLands = useLandStore((s) => s.completedLands);
 
   useEffect(() => {
-    const handleLandCompleted = (e: CustomEvent<number>) => {
-      const landNumber = e.detail;
-      // Find the archived land to compute stats
-      const land = completedLands.find(l => l.number === landNumber);
-      if (!land) {
-        // Land was just archived — it might not be in state yet.
-        // Use a brief delay to let state settle.
-        setTimeout(() => {
-          const lands = useLandStore.getState().completedLands;
-          const found = lands.find(l => l.number === landNumber);
-          if (found) showStats(found.number, found);
-        }, 100);
-        return;
-      }
-      showStats(landNumber, land);
-    };
-
-    function showStats(landNumber: number, land: { cells: (unknown | null)[]; totalFocusMinutes: number }) {
-      const cells = land.cells.filter(Boolean) as { rarity: PetRarity }[];
+    const handleLandCompleted = (e: CustomEvent<LandCompletedEvent>) => {
+      const { landNumber, cells, totalFocusMinutes } = e.detail;
+      const filledCells = cells.filter(Boolean) as { rarity: PetRarity }[];
       const breakdown: Record<PetRarity, number> = { common: 0, uncommon: 0, rare: 0, epic: 0, legendary: 0 };
-      for (const cell of cells) {
+      for (const cell of filledCells) {
         breakdown[cell.rarity] = (breakdown[cell.rarity] || 0) + 1;
       }
       const data: LandStats = {
         landNumber,
-        totalPets: cells.length,
-        totalMinutes: land.totalFocusMinutes,
+        totalPets: filledCells.length,
+        totalMinutes: totalFocusMinutes,
         rarityBreakdown: breakdown,
       };
       lastStatsRef.current = data;
       setStats(data);
       setIsOpen(true);
-    }
+    };
 
     window.addEventListener('landCompleted', handleLandCompleted as EventListener);
     return () => {
       window.removeEventListener('landCompleted', handleLandCompleted as EventListener);
     };
-  }, [completedLands]);
+  }, []);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -136,25 +110,25 @@ export const LandCompleteModal = () => {
           <div className="grid grid-cols-3 gap-2">
             <div className="retro-reward-item flex-col !items-center !gap-0.5 py-2.5">
               <span className="text-lg font-black text-amber-600">{displayStats.totalPets}</span>
-              <span className="text-[9px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Pets</span>
+              <span className="text-[10px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Pets</span>
             </div>
             <div className="retro-reward-item flex-col !items-center !gap-0.5 py-2.5">
               <span className="text-lg font-black text-amber-600">{timeStr}</span>
-              <span className="text-[9px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Focus Time</span>
+              <span className="text-[10px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Focus Time</span>
             </div>
             <div className="retro-reward-item flex-col !items-center !gap-0.5 py-2.5">
               <div className="flex items-center gap-1">
                 <PixelIcon name="coin" size={14} />
                 <span className="text-lg font-black text-amber-600">+{LAND_COMPLETE_BONUS_COINS}</span>
               </div>
-              <span className="text-[9px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Bonus</span>
+              <span className="text-[10px] font-bold uppercase text-[hsl(var(--muted-foreground)/0.5)]">Bonus</span>
             </div>
           </div>
 
           {/* Rarity breakdown */}
           {rarityEntries.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-center" style={{ color: 'hsl(150 10% 40%)' }}>
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-center" style={{ color: 'hsl(150 10% 40%)' }}>
                 Rarity Breakdown
               </p>
               <div className="space-y-1">
@@ -162,10 +136,10 @@ export const LandCompleteModal = () => {
                   <div key={rarity} className="flex items-center gap-2 px-1">
                     <div
                       className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: RARITY_COLORS[rarity] }}
+                      style={{ backgroundColor: RARITY_HEX[rarity] }}
                     />
-                    <span className="text-[11px] font-semibold flex-1" style={{ color: RARITY_COLORS[rarity] }}>
-                      {RARITY_LABELS[rarity]}
+                    <span className="text-[11px] font-semibold flex-1" style={{ color: RARITY_HEX[rarity] }}>
+                      {RARITY_LABEL[rarity]}
                     </span>
                     <span className="text-[11px] font-black tabular-nums text-[hsl(var(--foreground))]">
                       {displayStats.rarityBreakdown[rarity]}
@@ -175,7 +149,7 @@ export const LandCompleteModal = () => {
                         className="h-full rounded-full"
                         style={{
                           width: `${(displayStats.rarityBreakdown[rarity] / displayStats.totalPets) * 100}%`,
-                          backgroundColor: RARITY_COLORS[rarity],
+                          backgroundColor: RARITY_HEX[rarity],
                           opacity: 0.7,
                         }}
                       />

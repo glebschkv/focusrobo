@@ -11,14 +11,7 @@ import {
 import { type PetSpecies, type GrowthSize, RARITY_GLOW, getSizeSpritePath } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
-import { RARITY_LABEL, SIZE_LABEL, SIZE_ORDER, SIZE_DURATION_HINT } from './constants';
-
-const AFFINITY_INFO: Record<string, { label: string; color: string; description: string }> = {
-  none: { label: 'New', color: '#9E9E9E', description: 'Find 3 to become familiar' },
-  familiar: { label: 'Familiar', color: '#66BB6A', description: 'Find 5 total to bond' },
-  bonded: { label: 'Bonded', color: '#42A5F5', description: 'Can grow babies to teen! Find 10 to devote' },
-  devoted: { label: 'Devoted', color: '#AB47BC', description: 'Can grow any pet to adult!' },
-};
+import { RARITY_LABEL, SIZE_LABEL, SIZE_ORDER, SIZE_DURATION_HINT, AFFINITY_INFO } from './constants';
 
 interface SpeciesDetailDrawerProps {
   species: PetSpecies | null;

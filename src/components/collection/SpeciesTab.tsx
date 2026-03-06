@@ -22,38 +22,26 @@ const HowItWorksPanel = () => {
         <div className="mt-2 p-3 rounded-xl bg-[hsl(var(--muted)/0.08)] border border-[hsl(var(--border))] space-y-2.5">
           <div>
             <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Focus → Pet → Island</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Complete a focus session to earn a random pet. Pets are placed on your floating island. Fill the island to archive it and start a new one!
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Complete a focus session to earn a random pet. Pets are placed on your floating island. Fill it to archive and start a new one!
             </p>
           </div>
           <div>
             <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Pet Sizes</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Longer sessions = bigger pets. Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min).
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Longer sessions = bigger pets. Baby (25-45 min), Teen (60-90 min), Adult (120+ min).
             </p>
           </div>
           <div>
             <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Rarity Drops</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Common 45% · Uncommon 28% · Rare 17% · Epic 8% · Legendary 2%. Higher rarity pets glow!
-            </p>
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Affinity & Growth</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Find the same species multiple times to build affinity. Familiar (3×), Bonded (5×), Devoted (10×). Higher affinity lets you grow pets to larger sizes!
-            </p>
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Island Expansion</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Your island starts small (5×5) and grows as you fill it: 5→6→7→8→9→10→12→14→17→20. Fill all 400 cells to complete the island!
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Common 45% · Uncommon 28% · Rare 17% · Epic 8% · Legendary 2%. Rarer pets glow!
             </p>
           </div>
           <div>
             <p className="text-[10px] font-bold text-[hsl(var(--foreground))] mb-0.5">Wish List</p>
-            <p className="text-[9px] text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Wish for a species to get a small drop rate boost (+5%) when its rarity tier is rolled.
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Wish for a species to boost its drop rate when its rarity tier is rolled.
             </p>
           </div>
         </div>

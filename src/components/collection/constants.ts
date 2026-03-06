@@ -68,3 +68,38 @@ export const SIZE_DURATION_HINT: Record<string, string> = {
   adolescent: '60-90 min',
   adult: '120+ min',
 };
+
+/** Canonical hex colors for each rarity — use these everywhere instead of
+ *  defining local copies. Matches the PetDatabase RARITY_COLORS.tooltip values. */
+export const RARITY_HEX: Record<PetRarity, string> = {
+  common: '#9E9E9E',
+  uncommon: '#66BB6A',
+  rare: '#42A5F5',
+  epic: '#AB47BC',
+  legendary: '#FFA726',
+};
+
+/** Rarity star counts (1-5) for display */
+export const RARITY_STARS: Record<PetRarity, number> = {
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  epic: 4,
+  legendary: 5,
+};
+
+/** Affinity system — levels, colors, descriptions */
+export const AFFINITY_THRESHOLDS = [
+  { level: 'familiar' as const, count: 3 },
+  { level: 'bonded' as const, count: 5 },
+  { level: 'devoted' as const, count: 10 },
+];
+
+export type AffinityLevel = 'none' | 'familiar' | 'bonded' | 'devoted';
+
+export const AFFINITY_INFO: Record<AffinityLevel, { label: string; color: string; description: string }> = {
+  none: { label: 'New', color: '#9E9E9E', description: 'Find 3 to become familiar' },
+  familiar: { label: 'Familiar', color: '#66BB6A', description: 'Find 5 total to bond' },
+  bonded: { label: 'Bonded', color: '#42A5F5', description: 'Can grow babies to teen! Find 10 to devote' },
+  devoted: { label: 'Devoted', color: '#AB47BC', description: 'Can grow any pet to adult!' },
+};
