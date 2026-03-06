@@ -1339,7 +1339,7 @@
   backdrop-filter: blur(4px);
 }
 
-/* Centered popup card */
+/* Centered popup card — always white/light for readability */
 .pet-land__help-popup {
   position: relative;
   width: 100%;
@@ -1348,7 +1348,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  background: hsl(var(--card));
+  background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px));
@@ -1373,24 +1373,24 @@
   height: 28px;
   border-radius: 50%;
   border: none;
-  background: hsl(var(--muted) / 0.5);
+  background: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(var(--muted-foreground));
+  color: #666;
   cursor: pointer;
   transition: background 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
 .pet-land__help-close:active {
-  background: hsl(var(--muted) / 0.8);
+  background: #e0e0e0;
 }
 
 .pet-land__help-popup-title {
   font-size: 18px;
   font-weight: 800;
-  color: hsl(var(--foreground));
+  color: #1a1a1a;
   letter-spacing: -0.3px;
   margin: 0 0 16px;
 }
@@ -1427,14 +1427,14 @@
   display: block;
   font-size: 13px;
   font-weight: 700;
-  color: hsl(var(--foreground));
+  color: #1a1a1a;
   margin-bottom: 3px;
 }
 
 .pet-land__help-step p {
   font-size: 12px;
   line-height: 1.5;
-  color: hsl(var(--muted-foreground));
+  color: #555;
   margin: 0;
 }
 
@@ -1452,10 +1452,10 @@
   gap: 1px;
   padding: 5px 10px;
   border-radius: 10px;
-  background: hsl(var(--muted) / 0.35);
+  background: #f5f5f5;
   font-size: 11px;
   font-weight: 700;
-  color: hsl(var(--foreground));
+  color: #1a1a1a;
   flex: 1;
   text-align: center;
 }
@@ -1463,7 +1463,7 @@
 .pet-land__help-sizes em {
   font-style: normal;
   font-weight: 500;
-  color: hsl(var(--muted-foreground));
+  color: #888;
   font-size: 10px;
 }
 
@@ -1548,37 +1548,10 @@
   /* NOTE: Theme btn, nudge, and progress ring sit on the always-light sky,
      so they do NOT get dark overrides. Only overlays/modals go dark. */
 
-  /* Help popup */
+  /* Help popup — always white for readability (sits on blurred overlay) */
   .pet-land__help-popup {
-    background: hsl(0 0% 15%);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-  }
-  .pet-land__help-close {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
-  }
-  .pet-land__help-close:active {
-    background: rgba(255, 255, 255, 0.18);
-  }
-  .pet-land__help-rarity--common {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.6);
-  }
-  .pet-land__help-rarity--uncommon {
-    background: hsl(142 30% 18%);
-    color: hsl(142 40% 70%);
-  }
-  .pet-land__help-rarity--rare {
-    background: hsl(217 40% 18%);
-    color: hsl(217 55% 70%);
-  }
-  .pet-land__help-rarity--epic {
-    background: hsl(270 30% 18%);
-    color: hsl(270 45% 75%);
-  }
-  .pet-land__help-rarity--legendary {
-    background: hsl(45 50% 18%);
-    color: hsl(45 60% 70%);
+    background: #ffffff;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
   }
 
   /* Theme picker strip — stays light on sky background */
@@ -1604,9 +1577,10 @@
 }
 /* NOTE: .dark overrides for theme-btn, nudge removed — they sit on always-light sky */
 .dark .pet-land__help-popup {
-  background: hsl(0 0% 15%);
+  background: #ffffff;
 }
 .dark .pet-land__help-close {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f0f0f0;
+  color: #666;
 }
 /* .dark .pet-land__theme-strip — stays light on sky bg */
