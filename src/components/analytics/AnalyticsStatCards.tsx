@@ -1,6 +1,7 @@
-import { Clock, Flame, Calendar, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Clock, Calendar, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import { AnalyticsStreakFlame } from "./AnalyticsStreakFlame";
 
 interface StatCardsProps {
   todayFocusTime: number; // seconds
@@ -17,9 +18,6 @@ export const AnalyticsStatCards = ({
   weekOverWeekChange,
   formatDuration,
 }: StatCardsProps) => {
-  // Animate the streak number
-  const animatedStreak = useAnimatedCounter(currentStreak, 600);
-
   // Animate the week-over-week percentage
   const animatedChange = useAnimatedCounter(Math.abs(weekOverWeekChange), 700);
 
@@ -48,12 +46,11 @@ export const AnalyticsStatCards = ({
         <div className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase tracking-wider">Today</div>
       </div>
 
-      {/* Current Streak */}
+      {/* Current Streak — with flame */}
       <div className="retro-card p-3 text-center">
-        <div className="w-9 h-9 mx-auto mb-2 bg-gradient-to-b from-orange-400 to-orange-600 rounded-lg flex items-center justify-center text-white shadow-sm">
-          <Flame className="w-4 h-4" />
+        <div className="flex justify-center mb-1">
+          <AnalyticsStreakFlame currentStreak={currentStreak} compact />
         </div>
-        <div className="text-base font-extrabold leading-tight tabular-nums">{animatedStreak}</div>
         <div className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase tracking-wider">Streak</div>
       </div>
 
