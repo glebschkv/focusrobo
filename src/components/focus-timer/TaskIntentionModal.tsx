@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/drawer";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { cn } from "@/lib/utils";
+import { useHaptics } from "@/hooks/useHaptics";
 import { FocusCategory, FOCUS_CATEGORIES } from "@/types/analytics";
 import { TimerPreset } from "./constants";
 import { PixelIcon } from "@/components/ui/PixelIcon";
@@ -19,40 +20,40 @@ interface TaskIntentionModalProps {
 
 const CATEGORY_COLORS: Record<FocusCategory, { bg: string; border: string; text: string; activeBg: string }> = {
   work: {
-    bg: "bg-blue-50",
-    border: "border-blue-300",
-    text: "text-blue-700",
-    activeBg: "bg-blue-100",
+    bg: "bg-blue-50 dark:bg-blue-950",
+    border: "border-blue-300 dark:border-blue-700",
+    text: "text-blue-700 dark:text-blue-300",
+    activeBg: "bg-blue-100 dark:bg-blue-900",
   },
   study: {
-    bg: "bg-purple-50",
-    border: "border-purple-300",
-    text: "text-purple-700",
-    activeBg: "bg-purple-100",
+    bg: "bg-purple-50 dark:bg-purple-950",
+    border: "border-purple-300 dark:border-purple-700",
+    text: "text-purple-700 dark:text-purple-300",
+    activeBg: "bg-purple-100 dark:bg-purple-900",
   },
   creative: {
-    bg: "bg-pink-50",
-    border: "border-pink-300",
-    text: "text-pink-700",
-    activeBg: "bg-pink-100",
+    bg: "bg-pink-50 dark:bg-pink-950",
+    border: "border-pink-300 dark:border-pink-700",
+    text: "text-pink-700 dark:text-pink-300",
+    activeBg: "bg-pink-100 dark:bg-pink-900",
   },
   personal: {
-    bg: "bg-green-50",
-    border: "border-green-300",
-    text: "text-green-700",
-    activeBg: "bg-green-100",
+    bg: "bg-green-50 dark:bg-green-950",
+    border: "border-green-300 dark:border-green-700",
+    text: "text-green-700 dark:text-green-300",
+    activeBg: "bg-green-100 dark:bg-green-900",
   },
   health: {
-    bg: "bg-orange-50",
-    border: "border-orange-300",
-    text: "text-orange-700",
-    activeBg: "bg-orange-100",
+    bg: "bg-orange-50 dark:bg-orange-950",
+    border: "border-orange-300 dark:border-orange-700",
+    text: "text-orange-700 dark:text-orange-300",
+    activeBg: "bg-orange-100 dark:bg-orange-900",
   },
   other: {
-    bg: "bg-teal-50",
-    border: "border-teal-300",
-    text: "text-teal-700",
-    activeBg: "bg-teal-100",
+    bg: "bg-teal-50 dark:bg-teal-950",
+    border: "border-teal-300 dark:border-teal-700",
+    text: "text-teal-700 dark:text-teal-300",
+    activeBg: "bg-teal-100 dark:bg-teal-900",
   },
 };
 
@@ -72,8 +73,10 @@ export const TaskIntentionModal = memo(({
   const [selectedCategory, setSelectedCategory] = useState<FocusCategory>("work");
   const [taskLabel, setTaskLabel] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { haptic } = useHaptics();
 
   const handleStart = () => {
+    haptic('medium');
     onStart(selectedCategory, taskLabel.trim() || undefined);
     setTaskLabel("");
   };
@@ -95,12 +98,12 @@ export const TaskIntentionModal = memo(({
         <div className="px-5 pt-1 pb-6 space-y-5">
           {/* Header */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl mb-2"
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-2"
               style={{
                 background: 'hsl(var(--primary) / 0.1)',
               }}
             >
-              <PixelIcon name="target" size={24} />
+              <PixelIcon name="target" size={26} />
             </div>
             <h2 className="text-lg font-bold tracking-tight text-foreground">
               Ready to Focus?
@@ -123,7 +126,8 @@ export const TaskIntentionModal = memo(({
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => { setSelectedCategory(cat.id); haptic('light'); }}
+                    aria-pressed={isSelected}
                     className={cn(
                       "flex items-center gap-1.5 px-3 py-2 rounded-full border whitespace-nowrap",
                       "transition-all duration-150 active:scale-95 touch-manipulation flex-shrink-0",

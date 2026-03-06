@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { usePremiumStatus } from '@/hooks/usePremiumStatus';
 import { useSettings } from '@/hooks/useSettings';
+import { useHaptics } from '@/hooks/useHaptics';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import {
   Drawer,
   DrawerContent,
@@ -45,6 +47,8 @@ export const BreakTransitionModal = ({
   const [selectedDuration, setSelectedDuration] = useState(isLongBreak ? longBreak : shortBreak);
   const [autoStartCountdown, setAutoStartCountdown] = useState(10);
   const { isPremium } = usePremiumStatus();
+  const { haptic } = useHaptics();
+  const prefersReducedMotion = useReducedMotion();
 
   // Auto-start countdown
   useEffect(() => {
@@ -127,11 +131,12 @@ export const BreakTransitionModal = ({
             {BREAK_OPTIONS.map((option) => (
               <button
                 key={option.duration}
-                onClick={() => setSelectedDuration(option.duration)}
+                onClick={() => { setSelectedDuration(option.duration); haptic('light'); }}
+                aria-pressed={selectedDuration === option.duration}
                 className={cn(
                   "p-3 rounded-xl text-left transition-all active:scale-[0.97] touch-manipulation",
                   selectedDuration === option.duration
-                    ? "bg-amber-50 ring-2 ring-amber-400"
+                    ? "bg-amber-50 dark:bg-amber-950 ring-2 ring-amber-400 dark:ring-amber-500"
                     : "bg-muted/50 hover:bg-muted"
                 )}
               >
@@ -147,7 +152,7 @@ export const BreakTransitionModal = ({
           {/* Auto-start toggle (Premium feature) */}
           <div className={cn(
             "rounded-xl p-3",
-            isPremium ? "bg-purple-50" : "bg-muted/30"
+            isPremium ? "bg-purple-50 dark:bg-purple-950" : "bg-muted/30"
           )}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -161,9 +166,12 @@ export const BreakTransitionModal = ({
               </div>
               {isPremium ? (
                 <button
-                  onClick={() => onToggleAutoStart(!autoStartEnabled)}
+                  onClick={() => { onToggleAutoStart(!autoStartEnabled); haptic('light'); }}
+                  role="switch"
+                  aria-checked={autoStartEnabled}
+                  aria-label="Auto-start breaks"
                   className={cn(
-                    "w-11 h-6 rounded-full transition-all relative",
+                    "w-11 h-6 rounded-full transition-all relative min-h-[44px] min-w-[44px] flex items-center",
                     autoStartEnabled ? "bg-purple-500" : "bg-border"
                   )}
                 >
@@ -183,14 +191,14 @@ export const BreakTransitionModal = ({
             </div>
 
             {isPremium && autoStartEnabled && (
-              <div className="mt-2 flex items-center gap-2 text-purple-600">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              <div className="mt-2 flex items-center gap-2 text-purple-500">
+                <Sparkles className={cn("w-3.5 h-3.5", !prefersReducedMotion && "animate-pulse")} />
                 <span className="text-xs font-medium">
                   Starting in {autoStartCountdown}s...
                 </span>
                 <button
                   onClick={() => setAutoStartCountdown(10)}
-                  className="text-[10px] underline hover:no-underline"
+                  className="text-[10px] underline hover:no-underline min-h-[44px] px-2 flex items-center touch-manipulation"
                 >
                   Reset
                 </button>
@@ -211,7 +219,7 @@ export const BreakTransitionModal = ({
               Skip Break
             </button>
             <button
-              onClick={() => onStartBreak(selectedDuration)}
+              onClick={() => { haptic('medium'); onStartBreak(selectedDuration); }}
               className={cn(
                 "flex-1 py-3 rounded-xl text-white text-sm font-bold",
                 "flex items-center justify-center gap-2",

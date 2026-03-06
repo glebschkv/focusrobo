@@ -7,13 +7,16 @@
  * coins in one place with staggered animations.
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useHaptics } from "@/hooks/useHaptics";
 import { getPetById, GROWTH_SCALES, RARITY_GLOW, type GrowthSize, type PetRarity } from "@/data/PetDatabase";
 import type { PendingPet } from "@/stores/landStore";
+
 interface SessionCompleteViewProps {
   isVisible: boolean;
   onDismiss: (notes: string, rating: number) => void;
@@ -60,19 +63,6 @@ const RARITY_BADGE_COLORS: Record<PetRarity, { bg: string; text: string; border:
   legendary: { bg: 'hsl(42 75% 90%)', text: 'hsl(42 75% 35%)', border: 'hsl(42 75% 70%)' },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: 0.15 + i * 0.12,
-      duration: 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94],
-    },
-  }),
-};
-
 export const SessionCompleteView = ({
   isVisible,
   onDismiss,
@@ -87,9 +77,11 @@ export const SessionCompleteView = ({
   const [rating, setRating] = useState(3);
   const [notes, setNotes] = useState("");
   const [showNotes, setShowNotes] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const { haptic } = useHaptics();
 
-  const animatedXP = useAnimatedCounter(xpEarned, 900, isVisible);
-  const animatedCoins = useAnimatedCounter(coinsEarned, 700, isVisible);
+  const animatedXP = useAnimatedCounter(xpEarned, prefersReducedMotion ? 0 : 900, isVisible);
+  const animatedCoins = useAnimatedCounter(coinsEarned, prefersReducedMotion ? 0 : 700, isVisible);
 
   const sessionMinutes = Math.floor(sessionDuration / 60);
 
@@ -98,6 +90,13 @@ export const SessionCompleteView = ({
   const petSize = lastPlacedPet?.size;
   const petGlow = petRarity ? RARITY_GLOW[petRarity] : null;
   const petScale = petSize ? GROWTH_SCALES[petSize] : 1;
+
+  // Haptic on modal appear
+  useEffect(() => {
+    if (isVisible) {
+      haptic('success');
+    }
+  }, [isVisible, haptic]);
 
   const handleDone = useCallback(() => {
     onDismiss(notes, rating);
@@ -115,6 +114,24 @@ export const SessionCompleteView = ({
     setTimeout(() => onTakeBreak(), 100);
   }, [onDismiss, onTakeBreak, notes, rating]);
 
+  // Staggered card animation variants — disabled when reduced motion is preferred
+  const cardVariants = prefersReducedMotion
+    ? { hidden: {}, visible: () => ({}) }
+    : {
+        hidden: { opacity: 0, y: 24 },
+        visible: (i: number) => ({
+          opacity: 1,
+          y: 0,
+          transition: {
+            delay: 0.15 + i * 0.12,
+            duration: 0.4,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          },
+        }),
+      };
+
+  const noMotion = { duration: 0 };
+
   let cardIndex = 0;
 
   return (
@@ -125,19 +142,28 @@ export const SessionCompleteView = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={prefersReducedMotion ? noMotion : { duration: 0.25 }}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          {/* Backdrop — blocks scroll-through on iOS */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            style={{ touchAction: 'none' }}
+          />
 
           {/* Content */}
           <motion.div
             className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl bg-background"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Session Complete"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+            transition={prefersReducedMotion ? noMotion : { type: "spring", damping: 28, stiffness: 300 }}
+            style={{
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+              overscrollBehavior: 'contain',
+            }}
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1">
@@ -147,17 +173,17 @@ export const SessionCompleteView = ({
             {/* Header */}
             <motion.div
               className="text-center px-5 pt-2 pb-4"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.05, duration: 0.35 }}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
+              animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
+              transition={prefersReducedMotion ? noMotion : { delay: 0.05, duration: 0.35 }}
             >
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3"
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-3"
                 style={{
-                  background: 'linear-gradient(135deg, hsl(152 44% 45%), hsl(152 55% 52%))',
-                  boxShadow: '0 4px 12px hsl(152 44% 45% / 0.3)',
+                  background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.85))',
+                  boxShadow: '0 4px 12px hsl(var(--primary) / 0.3)',
                 }}
               >
-                <PixelIcon name="trophy" size={30} />
+                <PixelIcon name="trophy" size={26} />
               </div>
               <h2 className="text-xl font-black tracking-tight text-foreground">
                 Session Complete!
@@ -171,7 +197,7 @@ export const SessionCompleteView = ({
               {/* XP Card */}
               {xpEarned > 0 && (
                 <motion.div
-                  className="rounded-2xl border border-border bg-card p-4"
+                  className="rounded-xl border border-border bg-card p-4"
                   variants={cardVariants}
                   initial="hidden"
                   animate="visible"
@@ -179,10 +205,10 @@ export const SessionCompleteView = ({
                 >
                   <div className="flex items-center gap-2">
                     <PixelIcon name="star" size={20} />
-                    <span className="text-2xl font-black tabular-nums" style={{ color: 'hsl(42 65% 45%)' }}>
+                    <span className="text-2xl font-black tabular-nums text-primary">
                       +{animatedXP}
                     </span>
-                    <span className="text-sm font-bold" style={{ color: 'hsl(42 65% 55%)' }}>XP</span>
+                    <span className="text-sm font-bold text-primary/70">XP</span>
                   </div>
                 </motion.div>
               )}
@@ -190,7 +216,7 @@ export const SessionCompleteView = ({
               {/* Pet Reveal Card */}
               {pet && petRarity && petSize && (
                 <motion.div
-                  className="rounded-2xl border overflow-hidden"
+                  className="rounded-xl border overflow-hidden"
                   style={{
                     borderColor: RARITY_BADGE_COLORS[petRarity].border,
                     background: `linear-gradient(180deg, ${RARITY_BADGE_COLORS[petRarity].bg}, hsl(var(--card)))`,
@@ -205,7 +231,7 @@ export const SessionCompleteView = ({
                     <div
                       className="w-20 h-20 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'rgba(255,255,255,0.6)',
+                        background: 'hsl(var(--card) / 0.6)',
                         border: `2px solid ${RARITY_BADGE_COLORS[petRarity].border}`,
                         boxShadow: petGlow ? `0 0 16px ${petGlow}` : undefined,
                       }}
@@ -218,7 +244,7 @@ export const SessionCompleteView = ({
                           imageRendering: 'pixelated',
                           transform: `scale(${Math.max(petScale, 0.8)})`,
                           filter: petGlow ? `drop-shadow(0 0 6px ${petGlow})` : undefined,
-                          animation: 'pet-reveal-bounce 0.6s ease-out',
+                          animation: prefersReducedMotion ? 'none' : 'pet-reveal-bounce 0.6s ease-out',
                         }}
                         draggable={false}
                       />
@@ -255,7 +281,7 @@ export const SessionCompleteView = ({
               {/* Coins Card */}
               {coinsEarned > 0 && (
                 <motion.div
-                  className="rounded-2xl border border-border bg-card p-3 flex items-center justify-between"
+                  className="rounded-xl border border-border bg-card p-3 flex items-center justify-between"
                   variants={cardVariants}
                   initial="hidden"
                   animate="visible"
@@ -263,17 +289,17 @@ export const SessionCompleteView = ({
                 >
                   <div className="flex items-center gap-2">
                     <PixelIcon name="coin" size={20} />
-                    <span className="text-lg font-black tabular-nums" style={{ color: 'hsl(42 65% 45%)' }}>
+                    <span className="text-lg font-black tabular-nums text-primary">
                       +{animatedCoins}
                     </span>
-                    <span className="text-xs font-bold" style={{ color: 'hsl(42 65% 55%)' }}>Coins</span>
+                    <span className="text-xs font-bold text-primary/70">Coins</span>
                   </div>
                 </motion.div>
               )}
 
               {/* Mood Rating */}
               <motion.div
-                className="rounded-2xl border border-border bg-card p-4"
+                className="rounded-xl border border-border bg-card p-4"
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
@@ -284,12 +310,17 @@ export const SessionCompleteView = ({
                   {MOOD_OPTIONS.map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => setRating(option.value)}
+                      onClick={() => {
+                        setRating(option.value);
+                        haptic('light');
+                      }}
+                      aria-label={option.label}
+                      aria-pressed={rating === option.value}
                       className={cn(
-                        "flex-1 py-2 rounded-xl flex flex-col items-center gap-1 transition-all duration-150",
+                        "flex-1 py-2.5 rounded-xl flex flex-col items-center gap-1 transition-all duration-150",
                         "active:scale-90 touch-manipulation",
                         rating === option.value
-                          ? "bg-amber-100 ring-2 ring-amber-400"
+                          ? "bg-primary/10 ring-2 ring-primary/50"
                           : "bg-muted/50 hover:bg-muted"
                       )}
                     >
@@ -305,7 +336,7 @@ export const SessionCompleteView = ({
                 {!showNotes ? (
                   <button
                     onClick={() => setShowNotes(true)}
-                    className="mt-2.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                    className="mt-2.5 min-h-[44px] flex items-center text-[11px] text-muted-foreground hover:text-foreground transition-colors touch-manipulation"
                   >
                     + Add a note
                   </button>

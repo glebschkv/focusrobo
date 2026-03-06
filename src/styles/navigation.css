@@ -778,3 +778,16 @@
     }
   }
 
+  /* ============================================
+     REDUCED MOTION — Accessibility
+     Disables animations when user prefers reduced motion
+     ============================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .island-progress-fill { transition: none; }
+    .level-progress-fill { transition: none; }
+    .streak-chip.active .streak-icon { animation: none; }
+    .dock-indicator { transition: none; }
+    .energy-pulse { animation: none; }
+    .badge-pop { animation: none; }
+  }
+
