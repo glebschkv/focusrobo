@@ -37,11 +37,11 @@ export class StoreKitWeb extends WebPlugin implements StoreKitPlugin {
           description: plan.description,
           price: plan.price.replace(/[^0-9.,]/g, ''),
           displayPrice: plan.price,
-          type: plan.period === 'lifetime' ? 'nonConsumable' : 'autoRenewable',
-          subscriptionPeriod: plan.period !== 'lifetime' ? {
-            unit: plan.period === 'monthly' ? 'month' : 'year',
+          type: 'autoRenewable',
+          subscriptionPeriod: {
+            unit: plan.period === 'weekly' ? 'week' : plan.period === 'monthly' ? 'month' : 'year',
             value: 1
-          } : undefined
+          }
         };
       }
 
@@ -78,12 +78,13 @@ export class StoreKitWeb extends WebPlugin implements StoreKitPlugin {
     let expirationDate: number | undefined;
 
     if (plan) {
-      if (plan.period === 'monthly') {
+      if (plan.period === 'weekly') {
+        expirationDate = now + 7 * 24 * 60 * 60 * 1000;
+      } else if (plan.period === 'monthly') {
         expirationDate = now + 30 * 24 * 60 * 60 * 1000;
       } else if (plan.period === 'yearly') {
         expirationDate = now + 365 * 24 * 60 * 60 * 1000;
       }
-      // Lifetime has no expiration
     }
 
     this.mockPurchases.set(options.productId, {
@@ -156,7 +157,7 @@ export class StoreKitWeb extends WebPlugin implements StoreKitPlugin {
           activeSubscriptions.push(purchase);
         }
       } else {
-        // Non-consumable (lifetime)
+        // Non-consumable
         purchasedProducts.push(purchase);
       }
     });

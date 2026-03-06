@@ -4,13 +4,11 @@ import { logger } from '@/lib/logger';
 import { premiumStatusSchema } from '@/lib/storage-validation';
 import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 
-export type SubscriptionTier = 'free' | 'premium' | 'premium_plus' | 'lifetime';
+export type SubscriptionTier = 'free' | 'premium';
 
 export const TIER_BENEFITS = {
-  free: { coinMultiplier: 1, xpMultiplier: 1, monthlyStreakFreezes: 0, battlePassIncluded: false, soundMixingSlots: 1, focusPresetSlots: 1 },
-  premium: { coinMultiplier: 2, xpMultiplier: 2, monthlyStreakFreezes: 2, battlePassIncluded: false, soundMixingSlots: 2, focusPresetSlots: 3 },
-  premium_plus: { coinMultiplier: 3, xpMultiplier: 3, monthlyStreakFreezes: 5, battlePassIncluded: true, soundMixingSlots: 3, focusPresetSlots: 5 },
-  lifetime: { coinMultiplier: 4, xpMultiplier: 4, monthlyStreakFreezes: 7, battlePassIncluded: true, soundMixingSlots: 3, focusPresetSlots: 10 },
+  free: { coinMultiplier: 1, xpMultiplier: 1, monthlyStreakFreezes: 0, soundMixingSlots: 1, focusPresetSlots: 1 },
+  premium: { coinMultiplier: 2, xpMultiplier: 2, monthlyStreakFreezes: 3, soundMixingSlots: 3, focusPresetSlots: 5 },
 } as const;
 
 export interface PremiumState {
@@ -25,8 +23,6 @@ interface PremiumStore extends PremiumState {
   setPurchaseDetails: (details: Partial<PremiumState>) => void;
   clearPremium: () => void;
   isPremium: () => boolean;
-  isPremiumPlus: () => boolean;
-  isLifetime: () => boolean;
   getTierBenefits: () => typeof TIER_BENEFITS[SubscriptionTier];
   getCoinMultiplier: () => number;
   getXPMultiplier: () => number;
@@ -41,9 +37,7 @@ export const usePremiumStore = create<PremiumStore>()(
       setTier: (tier) => set({ tier }),
       setPurchaseDetails: (details) => set((s) => ({ ...s, ...details })),
       clearPremium: () => set(initialState),
-      isPremium: () => ['premium', 'premium_plus', 'lifetime'].includes(get().tier),
-      isPremiumPlus: () => ['premium_plus', 'lifetime'].includes(get().tier),
-      isLifetime: () => get().tier === 'lifetime',
+      isPremium: () => get().tier === 'premium',
       getTierBenefits: () => TIER_BENEFITS[get().tier] || TIER_BENEFITS.free,
       getCoinMultiplier: () => get().getTierBenefits().coinMultiplier,
       getXPMultiplier: () => get().getTierBenefits().xpMultiplier,
@@ -88,6 +82,4 @@ export const usePremiumStore = create<PremiumStore>()(
 );
 
 export const useTier = () => usePremiumStore((s) => s.tier);
-export const useIsPremium = () => usePremiumStore((s) => ['premium', 'premium_plus', 'lifetime'].includes(s.tier));
-export const useIsPremiumPlus = () => usePremiumStore((s) => ['premium_plus', 'lifetime'].includes(s.tier));
-export const useIsLifetime = () => usePremiumStore((s) => s.tier === 'lifetime');
+export const useIsPremium = () => usePremiumStore((s) => s.tier === 'premium');

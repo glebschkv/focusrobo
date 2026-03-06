@@ -73,50 +73,49 @@ at+qIxUCMG1mihDK1A3UT82NQz60imOlM27jbdoXt2QfyFMm+YhidDkLF1vLUagM
 -----END CERTIFICATE-----`;
 
 // Subscription tier mapping
-const SUBSCRIPTION_PRODUCTS: Record<string, { tier: 'premium' | 'premium_plus' | 'lifetime'; period: 'monthly' | 'yearly' | 'lifetime' }> = {
+const SUBSCRIPTION_PRODUCTS: Record<string, { tier: 'premium'; period: 'weekly' | 'monthly' | 'yearly' }> = {
+  'com.fonoinc.app.premium.weekly': { tier: 'premium', period: 'weekly' },
   'com.fonoinc.app.premium.monthly': { tier: 'premium', period: 'monthly' },
   'com.fonoinc.app.premium.yearly': { tier: 'premium', period: 'yearly' },
-  'com.fonoinc.app.premiumplus.monthly': { tier: 'premium_plus', period: 'monthly' },
-  'com.fonoinc.app.premiumplus.yearly': { tier: 'premium_plus', period: 'yearly' },
-  'com.fonoinc.app.lifetime': { tier: 'lifetime', period: 'lifetime' },
 };
 
 // Coin pack definitions (consumables)
 const COIN_PACK_PRODUCTS: Record<string, { coins: number; bonusCoins: number }> = {
-  'com.fonoinc.app.coins.value': { coins: 1500, bonusCoins: 300 },
-  'com.fonoinc.app.coins.premium': { coins: 5000, bonusCoins: 1000 },
-  'com.fonoinc.app.coins.mega': { coins: 15000, bonusCoins: 5000 },
-  'com.fonoinc.app.coins.ultra': { coins: 40000, bonusCoins: 20000 },
-  'com.fonoinc.app.coins.legendary': { coins: 100000, bonusCoins: 50000 },
+  'com.fonoinc.app.coins.handful': { coins: 400, bonusCoins: 100 },
+  'com.fonoinc.app.coins.pouch': { coins: 1400, bonusCoins: 600 },
+  'com.fonoinc.app.coins.chest': { coins: 3500, bonusCoins: 2000 },
+  'com.fonoinc.app.coins.trove': { coins: 8000, bonusCoins: 6000 },
+  'com.fonoinc.app.coins.hoard': { coins: 17000, bonusCoins: 18000 },
 };
 
 // Starter bundle definitions (non-consumables)
 const STARTER_BUNDLE_PRODUCTS: Record<string, {
   coins: number;
   boosterId?: string;
-  characterId?: string;
   streakFreezes?: number;
+  eggs?: Array<{ eggId: string; quantity: number }>;
 }> = {
   'com.fonoinc.app.bundle.welcome': {
-    coins: 600,
-    boosterId: 'focus_boost',
-    streakFreezes: 2
+    coins: 1500,
+    streakFreezes: 1,
+    eggs: [{ eggId: 'egg-rare', quantity: 1 }],
   },
-  'com.fonoinc.app.bundle.starter': {
+  'com.fonoinc.app.bundle.egghunter': {
     coins: 1000,
     boosterId: 'focus_boost',
-    characterId: 'clover-cat'
+    eggs: [
+      { eggId: 'egg-rare', quantity: 2 },
+      { eggId: 'egg-epic', quantity: 1 },
+    ],
   },
-  'com.fonoinc.app.bundle.collector': {
+  'com.fonoinc.app.bundle.islandmaster': {
     coins: 5000,
     boosterId: 'super_boost',
-    characterId: 'kitsune-spirit'
-  },
-  'com.fonoinc.app.bundle.ultimate': {
-    coins: 12000,
-    boosterId: 'super_boost',
-    characterId: 'storm-spirit',
-    streakFreezes: 5
+    streakFreezes: 3,
+    eggs: [
+      { eggId: 'egg-epic', quantity: 2 },
+      { eggId: 'egg-legendary', quantity: 1 },
+    ],
   },
 };
 
@@ -287,12 +286,12 @@ function calculateExpirationDate(purchaseDate: number, period: string): Date | n
   const purchaseDateObj = new Date(purchaseDate);
 
   switch (period) {
+    case 'weekly':
+      return new Date(purchaseDateObj.getTime() + 7 * 24 * 60 * 60 * 1000);
     case 'monthly':
       return new Date(purchaseDateObj.getTime() + 30 * 24 * 60 * 60 * 1000);
     case 'yearly':
       return new Date(purchaseDateObj.getTime() + 365 * 24 * 60 * 60 * 1000);
-    case 'lifetime':
-      return null; // Lifetime purchases don't expire
     default:
       return new Date(purchaseDateObj.getTime() + 30 * 24 * 60 * 60 * 1000);
   }
@@ -478,7 +477,7 @@ serve(async (req) => {
           transactionId: transactionPayload.transactionId,
           purchasedAt: new Date(transactionPayload.purchaseDate).toISOString(),
           environment: transactionPayload.environment.toLowerCase(),
-          isLifetime: productInfo.period === 'lifetime',
+          isLifetime: false,
         }
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -589,9 +588,9 @@ serve(async (req) => {
             alreadyOwned: true,
             // Include contents for restore - coins were already granted originally
             coinsGranted: 0, // Don't re-grant coins
-            characterId: bundleInfo.characterId,
             boosterId: bundleInfo.boosterId,
             streakFreezes: bundleInfo.streakFreezes || 0,
+            eggs: bundleInfo.eggs || [],
           }
         }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -623,7 +622,7 @@ serve(async (req) => {
           original_transaction_id: transactionPayload.originalTransactionId,
           product_type: 'starter_bundle',
           coins_granted: bundleInfo.coins,
-          character_id: bundleInfo.characterId || null,
+          character_id: null,
           booster_id: bundleInfo.boosterId || null,
           streak_freezes_granted: bundleInfo.streakFreezes || 0,
           purchase_date: new Date(transactionPayload.purchaseDate).toISOString(),
@@ -645,9 +644,9 @@ serve(async (req) => {
         bundle: {
           productId,
           coinsGranted: bundleInfo.coins,
-          characterId: bundleInfo.characterId,
           boosterId: bundleInfo.boosterId,
           streakFreezes: bundleInfo.streakFreezes || 0,
+          eggs: bundleInfo.eggs || [],
           transactionId: transactionPayload.transactionId,
         }
       }), {

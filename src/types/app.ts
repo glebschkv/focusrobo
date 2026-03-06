@@ -54,7 +54,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
 /**
  * Subscription tier levels
  */
-export type SubscriptionTier = 'free' | 'premium' | 'premium_plus' | 'lifetime';
+export type SubscriptionTier = 'free' | 'premium';
 
 /**
  * Subscription plan definition
@@ -64,7 +64,7 @@ export interface SubscriptionPlan {
   name: string;
   tier: SubscriptionTier;
   price: string;
-  period: 'monthly' | 'yearly' | 'lifetime';
+  period: 'weekly' | 'monthly' | 'yearly';
   features: string[];
 }
 
@@ -75,7 +75,6 @@ export interface PremiumStatus {
   isPremium: boolean;
   tier: SubscriptionTier;
   expiresAt?: string;
-  isLifetime: boolean;
 }
 
 // ============================================================================

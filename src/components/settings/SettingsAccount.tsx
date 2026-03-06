@@ -135,8 +135,7 @@ export const SettingsAccount = () => {
                 </p>
                 <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                   {isPremium
-                    ? currentPlan?.period === 'lifetime' ? 'Lifetime access'
-                      : `${currentPlan?.period === 'yearly' ? 'Annual' : 'Monthly'} subscription`
+                    ? `${currentPlan?.period === 'yearly' ? 'Annual' : currentPlan?.period === 'weekly' ? 'Weekly' : 'Monthly'} subscription`
                     : 'Limited features'}
                 </p>
               </div>

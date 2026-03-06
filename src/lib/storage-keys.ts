@@ -60,13 +60,7 @@ export const STORAGE_KEYS = {
   ANALYTICS_SETTINGS: `${PREFIX}analytics_settings`,
   ANALYTICS_RECORDS: `${PREFIX}analytics_records`,
 
-  // Advanced Gamification
-  BATTLE_PASS: `${PREFIX}battle_pass`,
-  GUILD_DATA: `${PREFIX}guild_data`,
-  BOSS_CHALLENGES: `${PREFIX}boss_challenges`,
-  LUCKY_WHEEL: `${PREFIX}lucky_wheel`,
-  COMBO_SYSTEM: `${PREFIX}combo_system`,
-  SPECIAL_EVENTS: `${PREFIX}special_events`,
+  // Gamification
   MILESTONES: `${PREFIX}milestones`,
 
   // Coins
@@ -135,12 +129,6 @@ const LEGACY_KEY_MAP: Record<string, StorageKey> = {
   pet_paradise_analytics_daily_stats: STORAGE_KEYS.ANALYTICS_DAILY_STATS,
   pet_paradise_analytics_settings: STORAGE_KEYS.ANALYTICS_SETTINGS,
   pet_paradise_analytics_records: STORAGE_KEYS.ANALYTICS_RECORDS,
-  pet_paradise_battle_pass: STORAGE_KEYS.BATTLE_PASS,
-  pet_paradise_guild_data: STORAGE_KEYS.GUILD_DATA,
-  pet_paradise_boss_challenges: STORAGE_KEYS.BOSS_CHALLENGES,
-  pet_paradise_lucky_wheel: STORAGE_KEYS.LUCKY_WHEEL,
-  pet_paradise_combo_system: STORAGE_KEYS.COMBO_SYSTEM,
-  pet_paradise_special_events: STORAGE_KEYS.SPECIAL_EVENTS,
   pet_paradise_milestones: STORAGE_KEYS.MILESTONES,
 
   // nomoPhone_ prefix

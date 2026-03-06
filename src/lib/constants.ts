@@ -282,51 +282,6 @@ export const ACHIEVEMENT_CONFIG = {
 } as const;
 
 // ============================================================================
-// BATTLE PASS
-// ============================================================================
-
-export const BATTLE_PASS_CONFIG = {
-  /** XP required per tier (balanced for ~2 sessions/day completion) */
-  XP_PER_TIER: 400,
-
-  /** Total tiers per season */
-  TOTAL_TIERS: 50,
-
-  /** Premium tier unlock levels (major reward tiers) */
-  PREMIUM_EXCLUSIVE_TIERS: [10, 20, 30, 40, 50] as const,
-
-  /** Season duration in days */
-  SEASON_DURATION_DAYS: 90,
-
-  /** Daily XP target to complete pass: 400 * 50 / 90 = ~222 XP/day */
-  DAILY_XP_TARGET: 222,
-} as const;
-
-// ============================================================================
-// LUCKY WHEEL
-// ============================================================================
-
-export const LUCKY_WHEEL_CONFIG = {
-  /** Free spins per day */
-  FREE_SPINS_PER_DAY: 1,
-
-  /** Cost per additional spin */
-  SPIN_COST: 50,
-
-  /** Cooldown between spins in hours */
-  SPIN_COOLDOWN_HOURS: 24,
-
-  /** Wheel slice probabilities (must sum to 100) */
-  SLICE_PROBABILITIES: {
-    COMMON: 40,
-    UNCOMMON: 30,
-    RARE: 20,
-    EPIC: 8,
-    LEGENDARY: 2,
-  } as const,
-} as const;
-
-// ============================================================================
 // BOT SYSTEM
 // ============================================================================
 
@@ -543,22 +498,19 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
+    PREMIUM_WEEKLY: 'com.fonoinc.app.premium.weekly',
     PREMIUM_MONTHLY: 'com.fonoinc.app.premium.monthly',
     PREMIUM_YEARLY: 'com.fonoinc.app.premium.yearly',
-    PREMIUM_PLUS_MONTHLY: 'com.fonoinc.app.premiumplus.monthly',
-    PREMIUM_PLUS_YEARLY: 'com.fonoinc.app.premiumplus.yearly',
-    LIFETIME: 'com.fonoinc.app.lifetime',
     // Coin Packs
-    COINS_VALUE: 'com.fonoinc.app.coins.value',
-    COINS_PREMIUM: 'com.fonoinc.app.coins.premium',
-    COINS_MEGA: 'com.fonoinc.app.coins.mega',
-    COINS_ULTRA: 'com.fonoinc.app.coins.ultra',
-    COINS_LEGENDARY: 'com.fonoinc.app.coins.legendary',
+    COINS_HANDFUL: 'com.fonoinc.app.coins.handful',
+    COINS_POUCH: 'com.fonoinc.app.coins.pouch',
+    COINS_CHEST: 'com.fonoinc.app.coins.chest',
+    COINS_TROVE: 'com.fonoinc.app.coins.trove',
+    COINS_HOARD: 'com.fonoinc.app.coins.hoard',
     // Starter Bundles
     BUNDLE_WELCOME: 'com.fonoinc.app.bundle.welcome',
-    BUNDLE_STARTER: 'com.fonoinc.app.bundle.starter',
-    BUNDLE_COLLECTOR: 'com.fonoinc.app.bundle.collector',
-    BUNDLE_ULTIMATE: 'com.fonoinc.app.bundle.ultimate',
+    BUNDLE_EGGHUNTER: 'com.fonoinc.app.bundle.egghunter',
+    BUNDLE_ISLANDMASTER: 'com.fonoinc.app.bundle.islandmaster',
   } as const,
 } as const;
 

@@ -4,15 +4,16 @@ import { safeJsonParse } from '@/lib/apiUtils';
 import { logger } from '@/lib/logger';
 import { useIsGuestMode } from '@/stores/authStore';
 import { useAuth } from '@/hooks/useAuth';
+import type { SubscriptionTier } from '@/types/app';
 
 const PREMIUM_STORAGE_KEY = 'petIsland_premium';
 const LAST_VERIFICATION_KEY = 'petIsland_premium_lastVerified';
 // SECURITY: Verify premium status with server periodically
 const SERVER_VERIFICATION_INTERVAL_MS = 5 * 60 * 1000; // Every 5 minutes
 
-export type SubscriptionTier = 'free' | 'premium' | 'premium_plus' | 'lifetime';
+export type { SubscriptionTier };
 
-const VALID_SUBSCRIPTION_TIERS: readonly SubscriptionTier[] = ['free', 'premium', 'premium_plus', 'lifetime'];
+const VALID_SUBSCRIPTION_TIERS: readonly SubscriptionTier[] = ['free', 'premium'];
 
 /**
  * Type guard to validate if a value is a valid SubscriptionTier
@@ -30,54 +31,21 @@ export const TIER_BENEFITS = {
     coinMultiplier: 1,
     xpMultiplier: 1,
     monthlyStreakFreezes: 0,
-    bonusCoinsMonthly: 0,
-    bonusCoinsYearly: 0,
-    battlePassIncluded: false,
     soundMixingSlots: 1,
     focusPresetSlots: 1,
-    dailySpinLimit: 1,
     loginCoinMultiplier: 1,
     analyticsAccess: 'basic' as AnalyticsAccess,
+    eggDiscountPercent: 0,
   },
   premium: {
-    coinMultiplier: 1.5,
-    xpMultiplier: 1.5,
-    monthlyStreakFreezes: 2,
-    bonusCoinsMonthly: 500,
-    bonusCoinsYearly: 1500,
-    battlePassIncluded: false,
-    soundMixingSlots: 2,
-    focusPresetSlots: 3,
-    dailySpinLimit: 3,
-    loginCoinMultiplier: 1.5,
-    analyticsAccess: 'full' as AnalyticsAccess,
-  },
-  premium_plus: {
     coinMultiplier: 2,
     xpMultiplier: 2,
-    monthlyStreakFreezes: 5,
-    bonusCoinsMonthly: 1500,
-    bonusCoinsYearly: 5000,
-    battlePassIncluded: true,
+    monthlyStreakFreezes: 3,
     soundMixingSlots: 3,
     focusPresetSlots: 5,
-    dailySpinLimit: 5,
     loginCoinMultiplier: 2,
     analyticsAccess: 'full' as AnalyticsAccess,
-  },
-  lifetime: {
-    coinMultiplier: 2.5,
-    xpMultiplier: 2.5,
-    monthlyStreakFreezes: 7,
-    bonusCoinsMonthly: 0, // One-time only
-    bonusCoinsYearly: 0,
-    bonusCoinsLifetime: 10000,
-    battlePassIncluded: true,
-    soundMixingSlots: 3,
-    focusPresetSlots: 10,
-    dailySpinLimit: 5,
-    loginCoinMultiplier: 2,
-    analyticsAccess: 'full' as AnalyticsAccess,
+    eggDiscountPercent: 15,
   },
 } as const;
 
@@ -88,149 +56,64 @@ export interface SubscriptionPlan {
   description: string;
   price: string;
   priceValue: number; // Numeric value for calculations
-  period: 'monthly' | 'yearly' | 'lifetime';
+  period: 'weekly' | 'monthly' | 'yearly';
   features: string[];
   iapProductId: string;
   savings?: string;
   isPopular?: boolean;
   bonusCoins: number;
+  badges?: string[];
 }
+
+const PREMIUM_FEATURES = [
+  '2x Coin & XP multiplier',
+  '3 Streak Freezes/month',
+  'Sound mixing (3 layers)',
+  '5 Focus presets',
+  '15% Egg discount',
+  'Full analytics',
+  'All island themes',
+];
 
 export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
+    id: 'premium-weekly',
+    tier: 'premium',
+    name: 'Premium Weekly',
+    description: 'Boost your progress',
+    price: '$2.49',
+    priceValue: 2.49,
+    period: 'weekly',
+    features: PREMIUM_FEATURES,
+    iapProductId: 'com.fonoinc.app.premium.weekly',
+    bonusCoins: 0,
+  },
+  {
     id: 'premium-monthly',
     tier: 'premium',
-    name: 'Premium',
+    name: 'Premium Monthly',
     description: 'Boost your progress',
-    price: '€4,99',
-    priceValue: 4.99,
+    price: '$5.99',
+    priceValue: 5.99,
     period: 'monthly',
-    features: [
-      '1.5x Coin & XP multiplier',
-      '3 Lucky Wheel spins/day',
-      '1.5x Daily login coins',
-      'Full analytics dashboard',
-      'All 13 ambient sounds',
-      'Auto-break Pomodoro cycles',
-      '2 Streak Freezes/month',
-      'All timer backgrounds',
-      'Website blocking',
-    ],
+    features: PREMIUM_FEATURES,
     iapProductId: 'com.fonoinc.app.premium.monthly',
     bonusCoins: 500,
   },
   {
     id: 'premium-yearly',
     tier: 'premium',
-    name: 'Premium',
+    name: 'Premium Yearly',
     description: 'Boost your progress',
-    price: '€39,99',
+    price: '$39.99',
     priceValue: 39.99,
     period: 'yearly',
-    features: [
-      '1.5x Coin & XP multiplier',
-      '3 Lucky Wheel spins/day',
-      '1.5x Daily login coins',
-      'Full analytics dashboard',
-      'All 13 ambient sounds',
-      'Auto-break Pomodoro cycles',
-      '2 Streak Freezes/month',
-      'All timer backgrounds',
-      'Website blocking',
-    ],
+    features: PREMIUM_FEATURES,
     iapProductId: 'com.fonoinc.app.premium.yearly',
-    savings: 'Save 33%',
+    savings: 'Save 44%',
     isPopular: true,
     bonusCoins: 1500,
-  },
-  {
-    id: 'premium-plus-monthly',
-    tier: 'premium_plus',
-    name: 'Premium+',
-    description: 'Maximum rewards',
-    price: '€8,99',
-    priceValue: 8.99,
-    period: 'monthly',
-    features: [
-      '2x Coin & XP multiplier',
-      '5 Lucky Wheel spins/day',
-      '2x Daily login coins',
-      'Everything in Premium',
-      'Battle Pass Premium included',
-      '5 Streak Freezes/month',
-      'Sound mixing (3 layers)',
-      'All timer backgrounds',
-      'Website blocking',
-    ],
-    iapProductId: 'com.fonoinc.app.premiumplus.monthly',
-    bonusCoins: 1500,
-  },
-  {
-    id: 'premium-plus-yearly',
-    tier: 'premium_plus',
-    name: 'Premium+',
-    description: 'Maximum rewards',
-    price: '€64,99',
-    priceValue: 64.99,
-    period: 'yearly',
-    features: [
-      '2x Coin & XP multiplier',
-      '5 Lucky Wheel spins/day',
-      '2x Daily login coins',
-      'Everything in Premium',
-      'Battle Pass Premium included',
-      '5 Streak Freezes/month',
-      'Sound mixing (3 layers)',
-      'All timer backgrounds',
-      'Website blocking',
-    ],
-    iapProductId: 'com.fonoinc.app.premiumplus.yearly',
-    savings: 'Save 40%',
-    bonusCoins: 5000,
-  },
-  {
-    id: 'premium-lifetime',
-    tier: 'lifetime',
-    name: 'Lifetime',
-    description: 'Forever access + founder perks',
-    price: '€179,99',
-    priceValue: 179.99,
-    period: 'lifetime',
-    features: [
-      '2.5x Coin & XP multiplier',
-      '5 Lucky Wheel spins/day',
-      '2x Daily login coins',
-      'Everything in Premium+',
-      'No recurring fees ever',
-      'Exclusive Founder badge',
-      'Founder-only legendary bot',
-      '10 Focus presets',
-      'Website blocking',
-    ],
-    iapProductId: 'com.fonoinc.app.lifetime',
-    savings: 'Best Value',
-    bonusCoins: 10000,
-  },
-];
-
-// Battle Pass Premium as separate purchase
-export const BATTLE_PASS_PLANS = [
-  {
-    id: 'battlepass-premium',
-    name: 'Battle Pass Premium',
-    description: 'Unlock premium track rewards',
-    price: '€4,99',
-    priceValue: 4.99,
-    iapProductId: 'com.fonoinc.app.battlepass.premium',
-  },
-  {
-    id: 'battlepass-premium-plus',
-    name: 'Battle Pass + 10 Tiers',
-    description: 'Premium track + skip 10 levels',
-    price: '€9,99',
-    priceValue: 9.99,
-    iapProductId: 'com.fonoinc.app.battlepass.premium.plus',
-    bonusTiers: 10,
+    badges: ['Popular', 'Save 44%'],
   },
 ];
 
@@ -257,6 +140,20 @@ const SUBSCRIPTION_CHANGE_EVENT = 'petIsland_subscriptionChange';
 export const dispatchSubscriptionChange = (tier: SubscriptionTier) => {
   window.dispatchEvent(new CustomEvent(SUBSCRIPTION_CHANGE_EVENT, { detail: { tier } }));
 };
+
+/**
+ * Normalize legacy tiers (premium_plus, lifetime) to 'premium'.
+ * Used during server verification and storage loading to migrate old data.
+ */
+function normalizeTier(tier: string): SubscriptionTier {
+  if (tier === 'premium_plus' || tier === 'lifetime') {
+    return 'premium';
+  }
+  if (isValidSubscriptionTier(tier)) {
+    return tier;
+  }
+  return 'free';
+}
 
 export const usePremiumStatus = () => {
   const [state, setState] = useState<PremiumState>(defaultState);
@@ -329,8 +226,8 @@ export const usePremiumStatus = () => {
         return true;
       }
 
-      // Server has a valid subscription
-      const serverTier = serverSub.tier as SubscriptionTier;
+      // Server has a valid subscription - normalize legacy tiers
+      const serverTier = normalizeTier(serverSub.tier);
 
       // Check if local state matches server
       const localState = safeJsonParse<PremiumState>(
@@ -381,6 +278,14 @@ export const usePremiumStatus = () => {
     const saved = localStorage.getItem(PREMIUM_STORAGE_KEY);
     if (saved) {
       const parsed = safeJsonParse<PremiumState>(saved, defaultState);
+
+      // Normalize legacy tiers from old storage
+      const normalizedTier = normalizeTier(parsed.tier as string);
+      if (normalizedTier !== parsed.tier) {
+        parsed.tier = normalizedTier;
+        try { localStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(parsed)); } catch { /* quota */ }
+      }
+
       // Check if subscription is still valid
       if (parsed.expiresAt && new Date(parsed.expiresAt) < new Date()) {
         // Subscription expired
@@ -446,14 +351,11 @@ export const usePremiumStatus = () => {
     };
   }, []);
 
-  // Get effective tier (lifetime is treated as premium_plus for features)
   // SECURITY: Local-only guests (no server identity) are always free tier.
   // Anonymous Supabase users CAN have premium if they purchased a subscription.
-  const effectiveTier = isLocalOnlyGuest ? 'free' : (state.tier === 'lifetime' ? 'lifetime' : state.tier);
+  const effectiveTier: SubscriptionTier = isLocalOnlyGuest ? 'free' : state.tier;
 
-  const isPremium = !isLocalOnlyGuest && (state.tier === 'premium' || state.tier === 'premium_plus' || state.tier === 'lifetime');
-  const isPremiumPlus = !isLocalOnlyGuest && (state.tier === 'premium_plus' || state.tier === 'lifetime');
-  const isLifetime = !isLocalOnlyGuest && state.tier === 'lifetime';
+  const isPremium = !isLocalOnlyGuest && state.tier === 'premium';
 
   // Get current tier benefits
   const getTierBenefits = useCallback(() => {
@@ -479,19 +381,9 @@ export const usePremiumStatus = () => {
     return getTierBenefits().focusPresetSlots;
   }, [getTierBenefits]);
 
-  // Check if Battle Pass Premium is included
-  const hasBattlePassIncluded = useCallback(() => {
-    return getTierBenefits().battlePassIncluded;
-  }, [getTierBenefits]);
-
   // Get monthly streak freezes allowance
   const getMonthlyStreakFreezes = useCallback(() => {
     return getTierBenefits().monthlyStreakFreezes;
-  }, [getTierBenefits]);
-
-  // Get daily lucky wheel spin limit
-  const getDailySpinLimit = useCallback(() => {
-    return getTierBenefits().dailySpinLimit;
   }, [getTierBenefits]);
 
   // Get daily login coin multiplier
@@ -502,6 +394,11 @@ export const usePremiumStatus = () => {
   // Check if user has full analytics access
   const hasFullAnalytics = useCallback(() => {
     return getTierBenefits().analyticsAccess === 'full';
+  }, [getTierBenefits]);
+
+  // Get egg discount percentage
+  const getEggDiscountPercent = useCallback(() => {
+    return getTierBenefits().eggDiscountPercent;
   }, [getTierBenefits]);
 
   // Check and grant monthly streak freezes if needed
@@ -603,8 +500,11 @@ export const usePremiumStatus = () => {
       }
 
       if (data?.success && data?.subscription) {
+        // Normalize legacy tiers from server response
+        const validatedTier = normalizeTier(data.subscription.tier);
+
         const newState: PremiumState = {
-          tier: data.subscription.tier,
+          tier: validatedTier,
           expiresAt: data.subscription.expiresAt,
           purchasedAt: data.subscription.purchasedAt,
           planId: productId,
@@ -614,8 +514,8 @@ export const usePremiumStatus = () => {
         localStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(newState));
         logger.debug('Purchase validated and saved:', newState.tier);
 
-        // Dispatch subscription change event for other hooks (Battle Pass, streak freezes, etc.)
-        dispatchSubscriptionChange(data.subscription.tier);
+        // Dispatch subscription change event for other hooks (streak freezes, etc.)
+        dispatchSubscriptionChange(validatedTier);
 
         return { success: true, message: 'Purchase validated successfully!' };
       }
@@ -654,12 +554,13 @@ export const usePremiumStatus = () => {
     const now = new Date();
     let expiresAt: string | null = null;
 
-    if (plan.period === 'monthly') {
+    if (plan.period === 'weekly') {
+      expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    } else if (plan.period === 'monthly') {
       expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
     } else if (plan.period === 'yearly') {
       expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
     }
-    // Lifetime has no expiry
 
     const newState: PremiumState = {
       tier: plan.tier,
@@ -672,7 +573,7 @@ export const usePremiumStatus = () => {
     localStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(newState));
     logger.debug('DEV: Simulated purchase for', plan.name);
 
-    // Dispatch subscription change event for other hooks (Battle Pass, etc.)
+    // Dispatch subscription change event for other hooks
     dispatchSubscriptionChange(plan.tier);
 
     return { success: true, message: `Successfully subscribed to ${plan.name}!` };
@@ -706,23 +607,12 @@ export const usePremiumStatus = () => {
 
   // Check if a specific feature is available
   type FeatureType = 'ambient_sounds' | 'auto_breaks' | 'session_notes' | 'advanced_analytics' |
-                     'sound_mixing' | 'focus_presets' | 'battle_pass' | 'founder_badge' | 'founder_pet' |
-                     'all_timer_backgrounds' | 'website_blocking';
+                     'sound_mixing' | 'focus_presets' | 'all_timer_backgrounds' | 'website_blocking';
 
   const hasFeature = useCallback((feature: FeatureType) => {
     if (state.tier === 'free') return false;
 
-    // Lifetime-only features
-    if (feature === 'founder_badge' || feature === 'founder_pet') {
-      return state.tier === 'lifetime';
-    }
-
-    // Premium+ and Lifetime features
-    if (feature === 'battle_pass') {
-      return state.tier === 'premium_plus' || state.tier === 'lifetime';
-    }
-
-    // All premium tiers get these features
+    // All premium users get all features
     return true;
   }, [state.tier]);
 
@@ -736,8 +626,6 @@ export const usePremiumStatus = () => {
   return {
     tier: state.tier,
     isPremium,
-    isPremiumPlus,
-    isLifetime,
     isLoading,
     isVerifying,
     // SECURITY: Expose guest mode status for UI to show sign-up prompts
@@ -760,11 +648,10 @@ export const usePremiumStatus = () => {
     getXPMultiplier,
     getSoundMixingSlots,
     getFocusPresetSlots,
-    hasBattlePassIncluded,
     getMonthlyStreakFreezes,
-    getDailySpinLimit,
     getLoginCoinMultiplier,
     hasFullAnalytics,
+    getEggDiscountPercent,
     // Grants
     checkAndGrantMonthlyStreakFreezes,
     grantBonusCoins,

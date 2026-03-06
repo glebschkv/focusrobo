@@ -124,8 +124,21 @@ export const useShopStore = create<ShopState>()(
       isBackgroundOwned: (backgroundId) => get().ownedBackgrounds.includes(backgroundId),
     }),
     {
-      name: 'petIsland_shopInventory',
+      name: 'nomo_shop_inventory',
       onRehydrateStorage: () => (state) => {
+        if (!state) {
+          // Migrate from legacy storage key
+          try {
+            const legacy = localStorage.getItem('petIsland_shopInventory');
+            if (legacy) {
+              const parsed = JSON.parse(legacy);
+              if (parsed && typeof parsed === 'object') {
+                shopLogger.debug('Migrating shop inventory from legacy key');
+                return parsed;
+              }
+            }
+          } catch { /* ignore */ }
+        }
         if (state) {
           // Guard against corrupt localStorage where arrays became null/undefined
           if (!Array.isArray(state.ownedCharacters)) state.ownedCharacters = [];

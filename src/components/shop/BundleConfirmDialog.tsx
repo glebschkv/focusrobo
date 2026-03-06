@@ -9,10 +9,11 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { StarterBundle, CoinPack } from "@/data/ShopData";
 import { BOOSTER_TYPES } from "@/hooks/useCoinBooster";
+import { EGG_TYPES } from "@/data/EggData";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useStoreKit } from "@/hooks/useStoreKit";
 
-import { RARITY_BADGE_COLORS } from "./styles";
+import { RARITY_BADGE_COLORS, RARITY_DOT_COLORS } from "./styles";
 
 interface BundleConfirmDialogProps {
   open: boolean;
@@ -68,6 +69,21 @@ export const BundleConfirmDialog = ({
         label: `${starterBundle.contents.streakFreezes} Time Crystal${starterBundle.contents.streakFreezes > 1 ? 's' : ''}`,
         sublabel: 'Protect your streaks',
       });
+    }
+
+    // Egg contents
+    if (starterBundle.contents.eggs && starterBundle.contents.eggs.length > 0) {
+      for (const eggEntry of starterBundle.contents.eggs) {
+        const eggDef = EGG_TYPES.find(e => e.id === eggEntry.eggId);
+        if (eggDef) {
+          contentItems.push({
+            icon: <PixelIcon name={eggEntry.eggId === 'egg-legendary' ? 'egg-legendary' : eggEntry.eggId === 'egg-epic' ? 'egg-epic' : eggEntry.eggId === 'egg-rare' ? 'egg-rare' : 'egg'} size={16} />,
+            label: `${eggEntry.quantity}× ${eggDef.name}`,
+            sublabel: `Hatch a new pet!`,
+            highlight: true,
+          });
+        }
+      }
     }
   } else if (isCoinPack) {
     const coinPack = bundle as CoinPack;

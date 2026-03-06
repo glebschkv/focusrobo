@@ -141,7 +141,6 @@ export interface SubscriptionStatus {
   isSubscribed: boolean;
   productId?: string;
   expirationDate?: string;
-  isLifetime?: boolean;
 }
 
 /**

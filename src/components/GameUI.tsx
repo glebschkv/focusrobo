@@ -26,7 +26,7 @@ import { IslandExpansionModal } from "@/components/IslandExpansionModal";
 import { LandCompleteModal } from "@/components/LandCompleteModal";
 import { RewardModalErrorBoundary } from "@/components/FeatureErrorBoundary";
 
-const TAB_STORAGE_KEY = 'botblock_currentTab';
+const TAB_STORAGE_KEY = 'nomo_current_tab';
 const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
 
 function getPersistedTab(): string {

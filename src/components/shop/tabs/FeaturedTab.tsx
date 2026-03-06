@@ -131,7 +131,7 @@ export const FeaturedTab = ({
               <p className="text-[10px] text-white/70 mt-1">2x coins, all sounds, exclusive perks</p>
             </div>
             <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('com.fonoinc.app.premium.monthly', '€4,99')}</span>
+              <span className="font-black text-white text-sm">{storeKit.getLocalizedPrice('com.fonoinc.app.premium.monthly', '$5.99')}</span>
               <span className="text-white/50 text-[10px] font-bold">/month</span>
             </div>
           </div>

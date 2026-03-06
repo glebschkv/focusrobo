@@ -113,7 +113,14 @@ export type ValidatedCoinSystem = z.infer<typeof coinSystemSchema>;
 // Premium Status Schema
 // ============================================================================
 
-const subscriptionTierSchema = z.enum(['free', 'premium', 'premium_plus', 'lifetime']);
+const subscriptionTierSchema = z.preprocess(
+  (val) => {
+    // Migrate legacy tiers to 'premium'
+    if (val === 'premium_plus' || val === 'lifetime') return 'premium';
+    return val;
+  },
+  z.enum(['free', 'premium'])
+);
 
 export const premiumStatusSchema = z.object({
   tier: subscriptionTierSchema.default('free'),
