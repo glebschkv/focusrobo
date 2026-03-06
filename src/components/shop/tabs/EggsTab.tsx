@@ -16,29 +16,7 @@ import { useCurrentLevel } from '@/stores/xpStore';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 
-const RARITY_DOT_COLORS: Record<PetRarity, string> = {
-  common: '#A0937E',
-  uncommon: '#6B9E58',
-  rare: '#5B8FB9',
-  epic: '#9B72CF',
-  legendary: '#E8B84B',
-};
-
-const RARITY_CARD_CLASS: Record<PetRarity, string> = {
-  common: '',
-  uncommon: '',
-  rare: 'rare',
-  epic: 'epic',
-  legendary: 'legendary',
-};
-
-const RARITY_STRIP_COLORS: Record<PetRarity, string> = {
-  common: 'bg-[#C9B896]',
-  uncommon: 'bg-[#6B9E58]',
-  rare: 'bg-[#5B8FB9]',
-  epic: 'bg-[#9B72CF]',
-  legendary: 'bg-[#E8B84B]',
-};
+import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
 
 const EGG_ICON_MAP: Record<string, string> = {
   'common-egg': 'egg',
@@ -96,7 +74,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       </p>
 
       {/* Nest cards */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {EGG_TYPES.map((egg, index) => (
           <NestCard
             key={egg.id}
@@ -207,7 +185,7 @@ function NestCard({
                     }}
                   />
                 </div>
-                <span className="text-[9px] font-bold tabular-nums w-7 text-right" style={{ color: '#A0937E' }}>
+                <span className="text-[10px] font-bold tabular-nums w-7 text-right" style={{ color: '#A0937E' }}>
                   {weight}%
                 </span>
               </div>

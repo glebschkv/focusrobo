@@ -12,12 +12,7 @@ import { BOOSTER_TYPES } from "@/hooks/useCoinBooster";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useStoreKit } from "@/hooks/useStoreKit";
 
-const RARITY_BADGE_COLORS: Record<string, string> = {
-  common: '#8B6F47',
-  rare: '#5B8FB9',
-  epic: '#9B72CF',
-  legendary: '#D4A040',
-};
+import { RARITY_BADGE_COLORS } from "./styles";
 
 interface BundleConfirmDialogProps {
   open: boolean;
@@ -132,13 +127,13 @@ export const BundleConfirmDialog = ({
 
           {/* Contents section */}
           <div className="p-4 space-y-3" style={{ background: '#FFF8EE' }}>
-            <p className="text-[11px] text-center leading-relaxed" style={{ color: '#8B6F47' }}>
+            <p className="text-xs text-center leading-relaxed" style={{ color: '#8B6F47' }}>
               {bundle.description}
             </p>
 
             {/* Contents list */}
             <div className="space-y-1.5">
-              <div className="text-[9px] font-bold tracking-[0.2em] text-center" style={{ color: '#A0937E' }}>
+              <div className="text-[10px] font-bold tracking-[0.2em] text-center" style={{ color: '#A0937E' }}>
                 Contains
               </div>
               <div className="space-y-1.5">

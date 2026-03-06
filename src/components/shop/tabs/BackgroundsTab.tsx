@@ -94,7 +94,7 @@ export const BackgroundsTab = ({
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bundle.name}</span>
                         {owned && (
-                          <span className="px-2 py-0.5 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                          <span className="px-2 py-0.5 text-white text-[10px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
                             <Check className="w-2.5 h-2.5" /> Collected
                           </span>
                         )}
@@ -178,7 +178,7 @@ export const BackgroundsTab = ({
                   </div>
                   <div className="p-2 text-center" style={{ background: isEquipped ? '#F2EAFA' : owned ? '#F0F5E0' : '#FFF6E8' }}>
                     {owned ? (
-                      <div className="text-[9px] font-medium" style={{ color: isEquipped ? '#9B72CF' : '#6B9E58' }}>
+                      <div className="text-[10px] font-medium" style={{ color: isEquipped ? '#9B72CF' : '#6B9E58' }}>
                         {isEquipped ? "Tap to unequip" : "Tap to equip"}
                       </div>
                     ) : (

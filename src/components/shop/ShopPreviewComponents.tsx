@@ -27,10 +27,10 @@ export const BackgroundPreview = ({
       className
     )}>
       {!loaded && !error && (
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-200 to-teal-300 animate-pulse" />
+        <div className="absolute inset-0 animate-pulse" style={{ background: 'linear-gradient(135deg, #F5EBD6, #E8DCC8)' }} />
       )}
       {error && (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #EDE4D2, #D4C4A0)' }}>
           <span className="text-xl">🖼️</span>
         </div>
       )}

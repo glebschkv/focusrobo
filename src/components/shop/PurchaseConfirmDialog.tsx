@@ -11,12 +11,7 @@ import { cn } from "@/lib/utils";
 import { ShopItem, Bundle } from "@/data/ShopData";
 import { BackgroundPreview, BundlePreviewCarousel } from "./ShopPreviewComponents";
 
-const RARITY_BADGE_COLORS: Record<string, string> = {
-  common: '#8B6F47',
-  rare: '#5B8FB9',
-  epic: '#9B72CF',
-  legendary: '#D4A040',
-};
+import { RARITY_BADGE_COLORS } from "./styles";
 
 interface PurchaseConfirmDialogProps {
   open: boolean;
@@ -81,7 +76,7 @@ export const PurchaseConfirmDialog = ({
             )}
           </div>
 
-          <div className="p-3 space-y-3" style={{ background: '#FFF8EE' }}>
+          <div className="p-4 space-y-3" style={{ background: '#FFF8EE' }}>
             <p className="text-xs text-center leading-relaxed" style={{ color: '#8B6F47' }}>
               {selectedItem.description}
             </p>

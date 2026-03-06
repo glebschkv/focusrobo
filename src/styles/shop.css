@@ -5,9 +5,48 @@
    not browsing an e-commerce store.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Shop Design Tokens ────────────────────────────────────────────────── */
+:root {
+  --shop-parchment: #F5EFE0;
+  --shop-parchment-mid: #F0E8D8;
+  --shop-parchment-dark: #EDE4D2;
+  --shop-cream: #FFFBF2;
+  --shop-cream-end: #FFF6E8;
+  --shop-cream-light: #FFF8EE;
+  --shop-wood: #D4C4A0;
+  --shop-wood-dark: #C9B896;
+  --shop-wood-border: #B8A07A;
+  --shop-accent: #C87941;
+  --shop-accent-dark: #A86530;
+  --shop-text: #5C3D1A;
+  --shop-text-secondary: #8B6F47;
+  --shop-text-muted: #A0937E;
+  --shop-text-price: #7A5C20;
+  --shop-text-expensive: #8B4040;
+  --shop-owned: #A8C078;
+  --shop-owned-bg-start: #F8FAF0;
+  --shop-owned-bg-end: #F0F5E0;
+  --shop-owned-text: #4A6B30;
+  --shop-owned-badge: #6B9E58;
+  --shop-equipped: #B89ACA;
+  --shop-equipped-accent: #9B72CF;
+  --shop-equipped-bg-start: #FAF6FD;
+  --shop-equipped-bg-end: #F2EAFA;
+  --shop-gold: #D4A040;
+  --shop-gold-light: #E8B84B;
+  --shop-gold-border: #C9A84E;
+  --shop-rarity-common: #A0937E;
+  --shop-rarity-uncommon: #6B9E58;
+  --shop-rarity-rare: #5B8FB9;
+  --shop-rarity-epic: #9B72CF;
+  --shop-rarity-legendary: #E8B84B;
+  --shop-disabled-bg: #DDD4C4;
+  --shop-disabled-text: #A0937E;
+}
+
 /* Main shop container — warm parchment canvas */
 .shop-container {
-  background: linear-gradient(180deg, #F5EFE0 0%, #F0E8D8 50%, #EDE4D2 100%);
+  background: linear-gradient(180deg, var(--shop-parchment) 0%, var(--shop-parchment-mid) 50%, var(--shop-parchment-dark) 100%);
   position: relative;
   overflow-x: hidden;
 }
@@ -241,6 +280,10 @@
   overflow: hidden;
 }
 
+.shop-card:hover {
+  box-shadow: 0 3px 10px rgba(139,111,71,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
 .shop-card:active {
   transform: scale(0.97);
   box-shadow: 0 1px 3px rgba(139,111,71,0.08);
@@ -284,9 +327,10 @@
   box-shadow: 0 2px 8px rgba(201,168,78,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
+.shop-list-card.owned,
 .shop-list-card.green {
-  border-color: #A8C078;
-  background: linear-gradient(180deg, #F8FAF0 0%, #F0F5E0 100%);
+  border-color: var(--shop-owned);
+  background: linear-gradient(180deg, var(--shop-owned-bg-start) 0%, var(--shop-owned-bg-end) 100%);
 }
 
 /* Grid card — compact item in grid */
@@ -409,6 +453,10 @@
   position: relative;
 }
 
+.egg-nest-card:hover {
+  box-shadow: 0 3px 12px rgba(139,111,71,0.14), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
 .egg-nest-card:active {
   transform: scale(0.97);
 }
@@ -504,6 +552,10 @@
   background: linear-gradient(180deg, #C87941 0%, #A86530 100%);
   color: #FFF8EE;
   box-shadow: 0 2px 8px rgba(168,101,48,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.hatch-button.affordable:hover {
+  box-shadow: 0 3px 12px rgba(168,101,48,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .hatch-button.affordable:active {
@@ -711,6 +763,10 @@
   overflow: hidden;
 }
 
+.treasure-card:hover {
+  box-shadow: 0 3px 10px rgba(139,111,71,0.12);
+}
+
 .treasure-card:active {
   transform: scale(0.97);
 }
@@ -749,6 +805,10 @@
   font-size: 14px;
   transition: all 0.15s ease;
   flex-shrink: 0;
+}
+
+.iap-price-button:hover {
+  box-shadow: 0 3px 12px rgba(75,120,64,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .iap-price-button:active {
@@ -1163,6 +1223,16 @@
   color: #5C3D1A;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHARED DISABLED STATE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.shop-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Hide scrollbar */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -1171,4 +1241,54 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION — Respect user preference
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .egg-wobble {
+    animation: none;
+  }
+
+  .hatch-button.affordable::after {
+    animation: none;
+  }
+
+  .shop-legendary-glow {
+    animation: none;
+  }
+
+  .wishing-well-card::before {
+    animation: none;
+  }
+
+  .shop-sparkle {
+    animation: none;
+    display: none;
+  }
+
+  .treasure-card.best-value::before {
+    animation: none;
+  }
+
+  .shop-coin-badge,
+  .shop-card,
+  .shop-list-card,
+  .shop-grid-card,
+  .shop-bundle-card,
+  .egg-nest-card,
+  .treasure-card,
+  .potion-shelf-item,
+  .hatch-button,
+  .iap-price-button,
+  .shop-tab-pill,
+  .world-portal,
+  .shop-modal-claim-btn,
+  .shop-modal-cancel-btn,
+  .shop-inventory-btn,
+  .inventory-card {
+    transition: none;
+  }
 }

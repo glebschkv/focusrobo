@@ -180,7 +180,7 @@ export const FeaturedTab = ({
                   {bundle.previewImages && <BundlePreviewCarousel images={bundle.previewImages} />}
                   {owned && (
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <span className="px-3 py-1 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                      <span className="px-3 py-1 text-white text-[10px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
                         <Check className="w-2.5 h-2.5" /> Collected
                       </span>
                     </div>
@@ -245,7 +245,7 @@ export const FeaturedTab = ({
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm" style={{ color: '#5C3D1A' }}>{bundle.name}</span>
                       {alreadyPurchased && (
-                        <span className="px-2 py-0.5 text-white text-[9px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                        <span className="px-2 py-0.5 text-white text-[10px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
                           <Check className="w-2.5 h-2.5" /> Claimed
                         </span>
                       )}
