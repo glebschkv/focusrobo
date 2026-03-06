@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Play, X, Timer, Sparkles, Crown } from 'lucide-react';
+import { Play, Timer, Sparkles, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { usePremiumStatus } from '@/hooks/usePremiumStatus';
 import { useSettings } from '@/hooks/useSettings';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface BreakTransitionModalProps {
   isOpen: boolean;
@@ -77,92 +77,85 @@ export const BreakTransitionModal = ({
   }, [isLongBreak, longBreak, shortBreak]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onSkipBreak()}>
-      <DialogContent className="max-w-sm p-0 overflow-hidden rounded-2xl">
-        {/* Header */}
-        <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-5 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-xl font-bold text-white">
-                <PixelIcon name="tea-cup" size={28} />
-                Time for a Break!
-              </DialogTitle>
-            </DialogHeader>
-            <button
-              onClick={onSkipBreak}
-              className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
+    <Drawer open={isOpen} onOpenChange={(open) => { if (!open) onSkipBreak(); }}>
+      <DrawerContent className="pb-safe">
+        <VisuallyHidden>
+          <DrawerTitle>Time for a Break</DrawerTitle>
+        </VisuallyHidden>
+
+        <div className="px-5 pt-1 pb-6 space-y-4">
+          {/* Header */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-2"
+              style={{
+                background: 'linear-gradient(135deg, hsl(38 92% 50%), hsl(25 95% 53%))',
+                boxShadow: '0 4px 12px hsl(38 92% 50% / 0.3)',
+              }}
             >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          <p className="text-sm text-white/90">
-            {isLongBreak
-              ? `Great job! ${completedSessions} sessions done. Take a longer break!`
-              : "You've earned a break. Rest up for the next session!"}
-          </p>
-
-          {/* Sessions indicator */}
-          <div className="flex gap-1.5 mt-3">
-            {Array.from({ length: longBreakInterval }, (_, i) => i + 1).map((n) => (
-              <div
-                key={n}
-                className={cn(
-                  "w-3 h-3 rounded-full",
-                  n <= (completedSessions % longBreakInterval || longBreakInterval)
-                    ? "bg-white"
-                    : "bg-white/30"
-                )}
-              />
-            ))}
-            <span className="text-xs text-white/80 ml-2">
-              {completedSessions % longBreakInterval || longBreakInterval}/{longBreakInterval} until long break
-            </span>
-          </div>
-        </div>
-
-        <div className="p-4 space-y-4">
-          {/* Break duration options */}
-          <div>
-            <label className="text-sm font-bold mb-2 block">Choose break length:</label>
-            <div className="grid grid-cols-2 gap-2">
-              {BREAK_OPTIONS.map((option) => (
-                <button
-                  key={option.duration}
-                  onClick={() => setSelectedDuration(option.duration)}
-                  className={cn(
-                    "p-3 rounded-xl text-left transition-all",
-                    selectedDuration === option.duration
-                      ? "bg-amber-50 ring-2 ring-amber-400"
-                      : "bg-stone-50 hover:bg-stone-100"
-                  )}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <PixelIcon name={option.icon} size={20} />
-                    <span className="font-bold text-sm">{option.label}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{option.description}</p>
-                </button>
-              ))}
+              <PixelIcon name="tea-cup" size={26} />
             </div>
+            <h2 className="text-lg font-bold tracking-tight text-foreground">
+              Time for a Break!
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              {isLongBreak
+                ? `Great job! ${completedSessions} sessions done.`
+                : "Rest up for the next session!"}
+            </p>
+
+            {/* Sessions indicator */}
+            <div className="flex items-center justify-center gap-1.5 mt-3">
+              {Array.from({ length: longBreakInterval }, (_, i) => i + 1).map((n) => (
+                <div
+                  key={n}
+                  className={cn(
+                    "w-2.5 h-2.5 rounded-full transition-colors",
+                    n <= (completedSessions % longBreakInterval || longBreakInterval)
+                      ? "bg-amber-400"
+                      : "bg-border"
+                  )}
+                />
+              ))}
+              <span className="text-[10px] text-muted-foreground ml-1.5">
+                {completedSessions % longBreakInterval || longBreakInterval}/{longBreakInterval} until long break
+              </span>
+            </div>
+          </div>
+
+          {/* Break duration options */}
+          <div className="grid grid-cols-2 gap-2">
+            {BREAK_OPTIONS.map((option) => (
+              <button
+                key={option.duration}
+                onClick={() => setSelectedDuration(option.duration)}
+                className={cn(
+                  "p-3 rounded-xl text-left transition-all active:scale-[0.97] touch-manipulation",
+                  selectedDuration === option.duration
+                    ? "bg-amber-50 ring-2 ring-amber-400"
+                    : "bg-muted/50 hover:bg-muted"
+                )}
+              >
+                <div className="flex items-center gap-2 mb-0.5">
+                  <PixelIcon name={option.icon} size={18} />
+                  <span className="font-bold text-sm text-foreground">{option.label}</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground">{option.description}</p>
+              </button>
+            ))}
           </div>
 
           {/* Auto-start toggle (Premium feature) */}
           <div className={cn(
             "rounded-xl p-3",
-            isPremium
-              ? "bg-purple-50"
-              : "bg-stone-50"
+            isPremium ? "bg-purple-50" : "bg-muted/30"
           )}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Timer className="w-4 h-4 text-purple-500" />
                 <div>
-                  <p className="text-sm font-semibold">Auto-start breaks</p>
-                  <p className="text-xs text-muted-foreground">
-                    {isPremium
-                      ? "Automatically start break timer"
-                      : "Premium feature"}
+                  <p className="text-xs font-semibold text-foreground">Auto-start breaks</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {isPremium ? "Automatically start break timer" : "Premium feature"}
                   </p>
                 </div>
               </div>
@@ -170,37 +163,34 @@ export const BreakTransitionModal = ({
                 <button
                   onClick={() => onToggleAutoStart(!autoStartEnabled)}
                   className={cn(
-                    "w-12 h-7 rounded-full transition-all relative",
-                    autoStartEnabled
-                      ? "bg-purple-500"
-                      : "bg-stone-300"
+                    "w-11 h-6 rounded-full transition-all relative",
+                    autoStartEnabled ? "bg-purple-500" : "bg-border"
                   )}
                 >
                   <div
                     className={cn(
-                      "absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-all",
-                      autoStartEnabled ? "right-1" : "left-1"
+                      "absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all",
+                      autoStartEnabled ? "right-0.5" : "left-0.5"
                     )}
                   />
                 </button>
               ) : (
                 <div className="flex items-center gap-1 text-amber-500">
-                  <Crown className="w-4 h-4" />
-                  <span className="text-xs font-semibold">Premium</span>
+                  <Crown className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-semibold">Premium</span>
                 </div>
               )}
             </div>
 
-            {/* Auto-start countdown */}
             {isPremium && autoStartEnabled && (
-              <div className="mt-3 flex items-center gap-2 text-purple-600">
-                <Sparkles className="w-4 h-4 animate-pulse" />
-                <span className="text-sm font-medium">
+              <div className="mt-2 flex items-center gap-2 text-purple-600">
+                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                <span className="text-xs font-medium">
                   Starting in {autoStartCountdown}s...
                 </span>
                 <button
                   onClick={() => setAutoStartCountdown(10)}
-                  className="text-xs underline hover:no-underline"
+                  className="text-[10px] underline hover:no-underline"
                 >
                   Reset
                 </button>
@@ -209,23 +199,35 @@ export const BreakTransitionModal = ({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2.5 pt-1">
             <button
               onClick={onSkipBreak}
-              className="flex-1 py-3 rounded-xl bg-stone-100 text-sm font-semibold hover:bg-stone-200 transition-colors"
+              className={cn(
+                "flex-1 py-3 rounded-xl font-semibold text-sm",
+                "border border-border text-foreground",
+                "active:scale-[0.97] transition-all duration-150 touch-manipulation"
+              )}
             >
               Skip Break
             </button>
             <button
               onClick={() => onStartBreak(selectedDuration)}
-              className="flex-1 py-3 rounded-xl bg-gradient-to-b from-amber-400 to-orange-500 text-white text-sm font-bold shadow-md hover:from-amber-500 hover:to-orange-600 transition-all flex items-center justify-center gap-2"
+              className={cn(
+                "flex-1 py-3 rounded-xl text-white text-sm font-bold",
+                "flex items-center justify-center gap-2",
+                "active:scale-[0.97] transition-all duration-150 touch-manipulation"
+              )}
+              style={{
+                background: 'linear-gradient(135deg, hsl(38 92% 50%), hsl(25 95% 53%))',
+                boxShadow: '0 3px 0 hsl(25 90% 40%), 0 6px 12px hsl(38 92% 50% / 0.2)',
+              }}
             >
               <Play className="w-4 h-4" />
               Start Break
             </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };

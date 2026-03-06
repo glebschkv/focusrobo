@@ -9,6 +9,7 @@ import {
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
+import { getAvailableCellCount } from "@/data/islandPositions";
 
 interface TopStatusBarProps {
   currentTab: string;
@@ -27,6 +28,10 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const coinSystem = useCoinSystem();
   const speciesCatalog = useSpeciesCatalog();
   const filledCount = useLandStore((s) => s.getFilledCount)();
+  const currentLand = useLandStore((s) => s.currentLand);
+  const gridSize = currentLand.gridSize;
+  const tierCapacity = getAvailableCellCount(gridSize);
+  const islandProgressPct = tierCapacity > 0 ? (filledCount / tierCapacity) * 100 : 0;
 
   if (currentTab !== "home") return null;
 
@@ -38,6 +43,8 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     <div className="status-bar-container">
       {/* Game-style unified top bar */}
       <div className="game-top-bar">
+        {/* Chips row: level, coins, streak */}
+        <div className="game-top-bar-chips">
         {/* Left section: Level */}
         <div className="top-bar-left">
           {/* Level Badge with Stats Popover */}
@@ -85,7 +92,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                       <PixelIcon name="paw" size={14} className="inline mr-1 align-middle" />
                       Pets on Land
                     </span>
-                    <span className="stat-val tabular-nums">{filledCount}/100</span>
+                    <span className="stat-val tabular-nums">{filledCount}/{tierCapacity}</span>
                   </div>
                   <div className="stat-row">
                     <span className="stat-label">
@@ -172,6 +179,21 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
             </PopoverContent>
           </Popover>
 
+        </div>
+        </div>{/* end game-top-bar-chips */}
+
+        {/* Island Progress Row */}
+        <div className="island-progress-row">
+          <span className="island-progress-label">Land {currentLand.number}</span>
+          <div className="island-progress-track">
+            <div
+              className="island-progress-fill"
+              style={{ width: `${islandProgressPct}%` }}
+            />
+          </div>
+          <span className="island-progress-count tabular-nums">
+            {filledCount}/{tierCapacity}
+          </span>
         </div>
       </div>
     </div>

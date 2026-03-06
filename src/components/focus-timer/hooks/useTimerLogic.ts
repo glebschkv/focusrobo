@@ -79,10 +79,12 @@ export const useTimerLogic = () => {
   const [showIntentionModal, setShowIntentionModal] = useState(false);
   const [showLockScreen, setShowLockScreen] = useState(false);
   const [showSessionNotesModal, setShowSessionNotesModal] = useState(false);
+  const [showSessionComplete, setShowSessionComplete] = useState(false);
   const [showPetRevealModal, setShowPetRevealModal] = useState(false);
   const [lastPlacedPet, setLastPlacedPet] = useState<PendingPet | null>(null);
   const [lastPlacedCellIndex, setLastPlacedCellIndex] = useState(-1);
   const [lastSessionXP, setLastSessionXP] = useState(0);
+  const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
   // them from timerState before the notes modal opens, so we snapshot here.
   const lastSessionMetaRef = useRef<{ category?: string; taskLabel?: string; sessionDuration: number; sessionId?: string }>({
@@ -249,6 +251,7 @@ export const useTimerLogic = () => {
       }
 
       let xpEarned = 0;
+      let coinsEarned = 0;
       if (state.timerState.sessionType !== 'break') {
         const rewardResult = await awardSessionRewards(
           completedMinutes,
@@ -264,6 +267,7 @@ export const useTimerLogic = () => {
         );
 
         xpEarned = rewardResult.xpEarned;
+        coinsEarned = rewardResult.coinsEarned;
 
         if (rewardResult.focusBonusType === 'PERFECT FOCUS') {
           triggerHaptic('success');
@@ -392,7 +396,8 @@ export const useTimerLogic = () => {
           sessionId: recordedSession?.id,
         };
         setLastSessionXP(xpEarned);
-        setShowSessionNotesModal(true);
+        setLastCoinsEarned(coinsEarned);
+        setShowSessionComplete(true);
       } else {
         toast.info('Break Complete!', {
           description: 'Time to get back to work!',
@@ -497,6 +502,38 @@ export const useTimerLogic = () => {
   }, [saveSessionNote, lastSessionXP, openBreakModal, updateSessionMeta, lastPlacedPet]);
 
   // ============================================================================
+  // UNIFIED SESSION COMPLETE DISMISS
+  // ============================================================================
+
+  const handleSessionCompleteDismiss = useCallback((notes: string, rating: number) => {
+    // Save session notes (same logic as handleSessionNotesSave)
+    const meta = lastSessionMetaRef.current;
+    saveSessionNote({
+      notes,
+      rating,
+      sessionDuration: meta.sessionDuration,
+      category: meta.category,
+      taskLabel: meta.taskLabel,
+      xpEarned: lastSessionXP,
+    });
+    if (meta.sessionId) {
+      updateSessionMeta(meta.sessionId, {
+        rating,
+        hasNotes: notes.trim().length > 0,
+      });
+    }
+
+    // Clean up pet state
+    setLastPlacedPet(null);
+    setLastPlacedCellIndex(-1);
+    setShowSessionComplete(false);
+  }, [saveSessionNote, lastSessionXP, updateSessionMeta]);
+
+  const handleSessionCompleteTakeBreak = useCallback(() => {
+    openBreakModal();
+  }, [openBreakModal]);
+
+  // ============================================================================
   // BREAK HANDLING
   // ============================================================================
 
@@ -559,11 +596,13 @@ export const useTimerLogic = () => {
     showIntentionModal,
     showLockScreen,
     showSessionNotesModal,
+    showSessionComplete,
     showBreakTransitionModal,
     showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
     lastSessionXP,
+    lastCoinsEarned,
     autoBreakEnabled,
 
     // Actions
@@ -576,11 +615,14 @@ export const useTimerLogic = () => {
     toggleSound,
     handleSessionNotesSave,
     handleDismissPetReveal,
+    handleSessionCompleteDismiss,
+    handleSessionCompleteTakeBreak,
     handleStartBreak,
     handleSkipBreak,
     toggleAutoBreak,
     setShowIntentionModal,
     setShowSessionNotesModal,
+    setShowSessionComplete,
     setShowPetRevealModal,
     setShowBreakTransitionModal: (show: boolean) => { if (show) openBreakModal(); else closeBreakModal(); },
     setShowLockScreen,
