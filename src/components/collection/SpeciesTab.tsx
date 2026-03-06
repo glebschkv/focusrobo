@@ -90,7 +90,7 @@ export const SpeciesTab = memo(({
                     species={sp}
                     discovered={!!entry}
                     timesFound={entry?.timesFound ?? 0}
-                    bestSize={entry?.bestSize ?? null}
+                    sizesFound={entry?.sizesFound ?? []}
                     locked={sp.unlockLevel > currentLevel}
                     isWished={wishedSpecies === sp.id}
                     onWish={() => onWish(sp.id)}

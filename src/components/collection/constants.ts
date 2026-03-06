@@ -3,7 +3,7 @@
  * All colors reference shared CSS design tokens from base.css.
  */
 
-import type { PetRarity } from '@/data/PetDatabase';
+import type { PetRarity, GrowthSize } from '@/data/PetDatabase';
 
 export const RARITY_ORDER: PetRarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 
@@ -59,4 +59,12 @@ export const SIZE_LABEL: Record<string, string> = {
   baby: 'Baby',
   adolescent: 'Teen',
   adult: 'Adult',
+};
+
+export const SIZE_ORDER: GrowthSize[] = ['baby', 'adolescent', 'adult'];
+
+export const SIZE_DURATION_HINT: Record<string, string> = {
+  baby: '25-45 min',
+  adolescent: '60-90 min',
+  adult: '120+ min',
 };

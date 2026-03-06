@@ -58,6 +58,118 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* ---- SIZE VARIANT SPRITES (card) ---- */
+
+.collection-card__sizes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 56px; /* Match h-14 of locked/undiscovered states */
+  padding-top: 8px;
+  margin-bottom: 4px;
+}
+
+.collection-card__size-sprite {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transition: filter 0.2s ease;
+}
+
+.collection-card__size-sprite--baby {
+  width: 24px;
+  height: 24px;
+}
+
+.collection-card__size-sprite--adolescent {
+  width: 28px;
+  height: 28px;
+}
+
+.collection-card__size-sprite--locked {
+  filter: grayscale(1) opacity(0.2);
+}
+
+.collection-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.collection-card__dots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.collection-card__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.collection-card__dot--filled {
+  background: currentColor;
+}
+
+.collection-card__dot--empty {
+  border: 1px solid currentColor;
+  opacity: 0.3;
+}
+
+/* Completed species — all 3 sizes collected */
+.collection-card--complete {
+  border-color: rgba(234, 179, 8, 0.45) !important;
+  box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.12), var(--shadow-sm);
+}
+
+/* ---- SIZE VARIANT PANELS (detail drawer) ---- */
+
+.collection-detail__sizes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.collection-detail__size-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 6px 10px;
+  border-radius: 14px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition: border-color 0.2s ease;
+}
+
+.collection-detail__size-panel--collected {
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.collection-detail__size-panel--locked {
+  opacity: 0.65;
+}
+
+.collection-detail__size-sprite {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  margin-bottom: 6px;
+}
+
+.collection-detail__size-sprite--locked {
+  filter: grayscale(1) opacity(0.3);
+}
+
 /* ---- LANDS TAB ---- */
 
 .collection-land-current {
