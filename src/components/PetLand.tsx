@@ -933,9 +933,9 @@ export const PetLand = () => {
                 <div>
                   <strong>Longer sessions, bigger pets</strong>
                   <div className="pet-land__help-sizes">
-                    <span>🐣 Baby <em>25–45 min</em></span>
-                    <span>🐥 Teen <em>60–90 min</em></span>
-                    <span>🐾 Adult <em>120+ min</em></span>
+                    <span>Baby <em>25–45 min</em></span>
+                    <span>Teen <em>60–90 min</em></span>
+                    <span>Adult <em>120+ min</em></span>
                   </div>
                 </div>
               </div>

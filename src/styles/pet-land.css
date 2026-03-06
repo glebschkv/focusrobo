@@ -1347,12 +1347,17 @@
   max-height: 80vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background: white;
+  scrollbar-width: none;
+  background: hsl(var(--card));
   border-radius: 20px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 24px 20px 20px;
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   cursor: default;
   animation: pet-land-help-pop 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.pet-land__help-popup::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes pet-land-help-pop {
@@ -1433,17 +1438,26 @@
   margin: 0;
 }
 
-/* Pet sizes inline */
+/* Pet sizes — compact pill badges */
 .pet-land__help-sizes {
   display: flex;
-  gap: 8px;
-  margin: 4px 0;
+  gap: 6px;
+  margin: 6px 0 2px;
 }
 
 .pet-land__help-sizes span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: hsl(var(--muted) / 0.35);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: hsl(var(--foreground));
+  flex: 1;
+  text-align: center;
 }
 
 .pet-land__help-sizes em {

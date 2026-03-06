@@ -22,9 +22,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 interface PremiumSubscriptionProps {
   isOpen: boolean;
@@ -169,17 +171,21 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isProcessing && !isRestoring && onClose()}>
-      <DialogContent className="max-w-[360px] p-0 overflow-hidden border-0 rounded-[24px] max-h-[90vh] overflow-y-auto bg-white shadow-[0_8px_40px_rgba(0,0,0,0.12)]">
+      <DialogContent className="premium-dialog max-w-[360px] p-0 overflow-hidden border-0 rounded-[24px] bg-[hsl(var(--card))] shadow-[var(--shadow-xl)] [&>button:last-of-type]:hidden">
         <VisuallyHidden>
           <DialogTitle>Go Premium</DialogTitle>
         </VisuallyHidden>
 
+        <div className="max-h-[85vh] overflow-y-auto overscroll-contain">
         {/* Header */}
-        <div className="pt-7 pb-5 px-6 text-center relative"
-          style={{
-            background: 'linear-gradient(180deg, hsl(42 60% 96%) 0%, white 100%)',
-          }}
-        >
+        <div className="pt-7 pb-5 px-6 text-center relative premium-header">
+          {/* Close button */}
+          <DialogClose asChild>
+            <button className="absolute top-3.5 right-3.5 w-9 h-9 rounded-full bg-[hsl(var(--muted)/0.4)] flex items-center justify-center text-[hsl(var(--muted-foreground))] transition-all active:scale-90 z-10 touch-manipulation" aria-label="Close" style={{ WebkitTapHighlightColor: 'transparent' }}>
+              <X className="w-4 h-4" />
+            </button>
+          </DialogClose>
+
           {/* Crown icon */}
           <div className="relative inline-flex items-center justify-center mb-3">
             <div
@@ -226,11 +232,12 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
                   key={planDef.id}
                   onClick={() => setSelectedPlan(planDef.id)}
                   className={cn(
-                    "flex-1 relative rounded-2xl p-3 text-center transition-all",
+                    "flex-1 relative rounded-2xl p-3 text-center transition-all touch-manipulation",
                     isSelected
                       ? "bg-[hsl(var(--primary))] shadow-[0_2px_12px_hsl(var(--primary)/0.3)]"
                       : "bg-[hsl(var(--muted)/0.3)] border border-[hsl(var(--border))]",
                   )}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   {planDef.badge && isSelected && (
                     <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-[hsl(42_70%_52%)] text-white whitespace-nowrap">
@@ -294,7 +301,7 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
             onClick={() => handlePurchase(activePlanDef)}
             disabled={isProcessing || isCurrentPremium}
             className={cn(
-              "w-full py-3.5 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.97]",
+              "w-full py-3.5 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all active:scale-[0.97] touch-manipulation",
               isCurrentPremium
                 ? "bg-[hsl(var(--muted)/0.4)] text-[hsl(var(--muted-foreground))] cursor-not-allowed"
                 : "text-white shadow-[0_2px_12px_hsl(var(--primary)/0.3)]",
@@ -354,6 +361,7 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
             </button>
           </div>
         </div>
+        </div>{/* end scroll wrapper */}
       </DialogContent>
     </Dialog>
   );
