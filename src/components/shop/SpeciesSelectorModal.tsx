@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/drawer';
 import { PET_DATABASE, type PetSpecies, type PetRarity } from '@/data/PetDatabase';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
+import { SPECIES_SELECTOR_DISCOVERED_PRICE, SPECIES_SELECTOR_UNDISCOVERED_PRICE } from '@/data/EggData';
 import { RARITY_DOT_COLORS } from './styles';
 
 const RARITY_ORDER: PetRarity[] = ['legendary', 'epic', 'rare', 'uncommon', 'common'];
@@ -20,32 +21,104 @@ const RARITY_LABEL: Record<PetRarity, string> = {
 interface SpeciesSelectorModalProps {
   open: boolean;
   onClose: () => void;
-  onSelect: (speciesId: string) => void;
+  onSelect: (speciesId: string, isDiscovered: boolean) => void;
   speciesCatalog: Record<string, SpeciesCatalogEntry>;
+  playerLevel: number;
 }
 
 export const SpeciesSelectorModal = memo(({
-  open, onClose, onSelect, speciesCatalog,
+  open, onClose, onSelect, speciesCatalog, playerLevel,
 }: SpeciesSelectorModalProps) => {
   const [selected, setSelected] = useState<string | null>(null);
 
-  const discoveredSpecies = useMemo(() => {
-    const discovered = PET_DATABASE.filter(s => speciesCatalog[s.id]);
-    const groups: Partial<Record<PetRarity, PetSpecies[]>> = {};
-    for (const sp of discovered) {
-      if (!groups[sp.rarity]) groups[sp.rarity] = [];
-      groups[sp.rarity]!.push(sp);
+  const { discoveredSpecies, undiscoveredSpecies } = useMemo(() => {
+    const discovered: Partial<Record<PetRarity, PetSpecies[]>> = {};
+    const undiscovered: Partial<Record<PetRarity, PetSpecies[]>> = {};
+
+    for (const sp of PET_DATABASE) {
+      if (sp.unlockLevel > playerLevel) continue;
+      const isDiscovered = !!speciesCatalog[sp.id];
+      const target = isDiscovered ? discovered : undiscovered;
+      if (!target[sp.rarity]) target[sp.rarity] = [];
+      target[sp.rarity]!.push(sp);
     }
-    return groups;
-  }, [speciesCatalog]);
+
+    return { discoveredSpecies: discovered, undiscoveredSpecies: undiscovered };
+  }, [speciesCatalog, playerLevel]);
 
   const totalDiscovered = Object.values(discoveredSpecies).reduce((sum, arr) => sum + (arr?.length ?? 0), 0);
+  const totalUndiscovered = Object.values(undiscoveredSpecies).reduce((sum, arr) => sum + (arr?.length ?? 0), 0);
+  const totalAvailable = totalDiscovered + totalUndiscovered;
+
+  const isSelectedDiscovered = selected ? !!speciesCatalog[selected] : true;
+  const selectedPrice = isSelectedDiscovered
+    ? SPECIES_SELECTOR_DISCOVERED_PRICE
+    : SPECIES_SELECTOR_UNDISCOVERED_PRICE;
 
   const handleConfirm = () => {
     if (selected) {
-      onSelect(selected);
+      onSelect(selected, isSelectedDiscovered);
       setSelected(null);
     }
+  };
+
+  const renderSpeciesGroup = (group: PetSpecies[] | undefined, rarity: PetRarity, dimmed: boolean) => {
+    if (!group || group.length === 0) return null;
+    return group.map((sp) => (
+      <button
+        key={sp.id}
+        onClick={() => setSelected(sp.id)}
+        className={cn(
+          'flex flex-col items-center p-2 rounded-xl border transition-all active:scale-[0.96] relative',
+          selected === sp.id
+            ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.08)]'
+            : 'border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.06)]',
+          dimmed && 'opacity-75',
+        )}
+      >
+        <img
+          src={sp.imagePath}
+          alt={sp.name}
+          className="w-10 h-10 object-contain"
+          style={{ imageRendering: 'pixelated' }}
+          draggable={false}
+        />
+        <span className="text-[9px] font-semibold text-[hsl(var(--foreground))] mt-1 truncate w-full text-center">
+          {sp.name}
+        </span>
+        {dimmed && (
+          <span className="absolute top-1 right-1 text-[7px] font-bold uppercase bg-amber-500 text-white px-1 rounded">
+            NEW
+          </span>
+        )}
+      </button>
+    ));
+  };
+
+  const renderRaritySection = (groups: Partial<Record<PetRarity, PetSpecies[]>>, dimmed: boolean) => {
+    return RARITY_ORDER.map((rarity) => {
+      const group = groups[rarity];
+      if (!group || group.length === 0) return null;
+      return (
+        <div key={`${dimmed ? 'u' : 'd'}-${rarity}`}>
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <div
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: RARITY_DOT_COLORS[rarity] }}
+            />
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider"
+              style={{ color: RARITY_DOT_COLORS[rarity] }}
+            >
+              {RARITY_LABEL[rarity]}
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {renderSpeciesGroup(group, rarity, dimmed)}
+          </div>
+        </div>
+      );
+    });
   };
 
   return (
@@ -57,67 +130,45 @@ export const SpeciesSelectorModal = memo(({
               Wishing Well
             </DrawerTitle>
             <DrawerDescription className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
-              Choose a species you've already discovered ({totalDiscovered} available)
+              Choose any unlocked species — discovered or new! ({totalAvailable} available)
             </DrawerDescription>
+            <p className="text-[10px] text-[hsl(var(--muted-foreground)/0.6)] mt-1">
+              Discovered: {SPECIES_SELECTOR_DISCOVERED_PRICE.toLocaleString()} coins | New species: {SPECIES_SELECTOR_UNDISCOVERED_PRICE.toLocaleString()} coins
+            </p>
           </DrawerHeader>
 
-          {totalDiscovered === 0 ? (
+          {totalAvailable === 0 ? (
             <div className="py-8 text-center">
               <PixelIcon name="sparkles" size={24} className="mx-auto mb-2 opacity-40" />
               <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                No species discovered yet.
+                No species unlocked at your level yet.
               </p>
               <p className="text-xs text-[hsl(var(--muted-foreground)/0.6)] mt-1">
-                Complete focus sessions to discover pets first!
+                Level up to unlock more species!
               </p>
             </div>
           ) : (
             <div className="overflow-y-auto max-h-[55vh] space-y-3">
-              {RARITY_ORDER.map((rarity) => {
-                const group = discoveredSpecies[rarity];
-                if (!group || group.length === 0) return null;
-                return (
-                  <div key={rarity}>
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <div
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{ backgroundColor: RARITY_DOT_COLORS[rarity] }}
-                      />
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: RARITY_DOT_COLORS[rarity] }}
-                      >
-                        {RARITY_LABEL[rarity]}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
-                      {group.map((sp) => (
-                        <button
-                          key={sp.id}
-                          onClick={() => setSelected(sp.id)}
-                          className={cn(
-                            'flex flex-col items-center p-2 rounded-xl border transition-all active:scale-[0.96]',
-                            selected === sp.id
-                              ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.08)]'
-                              : 'border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.06)]',
-                          )}
-                        >
-                          <img
-                            src={sp.imagePath}
-                            alt={sp.name}
-                            className="w-10 h-10 object-contain"
-                            style={{ imageRendering: 'pixelated' }}
-                            draggable={false}
-                          />
-                          <span className="text-[9px] font-semibold text-[hsl(var(--foreground))] mt-1 truncate w-full text-center">
-                            {sp.name}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+              {/* Discovered species */}
+              {totalDiscovered > 0 && (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground)/0.5)]">
+                    Discovered ({totalDiscovered})
+                  </p>
+                  {renderRaritySection(discoveredSpecies, false)}
+                </>
+              )}
+
+              {/* Undiscovered species */}
+              {totalUndiscovered > 0 && (
+                <>
+                  <div className="border-t border-[hsl(var(--border)/0.3)] my-2" />
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-amber-500">
+                    Undiscovered ({totalUndiscovered}) — {SPECIES_SELECTOR_UNDISCOVERED_PRICE.toLocaleString()} coins
+                  </p>
+                  {renderRaritySection(undiscoveredSpecies, true)}
+                </>
+              )}
             </div>
           )}
 
@@ -132,7 +183,9 @@ export const SpeciesSelectorModal = memo(({
                 : 'bg-[hsl(var(--muted)/0.2)] text-[hsl(var(--muted-foreground)/0.4)] cursor-not-allowed',
             )}
           >
-            {selected ? `Summon ${PET_DATABASE.find(s => s.id === selected)?.name ?? 'Pet'}` : 'Select a species'}
+            {selected
+              ? `Summon ${PET_DATABASE.find(s => s.id === selected)?.name ?? 'Pet'} (${selectedPrice.toLocaleString()} coins)`
+              : 'Select a species'}
           </button>
         </div>
       </DrawerContent>

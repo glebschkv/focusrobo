@@ -84,15 +84,7 @@ export const GameUI = () => {
     };
   }, [coinSystem]);
 
-  // Collect passive offline income on app load
-  const collectOfflineIncome = useLandStore((s) => s.collectOfflineIncome);
-  useEffect(() => {
-    const earned = collectOfflineIncome();
-    if (earned > 0) {
-      coinSystem.addCoins(earned, 'daily_reward');
-      toast.success(`Welcome back! Your pets earned ${earned} coins while you were away.`);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- run once on mount
+  // Passive income is now collected manually via TopStatusBar collect button
 
   // Single instance of useAppStateTracking — shared via context with all children
   const appState = useAppStateTracking();

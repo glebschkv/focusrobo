@@ -35,6 +35,7 @@ import { DeviceActivity } from "@/plugins/device-activity";
 import { markBlockingStopped } from "@/hooks/useTimerExpiryGuard";
 import { useLandStore, type PendingPet, type PendingEgg } from "@/stores/landStore";
 import { useNavigationStore } from "@/stores/navigationStore";
+import { usePremiumStore } from "@/stores/premiumStore";
 
 export const useTimerLogic = () => {
   const { awardXP, coinSystem, xpSystem } = useBackendAppState();

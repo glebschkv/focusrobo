@@ -186,21 +186,42 @@ export function rollEggTier(): EggTier {
 }
 
 /**
+ * Premium rarity boost — shifts weight from common to higher tiers.
+ * Only applies to session-earned pets (not egg hatches which have custom weights).
+ */
+const PREMIUM_RARITY_BOOST: Record<PetRarity, number> = {
+  common: -8,
+  uncommon: +2,
+  rare: +3,
+  epic: +2,
+  legendary: +1,
+};
+
+/**
  * Randomly select a pet species from the available pool,
  * weighted by rarity. Optionally accepts custom rarity weights
  * (used by egg system to override default drop rates).
  * If wishedSpecies is provided, that species gets a +5% boost
  * when its rarity tier is selected.
+ * If premiumBoost is true, shifts rarity weights toward higher tiers.
  */
 export function rollRandomPet(
   playerLevel: number,
   customWeights?: Partial<Record<PetRarity, number>>,
   wishedSpecies?: string | null,
+  premiumBoost?: boolean,
 ): PetSpecies {
   const pool = getAvailablePets(playerLevel);
   const weights = customWeights
     ? { ...RARITY_WEIGHTS, ...customWeights }
-    : RARITY_WEIGHTS;
+    : { ...RARITY_WEIGHTS };
+
+  // Apply premium rarity boost only when no custom weights (i.e., not egg hatches)
+  if (premiumBoost && !customWeights) {
+    for (const rarity of Object.keys(weights) as PetRarity[]) {
+      weights[rarity] = Math.max(0, weights[rarity] + PREMIUM_RARITY_BOOST[rarity]);
+    }
+  }
 
   if (pool.length === 0) {
     // Fallback: return first pet if somehow nothing is available

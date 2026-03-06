@@ -5,13 +5,13 @@ import {
   Sparkles,
   Zap,
   RefreshCw,
-  Music,
+  Palette,
   Snowflake,
   Loader2,
-  Palette,
   Egg,
   BarChart3,
-  Settings,
+  Coins,
+  Gem,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePremiumStatus, SUBSCRIPTION_PLANS, SubscriptionPlan } from '@/hooks/usePremiumStatus';
@@ -74,13 +74,13 @@ const PLAN_DEFS: PlanDef[] = [
 ];
 
 const PREMIUM_FEATURES = [
-  { icon: <Zap className="w-4 h-4" />, label: '2x Coins & XP' },
-  { icon: <Snowflake className="w-4 h-4" />, label: '3 Streak Freezes/mo' },
-  { icon: <Music className="w-4 h-4" />, label: '3-Layer Sound Mix' },
-  { icon: <Settings className="w-4 h-4" />, label: '5 Focus Presets' },
-  { icon: <Egg className="w-4 h-4" />, label: '15% Egg Discount' },
-  { icon: <BarChart3 className="w-4 h-4" />, label: 'Full Analytics' },
-  { icon: <Palette className="w-4 h-4" />, label: 'All Island Themes' },
+  { icon: <Zap className="w-4 h-4" />, label: 'Earn Double Coins & XP' },
+  { icon: <Coins className="w-4 h-4" />, label: '2x Daily Pet Income' },
+  { icon: <Gem className="w-4 h-4" />, label: 'Rarer Pets from Sessions' },
+  { icon: <Egg className="w-4 h-4" />, label: '15% Off All Eggs' },
+  { icon: <Snowflake className="w-4 h-4" />, label: '3 Streak Shields / Month' },
+  { icon: <BarChart3 className="w-4 h-4" />, label: 'Advanced Analytics' },
+  { icon: <Palette className="w-4 h-4" />, label: 'Exclusive Island Themes' },
 ];
 
 export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProps) => {

@@ -16,6 +16,7 @@ import type { GrowthSize, PetRarity, EggTier } from '@/data/PetDatabase';
 import { getGrowthSize, rollRandomPet, getPetById, rollEggTier } from '@/data/PetDatabase';
 import type { EggType } from '@/data/EggData';
 import { EGG_TYPES } from '@/data/EggData';
+import { PASSIVE_INCOME_CONFIG, getPetPassiveRate } from '@/lib/constants';
 import {
   GRID_SIZE,
   ISLAND_POSITIONS,
@@ -251,7 +252,7 @@ interface PetChoice {
 }
 
 interface LandStoreActions {
-  generateRandomPet: (sessionMinutes: number, playerLevel: number) => PendingPet;
+  generateRandomPet: (sessionMinutes: number, playerLevel: number, premiumBoost?: boolean) => PendingPet;
   generatePetChoices: (sessionMinutes: number, playerLevel: number, count?: number) => PetChoice[];
   choosePet: (speciesId: string, sessionMinutes: number) => PendingPet;
   hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
@@ -270,6 +271,7 @@ interface LandStoreActions {
   getAffinityLevel: (speciesId: string) => 'none' | 'familiar' | 'bonded' | 'devoted';
   growPet: (cellIndex: number, targetSize: 'adolescent' | 'adult') => boolean;
   collectOfflineIncome: () => number;
+  getDailyIncomeRate: () => number;
   clearLastPlaced: () => void;
   clearLandCompleted: () => void;
   clearMilestone: () => void;
@@ -299,9 +301,9 @@ export const useLandStore = create<LandStore>()(
     (set, get) => ({
       ...initialState,
 
-      generateRandomPet: (sessionMinutes: number, playerLevel: number) => {
+      generateRandomPet: (sessionMinutes: number, playerLevel: number, premiumBoost?: boolean) => {
         const { wishedSpecies } = get();
-        const species = rollRandomPet(playerLevel, undefined, wishedSpecies);
+        const species = rollRandomPet(playerLevel, undefined, wishedSpecies, premiumBoost);
         const size = getGrowthSize(sessionMinutes);
 
         const pending: PendingPet = {
@@ -399,9 +401,8 @@ export const useLandStore = create<LandStore>()(
       },
 
       selectSpecies: (speciesId: string) => {
-        const { speciesCatalog } = get();
         const species = getPetById(speciesId);
-        if (!species || !speciesCatalog[speciesId]) return null;
+        if (!species) return null;
         const pending: PendingPet = {
           petId: species.id,
           size: 'baby',
@@ -611,16 +612,34 @@ export const useLandStore = create<LandStore>()(
       collectOfflineIncome: () => {
         const { lastOfflineCheck, currentLand } = get();
         const now = Date.now();
-        const hoursPassed = (now - lastOfflineCheck) / (1000 * 60 * 60);
-        if (hoursPassed < 1) {
+        const MS_PER_HOUR = 1000 * 60 * 60;
+        const hoursPassed = Math.min(
+          (now - lastOfflineCheck) / MS_PER_HOUR,
+          PASSIVE_INCOME_CONFIG.MAX_ACCUMULATION_DAYS * 24
+        );
+        if (hoursPassed < PASSIVE_INCOME_CONFIG.MIN_HOURS_FOR_CLAIM) {
           set({ lastOfflineCheck: now });
           return 0;
         }
-        const filledCount = currentLand.cells.filter(c => c !== null).length;
-        // 1 coin per pet per hour, capped at 24 coins/day
-        const earned = Math.min(Math.floor(filledCount * hoursPassed), 24);
+        let totalIncome = 0;
+        for (const cell of currentLand.cells) {
+          if (!cell) continue;
+          const dailyRate = getPetPassiveRate(cell.rarity, cell.size);
+          totalIncome += dailyRate * (hoursPassed / 24);
+        }
+        const earned = Math.floor(totalIncome);
         set({ lastOfflineCheck: now });
         return earned;
+      },
+
+      getDailyIncomeRate: () => {
+        const { currentLand } = get();
+        let rate = 0;
+        for (const cell of currentLand.cells) {
+          if (!cell) continue;
+          rate += getPetPassiveRate(cell.rarity, cell.size);
+        }
+        return rate;
       },
 
       clearLastPlaced: () => {

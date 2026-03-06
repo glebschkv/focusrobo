@@ -1,6 +1,6 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -10,6 +10,8 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
+import { usePassiveIncome } from "@/hooks/usePassiveIncome";
+import { PremiumSubscription } from "@/components/PremiumSubscription";
 
 interface TopStatusBarProps {
   currentTab: string;
@@ -18,6 +20,9 @@ interface TopStatusBarProps {
 export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const [statsOpen, setStatsOpen] = useState(false);
   const [streakOpen, setStreakOpen] = useState(false);
+  const [premiumOpen, setPremiumOpen] = useState(false);
+  const [showPremiumNudge, setShowPremiumNudge] = useState(false);
+  const nudgeShownRef = useRef(false);
   const {
     currentLevel,
     currentXP,
@@ -32,6 +37,23 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const gridSize = currentLand.gridSize;
   const tierCapacity = getAvailableCellCount(gridSize);
   const islandProgressPct = tierCapacity > 0 ? (filledCount / tierCapacity) * 100 : 0;
+  const { dailyIncomeRate, accumulatedCoins, justCollected, collect, isPremium } = usePassiveIncome();
+
+  const handleCollect = useCallback(() => {
+    const amount = collect();
+    if (amount > 0 && !isPremium && !nudgeShownRef.current) {
+      nudgeShownRef.current = true;
+      // Show nudge after collection animation
+      setTimeout(() => setShowPremiumNudge(true), 1500);
+    }
+  }, [collect, isPremium]);
+
+  // Auto-dismiss premium nudge after 5s
+  useEffect(() => {
+    if (!showPremiumNudge) return;
+    const timer = setTimeout(() => setShowPremiumNudge(false), 5000);
+    return () => clearTimeout(timer);
+  }, [showPremiumNudge]);
 
   if (currentTab !== "home") return null;
 
@@ -108,6 +130,15 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                     </span>
                     <span className="stat-val tabular-nums">{streakData.longestStreak} days</span>
                   </div>
+                  {dailyIncomeRate > 0 && (
+                    <div className="stat-row">
+                      <span className="stat-label">
+                        <PixelIcon name="coin" size={14} className="inline mr-1 align-middle" />
+                        Pet Income
+                      </span>
+                      <span className="stat-val tabular-nums">{dailyIncomeRate}/day</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* XP Progress Bar */}
@@ -139,6 +170,36 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <span className="chip-value">{coinSystem.balance.toLocaleString()}</span>
           <span className="coin-plus-badge">+</span>
         </button>
+
+        {/* Passive income collect button */}
+        {accumulatedCoins > 0 && (
+          <button
+            className="income-collect-btn"
+            onClick={handleCollect}
+            aria-label={`Collect ${accumulatedCoins} coins from pets`}
+          >
+            <PixelIcon name="coin" size={14} className="income-collect-icon" />
+            <span className="income-collect-amount">+{accumulatedCoins}</span>
+          </button>
+        )}
+
+        {/* Coin float-up animation after collection */}
+        {justCollected != null && (
+          <span className="income-coin-float" key={justCollected}>
+            +{justCollected}
+          </span>
+        )}
+
+        {/* Premium nudge after passive income collection */}
+        {showPremiumNudge && (
+          <button
+            className="premium-nudge-pill"
+            onClick={() => { setShowPremiumNudge(false); setPremiumOpen(true); }}
+          >
+            <PixelIcon name="crown-legendary" size={14} />
+            <span>Get 2x pet income</span>
+          </button>
+        )}
 
         {/* Right section: Streak + Help */}
         <div className="top-bar-right">
@@ -203,6 +264,9 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           </span>
         </div>
       </div>
+
+      {/* Premium subscription dialog */}
+      <PremiumSubscription isOpen={premiumOpen} onClose={() => setPremiumOpen(false)} />
     </div>
   );
 };
