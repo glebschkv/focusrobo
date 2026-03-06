@@ -70,7 +70,10 @@ export const DailyLoginRewardModal = ({
 
   return (
     <Dialog open={isOpen && !!displayReward} onOpenChange={(open) => { if (!open) onDismiss(); }}>
-      <DialogContent className="max-w-[340px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl bg-white max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        className="max-w-[340px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl bg-white max-h-[90vh] overflow-y-auto"
+        style={!prefersReducedMotion ? { animation: 'daily-reward-enter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1)' } : undefined}
+      >
         <VisuallyHidden>
           <DialogTitle>Daily Login Reward</DialogTitle>
         </VisuallyHidden>
@@ -141,16 +144,16 @@ export const DailyLoginRewardModal = ({
           <div
             className="p-4 rounded-xl text-center relative overflow-hidden"
             style={{
-              background: 'hsl(var(--card))',
-              border: '1.5px solid hsl(var(--border))',
-              boxShadow: '0 2px 8px hsl(152 44% 45% / 0.06)',
+              background: 'hsl(152 30% 97%)',
+              border: '1.5px solid hsl(152 20% 88%)',
+              boxShadow: '0 2px 8px hsl(152 44% 45% / 0.08)',
             }}
           >
             <span
               className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2"
               style={{
-                background: 'hsl(var(--muted))',
-                color: 'hsl(var(--muted-foreground))',
+                background: 'hsl(152 44% 45% / 0.12)',
+                color: 'hsl(152 44% 40%)',
               }}
             >
               Day {currentDayInCycle}
@@ -198,7 +201,7 @@ export const DailyLoginRewardModal = ({
                   <div
                     key={r.day}
                     className={cn(
-                      "relative flex flex-col items-center py-2 px-1 rounded-xl text-center transition-all min-w-0",
+                      "relative flex flex-col items-center py-1.5 px-0.5 rounded-lg text-center transition-all min-w-0 overflow-hidden",
                       isFuture && !isDay7 && "opacity-40",
                       isFuture && isDay7 && "opacity-60",
                     )}
@@ -287,7 +290,7 @@ export const DailyLoginRewardModal = ({
         </div>
 
         {/* Claim Button */}
-        <div className="px-5 pb-5 pt-1">
+        <div className="px-5 pb-5 pt-3" style={{ borderTop: '1px solid hsl(var(--border))' }}>
           <button
             onClick={handleClaim}
             className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px] flex items-center justify-center gap-2"
@@ -302,11 +305,15 @@ export const DailyLoginRewardModal = ({
           </button>
         </div>
 
-        {/* Float animation keyframe */}
+        {/* Animation keyframes */}
         <style>{`
           @keyframes daily-reward-float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
+          }
+          @keyframes daily-reward-enter {
+            0% { opacity: 0; transform: scale(0.92); }
+            100% { opacity: 1; transform: scale(1); }
           }
         `}</style>
       </DialogContent>
