@@ -99,7 +99,7 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
           Choose an egg to discover a new companion for your island.
         </p>
         <p className="text-[11px] leading-relaxed" style={{ color: '#A0937E' }}>
-          Each egg has different chances of hatching common to legendary pets. Rarer eggs cost more coins but give better odds for rare species!
+          Hatch an egg to unlock a random pet and place it on your island. Rarer eggs cost more coins but give better odds of discovering rare species!
         </p>
       </div>
 
