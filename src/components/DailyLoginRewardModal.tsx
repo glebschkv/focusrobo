@@ -499,7 +499,7 @@ export const DailyLoginRewardModal = ({
               </div>
               <div className="flex-1 text-left min-w-0">
                 <span className="text-[11px] font-bold block" style={{ color: 'hsl(42 50% 30%)' }}>
-                  2x Coins & XP, Boosted Odds
+                  Double Rewards & Rarer Pets
                 </span>
                 <span className="text-[10px]" style={{ color: 'hsl(42 30% 50%)' }}>
                   Go Premium
