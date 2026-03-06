@@ -12,6 +12,8 @@ import {
   Egg,
   BarChart3,
   Settings,
+  Coins,
+  Gem,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePremiumStatus, SUBSCRIPTION_PLANS, SubscriptionPlan } from '@/hooks/usePremiumStatus';
@@ -75,6 +77,8 @@ const PLAN_DEFS: PlanDef[] = [
 
 const PREMIUM_FEATURES = [
   { icon: <Zap className="w-4 h-4" />, label: '2x Coins & XP' },
+  { icon: <Coins className="w-4 h-4" />, label: '2x Pet Income' },
+  { icon: <Gem className="w-4 h-4" />, label: 'Boosted Rarity Odds' },
   { icon: <Snowflake className="w-4 h-4" />, label: '3 Streak Freezes/mo' },
   { icon: <Music className="w-4 h-4" />, label: '3-Layer Sound Mix' },
   { icon: <Settings className="w-4 h-4" />, label: '5 Focus Presets' },

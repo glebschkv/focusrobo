@@ -252,7 +252,7 @@ interface PetChoice {
 }
 
 interface LandStoreActions {
-  generateRandomPet: (sessionMinutes: number, playerLevel: number) => PendingPet;
+  generateRandomPet: (sessionMinutes: number, playerLevel: number, premiumBoost?: boolean) => PendingPet;
   generatePetChoices: (sessionMinutes: number, playerLevel: number, count?: number) => PetChoice[];
   choosePet: (speciesId: string, sessionMinutes: number) => PendingPet;
   hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
@@ -301,9 +301,9 @@ export const useLandStore = create<LandStore>()(
     (set, get) => ({
       ...initialState,
 
-      generateRandomPet: (sessionMinutes: number, playerLevel: number) => {
+      generateRandomPet: (sessionMinutes: number, playerLevel: number, premiumBoost?: boolean) => {
         const { wishedSpecies } = get();
-        const species = rollRandomPet(playerLevel, undefined, wishedSpecies);
+        const species = rollRandomPet(playerLevel, undefined, wishedSpecies, premiumBoost);
         const size = getGrowthSize(sessionMinutes);
 
         const pending: PendingPet = {

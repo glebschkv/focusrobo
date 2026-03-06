@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from "react";
+import { useRef, useCallback, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { DailyReward } from "@/hooks/useDailyLoginRewards";
@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { usePremiumStore } from "@/stores/premiumStore";
+import { PremiumSubscription } from "@/components/PremiumSubscription";
 
 // Map reward emojis to PixelIcon names
 const EMOJI_TO_ICON: Record<string, string> = {
@@ -36,6 +38,8 @@ export const DailyLoginRewardModal = ({
   currentStreak,
   allRewards,
 }: DailyLoginRewardModalProps) => {
+  const isPremium = usePremiumStore((s) => s.isPremium());
+  const [premiumOpen, setPremiumOpen] = useState(false);
   const lastRewardRef = useRef<DailyReward | null>(null);
   if (reward) lastRewardRef.current = reward;
   const displayReward = reward || lastRewardRef.current;
@@ -475,7 +479,41 @@ export const DailyLoginRewardModal = ({
             <PixelIcon name="gift" size={20} />
             Claim Reward
           </button>
+
+          {/* Premium nudge for free users */}
+          {!isPremium && (
+            <button
+              onClick={() => { onDismiss(); setPremiumOpen(true); }}
+              className="w-full mt-2.5 p-2.5 rounded-xl flex items-center gap-2.5 transition-all active:scale-[0.98] touch-manipulation"
+              style={{
+                background: 'linear-gradient(135deg, hsl(42 60% 97%) 0%, hsl(42 40% 95%) 100%)',
+                border: '1.5px solid hsl(42 50% 82%)',
+                ...(!prefersReducedMotion ? { animation: 'daily-fade-up 0.4s ease-out 0.4s both' } : {}),
+              }}
+            >
+              <div
+                className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, hsl(42 75% 55%), hsl(30 70% 50%))' }}
+              >
+                <PixelIcon name="crown-legendary" size={16} />
+              </div>
+              <div className="flex-1 text-left min-w-0">
+                <span className="text-[11px] font-bold block" style={{ color: 'hsl(42 50% 30%)' }}>
+                  2x Coins & XP, Boosted Odds
+                </span>
+                <span className="text-[10px]" style={{ color: 'hsl(42 30% 50%)' }}>
+                  Go Premium
+                </span>
+              </div>
+              <span className="text-[10px] font-bold" style={{ color: 'hsl(42 60% 45%)' }}>
+                &rarr;
+              </span>
+            </button>
+          )}
         </div>
+
+        {/* Premium subscription dialog */}
+        <PremiumSubscription isOpen={premiumOpen} onClose={() => setPremiumOpen(false)} />
 
         {/* ── Keyframe Animations ── */}
         <style>{`

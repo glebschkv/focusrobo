@@ -55,5 +55,6 @@ export function usePassiveIncome() {
     accumulatedCoins,
     justCollected,
     collect,
+    isPremium,
   };
 }

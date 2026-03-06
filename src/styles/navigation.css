@@ -887,3 +887,33 @@
     padding-bottom: calc(var(--dock-height, 82px) + env(safe-area-inset-bottom, 0px) + 16px);
   }
 
+  /* ── Premium Nudge Pill ────────────────── */
+
+  .premium-nudge-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, hsl(42 75% 55%) 0%, hsl(30 70% 50%) 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    animation: premium-nudge-enter 0.4s ease-out both;
+    box-shadow: 0 2px 8px hsl(42 80% 50% / 0.35);
+    white-space: nowrap;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .premium-nudge-pill:active {
+    transform: scale(0.95);
+  }
+
+  @keyframes premium-nudge-enter {
+    0% { opacity: 0; transform: translateY(6px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+

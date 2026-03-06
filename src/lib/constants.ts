@@ -235,7 +235,7 @@ export const PASSIVE_INCOME_CONFIG = {
   /** Minimum hours before income is claimable */
   MIN_HOURS_FOR_CLAIM: 1,
   /** Premium tier multiplier for passive income */
-  PREMIUM_MULTIPLIER: 1.5,
+  PREMIUM_MULTIPLIER: 2.0,
 } as const;
 
 /** Get the daily passive coin rate for a pet based on rarity and size */

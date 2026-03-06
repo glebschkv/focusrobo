@@ -7,8 +7,8 @@ import { createValidatedStorage } from '@/lib/validated-zustand-storage';
 export type SubscriptionTier = 'free' | 'premium';
 
 export const TIER_BENEFITS = {
-  free: { coinMultiplier: 1, xpMultiplier: 1, monthlyStreakFreezes: 0, soundMixingSlots: 1, focusPresetSlots: 1 },
-  premium: { coinMultiplier: 2, xpMultiplier: 2, monthlyStreakFreezes: 3, soundMixingSlots: 3, focusPresetSlots: 5 },
+  free: { coinMultiplier: 1, xpMultiplier: 1, monthlyStreakFreezes: 0, soundMixingSlots: 1, focusPresetSlots: 1, rarityBoost: false, passiveIncomeMultiplier: 1 },
+  premium: { coinMultiplier: 2, xpMultiplier: 2, monthlyStreakFreezes: 3, soundMixingSlots: 3, focusPresetSlots: 5, rarityBoost: true, passiveIncomeMultiplier: 2 },
 } as const;
 
 export interface PremiumState {
