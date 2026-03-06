@@ -535,6 +535,23 @@ export const PetLand = () => {
     }
   }, [lastPlacedIndex, clearLastPlaced]);
 
+  // Listen for "goToPet" event — zoom/pan to a newly placed pet
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ cellIndex: number }>).detail;
+      if (detail?.cellIndex >= 0) {
+        const pos = getIslandPosition(detail.cellIndex, gridSize);
+        if (pos) {
+          // Zoom in slightly and reset view to center on the pet
+          setZoom(ZOOM_DOUBLE_TAP);
+          resetView();
+        }
+      }
+    };
+    window.addEventListener('goToPet', handler);
+    return () => window.removeEventListener('goToPet', handler);
+  }, [gridSize, setZoom, resetView]);
+
   // Auto-dismiss land completion + burst particles
   useEffect(() => {
     if (landJustCompleted !== null) {

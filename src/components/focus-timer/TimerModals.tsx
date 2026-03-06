@@ -4,20 +4,18 @@
  * Groups all timer-related modals in one place:
  * - TaskIntentionModal: Shown before starting a session
  * - SessionNotesModal: Shown after completing a work session
- * - BreakTransitionModal: Shown after session notes
+ * - BreakTransitionModal: Shown after session completion
  * - FocusLockScreen: Shown when app loses focus during work
  */
 
 import { memo } from "react";
 import { TaskIntentionModal } from "./TaskIntentionModal";
 import { SessionNotesModal } from "./SessionNotesModal";
-import { PetRevealModal } from "./PetRevealModal";
 import { BreakTransitionModal } from "./BreakTransitionModal";
 import { FocusLockScreen } from "./FocusLockScreen";
 import { useSettings } from "@/hooks/useSettings";
 import type { TimerPreset } from "./constants";
 import type { FocusCategory } from "@/types/analytics";
-import type { PendingPet } from "@/stores/landStore";
 
 interface TimerModalsProps {
   // Intention modal
@@ -34,18 +32,9 @@ interface TimerModalsProps {
   lastSessionXP: number;
   taskLabel?: string;
 
-  // Pet reveal modal
-  showPetRevealModal: boolean;
-  onDismissPetReveal: () => void;
-  lastPlacedPet: PendingPet | null;
-  lastPlacedCellIndex: number;
-  petChoices: Array<{ species: { id: string; name: string; rarity: string; imagePath: string }; size: string }>;
-  petRewardMinutes: number;
-  petRewardLevel: number;
-
   // Break transition modal
   showBreakTransitionModal: boolean;
-  onCloseBreakModal: () => void; // kept for API compatibility
+  onCloseBreakModal: () => void;
   onStartBreak: (duration: number) => void;
   onSkipBreak: () => void;
   completedSessions: number;
@@ -75,15 +64,6 @@ export const TimerModals = memo(({
   sessionDuration,
   lastSessionXP,
   taskLabel,
-
-  // Pet reveal modal
-  showPetRevealModal,
-  onDismissPetReveal,
-  lastPlacedPet,
-  lastPlacedCellIndex,
-  petChoices,
-  petRewardMinutes,
-  petRewardLevel,
 
   // Break transition modal
   showBreakTransitionModal,
@@ -125,21 +105,7 @@ export const TimerModals = memo(({
         taskLabel={taskLabel}
       />
 
-      {/* Pet Reveal Modal - shows after session notes, before break */}
-      <PetRevealModal
-        isOpen={showPetRevealModal}
-        onClose={onDismissPetReveal}
-        petId={lastPlacedPet?.petId ?? null}
-        size={lastPlacedPet?.size ?? null}
-        rarity={lastPlacedPet?.rarity ?? null}
-        sessionMinutes={lastPlacedPet?.sessionMinutes ?? 0}
-        cellIndex={lastPlacedCellIndex}
-        petChoices={petChoices}
-        rewardMinutes={petRewardMinutes}
-        rewardLevel={petRewardLevel}
-      />
-
-      {/* Break Transition Modal - shows after pet reveal */}
+      {/* Break Transition Modal - shows after session completion */}
       <BreakTransitionModal
         isOpen={showBreakTransitionModal}
         onClose={onSkipBreak}
