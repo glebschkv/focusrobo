@@ -900,98 +900,122 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* How it works info button */}
+      {/* Help button */}
       <button
-        className="pet-land__info-btn"
+        className="pet-land__help-btn"
         onClick={() => setShowHowItWorks(true)}
-        aria-label="How it works"
+        aria-label="How to play"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4" />
-          <path d="M12 8h.01" />
-        </svg>
+        <span className="pet-land__help-btn-icon">?</span>
       </button>
 
       {showHowItWorks && (
-        <div className="pet-land__info-overlay" onClick={() => setShowHowItWorks(false)}>
-          <div className="pet-land__info-card" onClick={(e) => e.stopPropagation()}>
-            <div className="pet-land__info-header">
-              <span className="pet-land__info-title">How BotBlock Works</span>
-              <button className="pet-land__info-close" onClick={() => setShowHowItWorks(false)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <div className="pet-land__help-overlay" onClick={() => setShowHowItWorks(false)}>
+          <div className="pet-land__help-sheet" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="pet-land__help-handle" />
+            <div className="pet-land__help-header">
+              <h2 className="pet-land__help-title">How to Play</h2>
+              <button className="pet-land__help-close" onClick={() => setShowHowItWorks(false)} aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M18 6L6 18" />
                   <path d="M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="pet-land__info-steps">
-              <div className="pet-land__info-step">
-                <div className="pet-land__info-step-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(142 60% 45%)" strokeWidth="2" strokeLinecap="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-                <div className="pet-land__info-step-body">
-                  <strong>Start a Focus Session</strong>
-                  <span>Set a timer (25 min+) and focus. The app blocks distracting apps while you work.</span>
-                </div>
+            {/* The Loop - visual flow */}
+            <div className="pet-land__help-flow">
+              <div className="pet-land__help-flow-item">
+                <div className="pet-land__help-flow-emoji">🎯</div>
+                <div className="pet-land__help-flow-label">Focus</div>
               </div>
-              <div className="pet-land__info-step">
-                <div className="pet-land__info-step-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(30 80% 55%)" strokeWidth="2" strokeLinecap="round">
-                    <ellipse cx="12" cy="14" rx="8" ry="9" />
-                    <path d="M9 7c1-3 5-3 6 0" />
-                    <circle cx="10" cy="16" r="1.2" fill="hsl(30 80% 75%)" stroke="none" />
-                  </svg>
-                </div>
-                <div className="pet-land__info-step-body">
-                  <strong>Discover a Pet</strong>
-                  <span>Complete the session to receive a random pet. Longer sessions = bigger pets.</span>
-                </div>
+              <div className="pet-land__help-flow-arrow">→</div>
+              <div className="pet-land__help-flow-item">
+                <div className="pet-land__help-flow-emoji">🐣</div>
+                <div className="pet-land__help-flow-label">Get Pet</div>
               </div>
-              <div className="pet-land__info-step">
-                <div className="pet-land__info-step-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(142 60% 45%)" strokeWidth="2" strokeLinecap="round">
-                    <polygon points="12 2 22 12 12 22 2 12" fill="hsl(142 60% 85%)" stroke="hsl(142 50% 55%)" />
-                    <line x1="8" y1="8" x2="16" y2="16" strokeOpacity="0.3" />
-                    <line x1="12" y1="6" x2="12" y2="18" strokeOpacity="0.3" />
-                  </svg>
-                </div>
-                <div className="pet-land__info-step-body">
-                  <strong>Grow Your Island</strong>
-                  <span>Each pet fills a tile. Fill them all and the island expands, from 5×5 up to 20×20.</span>
-                </div>
+              <div className="pet-land__help-flow-arrow">→</div>
+              <div className="pet-land__help-flow-item">
+                <div className="pet-land__help-flow-emoji">🏝️</div>
+                <div className="pet-land__help-flow-label">Fill Island</div>
               </div>
-              <div className="pet-land__info-step">
-                <div className="pet-land__info-step-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(270 60% 55%)" strokeWidth="2" strokeLinecap="round">
-                    <polygon points="12 2 15 9 22 9 16 14 18 21 12 17 6 21 8 14 2 9 9 9" fill="hsl(270 60% 90%)" stroke="hsl(270 50% 55%)" />
-                  </svg>
-                </div>
-                <div className="pet-land__info-step-body">
-                  <strong>Collect Rare Pets</strong>
-                  <span>41 species across 5 rarities. Level up to unlock rarer ones. Buy eggs for better odds.</span>
-                </div>
-              </div>
-              <div className="pet-land__info-step">
-                <div className="pet-land__info-step-icon">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="hsl(45 80% 50%)" strokeWidth="2" strokeLinecap="round">
-                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                  </svg>
-                </div>
-                <div className="pet-land__info-step-body">
-                  <strong>Complete &amp; Archive</strong>
-                  <span>Full island → archived forever. Start fresh and keep collecting!</span>
-                </div>
+              <div className="pet-land__help-flow-arrow">→</div>
+              <div className="pet-land__help-flow-item">
+                <div className="pet-land__help-flow-emoji">🔄</div>
+                <div className="pet-land__help-flow-label">New Island</div>
               </div>
             </div>
 
-            <div className="pet-land__info-tip">
-              Tip: Maintain a daily streak for bonus XP and coins. Check the shop for eggs, themes, and power-ups!
+            {/* Sections */}
+            <div className="pet-land__help-sections">
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">⏱️</span>
+                  <strong>Focus Sessions</strong>
+                </div>
+                <p>Start a timer (25 min+) and stay focused. The app can block distracting apps while you work. Complete the session to earn <b>XP</b>, <b>coins</b>, and a <b>random pet</b>.</p>
+              </div>
+
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">🐾</span>
+                  <strong>Pet Sizes</strong>
+                </div>
+                <div className="pet-land__help-sizes">
+                  <div className="pet-land__help-size">
+                    <span className="pet-land__help-size-label">Baby</span>
+                    <span className="pet-land__help-size-time">25–45 min</span>
+                  </div>
+                  <div className="pet-land__help-size">
+                    <span className="pet-land__help-size-label">Teen</span>
+                    <span className="pet-land__help-size-time">60–90 min</span>
+                  </div>
+                  <div className="pet-land__help-size">
+                    <span className="pet-land__help-size-label">Adult</span>
+                    <span className="pet-land__help-size-time">120+ min</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">✨</span>
+                  <strong>Rarities</strong>
+                </div>
+                <div className="pet-land__help-rarities">
+                  <span className="pet-land__help-rarity pet-land__help-rarity--common">Common</span>
+                  <span className="pet-land__help-rarity pet-land__help-rarity--uncommon">Uncommon</span>
+                  <span className="pet-land__help-rarity pet-land__help-rarity--rare">Rare</span>
+                  <span className="pet-land__help-rarity pet-land__help-rarity--epic">Epic</span>
+                  <span className="pet-land__help-rarity pet-land__help-rarity--legendary">Legendary</span>
+                </div>
+                <p>41 species across 5 rarities. Level up to unlock rarer ones. Buy eggs in the shop for better odds.</p>
+              </div>
+
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">🏝️</span>
+                  <strong>Your Island</strong>
+                </div>
+                <p>Each pet fills one tile. The island starts at 5×5 and expands as you fill it, up to 20×20. Once full, it gets archived forever and you start fresh.</p>
+              </div>
+
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">🔥</span>
+                  <strong>Streaks & XP</strong>
+                </div>
+                <p>Focus daily to build your streak. Longer streaks give bonus XP (up to +60%). Level up to unlock new species and earn more rewards.</p>
+              </div>
+
+              <div className="pet-land__help-section">
+                <div className="pet-land__help-section-header">
+                  <span className="pet-land__help-section-icon">🪙</span>
+                  <strong>Coins & Shop</strong>
+                </div>
+                <p>Earn coins from focus sessions. Spend them on eggs (better rarity odds), island themes, and power-ups. Longer sessions earn more coins.</p>
+              </div>
             </div>
           </div>
         </div>
