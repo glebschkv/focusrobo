@@ -50,6 +50,9 @@ export const UnifiedFocusTimer = () => {
     showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
+    petChoices,
+    petRewardMinutes,
+    petRewardLevel,
     lastSessionXP,
     lastCoinsEarned,
     autoBreakEnabled,
@@ -145,6 +148,9 @@ export const UnifiedFocusTimer = () => {
               onDismissPetReveal={handleDismissPetReveal}
               lastPlacedPet={lastPlacedPet}
               lastPlacedCellIndex={lastPlacedCellIndex}
+              petChoices={petChoices}
+              petRewardMinutes={petRewardMinutes}
+              petRewardLevel={petRewardLevel}
               // Break transition modal
               showBreakTransitionModal={showBreakTransitionModal}
               onCloseBreakModal={handleSkipBreak}

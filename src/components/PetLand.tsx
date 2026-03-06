@@ -8,11 +8,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore } from '@/stores/landStore';
+import { useThemeStore } from '@/stores/themeStore';
+import { useShopStore } from '@/stores/shopStore';
 import { IslandPet } from '@/components/IslandPet';
-import { PetDetailCard } from '@/components/PetDetailCard';
+import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
-import { getIslandScale, getAvailableCellCount } from '@/data/islandPositions';
+import { getIslandScale, getAvailableCellCount, getIslandPosition } from '@/data/islandPositions';
+import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
 import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
@@ -23,17 +26,21 @@ function getGrowthStage(count: number): string {
 }
 
 // Parallax tilt constants (used when zoom <= 1.0)
-const MAX_OFFSET = 12;
-const DRAG_SENSITIVITY = 0.5;
+const MAX_OFFSET = 14;
+const DRAG_SENSITIVITY = 0.6;
 const SPRING_STIFFNESS = 0.08;
 const SPRING_DAMPING = 0.8;
 const MOMENTUM_DECAY = 0.94;
 const MIN_VELOCITY = 0.05;
 
-// Parallax layer speeds
-const LAYER_SKY = 0.15;
-const LAYER_ISLAND = 0.5;
-const LAYER_PETS = 0.85;
+// Parallax layer speeds (increased for more noticeable effect)
+const LAYER_SKY = 0.2;
+const LAYER_ISLAND = 0.65;
+const LAYER_PETS = 1.0;
+
+// Auto-drift: slow idle sine wave when not touching
+const AUTO_DRIFT_AMPLITUDE = 2.5; // ±2.5px
+const AUTO_DRIFT_PERIOD = 10000; // 10 seconds full cycle
 
 // Zoom constants
 const ZOOM_MIN = 0.8;
@@ -384,6 +391,34 @@ function useIslandParallax() {
     return () => cancelAnimationFrame(animFrameId.current);
   }, []);
 
+  // Auto-drift: subtle idle parallax when user isn't interacting
+  useEffect(() => {
+    let driftFrameId: number;
+    const startTime = Date.now();
+
+    function driftTick() {
+      // Skip drift during active interaction or zoomed-in state
+      if (isDragging.current || isPinching.current || isZoomed()) {
+        driftFrameId = requestAnimationFrame(driftTick);
+        return;
+      }
+      // Don't override active spring animation
+      if (Math.abs(velocity.current) > MIN_VELOCITY) {
+        driftFrameId = requestAnimationFrame(driftTick);
+        return;
+      }
+
+      const elapsed = Date.now() - startTime;
+      const drift = Math.sin((elapsed / AUTO_DRIFT_PERIOD) * Math.PI * 2) * AUTO_DRIFT_AMPLITUDE;
+      currentOffset.current = drift;
+      updateCSS();
+      driftFrameId = requestAnimationFrame(driftTick);
+    }
+
+    driftFrameId = requestAnimationFrame(driftTick);
+    return () => cancelAnimationFrame(driftFrameId);
+  }, [updateCSS]);
+
   return {
     wrapperRef,
     skyRef,
@@ -415,6 +450,11 @@ export const PetLand = () => {
   const milestoneReached = useLandStore((s) => s.milestoneReached);
   const clearMilestone = useLandStore((s) => s.clearMilestone);
   const { haptic } = useHaptics();
+  const themeId = useThemeStore((s) => s.homeBackground);
+  const setTheme = useThemeStore((s) => s.setHomeBackground);
+  const ownedBackgrounds = useShopStore((s) => s.ownedBackgrounds);
+  const theme = getIslandTheme(themeId);
+  const [showThemePicker, setShowThemePicker] = useState(false);
 
   const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
@@ -496,20 +536,17 @@ export const PetLand = () => {
   const growthClass = getGrowthStage(filledCount);
 
   const particles = useMemo(() => {
+    const colors = theme.particleColors;
     return Array.from({ length: 7 }, (_, i) => ({
       id: i,
       left: `${10 + Math.random() * 80}%`,
       top: `${15 + Math.random() * 55}%`,
       duration: `${7 + Math.random() * 5}s`,
       delay: `${Math.random() * 6}s`,
-      background: [
-        'rgba(255, 255, 240, 0.5)',
-        'rgba(255, 240, 200, 0.4)',
-        'rgba(200, 230, 120, 0.3)',
-        'rgba(255, 255, 255, 0.45)',
-      ][i % 4],
+      background: colors[i % colors.length],
     }));
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeId]);
 
   const sparkles = useMemo(() => {
     return Array.from({ length: 6 }, (_, i) => ({
@@ -524,8 +561,10 @@ export const PetLand = () => {
   // Performance class: disable heavy animations when many pets
   const perfClass = petCount > 100 ? 'pet-land--perf-low' : petCount > 60 ? 'pet-land--perf-med' : '';
 
+  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[1]} 35%, ${theme.sky[2]} 65%, ${theme.sky[3]} 100%)`;
+
   return (
-    <div className={`pet-land ${growthClass} ${perfClass}`}>
+    <div className={`pet-land ${growthClass} ${perfClass}`} style={{ background: skyGradient }}>
       {/* Sky — parallax layer (slowest) */}
       <div className="pet-land__sky" ref={skyRef}>
         <div className="pet-land__sun" />
@@ -600,7 +639,7 @@ export const PetLand = () => {
           >
             {/* Island container — parallax layer (medium) */}
             <div className="pet-land__island-container" ref={containerRef}>
-            <IslandSVG gridSize={gridSize} />
+            <IslandSVG gridSize={gridSize} themeId={themeId} />
             <div className="pet-land__island-shadow" />
 
             {/* Pets layer — parallax layer (fastest) */}
@@ -629,12 +668,12 @@ export const PetLand = () => {
         </div>
       </div>
 
-      {/* Pet detail card */}
+      {/* Compact pet tooltip */}
       {selectedPet && (
-        <PetDetailCard
+        <PetTooltip
           cell={selectedPet.cell}
           index={selectedPet.index}
-          landNumber={currentLand.number}
+          gridSize={gridSize}
           onClose={handleCloseDetail}
         />
       )}
@@ -658,6 +697,58 @@ export const PetLand = () => {
             {milestoneReached} pets!
           </span>
           <span className="pet-land__milestone-sub">Your island is expanding</span>
+        </div>
+      )}
+
+      {/* Theme switcher */}
+      <button
+        className="pet-land__theme-btn"
+        onClick={() => setShowThemePicker(!showThemePicker)}
+        aria-label="Change island theme"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="13.5" cy="6.5" r="2.5" />
+          <circle cx="17.5" cy="10.5" r="2.5" />
+          <circle cx="8.5" cy="7.5" r="2.5" />
+          <circle cx="6.5" cy="12.5" r="2.5" />
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.1 2.5-.3C13.1 20.4 12 18.8 12 17c0-2.8 2.2-5 5-5 1.8 0 3.4 1 4.2 2.5.2-.8.3-1.6.3-2.5 0-5.5-4.5-10-10-10z" />
+        </svg>
+      </button>
+
+      {showThemePicker && (
+        <div className="pet-land__theme-picker" onClick={() => setShowThemePicker(false)}>
+          <div className="pet-land__theme-strip" onClick={(e) => e.stopPropagation()}>
+            {Object.values(ISLAND_THEMES).map((t) => {
+              const isOwned = t.id === 'day' || ownedBackgrounds.includes(t.id);
+              const isActive = t.id === themeId;
+              return (
+                <button
+                  key={t.id}
+                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''} ${!isOwned ? 'pet-land__theme-chip--locked' : ''}`}
+                  onClick={() => {
+                    if (isOwned) {
+                      setTheme(t.id);
+                      haptic('light');
+                    }
+                  }}
+                  disabled={!isOwned}
+                >
+                  <div
+                    className="pet-land__theme-swatch"
+                    style={{ background: `linear-gradient(135deg, ${t.grassLight[0]}, ${t.grassDark[0]})` }}
+                  />
+                  <span className="pet-land__theme-name">{t.name}</span>
+                  {!isOwned && (
+                    <span className="pet-land__theme-lock">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M12 2C9.24 2 7 4.24 7 7v3H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2V7c0-2.76-2.24-5-5-5zm-3 5c0-1.66 1.34-3 3-3s3 1.34 3 3v3H9V7z"/>
+                      </svg>
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 

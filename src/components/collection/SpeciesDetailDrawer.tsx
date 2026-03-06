@@ -11,7 +11,7 @@ import {
 import { type PetSpecies, type GrowthSize, RARITY_GLOW, getSizeSpritePath } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import type { SpeciesCatalogEntry } from '@/stores/landStore';
-import { RARITY_LABEL, SIZE_LABEL, SIZE_ORDER, SIZE_DURATION_HINT, AFFINITY_INFO } from './constants';
+import { RARITY_LABEL, SIZE_LABEL, SIZE_ORDER, SIZE_DURATION_HINT, AFFINITY_INFO, AFFINITY_THRESHOLDS } from './constants';
 
 interface SpeciesDetailDrawerProps {
   species: PetSpecies | null;
@@ -133,10 +133,10 @@ export const SpeciesDetailDrawer = memo(({
               </div>
             )}
 
-            {/* Affinity level */}
+            {/* Bond level — clear milestones */}
             {catalogEntry && (
               <div className="mb-4 p-3 rounded-xl bg-[hsl(var(--muted)/0.15)] border border-[hsl(var(--border))]">
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5">
                     <PixelIcon name="heart" size={12} />
                     <span className="text-[11px] font-bold" style={{ color: affinityInfo.color }}>
@@ -148,7 +148,7 @@ export const SpeciesDetailDrawer = memo(({
                   </span>
                 </div>
                 {/* Progress bar */}
-                <div className="h-1 rounded-full bg-[hsl(var(--muted)/0.2)] overflow-hidden mb-1">
+                <div className="h-1.5 rounded-full bg-[hsl(var(--muted)/0.2)] overflow-hidden mb-2">
                   <div
                     className="h-full rounded-full transition-all duration-300"
                     style={{
@@ -157,9 +157,28 @@ export const SpeciesDetailDrawer = memo(({
                     }}
                   />
                 </div>
-                <p className="text-[9px] text-[hsl(var(--muted-foreground))]">
-                  {affinityInfo.description}
-                </p>
+                {/* Milestone markers */}
+                <div className="space-y-1">
+                  {AFFINITY_THRESHOLDS.map((threshold) => {
+                    const reached = affinityCount >= threshold.count;
+                    const remaining = threshold.count - affinityCount;
+                    return (
+                      <div key={threshold.level} className="flex items-center justify-between min-h-[20px]">
+                        <span className={`text-[10px] font-semibold flex items-center gap-1 ${reached ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`}>
+                          {reached ? (
+                            <PixelIcon name="check" size={10} className="text-emerald-500 shrink-0" />
+                          ) : (
+                            <span className="text-[9px]">Find {remaining} more</span>
+                          )}
+                          <span>{threshold.reward}</span>
+                        </span>
+                        <span className="text-[9px] font-medium text-[hsl(var(--muted-foreground))]">
+                          {threshold.count}x
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 

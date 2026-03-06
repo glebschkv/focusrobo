@@ -228,8 +228,15 @@ interface LandStoreState {
   milestoneReached: number | null;
 }
 
+interface PetChoice {
+  species: { id: string; name: string; rarity: string; imagePath: string };
+  size: GrowthSize;
+}
+
 interface LandStoreActions {
   generateRandomPet: (sessionMinutes: number, playerLevel: number) => PendingPet;
+  generatePetChoices: (sessionMinutes: number, playerLevel: number, count?: number) => PetChoice[];
+  choosePet: (speciesId: string, sessionMinutes: number) => PendingPet;
   hatchEgg: (egg: EggType, playerLevel: number) => PendingPet;
   selectSpecies: (speciesId: string) => PendingPet | null;
   placePendingPet: () => number;
@@ -284,6 +291,33 @@ export const useLandStore = create<LandStore>()(
           sessionMinutes,
         };
 
+        set({ pendingPet: pending });
+        return pending;
+      },
+
+      generatePetChoices: (sessionMinutes: number, playerLevel: number, count = 4) => {
+        const size = getGrowthSize(sessionMinutes);
+        const choices: PetChoice[] = [];
+        const seen = new Set<string>();
+        for (let i = 0; i < count * 3 && choices.length < count; i++) {
+          const species = rollRandomPet(playerLevel);
+          if (!seen.has(species.id)) {
+            seen.add(species.id);
+            choices.push({ species, size });
+          }
+        }
+        return choices;
+      },
+
+      choosePet: (speciesId: string, sessionMinutes: number) => {
+        const species = getPetById(speciesId);
+        const size = getGrowthSize(sessionMinutes);
+        const pending: PendingPet = {
+          petId: speciesId,
+          size,
+          rarity: species?.rarity || 'common',
+          sessionMinutes,
+        };
         set({ pendingPet: pending });
         return pending;
       },

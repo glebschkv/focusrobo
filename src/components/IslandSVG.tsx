@@ -508,12 +508,17 @@ const leftCliffClip = `M ${p(LW.tl)} L ${p(LW.tr)} L ${p(LW.br)} L ${p(LW.bl)} Z
 const rightCliffClip = `M ${p(RW.tl)} L ${p(RW.tr)} L ${p(RW.br)} L ${p(RW.bl)} Z`;
 
 // ─── Component ─────────────────────────────────────────────────────
+import { getIslandTheme } from '@/data/IslandThemes';
+
 interface IslandSVGProps {
   /** Current grid tier — determines tile count (5–20) */
   gridSize?: number;
+  /** Theme ID — controls grass/cliff/edge colors */
+  themeId?: string;
 }
 
-export const IslandSVG = ({ gridSize = 20 }: IslandSVGProps) => {
+export const IslandSVG = ({ gridSize = 20, themeId = 'day' }: IslandSVGProps) => {
+  const theme = getIslandTheme(themeId);
   const tiles = getTiles(gridSize);
   return (
   <svg
@@ -523,60 +528,60 @@ export const IslandSVG = ({ gridSize = 20 }: IslandSVGProps) => {
     xmlns="http://www.w3.org/2000/svg"
   >
     <defs>
-      {/* Grass surface gradient */}
+      {/* Grass surface gradient — themed */}
       <linearGradient id="ig-grass" x1="30%" y1="0%" x2="70%" y2="100%">
-        <stop offset="0%" stopColor="#C4E87A" />
-        <stop offset="40%" stopColor="#B0D85A" />
-        <stop offset="70%" stopColor="#9CC84E" />
-        <stop offset="100%" stopColor="#88B842" />
+        <stop offset="0%" stopColor={theme.grassBase[0]} />
+        <stop offset="40%" stopColor={theme.grassBase[1]} />
+        <stop offset="70%" stopColor={theme.grassBase[2]} />
+        <stop offset="100%" stopColor={theme.grassBase[3]} />
       </linearGradient>
-      {/* Light tiles — brighter, sun-kissed */}
+      {/* Light tiles — themed */}
       <linearGradient id="ig-tl" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#CCF080" />
-        <stop offset="100%" stopColor="#B8E468" />
+        <stop offset="0%" stopColor={theme.grassLight[0]} />
+        <stop offset="100%" stopColor={theme.grassLight[1]} />
       </linearGradient>
-      {/* Dark tiles — deeper green for visible contrast */}
+      {/* Dark tiles — themed */}
       <linearGradient id="ig-td" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#96C444" />
-        <stop offset="100%" stopColor="#84B438" />
+        <stop offset="0%" stopColor={theme.grassDark[0]} />
+        <stop offset="100%" stopColor={theme.grassDark[1]} />
       </linearGradient>
 
-      {/* Left cliff gradients */}
+      {/* Left cliff gradients — themed */}
       <linearGradient id="ig-ll" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#72A834" />
-        <stop offset="100%" stopColor="#5E9228" />
+        <stop offset="0%" stopColor={theme.lipLeft[0]} />
+        <stop offset="100%" stopColor={theme.lipLeft[1]} />
       </linearGradient>
       <linearGradient id="ig-ld" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#B09858" />
-        <stop offset="40%" stopColor="#A08850" />
-        <stop offset="100%" stopColor="#887440" />
+        <stop offset="0%" stopColor={theme.dirtLeft[0]} />
+        <stop offset="40%" stopColor={theme.dirtLeft[1]} />
+        <stop offset="100%" stopColor={theme.dirtLeft[2]} />
       </linearGradient>
       <linearGradient id="ig-ls" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#686050" />
-        <stop offset="50%" stopColor="#585040" />
-        <stop offset="100%" stopColor="#484038" />
+        <stop offset="0%" stopColor={theme.stoneBaseLeft} />
+        <stop offset="50%" stopColor={theme.stoneBaseLeft} />
+        <stop offset="100%" stopColor={theme.stoneBaseLeft} />
       </linearGradient>
 
-      {/* Right cliff gradients (shadow side — darker) */}
+      {/* Right cliff gradients — themed */}
       <linearGradient id="ig-rl" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#648E2C" />
-        <stop offset="100%" stopColor="#507A20" />
+        <stop offset="0%" stopColor={theme.lipRight[0]} />
+        <stop offset="100%" stopColor={theme.lipRight[1]} />
       </linearGradient>
       <linearGradient id="ig-rd" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#988048" />
-        <stop offset="40%" stopColor="#8A7440" />
-        <stop offset="100%" stopColor="#746434" />
+        <stop offset="0%" stopColor={theme.dirtRight[0]} />
+        <stop offset="40%" stopColor={theme.dirtRight[1]} />
+        <stop offset="100%" stopColor={theme.dirtRight[2]} />
       </linearGradient>
       <linearGradient id="ig-rs" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#585044" />
-        <stop offset="50%" stopColor="#4A4238" />
-        <stop offset="100%" stopColor="#3E3830" />
+        <stop offset="0%" stopColor={theme.stoneBaseRight} />
+        <stop offset="50%" stopColor={theme.stoneBaseRight} />
+        <stop offset="100%" stopColor={theme.stoneBaseRight} />
       </linearGradient>
 
-      {/* Grass overhang fill */}
+      {/* Grass overhang fill — themed */}
       <linearGradient id="ig-edge" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#88B842" />
-        <stop offset="100%" stopColor="#6B9430" />
+        <stop offset="0%" stopColor={theme.grassEdge[0]} />
+        <stop offset="100%" stopColor={theme.grassEdge[1]} />
       </linearGradient>
 
       {/* Depth shading */}
@@ -589,16 +594,16 @@ export const IslandSVG = ({ gridSize = 20 }: IslandSVGProps) => {
         <stop offset="100%" stopColor="transparent" />
       </radialGradient>
 
-      {/* Grass lip blends into dirt — gradient from green to brown */}
+      {/* Grass lip blends into dirt — themed */}
       <linearGradient id="ig-ll-blend" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#72A834" />
-        <stop offset="60%" stopColor="#5E9228" />
-        <stop offset="100%" stopColor="#9A8448" />
+        <stop offset="0%" stopColor={theme.lipLeft[0]} />
+        <stop offset="60%" stopColor={theme.lipLeft[1]} />
+        <stop offset="100%" stopColor={theme.lipLeft[2]} />
       </linearGradient>
       <linearGradient id="ig-rl-blend" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#648E2C" />
-        <stop offset="60%" stopColor="#507A20" />
-        <stop offset="100%" stopColor="#8A7440" />
+        <stop offset="0%" stopColor={theme.lipRight[0]} />
+        <stop offset="60%" stopColor={theme.lipRight[1]} />
+        <stop offset="100%" stopColor={theme.lipRight[2]} />
       </linearGradient>
 
       {/* Clipping path for grass texture */}

@@ -39,6 +39,9 @@ interface TimerModalsProps {
   onDismissPetReveal: () => void;
   lastPlacedPet: PendingPet | null;
   lastPlacedCellIndex: number;
+  petChoices: Array<{ species: { id: string; name: string; rarity: string; imagePath: string }; size: string }>;
+  petRewardMinutes: number;
+  petRewardLevel: number;
 
   // Break transition modal
   showBreakTransitionModal: boolean;
@@ -78,6 +81,9 @@ export const TimerModals = memo(({
   onDismissPetReveal,
   lastPlacedPet,
   lastPlacedCellIndex,
+  petChoices,
+  petRewardMinutes,
+  petRewardLevel,
 
   // Break transition modal
   showBreakTransitionModal,
@@ -128,6 +134,9 @@ export const TimerModals = memo(({
         rarity={lastPlacedPet?.rarity ?? null}
         sessionMinutes={lastPlacedPet?.sessionMinutes ?? 0}
         cellIndex={lastPlacedCellIndex}
+        petChoices={petChoices}
+        rewardMinutes={petRewardMinutes}
+        rewardLevel={petRewardLevel}
       />
 
       {/* Break Transition Modal - shows after pet reveal */}

@@ -39,17 +39,17 @@ export const DailyLoginRewardModal = ({
   if (reward) lastRewardRef.current = reward;
   const displayReward = reward || lastRewardRef.current;
 
-  // Separate dismiss from claim: close the dialog first, then fire the claim
-  // after a microtask so Radix can begin its close animation before any new
-  // modal state changes propagate (prevents black overlay on iOS/Capacitor).
+  // Close dialog and fire claim. Use a single rAF to let Radix begin its
+  // close animation before new modal state changes propagate.
+  const claimingRef = useRef(false);
   const handleClaim = useCallback(() => {
+    if (claimingRef.current) return; // prevent double-tap
+    claimingRef.current = true;
     playSoundEffect('reward');
+    onClaim();
     onDismiss();
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        onClaim();
-      }, 50);
-    });
+    // Reset guard after animation completes
+    setTimeout(() => { claimingRef.current = false; }, 500);
   }, [onClaim, onDismiss]);
 
   if (!displayReward) return null;
@@ -258,7 +258,7 @@ export const DailyLoginRewardModal = ({
           {/* Claim Button */}
           <button
             onClick={handleClaim}
-            className="retro-arcade-btn retro-arcade-btn-green w-full py-3.5 text-sm tracking-wider touch-manipulation flex items-center justify-center gap-2"
+            className="retro-arcade-btn retro-arcade-btn-green w-full py-4 text-sm tracking-wider touch-manipulation flex items-center justify-center gap-2 min-h-[48px] active:scale-95 transition-transform"
           >
             <PixelIcon name="gift" size={20} />
             Claim Reward!

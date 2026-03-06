@@ -1,15 +1,24 @@
 /**
  * PetRevealModal Component
  *
- * Shown after a focus session completes to reveal the pet that was earned.
- * Uses rarity-themed backgrounds and celebration effects.
+ * Shown after a focus session completes. Now includes a choice phase:
+ * - "Random Roll" (free) — shows the pre-generated random pet
+ * - "Pick a Pet" (50 coins) — shows 4 choices, user picks one
  */
 
+import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { getPetById, GROWTH_SCALES, RARITY_GLOW, type GrowthSize, type PetRarity } from "@/data/PetDatabase";
-import { Sparkles, Star } from "lucide-react";
+import { Sparkles, Star, Shuffle, MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLandStore } from "@/stores/landStore";
+import { useCoinStore } from "@/stores/coinStore";
+
+interface PetChoice {
+  species: { id: string; name: string; rarity: string; imagePath: string };
+  size: string;
+}
 
 interface PetRevealModalProps {
   isOpen: boolean;
@@ -19,6 +28,12 @@ interface PetRevealModalProps {
   rarity: PetRarity | null;
   sessionMinutes: number;
   cellIndex: number;
+  /** Pet choices for the "Pick" option */
+  petChoices?: PetChoice[];
+  /** Session minutes for re-generating pet on pick */
+  rewardMinutes?: number;
+  /** Player level for re-generating pet on pick */
+  rewardLevel?: number;
 }
 
 const SIZE_LABELS: Record<GrowthSize, string> = {
@@ -95,6 +110,8 @@ const RARITY_CONFIG: Record<PetRarity, {
   },
 };
 
+const PICK_COST = 50;
+
 export const PetRevealModal = ({
   isOpen,
   onClose,
@@ -102,19 +119,171 @@ export const PetRevealModal = ({
   size,
   rarity,
   sessionMinutes,
+  petChoices = [],
+  rewardMinutes = 0,
+  rewardLevel = 1,
 }: PetRevealModalProps) => {
+  const [phase, setPhase] = useState<'choice' | 'reveal'>('choice');
+  const [revealPetId, setRevealPetId] = useState<string | null>(null);
+  const [revealSize, setRevealSize] = useState<GrowthSize | null>(null);
+  const [revealRarity, setRevealRarity] = useState<PetRarity | null>(null);
+
+  const coinBalance = useCoinStore((s) => s.balance);
+  const canAffordPick = coinBalance >= PICK_COST;
+
+  const handleRandomRoll = useCallback(() => {
+    // Place the pre-generated random pet on the island now
+    useLandStore.getState().placePendingPet();
+    setRevealPetId(petId);
+    setRevealSize(size);
+    setRevealRarity(rarity);
+    setPhase('reveal');
+  }, [petId, size, rarity]);
+
+  const handlePickPet = useCallback((choice: PetChoice) => {
+    // Spend coins and choose the specific pet
+    if (!canAffordPick) return;
+    useCoinStore.getState().spendCoins(PICK_COST);
+    // Replace the pre-placed random pet with the chosen one
+    const pending = useLandStore.getState().choosePet(choice.species.id, rewardMinutes);
+    useLandStore.getState().placePendingPet();
+    setRevealPetId(pending.petId);
+    setRevealSize(pending.size);
+    setRevealRarity(pending.rarity as PetRarity);
+    setPhase('reveal');
+  }, [canAffordPick, rewardMinutes]);
+
+  const handleClose = useCallback(() => {
+    setPhase('choice');
+    setRevealPetId(null);
+    setRevealSize(null);
+    setRevealRarity(null);
+    onClose();
+  }, [onClose]);
+
   if (!petId || !size || !rarity) return null;
 
-  const species = getPetById(petId);
+  // Choice phase — show "Random" vs "Pick"
+  if (phase === 'choice' && petChoices.length > 0) {
+    return (
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
+        <DialogContent className="max-w-[340px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl bg-white">
+          <VisuallyHidden>
+            <DialogTitle>Choose Your Reward</DialogTitle>
+          </VisuallyHidden>
+
+          <div className="px-5 pt-5 pb-3 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#78909C] mb-1">
+              Session Complete!
+            </p>
+            <h3 className="text-lg font-bold text-[#37474F]">Choose Your Reward</h3>
+          </div>
+
+          {/* Random roll option */}
+          <div className="px-5 pb-2">
+            <button
+              onClick={handleRandomRoll}
+              className="w-full p-3.5 rounded-xl border-2 border-[#E0E0E0] bg-gradient-to-b from-white to-gray-50 flex items-center gap-3 transition-all active:scale-[0.98] hover:border-[#90CAF9] touch-manipulation min-h-[48px]"
+            >
+              <div className="w-10 h-10 rounded-lg bg-[#E3F2FD] flex items-center justify-center flex-shrink-0">
+                <Shuffle className="w-5 h-5 text-[#1E88E5]" />
+              </div>
+              <div className="text-left flex-1">
+                <p className="text-sm font-bold text-[#37474F]">Random Roll</p>
+                <p className="text-[10px] text-[#90A4AE]">Mystery pet — could be anything!</p>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">
+                Free
+              </span>
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="px-5 flex items-center gap-2">
+            <div className="flex-1 h-px bg-[#E0E0E0]" />
+            <span className="text-[9px] font-bold text-[#BDBDBD] uppercase">or</span>
+            <div className="flex-1 h-px bg-[#E0E0E0]" />
+          </div>
+
+          {/* Pick option — 4 choices */}
+          <div className="px-5 pt-2 pb-4">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="flex items-center gap-1.5">
+                <MousePointerClick className="w-3.5 h-3.5 text-[#78909C]" />
+                <span className="text-xs font-bold text-[#546E7A]">Pick a Pet</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {!canAffordPick && (
+                  <span className="text-[9px] text-[#BDBDBD]">
+                    ({coinBalance} owned)
+                  </span>
+                )}
+                <span className={cn(
+                  "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                  canAffordPick ? "text-amber-600 bg-amber-50" : "text-red-400 bg-red-50"
+                )}>
+                  {PICK_COST} coins
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {petChoices.map((choice, i) => {
+                const choiceRarity = choice.species.rarity as PetRarity;
+                const config = RARITY_CONFIG[choiceRarity];
+                return (
+                  <button
+                    key={`${choice.species.id}-${i}`}
+                    onClick={() => handlePickPet(choice)}
+                    disabled={!canAffordPick}
+                    className={cn(
+                      "flex flex-col items-center p-2 rounded-xl border-2 transition-all touch-manipulation min-h-[44px]",
+                      canAffordPick
+                        ? "border-[#E0E0E0] active:scale-95 hover:border-[#90CAF9]"
+                        : "border-[#F5F5F5] opacity-50"
+                    )}
+                    style={{ background: `${config.bgFrom}40` }}
+                  >
+                    <img
+                      src={choice.species.imagePath}
+                      alt={choice.species.name}
+                      className="w-12 h-12 object-contain mb-1"
+                      style={{ imageRendering: 'pixelated' }}
+                      draggable={false}
+                    />
+                    <span className="text-[10px] font-bold text-[#37474F] truncate w-full text-center leading-tight">
+                      {choice.species.name}
+                    </span>
+                    <span
+                      className="text-[9px] font-bold uppercase mt-0.5"
+                      style={{ color: config.color }}
+                    >
+                      {config.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Reveal phase — show the pet that was earned
+  const displayPetId = revealPetId || petId;
+  const displaySize = revealSize || size;
+  const displayRarity = revealRarity || rarity;
+
+  const species = getPetById(displayPetId);
   if (!species) return null;
 
-  const scale = GROWTH_SCALES[size];
-  const glowColor = RARITY_GLOW[rarity];
-  const config = RARITY_CONFIG[rarity];
-  const isHighRarity = rarity === 'rare' || rarity === 'epic' || rarity === 'legendary';
+  const scale = GROWTH_SCALES[displaySize];
+  const glowColor = RARITY_GLOW[displayRarity];
+  const config = RARITY_CONFIG[displayRarity];
+  const isHighRarity = displayRarity === 'rare' || displayRarity === 'epic' || displayRarity === 'legendary';
 
   return (
-    <Dialog open={isOpen && !!species} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog open={isOpen && !!species} onOpenChange={(open) => { if (!open) handleClose(); }}>
       <DialogContent
         className="max-w-[320px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl"
         style={{
@@ -127,7 +296,6 @@ export const PetRevealModal = ({
 
         {/* Header banner */}
         <div className="relative px-5 pt-5 pb-3 text-center overflow-hidden">
-          {/* Floating sparkles for rare+ */}
           {config.showSparkles && (
             <>
               <div className="absolute top-3 left-6 animate-pulse opacity-60">
@@ -149,7 +317,6 @@ export const PetRevealModal = ({
             New Pet Found!
           </p>
 
-          {/* Rarity stars */}
           <div className="flex items-center justify-center gap-0.5">
             {Array.from({ length: config.starCount }).map((_, i) => (
               <Star
@@ -169,7 +336,6 @@ export const PetRevealModal = ({
 
         {/* Pet display area */}
         <div className="px-5 pb-2 flex flex-col items-center">
-          {/* Pet image container */}
           <div
             className="relative w-32 h-32 flex items-center justify-center rounded-2xl mb-4"
             style={{
@@ -192,7 +358,7 @@ export const PetRevealModal = ({
               }}
               draggable={false}
             />
-            {rarity === 'legendary' && (
+            {displayRarity === 'legendary' && (
               <div
                 className="absolute inset-0 rounded-2xl pointer-events-none"
                 style={{
@@ -204,7 +370,6 @@ export const PetRevealModal = ({
             )}
           </div>
 
-          {/* Pet info */}
           <div className="text-center space-y-2 w-full">
             <h3
               className="text-xl font-black tracking-tight"
@@ -213,7 +378,6 @@ export const PetRevealModal = ({
               {species.name}
             </h3>
 
-            {/* Rarity + size badges */}
             <div className="flex items-center justify-center gap-2">
               <span
                 className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full tracking-wide"
@@ -232,16 +396,14 @@ export const PetRevealModal = ({
                   color: '#546E7A',
                 }}
               >
-                {SIZE_EMOJI[size]} {SIZE_LABELS[size]}
+                {SIZE_EMOJI[displaySize]} {SIZE_LABELS[displaySize]}
               </span>
             </div>
 
-            {/* Description */}
             <p className="text-xs leading-relaxed px-2" style={{ color: '#78909C' }}>
               {species.description}
             </p>
 
-            {/* Session info */}
             <p className="text-[10px] font-medium" style={{ color: '#B0BEC5' }}>
               Earned from a {sessionMinutes} minute session
             </p>
@@ -251,8 +413,8 @@ export const PetRevealModal = ({
         {/* Continue button */}
         <div className="px-5 pb-5 pt-2">
           <button
-            onClick={onClose}
-            className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97]"
+            onClick={handleClose}
+            className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px]"
             style={{
               background: config.color,
               color: '#fff',
