@@ -236,9 +236,9 @@
 }
 
 .settings-badge--amber {
-  background: hsl(var(--warning) / 0.1);
-  border: 1px solid hsl(var(--warning) / 0.2);
-  color: hsl(var(--warning));
+  background: hsl(var(--warning) / 0.12);
+  border: 1px solid hsl(var(--warning) / 0.25);
+  color: hsl(35 70% 38%);
 }
 
 .settings-badge--red {
@@ -531,4 +531,30 @@
   border-radius: 20px;
   background: hsl(var(--muted) / 0.3);
   border: 1px solid hsl(var(--border) / 0.6);
+}
+
+/* ── Dark mode badge overrides ── */
+@media (prefers-color-scheme: dark) {
+  .settings-badge--amber {
+    color: hsl(42 60% 65%);
+  }
+}
+.dark .settings-badge--amber {
+  color: hsl(42 60% 65%);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM DIALOG — subscription popup
+   ═══════════════════════════════════════════════════════════════ */
+.premium-header {
+  background: linear-gradient(180deg, hsl(42 60% 96%) 0%, hsl(var(--card)) 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .premium-header {
+    background: linear-gradient(180deg, hsl(42 30% 14%) 0%, hsl(var(--card)) 100%);
+  }
+}
+.dark .premium-header {
+  background: linear-gradient(180deg, hsl(42 30% 14%) 0%, hsl(var(--card)) 100%);
 }
