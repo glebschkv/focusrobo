@@ -40,8 +40,9 @@ export const TimerControls = ({
           aria-label={ARIA_LABELS.START_TIMER}
           className="px-14 py-[18px] rounded-2xl text-lg font-bold tracking-wide text-white transition-all active:scale-95"
           style={{
-            background: colors.ringStart,
-            boxShadow: `0 4px 20px ${colors.ringStart}50`,
+            background: colors.buttonGradient,
+            boxShadow: `0 4px 20px ${colors.buttonShadowColor}, 0 1px 3px hsl(0 0% 0% / 0.1)`,
+            textShadow: colors.buttonTextShadow,
           }}
         >
           Start Growing
@@ -61,7 +62,7 @@ export const TimerControls = ({
           opacity: isLocked ? 0.4 : 1,
         }}
       >
-        <Square className="w-4 h-4" style={{ color: `${colors.text}60` }} aria-hidden="true" />
+        <Square className="w-4 h-4" style={{ color: colors.textSecondary }} aria-hidden="true" />
       </button>
 
       <button
@@ -69,8 +70,9 @@ export const TimerControls = ({
         aria-label={isLocked ? "Pause disabled — strict mode active" : ARIA_LABELS.PAUSE_TIMER}
         className="px-12 py-4 rounded-2xl text-sm font-bold tracking-wide text-white transition-all active:scale-95"
         style={{
-          background: isLocked ? `${colors.text}30` : colors.ringStart,
-          boxShadow: isLocked ? 'none' : `0 4px 16px ${colors.ringStart}30`,
+          background: isLocked ? `${colors.text}30` : colors.buttonGradient,
+          boxShadow: isLocked ? 'none' : `0 4px 16px ${colors.buttonShadowColor}`,
+          textShadow: isLocked ? 'none' : colors.buttonTextShadow,
         }}
       >
         {isLocked ? (
@@ -95,7 +97,7 @@ export const TimerControls = ({
           opacity: isLocked ? 0.4 : 1,
         }}
       >
-        <SkipForward className="w-4 h-4" style={{ color: `${colors.text}60` }} aria-hidden="true" />
+        <SkipForward className="w-4 h-4" style={{ color: colors.textSecondary }} aria-hidden="true" />
       </button>
     </div>
   );
