@@ -57,16 +57,16 @@ export const AnalyticsGamificationPanel = ({ stats, isPremium, onUpgrade }: Gami
 
       {/* Premium details */}
       {isPremium ? (
-        <div className="mt-3 pt-3 border-t border-border/30 space-y-1.5">
+        <div className="mt-3 pt-3 border-t border-border/30 flex items-center gap-4">
           {stats.rareOrBetter > 0 && (
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground">Rare+ pets:</span>
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="text-muted-foreground">Rare+:</span>
               <span className="font-bold text-blue-500">{stats.rareOrBetter}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-muted-foreground">Avg pets/day:</span>
-            <span className="font-bold tabular-nums">{(stats.petsEarned / 7).toFixed(1)}</span>
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="text-muted-foreground">Avg/day:</span>
+            <span className="font-bold tabular-nums">{stats.petsEarned > 0 ? (stats.petsEarned / 7).toFixed(1) : '0'}</span>
           </div>
         </div>
       ) : (
@@ -80,7 +80,7 @@ export const AnalyticsGamificationPanel = ({ stats, isPremium, onUpgrade }: Gami
         >
           <div className="flex items-center gap-1.5">
             <Crown className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-amber-700">See full game stats</span>
+            <span className="text-amber-600 dark:text-amber-400">See full game stats</span>
           </div>
           <ChevronRight className="w-3.5 h-3.5 text-amber-500/60" />
         </button>

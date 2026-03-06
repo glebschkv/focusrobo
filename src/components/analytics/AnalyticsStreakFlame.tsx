@@ -38,7 +38,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
         <span className={cn(
           "inline-block",
           flameSize === 'large' ? 'text-lg' : flameSize === 'medium' ? 'text-base' : 'text-sm',
-          currentStreak > 0 ? 'animate-pulse' : 'opacity-50'
+          currentStreak > 0 ? 'motion-safe:animate-pulse' : 'opacity-50'
         )}>
           🔥
         </span>
@@ -66,7 +66,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
           <span className={cn(
             "absolute",
             flameSize === 'large' ? 'text-4xl' : flameSize === 'medium' ? 'text-3xl' : 'text-2xl',
-            currentStreak > 0 && "animate-bounce",
+            currentStreak > 0 && "motion-safe:animate-bounce",
           )}
             style={{
               animationDuration: '3s',
@@ -90,7 +90,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
           </div>
 
           {/* Mini 7-day calendar */}
-          <div className="flex items-center gap-1 mt-2">
+          <div className="flex items-center gap-1.5 mt-2">
             {last7Days.map((dateStr) => {
               // Simple heuristic: if date <= lastSessionDate, show as active
               const isActive = lastSessionDate ? dateStr <= lastSessionDate : false;
@@ -99,7 +99,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
                 <div
                   key={dateStr}
                   className={cn(
-                    "w-4 h-4 rounded flex items-center justify-center text-[8px]",
+                    "w-5 h-5 rounded flex items-center justify-center text-[9px]",
                     isActive ? "bg-orange-500/20" : "bg-muted/20",
                     isCurrentDay && "ring-1 ring-orange-400/50"
                   )}

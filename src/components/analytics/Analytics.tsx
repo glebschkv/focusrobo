@@ -73,7 +73,7 @@ const InlineUpgradePrompt = ({
 }) => (
   <button
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all active:scale-[0.98]"
+    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all active:scale-[0.98] min-h-[48px]"
     style={{
       background: 'linear-gradient(135deg, hsl(35 80% 50% / 0.08) 0%, hsl(280 60% 50% / 0.06) 100%)',
       border: '1.5px dashed hsl(35 70% 50% / 0.25)',
@@ -87,7 +87,7 @@ const InlineUpgradePrompt = ({
     >
       <Icon className="w-3.5 h-3.5 text-amber-500" />
     </div>
-    <span className="text-[11px] text-amber-700 font-semibold flex-1 text-left">
+    <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex-1 text-left">
       {text}
     </span>
     <div className="flex items-center gap-1">
@@ -279,7 +279,7 @@ export const Analytics = () => {
   return (
     <div className="pb-24">
       {/* ─── Sticky Tab Bar ─── */}
-      <div className="sticky top-0 z-20 bg-background border-b border-border">
+      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border">
         <div ref={tabBarRef} className="flex relative px-4">
           {TABS.map((tab) => (
             <button
@@ -287,7 +287,7 @@ export const Analytics = () => {
               data-tab={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-bold uppercase tracking-wider transition-colors relative",
+                "flex-1 flex items-center justify-center gap-1.5 py-3.5 text-xs font-bold uppercase tracking-wider transition-colors relative min-h-[44px]",
                 activeTab === tab.id
                   ? "text-primary"
                   : "text-muted-foreground/60"

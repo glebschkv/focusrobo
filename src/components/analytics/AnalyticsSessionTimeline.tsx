@@ -72,18 +72,26 @@ export const AnalyticsSessionTimeline = ({ sessions, formatDuration }: SessionTi
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setDayOffset(Math.min(6, dayOffset + 1))}
-          className="p-1.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
+          className={cn(
+            "w-9 h-9 flex items-center justify-center rounded-lg bg-muted/20 transition-colors active:bg-muted/40",
+            dayOffset >= 6 && "opacity-30 pointer-events-none"
+          )}
           disabled={dayOffset >= 6}
+          aria-label="Previous day"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
+          <ChevronLeft className="w-4 h-4" />
         </button>
         <span className="text-xs font-bold">{formatDateLabel(selectedDate)}</span>
         <button
           onClick={() => setDayOffset(Math.max(0, dayOffset - 1))}
-          className="p-1.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors"
+          className={cn(
+            "w-9 h-9 flex items-center justify-center rounded-lg bg-muted/20 transition-colors active:bg-muted/40",
+            dayOffset <= 0 && "opacity-30 pointer-events-none"
+          )}
           disabled={dayOffset <= 0}
+          aria-label="Next day"
         >
-          <ChevronRight className="w-3.5 h-3.5" />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 

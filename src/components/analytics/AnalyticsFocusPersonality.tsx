@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Sunrise,
   Moon,
@@ -11,7 +10,6 @@ import {
   Crown,
   ChevronRight,
   HelpCircle,
-  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FocusPersonality, FOCUS_ARCHETYPES } from "@/types/analytics";
@@ -49,7 +47,6 @@ export const AnalyticsFocusPersonality = ({
   const archetype = FOCUS_ARCHETYPES[personality.primary];
   const secondaryArchetype = FOCUS_ARCHETYPES[personality.secondary];
   const IconComponent = ICON_MAP[archetype.icon] || Compass;
-  const [showInfo, setShowInfo] = useState(false);
 
   if (!isPremium) {
     // Free teaser — mystery card
@@ -113,7 +110,7 @@ export const AnalyticsFocusPersonality = ({
         >
           <div className="flex items-center gap-1.5">
             <Crown className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-[11px] font-bold text-amber-700">Discover your focus personality</span>
+            <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">Discover your focus personality</span>
           </div>
           <ChevronRight className="w-3.5 h-3.5 text-amber-500/60" />
         </div>
@@ -130,13 +127,7 @@ export const AnalyticsFocusPersonality = ({
         <div className="flex items-center gap-2 mb-1">
           <Compass className="w-4 h-4 text-primary" />
           <span className="text-sm font-bold">Focus Personality</span>
-          <button
-            onClick={() => setShowInfo(!showInfo)}
-            className="ml-auto text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-          </button>
-          <span className="text-[10px] text-muted-foreground">Updated weekly</span>
+          <span className="ml-auto text-[10px] text-muted-foreground">Updated weekly</span>
         </div>
 
         <div className="flex items-center gap-4 mt-3">

@@ -5,7 +5,7 @@ interface RadarChartProps {
   data: RadarDataPoint[];
 }
 
-const SIZE = 200;
+const SIZE = 220;
 const CENTER = SIZE / 2;
 const RADIUS = 75;
 const LEVELS = 4;

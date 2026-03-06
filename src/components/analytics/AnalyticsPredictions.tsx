@@ -112,7 +112,7 @@ export const AnalyticsPredictions = ({ predictions, isPremium, onUpgrade }: Pred
         >
           <div className="flex items-center gap-1.5">
             <Crown className="w-3.5 h-3.5 text-amber-500" />
-            <span className="text-amber-700">Unlock all predictions</span>
+            <span className="text-amber-600 dark:text-amber-400">Unlock all predictions</span>
           </div>
           <ChevronRight className="w-3.5 h-3.5 text-amber-500/60" />
         </button>

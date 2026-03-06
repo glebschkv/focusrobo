@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Droplets, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FlowStats } from "@/types/analytics";
@@ -8,6 +9,7 @@ interface FlowStatesProps {
 
 export const AnalyticsFlowStates = ({ stats }: FlowStatesProps) => {
   const { totalFlowSessions, flowRate, longestFlowStreak, currentFlowStreak } = stats;
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // Mini ring for flow rate
   const size = 56;
@@ -24,13 +26,24 @@ export const AnalyticsFlowStates = ({ stats }: FlowStatesProps) => {
       <div className="flex items-center gap-2 mb-3">
         <Droplets className="w-4 h-4 text-violet-500" />
         <span className="text-sm font-bold">Flow States</span>
-        <div className="ml-auto group relative">
-          <Info className="w-3.5 h-3.5 text-muted-foreground/40 cursor-help" />
-          <div className="absolute right-0 top-5 z-10 hidden group-hover:block bg-card border border-border rounded-lg p-2 shadow-lg w-44">
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
-              Flow = 45+ min session, completed, zero distractions (perfect quality)
-            </p>
-          </div>
+        <div className="ml-auto relative">
+          <button
+            onClick={() => setShowTooltip(!showTooltip)}
+            className="w-7 h-7 flex items-center justify-center -mr-1.5 rounded-full active:bg-muted/20"
+            aria-label="Flow state info"
+          >
+            <Info className="w-3.5 h-3.5 text-muted-foreground/40" />
+          </button>
+          {showTooltip && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowTooltip(false)} />
+              <div className="absolute right-0 top-8 z-20 bg-card border border-border rounded-lg p-2.5 shadow-lg w-48">
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  Flow = 45+ min session, completed, zero distractions (perfect quality)
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
