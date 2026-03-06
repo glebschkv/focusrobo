@@ -4,7 +4,8 @@ import { AppSettings } from "@/hooks/useSettings";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
-import { Download, Upload, RotateCcw, Shield, AlertTriangle, HardDrive, Loader2 } from "lucide-react";
+import { Download, Upload, RotateCcw, Shield, AlertTriangle, HardDrive, Loader2, BarChart3 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from 'sonner';
 
 interface SettingsDataProps {
@@ -41,20 +42,27 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
         </div>
 
         <div className="space-y-3">
-          <div className="settings-row">
-            <div>
-              <Label className="text-xs font-semibold text-[hsl(var(--foreground))]">Usage Analytics</Label>
-              <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Anonymous usage data to improve the app</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn("settings-icon-box", settings.dataCollection ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+                <BarChart3 className="w-4 h-4" />
+              </div>
+              <div>
+                <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Usage Analytics</Label>
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Anonymous data to improve the app</p>
+              </div>
             </div>
             <Switch checked={settings.dataCollection} onCheckedChange={(checked) => onUpdate({ dataCollection: checked })} />
           </div>
 
-          <div className="settings-row">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-3.5 h-3.5 text-[hsl(var(--warning))]" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn("settings-icon-box", settings.crashReporting ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+                <AlertTriangle className="w-4 h-4" />
+              </div>
               <div>
-                <Label className="text-xs font-semibold text-[hsl(var(--foreground))]">Crash Reports</Label>
-                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Send error logs</p>
+                <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Crash Reports</Label>
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Send error logs when issues occur</p>
               </div>
             </div>
             <Switch checked={settings.crashReporting} onCheckedChange={(checked) => onUpdate({ crashReporting: checked })} />
@@ -72,7 +80,7 @@ export const SettingsData = ({ settings, onUpdate, onReset, onExport, onImport }
         <div className="space-y-2">
           <button onClick={onExport} className="settings-btn-secondary">
             <Download className="w-4 h-4" />
-            <span className="text-sm font-semibold">Export Settings</span>
+            <span>Export Settings</span>
           </button>
 
           <div className="relative">

@@ -57,8 +57,8 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">Volume</Label>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[hsl(var(--primary))]">{settings.soundVolume}%</span>
-                  <button onClick={testSound} className="p-1.5 rounded-md bg-[hsl(var(--primary))] text-white">
+                  <span className="settings-slider-value">{settings.soundVolume}%</span>
+                  <button onClick={testSound} className="p-1.5 rounded-lg bg-[hsl(var(--primary))] text-white transition-all active:scale-95">
                     <Play className="w-3 h-3" />
                   </button>
                 </div>

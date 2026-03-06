@@ -105,7 +105,7 @@ export const SettingsProfile = () => {
 
         {/* Display Name */}
         <div className="space-y-2">
-          <Label htmlFor="displayName" className="text-xs text-[hsl(var(--muted-foreground))]">Display Name</Label>
+          <Label htmlFor="displayName" className="text-xs font-semibold text-[hsl(var(--muted-foreground))]">Display Name</Label>
           {isEditing ? (
             <Input
               id="displayName"

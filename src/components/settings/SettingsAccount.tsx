@@ -153,7 +153,7 @@ export const SettingsAccount = () => {
 
           <button onClick={handleRestorePurchases} disabled={isRestoring} className="settings-btn-secondary">
             <RefreshCw className={`w-4 h-4 ${isRestoring ? 'animate-spin' : ''}`} />
-            <span className="text-sm font-semibold">{isRestoring ? 'Restoring...' : 'Restore Purchases'}</span>
+            <span>{isRestoring ? 'Restoring...' : 'Restore Purchases'}</span>
           </button>
 
           <p className="text-[11px] text-[hsl(var(--muted-foreground))] text-center">
@@ -223,7 +223,7 @@ export const SettingsAccount = () => {
         </div>
         <button className="settings-btn-secondary" disabled={isSigningOut} onClick={() => setSignOutDialogOpen(true)}>
           <LogOut className="w-4 h-4" />
-          <span className="text-sm font-semibold">{isLocalOnlyGuest ? 'Exit Guest Mode' : 'Sign Out'}</span>
+          <span>{isLocalOnlyGuest ? 'Exit Guest Mode' : 'Sign Out'}</span>
         </button>
       </div>
 
