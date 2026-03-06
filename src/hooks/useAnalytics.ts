@@ -14,10 +14,22 @@ import {
   AnalyticsInsight,
   Milestone,
   MonthlyStats,
+  FocusPersonality,
+  FocusArchetype,
+  FOCUS_ARCHETYPES,
+  RadarDataPoint,
+  Prediction,
+  FlowStats,
+  SmartSchedule,
+  ScheduleSlot,
+  WeeklyGameStats,
   DEFAULT_ANALYTICS_SETTINGS,
   DEFAULT_PERSONAL_RECORDS,
   createEmptyDailyStats,
 } from '@/types/analytics';
+import { useLandStore } from '@/stores/landStore';
+// xpStore accessed via getState() inside useMemo
+// coinStore accessed via getState() inside useMemo
 
 // Helper to get local YYYY-MM-DD string from a Date
 // Uses local timezone consistently (not UTC) so that sessions near midnight
@@ -1190,7 +1202,64 @@ export const useAnalytics = () => {
       }
     }
 
-    return generated.slice(0, 6);
+    // 14. Flow state insight
+    const flowSess = sessions.filter(s =>
+      s.sessionType !== 'break' && s.status === 'completed' &&
+      s.focusQuality === 'perfect' && s.actualDuration >= 2700 &&
+      s.startTime >= Date.now() - (30 * 24 * 60 * 60 * 1000)
+    );
+    if (flowSess.length >= 3) {
+      generated.push({
+        id: 'flow-achievement',
+        type: 'achievement',
+        icon: 'Shield',
+        title: `${flowSess.length} flow states this month`,
+        description: 'Deep focus sessions (45+ min, zero distractions) are where your best work happens.',
+        color: 'text-violet-500',
+      });
+    }
+
+    // 15. Smart schedule suggestion
+    const dayN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayCompletionRates: Record<number, { completed: number; total: number }> = {};
+    sessions.filter(s => s.sessionType !== 'break' && s.startTime >= Date.now() - (30 * 24 * 60 * 60 * 1000)).forEach(s => {
+      const d = (new Date(s.startTime).getDay() + 6) % 7;
+      if (!dayCompletionRates[d]) dayCompletionRates[d] = { completed: 0, total: 0 };
+      dayCompletionRates[d].total++;
+      if (s.status === 'completed') dayCompletionRates[d].completed++;
+    });
+    const bestCompletionDay = Object.entries(dayCompletionRates)
+      .filter(([, v]) => v.total >= 3)
+      .map(([d, v]) => ({ day: parseInt(d), rate: Math.round((v.completed / v.total) * 100) }))
+      .sort((a, b) => b.rate - a.rate)[0];
+    if (bestCompletionDay && bestCompletionDay.rate >= 85) {
+      generated.push({
+        id: 'best-completion-day',
+        type: 'recommendation',
+        icon: 'Target',
+        title: `${dayN[bestCompletionDay.day]}s are your power day`,
+        description: `${bestCompletionDay.rate}% completion rate on ${dayN[bestCompletionDay.day]}s. Schedule your hardest tasks then.`,
+        color: 'text-blue-500',
+      });
+    }
+
+    // 16. Gamification insight
+    const weekCutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const weekCompletedSessions = sessions.filter(s =>
+      s.sessionType !== 'break' && s.status === 'completed' && s.startTime >= weekCutoff
+    ).length;
+    if (weekCompletedSessions >= 7) {
+      generated.push({
+        id: 'pet-pace',
+        type: 'achievement',
+        icon: 'Trophy',
+        title: `${weekCompletedSessions} pets earned this week!`,
+        description: 'Every completed session adds a new pet to your island. You\'re building a thriving colony.',
+        color: 'text-green-500',
+      });
+    }
+
+    return generated.slice(0, 10);
   }, [weekOverWeekChange, lastWeekStats, bestFocusHours, currentGoalStreak, completionRate, sessions, getCategoryDistribution, todayStats, records, focusQualityStats, dailyStats]);
 
   // ============================================================================
@@ -1237,7 +1306,141 @@ export const useAnalytics = () => {
   }, [records, getCategoryDistribution, weekOverWeekChange, bestFocusHours, dailyStats, focusScore]);
 
   // ============================================================================
-  // FOCUS SCORE HISTORY (for trend sparkline)
+  // FOCUS PERSONALITY (archetype based on behavioral patterns)
+  // ============================================================================
+  const focusPersonality = useMemo((): FocusPersonality => {
+    const last30Days = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    const recentWork = sessions.filter(s =>
+      s.sessionType !== 'break' && s.startTime >= last30Days
+    );
+
+    if (recentWork.length < 3) {
+      return {
+        primary: 'explorer',
+        secondary: 'explorer',
+        traits: { endurance: 0, consistency: 0, quality: 0, volume: 0, growth: 0 },
+        description: FOCUS_ARCHETYPES['explorer'].description,
+        icon: FOCUS_ARCHETYPES['explorer'].icon,
+        color: FOCUS_ARCHETYPES['explorer'].color,
+      };
+    }
+
+    // Calculate behavioral signals
+    const morningCount = recentWork.filter(s => {
+      const h = new Date(s.startTime).getHours();
+      return h >= 5 && h < 12;
+    }).length;
+    const eveningCount = recentWork.filter(s => {
+      const h = new Date(s.startTime).getHours();
+      return h >= 18 || h < 2;
+    }).length;
+    const morningRatio = morningCount / recentWork.length;
+    const eveningRatio = eveningCount / recentWork.length;
+
+    const completedWork = recentWork.filter(s => s.status === 'completed');
+    const avgSessionMin = completedWork.length > 0
+      ? completedWork.reduce((sum, s) => sum + s.actualDuration, 0) / completedWork.length / 60
+      : 0;
+    const completionRate = recentWork.length > 0
+      ? completedWork.length / recentWork.length
+      : 0;
+
+    const perfectCount = recentWork.filter(s => s.focusQuality === 'perfect').length;
+    const perfectRatio = recentWork.length > 0 ? perfectCount / recentWork.length : 0;
+
+    // Sessions per active day
+    let activeDays30 = 0;
+    for (let i = 0; i < 30; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = toLocalDateString(date);
+      if (dailyStats[dateStr]?.sessionsCompleted > 0) activeDays30++;
+    }
+    const sessionsPerDay = activeDays30 > 0 ? recentWork.length / activeDays30 : 0;
+
+    // Score each archetype
+    const scores: Record<FocusArchetype, number> = {
+      'early-bird': morningRatio > 0.6 ? 100 : morningRatio * 150,
+      'night-owl': eveningRatio > 0.6 ? 100 : eveningRatio * 150,
+      'marathon-runner': avgSessionMin > 90 ? 100 : Math.min(100, (avgSessionMin / 90) * 100),
+      'sprint-master': avgSessionMin < 35 && sessionsPerDay > 3 ? 100 : (avgSessionMin < 35 ? 60 : 0) + (sessionsPerDay > 3 ? 40 : sessionsPerDay / 3 * 40),
+      'zen-master': perfectRatio > 0.8 ? 100 : perfectRatio * 120,
+      'grinder': sessionsPerDay > 5 ? 100 : Math.min(100, (sessionsPerDay / 5) * 100),
+      'perfectionist': completionRate > 0.95 ? 100 : completionRate * 100,
+      'explorer': 30, // baseline fallback
+    };
+
+    const sorted = Object.entries(scores).sort(([, a], [, b]) => b - a);
+    const primary = sorted[0][0] as FocusArchetype;
+    const secondary = sorted[1][0] as FocusArchetype;
+
+    // Compute 5 trait scores (0-100)
+    const endurance = Math.min(100, Math.round((avgSessionMin / 120) * 100));
+    const consistency = Math.min(100, Math.round((activeDays30 / 30) * 100));
+    const quality = Math.min(100, Math.round(perfectRatio * 100));
+    const volume = Math.min(100, Math.round((recentWork.length / 60) * 100)); // 60 sessions in 30 days = 100
+    const growth = Math.min(100, Math.max(0, Math.round(50 + weekOverWeekChange)));
+
+    const archetype = FOCUS_ARCHETYPES[primary];
+
+    return {
+      primary,
+      secondary,
+      traits: { endurance, consistency, quality, volume, growth },
+      description: archetype.description,
+      icon: archetype.icon,
+      color: archetype.color,
+    };
+  }, [sessions, dailyStats, weekOverWeekChange]);
+
+  // ============================================================================
+  // RADAR CHART DATA (5-axis performance profile)
+  // ============================================================================
+  const radarData = useMemo((): RadarDataPoint[] => {
+    const traits = focusPersonality.traits;
+
+    // Compute last week's traits for comparison
+    const last14Days = Date.now() - (14 * 24 * 60 * 60 * 1000);
+    const last7Days = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const prevWeekSessions = sessions.filter(s =>
+      s.sessionType !== 'break' && s.startTime >= last14Days && s.startTime < last7Days
+    );
+
+    let prevEndurance = 0, prevConsistency = 0, prevQuality = 0, prevVolume = 0;
+    const prevGrowth = 50;
+
+    if (prevWeekSessions.length > 0) {
+      const prevCompleted = prevWeekSessions.filter(s => s.status === 'completed');
+      const prevAvgMin = prevCompleted.length > 0
+        ? prevCompleted.reduce((sum, s) => sum + s.actualDuration, 0) / prevCompleted.length / 60
+        : 0;
+      prevEndurance = Math.min(100, Math.round((prevAvgMin / 120) * 100));
+
+      let prevActiveDays = 0;
+      for (let i = 7; i < 14; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = toLocalDateString(date);
+        if (dailyStats[dateStr]?.sessionsCompleted > 0) prevActiveDays++;
+      }
+      prevConsistency = Math.min(100, Math.round((prevActiveDays / 7) * 100));
+
+      const prevPerfect = prevWeekSessions.filter(s => s.focusQuality === 'perfect').length;
+      prevQuality = Math.min(100, Math.round((prevPerfect / prevWeekSessions.length) * 100));
+      prevVolume = Math.min(100, Math.round((prevWeekSessions.length / 14) * 100));
+    }
+
+    return [
+      { axis: 'Endurance', value: traits.endurance, previousValue: prevEndurance },
+      { axis: 'Consistency', value: traits.consistency, previousValue: prevConsistency },
+      { axis: 'Quality', value: traits.quality, previousValue: prevQuality },
+      { axis: 'Volume', value: traits.volume, previousValue: prevVolume },
+      { axis: 'Growth', value: traits.growth, previousValue: prevGrowth },
+    ];
+  }, [focusPersonality.traits, sessions, dailyStats]);
+
+  // ============================================================================
+  // FOCUS SCORE HISTORY (for trend sparkline + predictions)
   // ============================================================================
   const focusScoreHistory = useMemo((): { date: string; score: number }[] => {
     const result: { date: string; score: number }[] = [];
@@ -1255,6 +1458,271 @@ export const useAnalytics = () => {
 
     return result;
   }, [dailyStats]);
+
+  // ============================================================================
+  // PREDICTIVE ANALYTICS (linear extrapolation)
+  // ============================================================================
+  const predictions = useMemo((): Prediction[] => {
+    const result: Prediction[] = [];
+
+    // 1. Total hours milestone prediction
+    const daysSinceJoin = Math.max(1, Math.floor((Date.now() - new Date(records.joinedDate).getTime()) / (24 * 60 * 60 * 1000)));
+    const dailyRate = records.totalFocusTime / daysSinceJoin;
+    if (dailyRate > 0 && records.totalSessions >= 3) {
+      const totalHours = Math.floor(records.totalFocusTime / 3600);
+      const nextTarget = [10, 25, 50, 100, 250, 500, 1000].find(h => h > totalHours);
+      if (nextTarget) {
+        const secondsNeeded = nextTarget * 3600 - records.totalFocusTime;
+        const daysToTarget = Math.ceil(secondsNeeded / dailyRate);
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + daysToTarget);
+        result.push({
+          id: 'hours-milestone',
+          label: `${nextTarget}h total focus`,
+          value: targetDate.toLocaleDateString([], { month: 'short', day: 'numeric' }),
+          date: toLocalDateString(targetDate),
+          confidence: daysToTarget < 14 ? 'high' : daysToTarget < 60 ? 'medium' : 'low',
+          icon: 'Clock',
+          trend: weekOverWeekChange > 0 ? 'up' : weekOverWeekChange < 0 ? 'down' : 'stable',
+        });
+      }
+    }
+
+    // 2. Focus score projection
+    if (focusScoreHistory.length >= 7) {
+      const recent7 = focusScoreHistory.slice(-7);
+      const avgRecent = recent7.reduce((sum, d) => sum + d.score, 0) / recent7.length;
+      const older7 = focusScoreHistory.slice(-14, -7);
+      if (older7.length > 0) {
+        const avgOlder = older7.reduce((sum, d) => sum + d.score, 0) / older7.length;
+        const weeklyDelta = avgRecent - avgOlder;
+        const projected = Math.min(100, Math.max(0, Math.round(avgRecent + weeklyDelta)));
+        result.push({
+          id: 'score-projection',
+          label: 'Focus Score next week',
+          value: `${projected}`,
+          confidence: Math.abs(weeklyDelta) < 5 ? 'high' : 'medium',
+          icon: 'TrendingUp',
+          trend: weeklyDelta > 0 ? 'up' : weeklyDelta < 0 ? 'down' : 'stable',
+        });
+      }
+    }
+
+    // 3. Weekly coin projection
+    const last7DaysSessions = sessions.filter(s =>
+      s.sessionType !== 'break' && s.status === 'completed' &&
+      s.startTime >= Date.now() - (7 * 24 * 60 * 60 * 1000)
+    );
+    if (last7DaysSessions.length > 0) {
+      // Estimate coins from sessions (2 coins/min base)
+      const weeklyMinutes = last7DaysSessions.reduce((sum, s) => sum + s.actualDuration, 0) / 60;
+      const projectedCoins = Math.round(weeklyMinutes * 2);
+      result.push({
+        id: 'coins-projection',
+        label: 'Coins this week',
+        value: `~${projectedCoins}`,
+        confidence: 'medium',
+        icon: 'Coins',
+        trend: 'stable',
+      });
+    }
+
+    // 4. Island completion estimate
+    const last7Completed = sessions.filter(s =>
+      s.sessionType !== 'break' && s.status === 'completed' &&
+      s.startTime >= Date.now() - (7 * 24 * 60 * 60 * 1000)
+    ).length;
+    if (last7Completed > 0) {
+      const petsPerDay = last7Completed / 7;
+      result.push({
+        id: 'island-progress',
+        label: 'Pets/week pace',
+        value: `~${Math.round(petsPerDay * 7)}`,
+        confidence: petsPerDay > 1 ? 'high' : 'medium',
+        icon: 'Grid3x3',
+        trend: 'stable',
+      });
+    }
+
+    return result.slice(0, 4);
+  }, [records, sessions, weekOverWeekChange, focusScoreHistory]);
+
+  // ============================================================================
+  // FLOW STATE DETECTION
+  // ============================================================================
+  const flowStats = useMemo((): FlowStats => {
+    const last30Days = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    const recentCompleted = sessions.filter(s =>
+      s.sessionType !== 'break' &&
+      s.status === 'completed' &&
+      s.startTime >= last30Days
+    );
+
+    // Flow = completed + perfect quality + >= 45 min
+    const flowSessions = recentCompleted.filter(s =>
+      s.focusQuality === 'perfect' && s.actualDuration >= 2700
+    );
+
+    // Calculate flow streak (consecutive flow sessions from most recent)
+    let currentFlowStreak = 0;
+    let longestFlowStreak = 0;
+    let currentRun = 0;
+    const sortedByTime = [...recentCompleted].sort((a, b) => b.startTime - a.startTime);
+
+    for (const s of sortedByTime) {
+      const isFlow = s.focusQuality === 'perfect' && s.actualDuration >= 2700;
+      if (isFlow) {
+        currentRun++;
+        if (currentFlowStreak === 0) currentFlowStreak = currentRun;
+      } else {
+        if (currentFlowStreak === 0) currentFlowStreak = 0; // first non-flow breaks current
+        longestFlowStreak = Math.max(longestFlowStreak, currentRun);
+        currentRun = 0;
+      }
+    }
+    longestFlowStreak = Math.max(longestFlowStreak, currentRun);
+
+    const lastFlow = flowSessions.length > 0
+      ? toLocalDateString(new Date(Math.max(...flowSessions.map(s => s.startTime))))
+      : null;
+
+    return {
+      totalFlowSessions: flowSessions.length,
+      flowRate: recentCompleted.length > 0 ? Math.round((flowSessions.length / recentCompleted.length) * 100) : 0,
+      longestFlowStreak,
+      currentFlowStreak,
+      lastFlowDate: lastFlow,
+    };
+  }, [sessions]);
+
+  // ============================================================================
+  // SMART SCHEDULE (7x24 time slot analysis)
+  // ============================================================================
+  const smartSchedule = useMemo((): SmartSchedule => {
+    // Build 7×24 matrix from session data
+    const matrix: Record<string, { totalMinutes: number; completed: number; total: number; sessionCount: number }> = {};
+
+    // Initialize matrix
+    for (let day = 0; day < 7; day++) {
+      for (let hour = 0; hour < 24; hour++) {
+        matrix[`${day}-${hour}`] = { totalMinutes: 0, completed: 0, total: 0, sessionCount: 0 };
+      }
+    }
+
+    // Populate from sessions
+    const workSessions = sessions.filter(s => s.sessionType !== 'break');
+    workSessions.forEach(s => {
+      const d = new Date(s.startTime);
+      const dayOfWeek = (d.getDay() + 6) % 7; // Monday = 0
+      const hour = d.getHours();
+      const key = `${dayOfWeek}-${hour}`;
+      const slot = matrix[key];
+      if (slot) {
+        slot.totalMinutes += s.actualDuration / 60;
+        slot.sessionCount++;
+        slot.total++;
+        if (s.status === 'completed') slot.completed++;
+      }
+    });
+
+    // Find top 3 slots by completion rate (minimum 3 sessions)
+    const slots: ScheduleSlot[] = [];
+    Object.entries(matrix).forEach(([key, data]) => {
+      if (data.sessionCount >= 3) {
+        const [day, hour] = key.split('-').map(Number);
+        slots.push({
+          dayOfWeek: day,
+          hour,
+          completionRate: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0,
+          avgMinutes: data.sessionCount > 0 ? Math.round(data.totalMinutes / data.sessionCount) : 0,
+          sessionCount: data.sessionCount,
+        });
+      }
+    });
+
+    const topSlots = slots.sort((a, b) => b.completionRate - a.completionRate).slice(0, 3);
+
+    // Best day
+    const dayTotals: Record<number, number> = {};
+    for (let d = 0; d < 7; d++) {
+      dayTotals[d] = 0;
+      for (let h = 0; h < 24; h++) {
+        dayTotals[d] += matrix[`${d}-${h}`].totalMinutes;
+      }
+    }
+    const bestDayEntry = Object.entries(dayTotals).sort(([, a], [, b]) => b - a)[0];
+    const bestDay = { day: parseInt(bestDayEntry[0]), totalMinutes: Math.round(bestDayEntry[1]) };
+
+    // Peak hours (top 3)
+    const hourTotals: Record<number, number> = {};
+    for (let h = 0; h < 24; h++) {
+      hourTotals[h] = 0;
+      for (let d = 0; d < 7; d++) {
+        hourTotals[h] += matrix[`${d}-${h}`].totalMinutes;
+      }
+    }
+    const peakHours = Object.entries(hourTotals)
+      .sort(([, a], [, b]) => b - a)
+      .filter(([, v]) => v > 0)
+      .slice(0, 3)
+      .map(([h]) => parseInt(h));
+
+    // Flatten matrix for export
+    const exportMatrix: Record<string, { totalMinutes: number; completionRate: number; sessionCount: number }> = {};
+    Object.entries(matrix).forEach(([key, data]) => {
+      exportMatrix[key] = {
+        totalMinutes: Math.round(data.totalMinutes),
+        completionRate: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0,
+        sessionCount: data.sessionCount,
+      };
+    });
+
+    return { topSlots, bestDay, peakHours, matrix: exportMatrix };
+  }, [sessions]);
+
+  // ============================================================================
+  // GAMIFICATION STATS (weekly game progress from other stores)
+  // ============================================================================
+  const weeklyGameStats = useMemo((): WeeklyGameStats => {
+    // Get land store data
+    const landState = useLandStore.getState();
+    const currentLand = landState.currentLand;
+
+    // Count pets placed this week
+    const weekStart = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const weekPets = currentLand.cells.filter(cell =>
+      cell !== null && cell.timestamp >= weekStart
+    );
+    const rareOrBetter = weekPets.filter(cell =>
+      cell !== null && ['rare', 'epic', 'legendary'].includes(cell.rarity)
+    ).length;
+
+    // Estimate XP earned this week from sessions
+    const weekSessions = sessions.filter(s =>
+      s.sessionType !== 'break' && s.status === 'completed' &&
+      s.startTime >= weekStart
+    );
+    const xpEarned = weekSessions.reduce((sum, s) => sum + s.xpEarned, 0);
+
+    // Coins estimate (2 coins/min base rate)
+    const weekMinutes = weekSessions.reduce((sum, s) => sum + s.actualDuration, 0) / 60;
+    const coinsEarned = Math.round(weekMinutes * 2);
+
+    // Island progress
+    const availableCells = landState.getAvailableCells();
+    const filledCount = currentLand.cells.filter(c => c !== null).length;
+    const islandProgress = availableCells.size > 0
+      ? Math.round((filledCount / availableCells.size) * 100)
+      : 0;
+
+    return {
+      petsEarned: weekPets.length,
+      rareOrBetter,
+      xpEarned,
+      coinsEarned,
+      islandProgress,
+    };
+  }, [sessions]);
 
   // ============================================================================
   // PEER BENCHMARK (simulated percentile based on score distribution)
@@ -1334,6 +1802,14 @@ export const useAnalytics = () => {
     previousMonthStats,
     insights,
     premiumTeasers,
+
+    // Advanced analytics
+    focusPersonality,
+    radarData,
+    predictions,
+    flowStats,
+    smartSchedule,
+    weeklyGameStats,
 
     // Actions
     recordSession,

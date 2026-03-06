@@ -20,6 +20,13 @@ import { AnalyticsInsights } from "./AnalyticsInsights";
 import { AnalyticsMilestones } from "./AnalyticsMilestones";
 import { AnalyticsCompletionTrend } from "./AnalyticsCompletionTrend";
 import { AnalyticsMonthlySummary } from "./AnalyticsMonthlySummary";
+import { AnalyticsFocusPersonality } from "./AnalyticsFocusPersonality";
+import { AnalyticsRadarChart } from "./AnalyticsRadarChart";
+import { AnalyticsPredictions } from "./AnalyticsPredictions";
+import { AnalyticsGamificationPanel } from "./AnalyticsGamificationPanel";
+import { AnalyticsSessionTimeline } from "./AnalyticsSessionTimeline";
+import { AnalyticsFlowStates } from "./AnalyticsFlowStates";
+import { AnalyticsSmartSchedule } from "./AnalyticsSmartSchedule";
 import { CollapsibleAnalyticsSection } from "./CollapsibleAnalyticsSection";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 import {
@@ -39,8 +46,11 @@ import {
   CalendarRange,
   Trophy,
   History,
+  Droplets,
+  CalendarClock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DailyStats, FocusCategory } from "@/types/analytics";
 
 // ─── Tab types ───────────────────────────────────────────
 type AnalyticsTab = "overview" | "trends" | "details";
@@ -97,10 +107,10 @@ const PremiumLockedPreview = ({
   teaserIndex,
   onUpgrade,
 }: {
-  dailyStats: Record<string, any>;
-  thisWeekCategoryDistribution: any;
-  settings: any;
-  formatDuration: any;
+  dailyStats: Record<string, DailyStats>;
+  thisWeekCategoryDistribution: Record<FocusCategory, number>;
+  settings: { dailyGoalMinutes: number };
+  formatDuration: (seconds: number, format?: 'short' | 'long') => string;
   premiumTeasers: string[];
   teaserIndex: number;
   onUpgrade: () => void;
@@ -154,14 +164,14 @@ const PremiumLockedPreview = ({
             </p>
           ) : (
             <p className="text-[11px] mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              Insights, heatmaps, focus quality, milestones & more
+              Focus personality, radar charts, predictions, flow states & more
             </p>
           )}
         </div>
 
         {/* Feature count */}
         <div className="flex items-center gap-3 text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          <span>15 Premium Features</span>
+          <span>25+ Premium Features</span>
           <span>|</span>
           <span>Unlimited History</span>
         </div>
@@ -187,6 +197,7 @@ const PremiumLockedPreview = ({
 export const Analytics = () => {
   const {
     isLoaded,
+    sessions,
     settings,
     records,
     todayStats,
@@ -208,6 +219,13 @@ export const Analytics = () => {
     previousMonthStats,
     insights,
     premiumTeasers,
+    // New advanced analytics
+    focusPersonality,
+    radarData,
+    predictions,
+    flowStats,
+    smartSchedule,
+    weeklyGameStats,
     getDailyStatsRange,
     getRecentSessions,
     formatDuration,
@@ -277,6 +295,10 @@ export const Analytics = () => {
             >
               {tab.icon}
               {tab.label}
+              {/* Premium badge on Trends/Details for free users */}
+              {!fullAnalytics && tab.id !== 'overview' && (
+                <Crown className="w-2.5 h-2.5 text-amber-500/60" />
+              )}
             </button>
           ))}
           {/* Sliding underline */}
@@ -289,7 +311,7 @@ export const Analytics = () => {
 
       <div className="px-4 py-3 space-y-3">
         {/* ════════════════════════════════════════════════════════════════
-            OVERVIEW TAB — Today snapshot, score, weekly chart
+            OVERVIEW TAB
             ════════════════════════════════════════════════════════════════ */}
         {activeTab === "overview" && (
           <>
@@ -300,6 +322,13 @@ export const Analytics = () => {
               weeklyFocusTime={thisWeekStats.totalFocusTime}
               weekOverWeekChange={weekOverWeekChange}
               formatDuration={formatDuration}
+            />
+
+            {/* Gamification Panel — FREE teaser / PREMIUM full */}
+            <AnalyticsGamificationPanel
+              stats={weeklyGameStats}
+              isPremium={fullAnalytics}
+              onUpgrade={() => setShowPremiumModal(true)}
             />
 
             {/* Daily Goal Ring */}
@@ -317,6 +346,13 @@ export const Analytics = () => {
               streakFreezeCount={streakData.streakFreezeCount}
               dailyGoalMinutes={settings.dailyGoalMinutes}
               todayFocusMinutes={Math.floor(todayStats.totalFocusTime / 60)}
+            />
+
+            {/* Focus Personality — PREMIUM (free sees mystery card) */}
+            <AnalyticsFocusPersonality
+              personality={focusPersonality}
+              isPremium={fullAnalytics}
+              onUpgrade={() => setShowPremiumModal(true)}
             />
 
             {/* Focus Score */}
@@ -338,12 +374,12 @@ export const Analytics = () => {
             {!fullAnalytics && (
               <InlineUpgradePrompt
                 icon={TrendingUp}
-                text="See how this week compares to last week"
+                text="Unlock radar charts, predictions & flow tracking"
                 onClick={() => setShowPremiumModal(true)}
               />
             )}
 
-            {/* Weekly Report */}
+            {/* Weekly Report Card (enhanced with grade) */}
             <AnalyticsWeeklyReport
               thisWeek={thisWeekStats}
               lastWeek={lastWeekStats}
@@ -361,8 +397,8 @@ export const Analytics = () => {
             ) : (
               insights.length > 0 && (
                 <div className="relative">
-                  <AnalyticsInsights insights={insights.slice(0, 1)} />
-                  {insights.length > 1 && (
+                  <AnalyticsInsights insights={insights.slice(0, 2)} />
+                  {insights.length > 2 && (
                     <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-card to-transparent rounded-b-xl" />
                   )}
                 </div>
@@ -372,12 +408,22 @@ export const Analytics = () => {
         )}
 
         {/* ════════════════════════════════════════════════════════════════
-            TRENDS TAB — Comparisons, quality, monthly
+            TRENDS TAB
             ════════════════════════════════════════════════════════════════ */}
         {activeTab === "trends" && (
           <>
             {fullAnalytics ? (
               <>
+                {/* Radar Chart */}
+                <AnalyticsRadarChart data={radarData} />
+
+                {/* Predictions */}
+                <AnalyticsPredictions
+                  predictions={predictions}
+                  isPremium={true}
+                  onUpgrade={() => setShowPremiumModal(true)}
+                />
+
                 {/* Focus Score Trend */}
                 <AnalyticsFocusScoreTrend
                   history={focusScoreHistory}
@@ -436,9 +482,16 @@ export const Analytics = () => {
                   onUpgrade={() => setShowPremiumModal(true)}
                 />
 
+                {/* Predictions teaser (1 visible, rest blurred) */}
+                <AnalyticsPredictions
+                  predictions={predictions}
+                  isPremium={false}
+                  onUpgrade={() => setShowPremiumModal(true)}
+                />
+
                 <InlineUpgradePrompt
                   icon={LayoutGrid}
-                  text="See your focus time breakdown by category"
+                  text="Unlock your focus radar chart & personality profile"
                   onClick={() => setShowPremiumModal(true)}
                 />
 
@@ -459,7 +512,7 @@ export const Analytics = () => {
                 />
                 <InlineUpgradePrompt
                   icon={Clock}
-                  text="Discover your peak focus hours"
+                  text="Discover your peak focus hours & smart schedule"
                   onClick={() => setShowPremiumModal(true)}
                 />
               </>
@@ -468,19 +521,33 @@ export const Analytics = () => {
         )}
 
         {/* ════════════════════════════════════════════════════════════════
-            DETAILS TAB — Categories, heatmap, records, sessions
+            DETAILS TAB
             ════════════════════════════════════════════════════════════════ */}
         {activeTab === "details" && (
           <>
             {fullAnalytics ? (
               <>
+                {/* Session Timeline */}
+                <AnalyticsSessionTimeline
+                  sessions={sessions}
+                  formatDuration={formatDuration}
+                />
+
+                {/* Smart Schedule */}
+                <AnalyticsSmartSchedule
+                  schedule={smartSchedule}
+                />
+
+                {/* Flow States */}
+                <AnalyticsFlowStates stats={flowStats} />
+
                 {/* Category Breakdown */}
                 <AnalyticsCategoryBreakdown
                   categoryDistribution={thisWeekCategoryDistribution}
                   formatDuration={formatDuration}
                 />
 
-                {/* Activity Heatmap */}
+                {/* Activity Heatmap (with schedule toggle) */}
                 <AnalyticsHeatmap
                   dailyStats={dailyStats}
                   dailyGoalMinutes={settings.dailyGoalMinutes}
@@ -543,13 +610,18 @@ export const Analytics = () => {
                 />
 
                 <InlineUpgradePrompt
-                  icon={CalendarDays}
-                  text="View your 12-week activity heatmap"
+                  icon={CalendarClock}
+                  text="See your session timeline & smart schedule"
                   onClick={() => setShowPremiumModal(true)}
                 />
                 <InlineUpgradePrompt
-                  icon={Clock}
-                  text="Discover your peak focus hours"
+                  icon={Droplets}
+                  text="Track your flow states & deep focus sessions"
+                  onClick={() => setShowPremiumModal(true)}
+                />
+                <InlineUpgradePrompt
+                  icon={CalendarDays}
+                  text="View your 12-week activity heatmap"
                   onClick={() => setShowPremiumModal(true)}
                 />
                 <InlineUpgradePrompt
