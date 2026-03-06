@@ -91,6 +91,15 @@ export const TIMER_PRESETS: TimerPreset[] = [
     description: 'Extended 60-minute session'
   },
   {
+    id: 'marathon',
+    name: 'Marathon',
+    duration: 120,
+    type: 'deep-work',
+    icon: Brain,
+    color: 'text-success',
+    description: '2-hour marathon for adult pets'
+  },
+  {
     id: 'short-break',
     name: 'Short Break',
     duration: 5,

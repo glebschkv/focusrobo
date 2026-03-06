@@ -83,6 +83,9 @@ export const useTimerLogic = () => {
   const [showPetRevealModal, setShowPetRevealModal] = useState(false);
   const [lastPlacedPet, setLastPlacedPet] = useState<PendingPet | null>(null);
   const [lastPlacedCellIndex, setLastPlacedCellIndex] = useState(-1);
+  const [petChoices, setPetChoices] = useState<Array<{ species: { id: string; name: string; rarity: string; imagePath: string }; size: string }>>([]);
+  const [petRewardMinutes, setPetRewardMinutes] = useState(0);
+  const [petRewardLevel, setPetRewardLevel] = useState(1);
   const [lastSessionXP, setLastSessionXP] = useState(0);
   const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
@@ -327,16 +330,22 @@ export const useTimerLogic = () => {
         }
       }
 
-      // Generate and place pet on land grid for work sessions
+      // Prepare pet reward for work sessions — actual generation deferred to PetRevealModal
+      // so the user can choose between random roll and picking a pet
       if (state.timerState.sessionType !== 'break' && completedMinutes >= 25) {
         try {
           const playerLevel = xpSystem?.currentLevel ?? 1;
+          // Generate choices for the "Pick" option
+          const choices = useLandStore.getState().generatePetChoices(completedMinutes, playerLevel, 4);
+          setPetChoices(choices);
+          setPetRewardMinutes(completedMinutes);
+          setPetRewardLevel(playerLevel);
+          // Pre-generate a random pet for the "Random" option, but do NOT place it yet.
+          // Placement is deferred to PetRevealModal so the user can choose between
+          // random roll and picking a specific pet.
           const pending = useLandStore.getState().generateRandomPet(completedMinutes, playerLevel);
-          const cellIndex = useLandStore.getState().placePendingPet();
-          if (cellIndex !== -1) {
-            setLastPlacedPet(pending);
-            setLastPlacedCellIndex(cellIndex);
-          }
+          setLastPlacedPet(pending);
+          setLastPlacedCellIndex(0); // placeholder — actual cell assigned on placement
         } catch (e) {
           timerLogger.error('Failed to generate/place pet:', e);
         }
@@ -601,6 +610,9 @@ export const useTimerLogic = () => {
     showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
+    petChoices,
+    petRewardMinutes,
+    petRewardLevel,
     lastSessionXP,
     lastCoinsEarned,
     autoBreakEnabled,

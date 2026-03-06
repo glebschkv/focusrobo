@@ -88,18 +88,18 @@ export const RARITY_STARS: Record<PetRarity, number> = {
   legendary: 5,
 };
 
-/** Affinity system — levels, colors, descriptions */
+/** Bond system — clearer level names and explicit reward descriptions */
 export const AFFINITY_THRESHOLDS = [
-  { level: 'familiar' as const, count: 3 },
-  { level: 'bonded' as const, count: 5 },
-  { level: 'devoted' as const, count: 10 },
+  { level: 'familiar' as const, count: 3, reward: 'Grow babies to teen' },
+  { level: 'bonded' as const, count: 5, reward: 'Better roll chance' },
+  { level: 'devoted' as const, count: 10, reward: 'Grow any pet to adult' },
 ];
 
 export type AffinityLevel = 'none' | 'familiar' | 'bonded' | 'devoted';
 
 export const AFFINITY_INFO: Record<AffinityLevel, { label: string; color: string; description: string }> = {
-  none: { label: 'New', color: '#9E9E9E', description: 'Find 3 to become familiar' },
-  familiar: { label: 'Familiar', color: '#66BB6A', description: 'Find 5 total to bond' },
-  bonded: { label: 'Bonded', color: '#42A5F5', description: 'Can grow babies to teen! Find 10 to devote' },
-  devoted: { label: 'Devoted', color: '#AB47BC', description: 'Can grow any pet to adult!' },
+  none: { label: 'New', color: '#9E9E9E', description: 'Find this species 3 times to start bonding' },
+  familiar: { label: 'Bond Lv.1', color: '#66BB6A', description: 'Can grow babies to teen! Find 5 total for Lv.2' },
+  bonded: { label: 'Bond Lv.2', color: '#42A5F5', description: 'Better roll chance! Find 10 total for max bond' },
+  devoted: { label: 'Best Friend', color: '#AB47BC', description: 'Can grow any pet to adult!' },
 };
