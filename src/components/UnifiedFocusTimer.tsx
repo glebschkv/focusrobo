@@ -9,6 +9,7 @@
  * - TimerView: Renders the main timer interface
  * - StatsView: Renders the analytics/stats view
  * - TimerModals: Orchestrates all timer-related modals
+ * - SessionCompleteView: Unified post-session celebration screen
  */
 
 import { useState, useCallback } from "react";
@@ -22,6 +23,7 @@ import { AmbientSoundPicker } from "./focus-timer/AmbientSoundPicker";
 import { TimerView } from "./focus-timer/TimerView";
 import { StatsView } from "./focus-timer/StatsView";
 import { TimerModals } from "./focus-timer/TimerModals";
+import { SessionCompleteView } from "./focus-timer/SessionCompleteView";
 import { PremiumSubscription } from "./PremiumSubscription";
 
 type TimerViewType = 'timer' | 'stats';
@@ -43,11 +45,13 @@ export const UnifiedFocusTimer = () => {
     showIntentionModal,
     showLockScreen,
     showSessionNotesModal,
+    showSessionComplete,
     showBreakTransitionModal,
     showPetRevealModal,
     lastPlacedPet,
     lastPlacedCellIndex,
     lastSessionXP,
+    lastCoinsEarned,
     autoBreakEnabled,
     setPreset,
     requestStartTimer,
@@ -58,6 +62,8 @@ export const UnifiedFocusTimer = () => {
     toggleSound,
     handleSessionNotesSave,
     handleDismissPetReveal,
+    handleSessionCompleteDismiss,
+    handleSessionCompleteTakeBreak,
     handleStartBreak,
     handleSkipBreak,
     toggleAutoBreak,
@@ -127,14 +133,14 @@ export const UnifiedFocusTimer = () => {
               onCloseIntentionModal={handleCloseIntentionModal}
               onStartWithIntent={startTimerWithIntent}
               selectedPreset={selectedPreset}
-              // Session notes modal
+              // Session notes modal (legacy — kept for fallback)
               showSessionNotesModal={showSessionNotesModal}
               onCloseSessionNotes={handleCloseSessionNotes}
               onSaveSessionNotes={handleSessionNotesSave}
               sessionDuration={timerState.sessionDuration}
               lastSessionXP={lastSessionXP}
               taskLabel={timerState.taskLabel}
-              // Pet reveal modal
+              // Pet reveal modal (legacy — kept for fallback)
               showPetRevealModal={showPetRevealModal}
               onDismissPetReveal={handleDismissPetReveal}
               lastPlacedPet={lastPlacedPet}
@@ -154,6 +160,19 @@ export const UnifiedFocusTimer = () => {
               lockScreenTaskLabel={timerState.taskLabel}
               onReturnToApp={handleReturnToApp}
               onAbandonSession={handleAbandonSession}
+            />
+
+            {/* Unified Session Complete View */}
+            <SessionCompleteView
+              isVisible={showSessionComplete}
+              onDismiss={handleSessionCompleteDismiss}
+              onTakeBreak={handleSessionCompleteTakeBreak}
+              sessionDuration={timerState.sessionDuration}
+              xpEarned={lastSessionXP}
+              coinsEarned={lastCoinsEarned}
+              lastPlacedPet={lastPlacedPet}
+              taskLabel={timerState.taskLabel}
+              showBreakOption={autoBreakEnabled}
             />
           </>
         )}

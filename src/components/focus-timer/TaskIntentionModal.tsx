@@ -1,11 +1,12 @@
-import { useState, memo } from "react";
+import { useState, memo, useRef } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { cn } from "@/lib/utils";
+import { useHaptics } from "@/hooks/useHaptics";
 import { FocusCategory, FOCUS_CATEGORIES } from "@/types/analytics";
 import { TimerPreset } from "./constants";
 import { PixelIcon } from "@/components/ui/PixelIcon";
@@ -17,38 +18,51 @@ interface TaskIntentionModalProps {
   selectedPreset: TimerPreset;
 }
 
-const CATEGORY_GLOW: Record<FocusCategory, { border: string; shadow: string; bg: string }> = {
+const CATEGORY_COLORS: Record<FocusCategory, { bg: string; border: string; text: string; activeBg: string }> = {
   work: {
-    border: "border-blue-400",
-    shadow: "shadow-[0_0_14px_rgba(96,165,250,0.5)]",
-    bg: "bg-blue-500/20",
+    bg: "bg-blue-50 dark:bg-blue-950",
+    border: "border-blue-300 dark:border-blue-700",
+    text: "text-blue-700 dark:text-blue-300",
+    activeBg: "bg-blue-100 dark:bg-blue-900",
   },
   study: {
-    border: "border-purple-400",
-    shadow: "shadow-[0_0_14px_rgba(192,132,252,0.5)]",
-    bg: "bg-purple-500/20",
+    bg: "bg-purple-50 dark:bg-purple-950",
+    border: "border-purple-300 dark:border-purple-700",
+    text: "text-purple-700 dark:text-purple-300",
+    activeBg: "bg-purple-100 dark:bg-purple-900",
   },
   creative: {
-    border: "border-pink-400",
-    shadow: "shadow-[0_0_14px_rgba(244,114,182,0.5)]",
-    bg: "bg-pink-500/20",
+    bg: "bg-pink-50 dark:bg-pink-950",
+    border: "border-pink-300 dark:border-pink-700",
+    text: "text-pink-700 dark:text-pink-300",
+    activeBg: "bg-pink-100 dark:bg-pink-900",
   },
   personal: {
-    border: "border-green-400",
-    shadow: "shadow-[0_0_14px_rgba(74,222,128,0.5)]",
-    bg: "bg-green-500/20",
+    bg: "bg-green-50 dark:bg-green-950",
+    border: "border-green-300 dark:border-green-700",
+    text: "text-green-700 dark:text-green-300",
+    activeBg: "bg-green-100 dark:bg-green-900",
   },
   health: {
-    border: "border-orange-400",
-    shadow: "shadow-[0_0_14px_rgba(251,146,60,0.5)]",
-    bg: "bg-orange-500/20",
+    bg: "bg-orange-50 dark:bg-orange-950",
+    border: "border-orange-300 dark:border-orange-700",
+    text: "text-orange-700 dark:text-orange-300",
+    activeBg: "bg-orange-100 dark:bg-orange-900",
   },
   other: {
-    border: "border-teal-400",
-    shadow: "shadow-[0_0_14px_rgba(34,211,238,0.5)]",
-    bg: "bg-teal-500/20",
+    bg: "bg-teal-50 dark:bg-teal-950",
+    border: "border-teal-300 dark:border-teal-700",
+    text: "text-teal-700 dark:text-teal-300",
+    activeBg: "bg-teal-100 dark:bg-teal-900",
   },
 };
+
+function getPetSizeHint(duration: number): { emoji: string; label: string } | null {
+  if (duration < 25) return null;
+  if (duration < 60) return { emoji: '🌱', label: 'Baby pet' };
+  if (duration < 120) return { emoji: '🌿', label: 'Teen pet' };
+  return { emoji: '🌳', label: 'Adult pet' };
+}
 
 export const TaskIntentionModal = memo(({
   isOpen,
@@ -58,133 +72,137 @@ export const TaskIntentionModal = memo(({
 }: TaskIntentionModalProps) => {
   const [selectedCategory, setSelectedCategory] = useState<FocusCategory>("work");
   const [taskLabel, setTaskLabel] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { haptic } = useHaptics();
 
   const handleStart = () => {
+    haptic('medium');
     onStart(selectedCategory, taskLabel.trim() || undefined);
     setTaskLabel("");
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     setTaskLabel("");
     onClose();
   };
 
+  const petHint = getPetSizeHint(selectedPreset.duration);
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="retro-modal max-w-[340px] p-0 overflow-hidden border-0 [&>button:last-child]:hidden">
+    <Drawer open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
+      <DrawerContent className="max-h-[80vh] pb-safe">
         <VisuallyHidden>
-          <DialogTitle>What are you focusing on?</DialogTitle>
+          <DrawerTitle>Ready to Focus?</DrawerTitle>
         </VisuallyHidden>
 
-        {/* Header */}
-        <div className="p-4 pb-3 text-center border-b border-stone-100">
-          <div className="flex items-center justify-center gap-2.5">
-            <PixelIcon name="target" size={22} />
-            <h2 className="text-base font-semibold tracking-wide text-stone-900">
-              What are you focusing on?
+        <div className="px-5 pt-1 pb-6 space-y-5">
+          {/* Header */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-2"
+              style={{
+                background: 'hsl(var(--primary) / 0.1)',
+              }}
+            >
+              <PixelIcon name="target" size={26} />
+            </div>
+            <h2 className="text-lg font-bold tracking-tight text-foreground">
+              Ready to Focus?
             </h2>
           </div>
-          <p className="text-[11px] text-stone-400 mt-1.5">
-            Set an intention to stay accountable
-          </p>
-        </div>
 
-        <div className="p-4 pt-3 space-y-4">
-          {/* Category Selection */}
+          {/* Category Pills — horizontal scroll */}
           <div className="space-y-2">
-            <label className="text-[10px] font-medium tracking-widest uppercase text-stone-400">
+            <label className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground">
               Category
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div
+              ref={scrollRef}
+              className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
               {FOCUS_CATEGORIES.map((cat) => {
                 const isSelected = selectedCategory === cat.id;
-                const glow = CATEGORY_GLOW[cat.id];
+                const colors = CATEGORY_COLORS[cat.id];
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => { setSelectedCategory(cat.id); haptic('light'); }}
+                    aria-pressed={isSelected}
                     className={cn(
-                      "relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border transition-all duration-150",
-                      "active:scale-95 touch-manipulation",
+                      "flex items-center gap-1.5 px-3 py-2 rounded-full border whitespace-nowrap",
+                      "transition-all duration-150 active:scale-95 touch-manipulation flex-shrink-0",
                       isSelected
-                        ? cn(glow.border, glow.bg)
-                        : "border-stone-200 bg-white hover:border-stone-300"
+                        ? cn(colors.activeBg, colors.border, colors.text, "font-semibold")
+                        : "bg-background border-border text-muted-foreground hover:border-foreground/20"
                     )}
                   >
-                    <PixelIcon name={cat.icon} size={28} />
-                    <span className={cn(
-                      "text-[11px] font-medium tracking-wide",
-                      isSelected ? "text-stone-900" : "text-stone-400"
-                    )}>
-                      {cat.label}
-                    </span>
+                    <PixelIcon name={cat.icon} size={18} />
+                    <span className="text-xs">{cat.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Optional Task Label */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-medium tracking-widest uppercase text-stone-400">
-              Task <span className="text-stone-300 normal-case tracking-normal">(optional)</span>
-            </label>
-            <input
-              value={taskLabel}
-              onChange={(e) => setTaskLabel(e.target.value)}
-              placeholder="e.g., Finish report, Chapter 5..."
-              className={cn(
-                "w-full px-3 py-2.5 rounded-xl text-sm text-stone-900",
-                "bg-stone-50 border border-stone-200",
-                "placeholder:text-stone-300",
-                "focus:outline-none focus:border-emerald-300 focus:ring-1 focus:ring-emerald-200",
-                "transition-all duration-150"
-              )}
-              maxLength={50}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleStart();
-                }
-              }}
-            />
+          {/* Task Input — inline */}
+          <input
+            value={taskLabel}
+            onChange={(e) => setTaskLabel(e.target.value)}
+            placeholder="What's your focus? (optional)"
+            className={cn(
+              "w-full px-4 py-3 rounded-xl text-sm text-foreground",
+              "bg-muted/50 border border-border",
+              "placeholder:text-muted-foreground/50",
+              "focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20",
+              "transition-all duration-150"
+            )}
+            maxLength={50}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleStart();
+            }}
+          />
+
+          {/* Duration Display */}
+          <div className="flex items-center justify-between py-3 px-4 rounded-xl border border-border bg-muted/30">
+            <div className="flex items-center gap-2.5">
+              <PixelIcon name="hourglass" size={18} />
+              <div>
+                <span className="text-sm font-semibold text-foreground">
+                  {selectedPreset.duration === Infinity ? '∞' : `${selectedPreset.duration} min`}
+                </span>
+                <span className="text-xs text-muted-foreground ml-1.5">
+                  {selectedPreset.name}
+                </span>
+              </div>
+            </div>
+            {petHint && (
+              <span className="text-[11px] text-muted-foreground font-medium">
+                {petHint.emoji} {petHint.label}
+              </span>
+            )}
           </div>
 
-          {/* Session Info Pill */}
-          <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-stone-200 bg-stone-50">
-            <PixelIcon name="sparkles" size={16} />
-            <span className="text-xs font-medium text-stone-400 tracking-wide">
-              {selectedPreset.name} &middot; {selectedPreset.duration} min
-            </span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-1 pb-1">
-            <button
-              onClick={handleCancel}
-              className={cn(
-                "flex-1 py-2.5 rounded-xl font-medium text-sm",
-                "border border-stone-200 text-stone-400",
-                "hover:border-stone-300 hover:text-stone-500",
-                "active:scale-95",
-                "transition-all duration-150 touch-manipulation"
-              )}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleStart}
-              className={cn(
-                "flex-1 py-2.5 rounded-xl font-semibold text-sm text-white",
-                "bg-emerald-500 hover:bg-emerald-600 active:scale-95",
-                "transition-all duration-150 touch-manipulation select-none"
-              )}
-            >
+          {/* Start Button */}
+          <button
+            onClick={handleStart}
+            className={cn(
+              "w-full py-3.5 rounded-xl font-bold text-sm text-white tracking-wide",
+              "transition-all duration-150 touch-manipulation select-none",
+              "active:scale-[0.97]"
+            )}
+            style={{
+              background: 'hsl(var(--primary))',
+              boxShadow: '0 3px 0 hsl(var(--primary) / 0.7), 0 6px 16px hsl(var(--primary) / 0.2)',
+            }}
+          >
+            <span className="flex items-center justify-center gap-2">
+              <PixelIcon name="play" size={16} />
               Start Focus
-            </button>
-          </div>
+            </span>
+          </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 }, (prev, next) =>
   prev.isOpen === next.isOpen && prev.selectedPreset === next.selectedPreset

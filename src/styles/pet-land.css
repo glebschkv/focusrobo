@@ -761,62 +761,6 @@
   border-bottom-color: hsl(var(--card) / 0.9);
 }
 
-/* ── Progress bar ─────────────────────────────────────────────── */
-
-.pet-land__progress {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 0 0 8px;
-  flex-shrink: 0;
-}
-
-.pet-land__progress-bar-track {
-  position: relative;
-  width: 60%;
-  max-width: 240px;
-  height: 6px;
-  background: rgba(40, 70, 50, 0.35);
-  border-radius: 3px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 240, 200, 0.12);
-}
-
-.pet-land__progress-bar-fill {
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #A8D860, #7CC840);
-  box-shadow: 0 0 8px rgba(120, 200, 60, 0.35);
-  transition: width 0.5s ease;
-}
-
-.pet-land__progress-marker {
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.pet-land__progress-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 12px;
-  background: rgba(30, 50, 35, 0.55);
-  color: rgba(240, 255, 245, 0.95);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  border-radius: 20px;
-  border: 1px solid rgba(200, 235, 210, 0.12);
-}
-
 /* ── Empty state message ──────────────────────────────────────── */
 
 .pet-land__empty-hint {

@@ -17,9 +17,8 @@
   /* Solid matte top bar with backdrop blur */
   .game-top-bar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    flex-direction: column;
+    gap: 0;
     padding: 7px 10px;
     background: hsl(var(--card) / 0.85);
     backdrop-filter: blur(20px) saturate(180%);
@@ -27,6 +26,57 @@
     border: 1px solid hsl(var(--border));
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
+  }
+
+  /* Top row: level, coins, streak chips */
+  .game-top-bar-chips {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Island progress row beneath chips */
+  .island-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 2px 1px;
+    border-top: 1px solid hsl(var(--border) / 0.5);
+    margin-top: 5px;
+  }
+
+  .island-progress-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .island-progress-track {
+    flex: 1;
+    height: 4px;
+    background: hsl(var(--border));
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .island-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #A8D860, #7CC840);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 4px rgba(124, 200, 64, 0.3);
+  }
+
+  .island-progress-count {
+    font-size: 10px;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Status bar scroll fade (2.3) */
@@ -726,5 +776,18 @@
         0 2px 6px hsl(42 65% 52% / 0.25),
         0 0 0 8px hsl(42 65% 52% / 0);
     }
+  }
+
+  /* ============================================
+     REDUCED MOTION — Accessibility
+     Disables animations when user prefers reduced motion
+     ============================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .island-progress-fill { transition: none; }
+    .level-progress-fill { transition: none; }
+    .streak-chip.active .streak-icon { animation: none; }
+    .dock-indicator { transition: none; }
+    .energy-pulse { animation: none; }
+    .badge-pop { animation: none; }
   }
 

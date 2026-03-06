@@ -661,19 +661,7 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* Progress bar */}
-      <div className="pet-land__progress">
-        <div className="pet-land__progress-bar-track">
-          <div className="pet-land__progress-bar-fill" style={{ width: `${progressPct}%` }} />
-          <div className="pet-land__progress-marker" style={{ left: '25%' }} />
-          <div className="pet-land__progress-marker" style={{ left: '50%' }} />
-          <div className="pet-land__progress-marker" style={{ left: '75%' }} />
-        </div>
-        <span className="pet-land__progress-label tabular-nums">
-          Land {currentLand.number} · {filledCount}/{tierCapacity}
-          {gridSize < 20 && ` · ${gridSize}×${gridSize}`}
-        </span>
-      </div>
+      {/* Progress bar moved to TopStatusBar */}
 
     </div>
   );
