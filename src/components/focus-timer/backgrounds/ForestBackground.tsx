@@ -97,7 +97,7 @@ export const ForestBackground = memo(() => {
         }}
       />
       <div
-        className="absolute top-0 left-[55%] w-32 h-[55%] opacity-18 animate-ray-sway pointer-events-none"
+        className="absolute top-0 left-[55%] w-32 h-[55%] opacity-[0.18] animate-ray-sway pointer-events-none"
         style={{
           background: 'linear-gradient(180deg, hsl(55 60% 85%) 0%, transparent 100%)',
           clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)',
@@ -106,7 +106,7 @@ export const ForestBackground = memo(() => {
         }}
       />
       <div
-        className="absolute top-0 left-[40%] w-24 h-[45%] opacity-15 animate-ray-sway pointer-events-none"
+        className="absolute top-0 left-[40%] w-24 h-[45%] opacity-[0.15] animate-ray-sway pointer-events-none"
         style={{
           background: 'linear-gradient(180deg, hsl(50 60% 88%) 0%, transparent 100%)',
           clipPath: 'polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%)',
@@ -115,7 +115,7 @@ export const ForestBackground = memo(() => {
         }}
       />
       <div
-        className="absolute top-0 right-[10%] w-28 h-[50%] opacity-12 animate-ray-sway pointer-events-none"
+        className="absolute top-0 right-[10%] w-28 h-[50%] opacity-[0.12] animate-ray-sway pointer-events-none"
         style={{
           background: 'linear-gradient(180deg, hsl(55 55% 86%) 0%, transparent 100%)',
           clipPath: 'polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%)',

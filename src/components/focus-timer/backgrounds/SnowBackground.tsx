@@ -97,24 +97,25 @@ export const SnowBackground = memo(() => {
       {crystals.map((c, i) => (
         <div
           key={i}
-          className="absolute animate-snowfall animate-crystal-sparkle pointer-events-none"
+          className="absolute animate-snowfall pointer-events-none"
           style={{
             left: c.left,
             width: `${c.size}px`,
             height: `${c.size}px`,
             opacity: c.opacity,
             animationDelay: c.delay,
-            animationDuration: c.duration,
+            ['--snowfall-duration' as string]: c.duration,
             ['--sway' as string]: c.sway,
-            ['--sparkle-duration' as string]: c.sparkleDuration,
           }}
         >
-          {/* Six-pointed star shape */}
+          {/* Six-pointed star shape with independent sparkle */}
           <div
-            className="w-full h-full bg-white"
+            className="w-full h-full bg-white animate-crystal-sparkle"
             style={{
               clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
               boxShadow: `0 0 ${c.size}px hsl(0 0% 100% / 0.5)`,
+              ['--sparkle-duration' as string]: c.sparkleDuration,
+              animationDelay: c.sparkleDelay,
             }}
           />
         </div>

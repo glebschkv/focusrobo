@@ -537,6 +537,18 @@
 
   /* --- SNOW THEME --- */
 
+  /* Snowfall drift down with sway */
+  @keyframes snowfall {
+    0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translateY(50vh) translateX(var(--sway, 15px)); }
+    100% { transform: translateY(100vh) translateX(0); opacity: 0; }
+  }
+
+  .animate-snowfall {
+    animation: snowfall var(--snowfall-duration, 8s) linear infinite;
+  }
+
   /* Full aurora borealis wave */
   @keyframes aurora-wave {
     0% { transform: translateX(-20px) scaleY(0.8); opacity: 0.12; }
