@@ -126,7 +126,9 @@ export const GameUI = () => {
           {/* Full Screen Content */}
           <div
             style={{ paddingBottom: 'calc(var(--dock-height, 82px) + env(safe-area-inset-bottom, 0px) + 16px)' }}
-            className={`absolute inset-0 pointer-events-auto overflow-auto ${
+            className={`absolute inset-0 pointer-events-auto ${
+              currentTab === "home" ? "overflow-hidden" : "overflow-auto"
+            } ${
               currentTab === "home" ? "" : "bg-[hsl(var(--background))]"
             } ${
               currentTab === "timer" || currentTab === "home" ? "" : "pt-safe"

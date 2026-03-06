@@ -672,7 +672,6 @@ export const PetLand = () => {
         ref={wrapperRef}
         className="pet-land__island-wrapper"
         {...parallaxHandlers}
-        style={{ touchAction: 'none' }}
       >
         {/* Ambient dust motes */}
         {particles.map((p) => (

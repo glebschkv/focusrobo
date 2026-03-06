@@ -407,7 +407,7 @@
   margin: auto;
   animation: pet-land-island-float 4.5s ease-in-out infinite;
   cursor: grab;
-  touch-action: pan-y;
+  touch-action: none;
   overflow: visible;
 }
 
