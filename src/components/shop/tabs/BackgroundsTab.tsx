@@ -1,7 +1,7 @@
 /**
- * BackgroundsTab — "Worlds"
- * Backgrounds displayed as world portals your pets can explore.
- * Immersive previews with warm, magical framing.
+ * BackgroundsTab — "Backgrounds"
+ * Purchasable backgrounds displayed as themed previews.
+ * Each background applies a unique island theme when equipped.
  */
 
 import { Check, Palette } from "lucide-react";
@@ -46,14 +46,13 @@ export const BackgroundsTab = ({
     e.stopPropagation();
     if (inventory.equippedBackground === bgId) {
       equipBackground(null);
-      toast.success("World unequipped");
+      toast.success("Background unequipped");
       setHomeBackground('day');
     } else {
       equipBackground(bgId);
-      toast.success("New world equipped!");
+      toast.success("New background equipped!");
       const background = PREMIUM_BACKGROUNDS.find(bg => bg.id === bgId);
-      const imagePath = background?.previewImage || 'day';
-      setHomeBackground(imagePath);
+      setHomeBackground(background?.theme || 'day');
     }
   }, [inventory.equippedBackground, equipBackground, setHomeBackground]);
 
@@ -61,14 +60,14 @@ export const BackgroundsTab = ({
     <div className="space-y-4">
       {/* Section intro */}
       <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>
-        Discover new lands for your pets to call home.
+        Discover unique backgrounds for your island.
       </p>
 
       {/* World Collections (Bundles) */}
       {BACKGROUND_BUNDLES.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">World Collections</span>
+            <span className="shop-section-title">Background Collections</span>
           </div>
           <div className="space-y-2">
             {BACKGROUND_BUNDLES.map((bundle) => {
@@ -129,7 +128,7 @@ export const BackgroundsTab = ({
       {backgroundsWithPreviews.length > 0 && (
         <div>
           <div className="shop-section-header">
-            <span className="shop-section-title">Individual Worlds</span>
+            <span className="shop-section-title">Unique Backgrounds</span>
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             {backgroundsWithPreviews.map((bg) => {

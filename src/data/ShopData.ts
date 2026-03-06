@@ -23,7 +23,7 @@ export type {
 export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   {
     id: 'bg-sky-islands',
-    name: 'Sky Islands',
+    name: 'Floating Archipelago',
     description: 'Majestic rocky islands rising from calm waters under a serene sky.',
     category: 'backgrounds',
     coinPrice: 800,
@@ -35,7 +35,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-calm-seas',
-    name: 'Calm Seas',
+    name: 'Serene Tides',
     description: 'A peaceful ocean horizon under a beautiful gradient sky.',
     category: 'backgrounds',
     coinPrice: 800,
@@ -47,7 +47,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-twilight-clouds',
-    name: 'Twilight Clouds',
+    name: 'Dusk Canopy',
     description: 'Dramatic clouds painted in soft twilight colors over the sea.',
     category: 'backgrounds',
     coinPrice: 1000,
@@ -59,7 +59,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-aurora-horizon',
-    name: 'Aurora Horizon',
+    name: 'Northern Glow',
     description: 'A mesmerizing sky with ethereal light dancing across the clouds.',
     category: 'backgrounds',
     coinPrice: 1000,
@@ -71,7 +71,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-sunset-clouds',
-    name: 'Sunset Clouds',
+    name: 'Golden Hour',
     description: 'Breathtaking sunset clouds reflected in still waters.',
     category: 'backgrounds',
     coinPrice: 1200,
@@ -110,7 +110,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-aurora',
-    name: 'Aurora Borealis',
+    name: 'Polar Lights',
     description: 'Dance under the magical northern lights in this stunning arctic scene.',
     category: 'backgrounds',
     coinPrice: 1800,
@@ -132,7 +132,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-volcano',
-    name: 'Volcanic Island',
+    name: 'Magma Peak',
     description: 'A dramatic volcanic landscape with flowing lava and ash.',
     category: 'backgrounds',
     coinPrice: 2200,
@@ -177,7 +177,7 @@ export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-winter-wonderland',
-    name: 'Winter Wonderland',
+    name: 'Frosted Realm',
     description: 'A magical snowy scene with twinkling lights and cozy vibes.',
     category: 'backgrounds',
     coinPrice: 1800,
@@ -461,7 +461,7 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
 // Shop categories for UI - 4 tabs: Hatchery, Worlds, Potions, Today's Finds
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'eggs', name: 'Hatchery', icon: 'egg' },
-  { id: 'customize', name: 'Worlds', icon: 'island' },
+  { id: 'customize', name: 'Backgrounds', icon: 'island' },
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },
 ];
