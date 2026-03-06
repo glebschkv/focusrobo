@@ -64,15 +64,6 @@ export const TIMER_PRESETS: TimerPreset[] = [
     description: 'Classic 25-minute focus session'
   },
   {
-    id: 'deep-work',
-    name: 'Deep Work',
-    duration: 90,
-    type: 'deep-work',
-    icon: Brain,
-    color: 'text-success',
-    description: 'Extended 90-minute deep focus'
-  },
-  {
     id: 'focus-45',
     name: 'Focus 45',
     duration: 45,
@@ -89,6 +80,15 @@ export const TIMER_PRESETS: TimerPreset[] = [
     icon: Clock,
     color: 'text-primary',
     description: 'Extended 60-minute session'
+  },
+  {
+    id: 'deep-work',
+    name: 'Deep Work',
+    duration: 90,
+    type: 'deep-work',
+    icon: Brain,
+    color: 'text-success',
+    description: 'Extended 90-minute deep focus'
   },
   {
     id: 'marathon',

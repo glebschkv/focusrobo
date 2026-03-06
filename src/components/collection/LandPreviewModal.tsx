@@ -9,6 +9,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { IslandSVG } from '@/components/IslandSVG';
 import { IslandPet } from '@/components/IslandPet';
 import { getAvailableCellCount } from '@/data/islandPositions';
+import { getIslandTheme } from '@/data/IslandThemes';
 import type { Land } from '@/stores/landStore';
 
 interface LandPreviewModalProps {
@@ -21,6 +22,8 @@ export function LandPreviewModal({ land, isOpen, onClose }: LandPreviewModalProp
   const cellCount = land.cells.filter(Boolean).length;
   const totalCells = getAvailableCellCount(land.gridSize);
   const focusHours = Math.round(land.totalFocusMinutes / 60 * 10) / 10;
+  const theme = getIslandTheme(land.theme || 'day');
+  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[1]} 35%, ${theme.sky[2]} 65%, ${theme.sky[3]} 100%)`;
 
   // Count rarities
   const rarities = { common: 0, uncommon: 0, rare: 0, epic: 0, legendary: 0 };
@@ -32,7 +35,7 @@ export function LandPreviewModal({ land, isOpen, onClose }: LandPreviewModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-[360px] p-0 overflow-hidden border-0">
+      <DialogContent className="max-w-[360px] p-0 overflow-hidden border-0 rounded-2xl">
         <VisuallyHidden>
           <DialogTitle>Land {land.number} Preview</DialogTitle>
         </VisuallyHidden>
@@ -51,7 +54,7 @@ export function LandPreviewModal({ land, isOpen, onClose }: LandPreviewModalProp
         <div
           className="relative mx-4 overflow-hidden rounded-xl"
           style={{
-            background: 'linear-gradient(180deg, #6BB8E0 0%, #A5D8EF 35%, #D0EAF5 65%, #EEF4F0 100%)',
+            background: skyGradient,
             aspectRatio: '2 / 1.4',
           }}
         >
@@ -85,15 +88,15 @@ export function LandPreviewModal({ land, isOpen, onClose }: LandPreviewModalProp
         <div className="px-4 py-3 grid grid-cols-3 gap-2 text-center">
           <div>
             <p className="text-lg font-bold text-[hsl(var(--foreground))]">{cellCount}</p>
-            <p className="text-[10px] text-[hsl(var(--muted-foreground))]">Pets</p>
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Pets</p>
           </div>
           <div>
             <p className="text-lg font-bold text-[hsl(var(--foreground))]">{focusHours}h</p>
-            <p className="text-[10px] text-[hsl(var(--muted-foreground))]">Focus time</p>
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Focus time</p>
           </div>
           <div>
             <p className="text-lg font-bold text-[hsl(var(--foreground))]">{totalCells}</p>
-            <p className="text-[10px] text-[hsl(var(--muted-foreground))]">Capacity</p>
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Capacity</p>
           </div>
         </div>
 

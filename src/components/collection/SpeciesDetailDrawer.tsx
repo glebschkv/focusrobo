@@ -163,11 +163,16 @@ export const SpeciesDetailDrawer = memo(({
                     const reached = affinityCount >= threshold.count;
                     const remaining = threshold.count - affinityCount;
                     return (
-                      <div key={threshold.level} className="flex items-center justify-between">
-                        <span className={`text-[9px] font-semibold ${reached ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`}>
-                          {reached ? '✓' : `${remaining} more →`} {threshold.reward}
+                      <div key={threshold.level} className="flex items-center justify-between min-h-[20px]">
+                        <span className={`text-[10px] font-semibold flex items-center gap-1 ${reached ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))]'}`}>
+                          {reached ? (
+                            <PixelIcon name="check" size={10} className="text-emerald-500 shrink-0" />
+                          ) : (
+                            <span className="text-[9px]">Find {remaining} more</span>
+                          )}
+                          <span>{threshold.reward}</span>
                         </span>
-                        <span className="text-[8px] text-[hsl(var(--muted-foreground))]">
+                        <span className="text-[9px] font-medium text-[hsl(var(--muted-foreground))]">
                           {threshold.count}x
                         </span>
                       </div>

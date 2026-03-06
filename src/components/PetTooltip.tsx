@@ -69,6 +69,7 @@ export function PetTooltip({ cell, index, gridSize, onClose }: PetTooltipProps) 
         position: 'absolute',
         inset: 0,
         zIndex: 999,
+        cursor: 'pointer', // Required for iOS touch events on non-interactive elements
       }}
     >
       <div

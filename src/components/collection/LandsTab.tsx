@@ -110,7 +110,7 @@ export const LandsTab = memo(({ currentLand, completedLands, filledCells }: Land
                 {group.lands.map((land) => (
                   <button
                     key={land.id}
-                    className="collection-land-completed w-full text-left"
+                    className="collection-land-completed w-full text-left transition-transform active:scale-[0.98] touch-manipulation"
                     onClick={() => handlePreview(land)}
                   >
                     <div className="flex items-center justify-between">

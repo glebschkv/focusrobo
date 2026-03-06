@@ -183,7 +183,7 @@ export const PetRevealModal = ({
           <div className="px-5 pb-2">
             <button
               onClick={handleRandomRoll}
-              className="w-full p-3 rounded-xl border-2 border-[#E0E0E0] bg-gradient-to-b from-white to-gray-50 flex items-center gap-3 transition-all active:scale-[0.98] hover:border-[#90CAF9]"
+              className="w-full p-3.5 rounded-xl border-2 border-[#E0E0E0] bg-gradient-to-b from-white to-gray-50 flex items-center gap-3 transition-all active:scale-[0.98] hover:border-[#90CAF9] touch-manipulation min-h-[48px]"
             >
               <div className="w-10 h-10 rounded-lg bg-[#E3F2FD] flex items-center justify-center flex-shrink-0">
                 <Shuffle className="w-5 h-5 text-[#1E88E5]" />
@@ -206,18 +206,25 @@ export const PetRevealModal = ({
           </div>
 
           {/* Pick option — 4 choices */}
-          <div className="px-5 pt-2 pb-3">
-            <div className="flex items-center justify-between mb-2">
+          <div className="px-5 pt-2 pb-4">
+            <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-1.5">
                 <MousePointerClick className="w-3.5 h-3.5 text-[#78909C]" />
                 <span className="text-xs font-bold text-[#546E7A]">Pick a Pet</span>
               </div>
-              <span className={cn(
-                "text-[10px] font-bold px-2 py-0.5 rounded-full",
-                canAffordPick ? "text-amber-600 bg-amber-50" : "text-red-400 bg-red-50"
-              )}>
-                {PICK_COST} coins
-              </span>
+              <div className="flex items-center gap-1.5">
+                {!canAffordPick && (
+                  <span className="text-[9px] text-[#BDBDBD]">
+                    ({coinBalance} owned)
+                  </span>
+                )}
+                <span className={cn(
+                  "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                  canAffordPick ? "text-amber-600 bg-amber-50" : "text-red-400 bg-red-50"
+                )}>
+                  {PICK_COST} coins
+                </span>
+              </div>
             </div>
             <div className="grid grid-cols-4 gap-2">
               {petChoices.map((choice, i) => {
@@ -229,7 +236,7 @@ export const PetRevealModal = ({
                     onClick={() => handlePickPet(choice)}
                     disabled={!canAffordPick}
                     className={cn(
-                      "flex flex-col items-center p-2 rounded-xl border-2 transition-all",
+                      "flex flex-col items-center p-2 rounded-xl border-2 transition-all touch-manipulation min-h-[44px]",
                       canAffordPick
                         ? "border-[#E0E0E0] active:scale-95 hover:border-[#90CAF9]"
                         : "border-[#F5F5F5] opacity-50"
@@ -243,11 +250,11 @@ export const PetRevealModal = ({
                       style={{ imageRendering: 'pixelated' }}
                       draggable={false}
                     />
-                    <span className="text-[9px] font-bold text-[#37474F] truncate w-full text-center">
+                    <span className="text-[10px] font-bold text-[#37474F] truncate w-full text-center leading-tight">
                       {choice.species.name}
                     </span>
                     <span
-                      className="text-[8px] font-bold uppercase mt-0.5"
+                      className="text-[9px] font-bold uppercase mt-0.5"
                       style={{ color: config.color }}
                     >
                       {config.label}
@@ -407,7 +414,7 @@ export const PetRevealModal = ({
         <div className="px-5 pb-5 pt-2">
           <button
             onClick={handleClose}
-            className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97]"
+            className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px]"
             style={{
               background: config.color,
               color: '#fff',

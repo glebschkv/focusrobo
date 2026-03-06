@@ -738,7 +738,13 @@ export const PetLand = () => {
                     style={{ background: `linear-gradient(135deg, ${t.grassLight[0]}, ${t.grassDark[0]})` }}
                   />
                   <span className="pet-land__theme-name">{t.name}</span>
-                  {!isOwned && <span className="pet-land__theme-lock">🔒</span>}
+                  {!isOwned && (
+                    <span className="pet-land__theme-lock">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M12 2C9.24 2 7 4.24 7 7v3H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2V7c0-2.76-2.24-5-5-5zm-3 5c0-1.66 1.34-3 3-3s3 1.34 3 3v3H9V7z"/>
+                      </svg>
+                    </span>
+                  )}
                 </button>
               );
             })}
