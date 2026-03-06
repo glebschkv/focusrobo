@@ -15,7 +15,8 @@ import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
 import { getIslandScale, getAvailableCellCount, getIslandPosition } from '@/data/islandPositions';
-import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
+import { getIslandTheme, ISLAND_THEMES, FREE_THEME_IDS } from '@/data/IslandThemes';
+import { PREMIUM_BACKGROUNDS } from '@/data/ShopData';
 import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
@@ -900,7 +901,10 @@ export const PetLand = () => {
       {showThemePicker && (
         <div className="pet-land__theme-picker" onClick={() => setShowThemePicker(false)}>
           <div className="pet-land__theme-strip" onClick={(e) => e.stopPropagation()}>
-            {Object.values(ISLAND_THEMES).map((t) => {
+            {Object.values(ISLAND_THEMES).filter((t) => FREE_THEME_IDS.includes(t.id) || ownedBackgrounds.some((bgId: string) => {
+              const bg = PREMIUM_BACKGROUNDS.find(b => b.id === bgId);
+              return bg?.theme === t.id;
+            })).map((t) => {
               const isActive = t.id === themeId;
               return (
                 <button

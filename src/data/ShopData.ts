@@ -23,7 +23,7 @@ export type {
 export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   {
     id: 'bg-sky-islands',
-    name: 'Sky Islands',
+    name: 'Floating Archipelago',
     description: 'Majestic rocky islands rising from calm waters under a serene sky.',
     category: 'backgrounds',
     coinPrice: 800,
@@ -35,7 +35,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-calm-seas',
-    name: 'Calm Seas',
+    name: 'Serene Tides',
     description: 'A peaceful ocean horizon under a beautiful gradient sky.',
     category: 'backgrounds',
     coinPrice: 800,
@@ -47,7 +47,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-twilight-clouds',
-    name: 'Twilight Clouds',
+    name: 'Dusk Canopy',
     description: 'Dramatic clouds painted in soft twilight colors over the sea.',
     category: 'backgrounds',
     coinPrice: 1000,
@@ -59,7 +59,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-aurora-horizon',
-    name: 'Aurora Horizon',
+    name: 'Northern Glow',
     description: 'A mesmerizing sky with ethereal light dancing across the clouds.',
     category: 'backgrounds',
     coinPrice: 1000,
@@ -71,7 +71,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-sunset-clouds',
-    name: 'Sunset Clouds',
+    name: 'Golden Hour',
     description: 'Breathtaking sunset clouds reflected in still waters.',
     category: 'backgrounds',
     coinPrice: 1200,
@@ -84,109 +84,8 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
 ];
 
 export const PREMIUM_BACKGROUNDS: PremiumBackground[] = [
-  // Include Sky Bundle backgrounds
+  // Sky Bundle backgrounds (5 purchasable backgrounds with preview images)
   ...SKY_BUNDLE_BACKGROUNDS,
-  {
-    id: 'bg-sakura',
-    name: 'Sakura Garden',
-    description: 'A serene Japanese garden with cherry blossoms in full bloom.',
-    category: 'backgrounds',
-    coinPrice: 1000,
-    icon: 'sakura',
-    rarity: 'rare',
-    theme: 'sakura',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-cyberpunk',
-    name: 'Neon City',
-    description: 'A futuristic cyberpunk cityscape with neon lights and holograms.',
-    category: 'backgrounds',
-    coinPrice: 1500,
-    icon: 'neon-city',
-    rarity: 'epic',
-    theme: 'cyberpunk',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-aurora',
-    name: 'Aurora Borealis',
-    description: 'Dance under the magical northern lights in this stunning arctic scene.',
-    category: 'backgrounds',
-    coinPrice: 1800,
-    icon: 'aurora',
-    rarity: 'epic',
-    theme: 'aurora',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-crystal-cave',
-    name: 'Crystal Cavern',
-    description: 'A mystical underground cave filled with glowing crystals.',
-    category: 'backgrounds',
-    coinPrice: 1200,
-    icon: 'diamond',
-    rarity: 'rare',
-    theme: 'crystal',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-volcano',
-    name: 'Volcanic Island',
-    description: 'A dramatic volcanic landscape with flowing lava and ash.',
-    category: 'backgrounds',
-    coinPrice: 2200,
-    icon: 'volcano',
-    rarity: 'legendary',
-    theme: 'volcano',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-space',
-    name: 'Cosmic Void',
-    description: 'Float among the stars in the endless expanse of space.',
-    category: 'backgrounds',
-    coinPrice: 2500,
-    icon: 'rocket',
-    rarity: 'legendary',
-    theme: 'space',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-underwater',
-    name: 'Deep Sea Reef',
-    description: 'Explore a vibrant coral reef teeming with colorful life.',
-    category: 'backgrounds',
-    coinPrice: 1100,
-    icon: 'fish',
-    rarity: 'rare',
-    theme: 'underwater',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-halloween',
-    name: 'Spooky Hollow',
-    description: 'A haunted forest perfect for the spookiest of bots.',
-    category: 'backgrounds',
-    coinPrice: 1800,
-    icon: 'pumpkin',
-    rarity: 'epic',
-    isLimited: true,
-    theme: 'halloween',
-    comingSoon: false,
-  },
-  {
-    id: 'bg-winter-wonderland',
-    name: 'Winter Wonderland',
-    description: 'A magical snowy scene with twinkling lights and cozy vibes.',
-    category: 'backgrounds',
-    coinPrice: 1800,
-    icon: 'christmas-tree',
-    rarity: 'epic',
-    isLimited: true,
-    theme: 'winter',
-    comingSoon: false,
-  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -461,7 +360,7 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
 // Shop categories for UI - 4 tabs: Hatchery, Worlds, Potions, Today's Finds
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'eggs', name: 'Hatchery', icon: 'egg' },
-  { id: 'customize', name: 'Worlds', icon: 'island' },
+  { id: 'customize', name: 'Backgrounds', icon: 'island' },
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },
 ];

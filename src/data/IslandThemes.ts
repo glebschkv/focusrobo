@@ -41,7 +41,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   day: {
     id: 'day',
     name: 'Meadow',
-    sky: ['#6BB8E0', '#A5D8EF', '#D0EAF5', '#EEF4F0'],
+    sky: ['#6BB8E0', '#A5D8EF', '#D0EAF5', '#F0F4F8'],
     grassLight: ['#CCF080', '#B8E468'],
     grassDark: ['#96C444', '#84B438'],
     grassBase: ['#C4E87A', '#B0D85A', '#9CC84E', '#88B842'],
@@ -187,6 +187,133 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       'rgba(255, 240, 200, 0.5)',
     ],
   },
+  // ── Purchasable themes ──────────────────────────────────────────
+
+  'sky-islands': {
+    id: 'sky-islands',
+    name: 'Floating Archipelago',
+    sky: ['#4A9ED6', '#72B8E4', '#A8D4F0', '#D8ECF8'],
+    grassLight: ['#A8D8A0', '#98CC90'],
+    grassDark: ['#78B470', '#68A460'],
+    grassBase: ['#98CC90', '#88C080', '#78B470', '#68A860'],
+    grassEdge: ['#60A058', '#509048'],
+    lipLeft: ['#589850', '#488840', '#8A8050'],
+    lipRight: ['#488840', '#387830', '#7A7040'],
+    dirtLeft: ['#9A8860', '#8A7850', '#7A6840'],
+    dirtRight: ['#8A7850', '#7A6840', '#6A5830'],
+    stoneBaseLeft: '#5A5040',
+    stoneBaseRight: '#4A4438',
+    cloudColor: 'rgba(255, 255, 255, 0.9)',
+    sunColor: 'rgba(255, 245, 220, 0.9)',
+    particles: 'dust',
+    particleColors: [
+      'rgba(200, 230, 255, 0.5)',
+      'rgba(180, 220, 255, 0.4)',
+      'rgba(255, 255, 255, 0.45)',
+      'rgba(220, 240, 255, 0.5)',
+    ],
+  },
+
+  'calm-seas': {
+    id: 'calm-seas',
+    name: 'Serene Tides',
+    sky: ['#3A8CC8', '#60A8D8', '#98CCE8', '#D0E8F4'],
+    grassLight: ['#88C8A0', '#78BC90'],
+    grassDark: ['#60A878', '#50986C'],
+    grassBase: ['#78BC90', '#68B080', '#58A470', '#489860'],
+    grassEdge: ['#409050', '#308040'],
+    lipLeft: ['#388848', '#288038', '#6A8860'],
+    lipRight: ['#288038', '#187028', '#5A7850'],
+    dirtLeft: ['#708878', '#607868', '#506858'],
+    dirtRight: ['#607868', '#506858', '#405848'],
+    stoneBaseLeft: '#485850',
+    stoneBaseRight: '#3A4A42',
+    cloudColor: 'rgba(220, 240, 255, 0.85)',
+    sunColor: 'rgba(220, 240, 255, 0.8)',
+    particles: 'sparkles',
+    particleColors: [
+      'rgba(180, 220, 255, 0.5)',
+      'rgba(200, 235, 255, 0.4)',
+      'rgba(255, 255, 255, 0.45)',
+      'rgba(160, 210, 240, 0.5)',
+    ],
+  },
+
+  'twilight-clouds': {
+    id: 'twilight-clouds',
+    name: 'Dusk Canopy',
+    sky: ['#6A4C8C', '#9870B0', '#C8A0D0', '#E8D0E8'],
+    grassLight: ['#A890C0', '#9880B0'],
+    grassDark: ['#8068A0', '#705890'],
+    grassBase: ['#9880B0', '#8870A0', '#786090', '#685080'],
+    grassEdge: ['#604878', '#504068'],
+    lipLeft: ['#584070', '#484060', '#706058'],
+    lipRight: ['#483860', '#383050', '#605048'],
+    dirtLeft: ['#806870', '#706060', '#605050'],
+    dirtRight: ['#706060', '#605050', '#504040'],
+    stoneBaseLeft: '#484040',
+    stoneBaseRight: '#3C3638',
+    cloudColor: 'rgba(200, 180, 220, 0.7)',
+    sunColor: 'rgba(255, 200, 180, 0.8)',
+    particles: 'dust',
+    particleColors: [
+      'rgba(200, 170, 230, 0.5)',
+      'rgba(230, 190, 210, 0.4)',
+      'rgba(255, 210, 200, 0.45)',
+      'rgba(180, 160, 220, 0.5)',
+    ],
+  },
+
+  'aurora-horizon': {
+    id: 'aurora-horizon',
+    name: 'Northern Glow',
+    sky: ['#0C2840', '#1A4060', '#2C6878', '#5CA898'],
+    grassLight: ['#60B898', '#50A888'],
+    grassDark: ['#389878', '#288868'],
+    grassBase: ['#50A888', '#409878', '#308868', '#207858'],
+    grassEdge: ['#187050', '#106040'],
+    lipLeft: ['#186848', '#106038', '#406050'],
+    lipRight: ['#106038', '#085028', '#305040'],
+    dirtLeft: ['#506858', '#406050', '#305040'],
+    dirtRight: ['#406050', '#305040', '#204030'],
+    stoneBaseLeft: '#2C3C34',
+    stoneBaseRight: '#20302C',
+    cloudColor: 'rgba(80, 200, 180, 0.4)',
+    sunColor: 'rgba(100, 220, 200, 0.5)',
+    particles: 'sparkles',
+    particleColors: [
+      'rgba(80, 220, 180, 0.6)',
+      'rgba(100, 240, 200, 0.5)',
+      'rgba(60, 200, 160, 0.5)',
+      'rgba(120, 255, 220, 0.55)',
+    ],
+  },
+
+  'sunset-clouds': {
+    id: 'sunset-clouds',
+    name: 'Golden Hour',
+    sky: ['#C85830', '#E08048', '#F0B878', '#F8E0C0'],
+    grassLight: ['#D8C888', '#CCB878'],
+    grassDark: ['#B8A060', '#A89050'],
+    grassBase: ['#CCB878', '#BCA868', '#AC9858', '#9C8848'],
+    grassEdge: ['#948040', '#847030'],
+    lipLeft: ['#8C7838', '#7C6828', '#8A7848'],
+    lipRight: ['#7C6828', '#6C5818', '#7A6838'],
+    dirtLeft: ['#A88C60', '#987C50', '#886C40'],
+    dirtRight: ['#987C50', '#886C40', '#785C30'],
+    stoneBaseLeft: '#685440',
+    stoneBaseRight: '#584838',
+    cloudColor: 'rgba(255, 200, 150, 0.7)',
+    sunColor: 'rgba(255, 180, 100, 1)',
+    particles: 'dust',
+    particleColors: [
+      'rgba(255, 200, 140, 0.6)',
+      'rgba(255, 180, 120, 0.5)',
+      'rgba(255, 220, 160, 0.5)',
+      'rgba(255, 160, 100, 0.55)',
+    ],
+  },
+
 };
 
 /** Get theme by ID, falling back to default meadow */
@@ -196,3 +323,6 @@ export function getIslandTheme(themeId: string): IslandTheme {
 
 /** List of all available theme IDs */
 export const ISLAND_THEME_IDS = Object.keys(ISLAND_THEMES);
+
+/** Free built-in theme IDs (always available in the picker) */
+export const FREE_THEME_IDS = ['day', 'winter', 'beach', 'sakura', 'night', 'desert'];
