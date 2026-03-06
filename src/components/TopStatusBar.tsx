@@ -140,7 +140,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <span className="coin-plus-badge">+</span>
         </button>
 
-        {/* Right section: Streak + Settings */}
+        {/* Right section: Streak + Help */}
         <div className="top-bar-right">
           <Popover open={streakOpen} onOpenChange={setStreakOpen}>
             <PopoverTrigger asChild>
@@ -179,6 +179,13 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
             </PopoverContent>
           </Popover>
 
+          <button
+            className="top-bar-help-btn"
+            onClick={() => window.dispatchEvent(new CustomEvent('openHelp'))}
+            aria-label="How to play"
+          >
+            <span className="top-bar-help-icon">?</span>
+          </button>
         </div>
         </div>{/* end game-top-bar-chips */}
 

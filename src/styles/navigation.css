@@ -103,6 +103,38 @@
     gap: 8px;
   }
 
+  /* Help button in top bar */
+  .top-bar-help-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    pointer-events: auto;
+  }
+
+  .top-bar-help-btn:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .top-bar-help-icon {
+    font-size: 14px;
+    font-weight: 800;
+    color: hsl(142 35% 40%);
+    line-height: 1;
+    margin-top: -1px;
+  }
+
   /* Level Badge — Solid sage pill */
   .level-badge-btn {
     position: relative;
