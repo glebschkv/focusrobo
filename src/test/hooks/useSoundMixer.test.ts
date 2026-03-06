@@ -79,12 +79,27 @@ vi.mock('@/data/AmbientSoundsData', () => ({
 vi.mock('@/hooks/usePremiumStatus', () => ({
   TIER_BENEFITS: {
     free: { soundMixingSlots: 1 },
-    premium: { soundMixingSlots: 2 },
-    premium_plus: { soundMixingSlots: 3 },
-    lifetime: { soundMixingSlots: 3 },
+    premium: { soundMixingSlots: 3 },
   },
-  isValidSubscriptionTier: (value: unknown): value is 'free' | 'premium' | 'premium_plus' | 'lifetime' => {
-    return typeof value === 'string' && ['free', 'premium', 'premium_plus', 'lifetime'].includes(value);
+  isValidSubscriptionTier: (value: unknown): value is 'free' | 'premium' => {
+    return typeof value === 'string' && ['free', 'premium'].includes(value);
+  },
+}));
+
+// Mock usePremiumStore (Zustand store used by useSoundMixer to get tier benefits)
+let mockTier = 'free';
+vi.mock('@/stores/premiumStore', () => ({
+  usePremiumStore: {
+    getState: () => ({
+      tier: mockTier,
+      getTierBenefits: () => {
+        const benefits: Record<string, { soundMixingSlots: number }> = {
+          free: { soundMixingSlots: 1 },
+          premium: { soundMixingSlots: 3 },
+        };
+        return benefits[mockTier] || benefits.free;
+      },
+    }),
   },
 }));
 
@@ -186,11 +201,11 @@ let mockAudioContext: ReturnType<typeof createMockAudioContext>;
 
 describe('useSoundMixer', () => {
   const STORAGE_KEY = 'petIsland_soundMixer';
-  const PREMIUM_KEY = 'petIsland_premium';
 
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    mockTier = 'free'; // Reset to free tier
 
     mockAudioContext = createMockAudioContext();
     (window as unknown as { AudioContext: typeof AudioContext }).AudioContext = vi.fn(
@@ -293,7 +308,7 @@ describe('useSoundMixer', () => {
       expect(result.current.canAddLayer()).toBe(false);
     });
 
-    it('should allow 2 layers for premium tier', () => {
+    it('should allow 3 layers for premium tier', () => {
       localStorage.setItem(
         PREMIUM_KEY,
         JSON.stringify({ tier: 'premium' })
@@ -301,7 +316,7 @@ describe('useSoundMixer', () => {
 
       const { result } = renderHook(() => useSoundMixer());
 
-      expect(result.current.maxLayers).toBe(2);
+      expect(result.current.maxLayers).toBe(3);
 
       act(() => {
         result.current.addLayer('white-noise');
@@ -313,29 +328,13 @@ describe('useSoundMixer', () => {
         result.current.addLayer('pink-noise');
       });
 
+      expect(result.current.canAddLayer()).toBe(true);
+
+      act(() => {
+        result.current.addLayer('brown-noise');
+      });
+
       expect(result.current.canAddLayer()).toBe(false);
-    });
-
-    it('should allow 3 layers for premium_plus tier', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium_plus' })
-      );
-
-      const { result } = renderHook(() => useSoundMixer());
-
-      expect(result.current.maxLayers).toBe(3);
-    });
-
-    it('should allow 3 layers for lifetime tier', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'lifetime' })
-      );
-
-      const { result } = renderHook(() => useSoundMixer());
-
-      expect(result.current.maxLayers).toBe(3);
     });
 
     it('should handle invalid premium data', () => {
@@ -533,7 +532,7 @@ describe('useSoundMixer', () => {
     it('should create audio context for each layer', () => {
       localStorage.setItem(
         PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium_plus' })
+        JSON.stringify({ tier: 'premium' })
       );
 
       const { result } = renderHook(() => useSoundMixer());
@@ -913,7 +912,7 @@ describe('useSoundMixer', () => {
     it('should handle add/remove operations correctly', () => {
       localStorage.setItem(
         PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium_plus' })
+        JSON.stringify({ tier: 'premium' })
       );
 
       const { result } = renderHook(() => useSoundMixer());

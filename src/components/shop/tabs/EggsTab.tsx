@@ -13,6 +13,8 @@ import type { PetRarity } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import { useCoinSystem } from '@/hooks/useCoinSystem';
 import { useCurrentLevel } from '@/stores/xpStore';
+import { usePremiumStatus } from '@/hooks/usePremiumStatus';
+import { getEggDiscountedPrice } from '@/hooks/useShop';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 import { SpeciesSelectorModal } from '../SpeciesSelectorModal';
@@ -42,6 +44,8 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const speciesCatalog = useLandStore((s) => s.speciesCatalog);
   const coinSystem = useCoinSystem();
   const currentLevel = useCurrentLevel();
+  const { getEggDiscountPercent, isPremium } = usePremiumStatus();
+  const discountPercent = getEggDiscountPercent();
 
   const handleSelectSpecies = async (speciesId: string) => {
     if (!canAfford(SPECIES_SELECTOR_PRICE)) {
@@ -66,14 +70,15 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
 
   const handleHatch = async (egg: EggType) => {
     if (hatching) return;
-    if (!canAfford(egg.coinPrice)) {
+    const effectivePrice = getEggDiscountedPrice(egg.coinPrice, discountPercent);
+    if (!canAfford(effectivePrice)) {
       toast.error('Not enough coins!');
       return;
     }
 
     setHatching(true);
     try {
-      const spent = await coinSystem.spendCoins(egg.coinPrice, 'shop_purchase');
+      const spent = await coinSystem.spendCoins(effectivePrice, 'shop_purchase');
       if (!spent) {
         toast.error('Purchase failed!');
         return;
@@ -100,16 +105,21 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
 
       {/* Nest cards */}
       <div className="grid grid-cols-2 gap-2.5">
-        {EGG_TYPES.map((egg, index) => (
-          <NestCard
-            key={egg.id}
-            egg={egg}
-            index={index}
-            canAfford={canAfford(egg.coinPrice)}
-            onHatch={() => handleHatch(egg)}
-            hatching={hatching}
-          />
-        ))}
+        {EGG_TYPES.map((egg, index) => {
+          const effectivePrice = getEggDiscountedPrice(egg.coinPrice, discountPercent);
+          return (
+            <NestCard
+              key={egg.id}
+              egg={egg}
+              index={index}
+              canAfford={canAfford(effectivePrice)}
+              onHatch={() => handleHatch(egg)}
+              hatching={hatching}
+              discountPercent={discountPercent}
+              effectivePrice={effectivePrice}
+            />
+          );
+        })}
       </div>
 
       {/* Wishing Well — Species Selector */}
@@ -160,12 +170,16 @@ function NestCard({
   canAfford,
   onHatch,
   hatching,
+  discountPercent,
+  effectivePrice,
 }: {
   egg: EggType;
   index: number;
   canAfford: boolean;
   onHatch: () => void;
   hatching: boolean;
+  discountPercent: number;
+  effectivePrice: number;
 }) {
   return (
     <div className={cn(
@@ -227,13 +241,33 @@ function NestCard({
           })}
         </div>
 
+        {/* Premium discount badge */}
+        {discountPercent > 0 && (
+          <div className="mb-2 text-center">
+            <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #D4A84E, #C87941)' }}>
+              Premium -{discountPercent}%
+            </span>
+          </div>
+        )}
+
         {/* Price + hatch */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <PixelIcon name="coin" size={13} />
-            <span className="font-black text-xs" style={{ color: '#7A5C20' }}>
-              {egg.coinPrice.toLocaleString()}
-            </span>
+            {discountPercent > 0 ? (
+              <>
+                <span className="text-[10px] line-through" style={{ color: '#A0937E' }}>
+                  {egg.coinPrice.toLocaleString()}
+                </span>
+                <span className="font-black text-xs" style={{ color: '#6B9E58' }}>
+                  {effectivePrice.toLocaleString()}
+                </span>
+              </>
+            ) : (
+              <span className="font-black text-xs" style={{ color: '#7A5C20' }}>
+                {egg.coinPrice.toLocaleString()}
+              </span>
+            )}
           </div>
           <button
             onClick={onHatch}

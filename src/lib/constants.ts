@@ -543,22 +543,19 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
+    PREMIUM_WEEKLY: 'com.fonoinc.app.premium.weekly',
     PREMIUM_MONTHLY: 'com.fonoinc.app.premium.monthly',
     PREMIUM_YEARLY: 'com.fonoinc.app.premium.yearly',
-    PREMIUM_PLUS_MONTHLY: 'com.fonoinc.app.premiumplus.monthly',
-    PREMIUM_PLUS_YEARLY: 'com.fonoinc.app.premiumplus.yearly',
-    LIFETIME: 'com.fonoinc.app.lifetime',
     // Coin Packs
-    COINS_VALUE: 'com.fonoinc.app.coins.value',
-    COINS_PREMIUM: 'com.fonoinc.app.coins.premium',
-    COINS_MEGA: 'com.fonoinc.app.coins.mega',
-    COINS_ULTRA: 'com.fonoinc.app.coins.ultra',
-    COINS_LEGENDARY: 'com.fonoinc.app.coins.legendary',
+    COINS_HANDFUL: 'com.fonoinc.app.coins.handful',
+    COINS_POUCH: 'com.fonoinc.app.coins.pouch',
+    COINS_CHEST: 'com.fonoinc.app.coins.chest',
+    COINS_TROVE: 'com.fonoinc.app.coins.trove',
+    COINS_HOARD: 'com.fonoinc.app.coins.hoard',
     // Starter Bundles
     BUNDLE_WELCOME: 'com.fonoinc.app.bundle.welcome',
-    BUNDLE_STARTER: 'com.fonoinc.app.bundle.starter',
-    BUNDLE_COLLECTOR: 'com.fonoinc.app.bundle.collector',
-    BUNDLE_ULTIMATE: 'com.fonoinc.app.bundle.ultimate',
+    BUNDLE_EGGHUNTER: 'com.fonoinc.app.bundle.egghunter',
+    BUNDLE_ISLANDMASTER: 'com.fonoinc.app.bundle.islandmaster',
   } as const,
 } as const;
 

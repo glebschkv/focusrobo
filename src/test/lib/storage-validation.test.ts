@@ -152,13 +152,41 @@ describe('Storage Validation', () => {
 
     it('should accept null dates', () => {
       const validData = {
-        tier: 'lifetime' as const,
+        tier: 'premium' as const,
         expiresAt: null,
         purchasedAt: null,
         planId: null,
       };
       const result = premiumStatusSchema.safeParse(validData);
       expect(result.success).toBe(true);
+    });
+
+    it('should migrate legacy premium_plus tier to premium', () => {
+      const legacyData = {
+        tier: 'premium_plus',
+        expiresAt: '2025-12-31T23:59:59Z',
+        purchasedAt: '2024-01-01T00:00:00Z',
+        planId: 'plan_123',
+      };
+      const result = premiumStatusSchema.safeParse(legacyData);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.tier).toBe('premium');
+      }
+    });
+
+    it('should migrate legacy lifetime tier to premium', () => {
+      const legacyData = {
+        tier: 'lifetime',
+        expiresAt: null,
+        purchasedAt: '2024-01-01T00:00:00Z',
+        planId: 'plan_123',
+      };
+      const result = premiumStatusSchema.safeParse(legacyData);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.tier).toBe('premium');
+      }
     });
   });
 

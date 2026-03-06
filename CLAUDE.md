@@ -443,7 +443,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | `landStore` | `nomo_land_data` | **Island grid (400 cells max), grid expansion tier, completed lands, species catalog, pending pet, wished species, species affinity, egg hatching** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
-| `premiumStore` | `nomo_premium` | Subscription tier (free/premium/premium_plus/lifetime) |
+| `premiumStore` | `nomo_premium` | Subscription tier (free/premium) |
 | `streakStore` | `nomo_streak_data` | Current streak, longest streak, streak freezes (max 3), total sessions |
 | `focusStore` | `nomo_focus_mode` | Focus mode settings, blocked apps, strict mode |
 | `navigationStore` | (not persisted) | Active tab, modal state, navigation history |
@@ -604,7 +604,7 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 - **XP per minute of focus**: 1.2 base
 - **Level formula**: Thresholds table for levels 1-20, then 700 XP/level after 20
 - **Streak bonus**: +3% per day, capped at 60% (max multiplier 1.6x at 20 days)
-- **Premium multipliers**: free=1x, premium=2x, premium_plus=3x, lifetime=4x
+- **Premium multipliers**: free=1x, premium=2x
 - **Focus bonuses**: Perfect focus (0 blocked attempts) = +25% XP + 50 coins; Good focus (1-2 attempts) = +10% XP + 25 coins
 - **Level-ups unlock new pet species** in the random drop pool
 
@@ -623,12 +623,10 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 - XP bonuses: 50 → 100 → 200 → 500 → 1500 at milestones
 
 ### Premium Tiers
-| Tier | Coin Multi | XP Multi | Streak Freezes/mo | Sound Slots |
-|------|-----------|----------|-------------------|-------------|
-| Free | 1x | 1x | 0 | 1 |
-| Premium | 2x | 2x | 2 | 2 |
-| Premium Plus | 3x | 3x | 5 | 3 |
-| Lifetime | 4x | 4x | 7 | 3 |
+| Tier | Coin Multi | XP Multi | Streak Freezes/mo | Sound Slots | Egg Discount |
+|------|-----------|----------|-------------------|-------------|-------------|
+| Free | 1x | 1x | 0 | 1 | 0% |
+| Premium | 2x | 2x | 3 | 3 | 15% |
 
 ### Focus Mode
 - Blocks configurable apps (Instagram, TikTok, Twitter, etc.) via iOS DeviceActivity/Screen Time
@@ -774,17 +772,15 @@ Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (1
 
 ```
 Subscriptions:
-  co.botblock.app.premium.monthly
-  co.botblock.app.premium.yearly
-  co.botblock.app.premiumplus.monthly
-  co.botblock.app.premiumplus.yearly
-  co.botblock.app.lifetime
+  com.fonoinc.app.premium.weekly
+  com.fonoinc.app.premium.monthly
+  com.fonoinc.app.premium.yearly
 
 Coin Packs:
-  co.botblock.app.coins.value / premium / mega / ultra / legendary
+  com.fonoinc.app.coins.handful / pouch / chest / trove / hoard
 
 Bundles:
-  co.botblock.app.bundle.welcome / starter / collector / ultimate
+  com.fonoinc.app.bundle.welcome / egghunter / islandmaster
 ```
 
 ## What's Next (TODO)

@@ -94,6 +94,7 @@ export interface StarterBundle extends ShopItem {
     boosterId?: string;
     characterId?: string;
     streakFreezes?: number;
+    eggs?: Array<{ eggId: string; quantity: number }>;
   };
   savings: string;
 }

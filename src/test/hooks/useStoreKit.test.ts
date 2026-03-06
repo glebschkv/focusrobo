@@ -134,40 +134,40 @@ vi.mock('@/integrations/supabase/client', () => ({
 vi.mock('@/hooks/usePremiumStatus', () => ({
   SUBSCRIPTION_PLANS: [
     {
+      id: 'premium-weekly',
+      tier: 'premium',
+      name: 'Premium Weekly',
+      description: 'Boost your progress',
+      price: '$2.49',
+      priceValue: 2.49,
+      period: 'weekly',
+      features: [],
+      iapProductId: 'com.fonoinc.app.premium.weekly',
+      bonusCoins: 0,
+    },
+    {
       id: 'premium-monthly',
       tier: 'premium',
-      name: 'Premium',
-      description: 'Double your progress',
+      name: 'Premium Monthly',
+      description: 'Boost your progress',
       price: '$5.99',
       priceValue: 5.99,
       period: 'monthly',
       features: [],
       iapProductId: 'com.fonoinc.app.premium.monthly',
-      bonusCoins: 1000,
+      bonusCoins: 500,
     },
     {
       id: 'premium-yearly',
       tier: 'premium',
-      name: 'Premium',
-      description: 'Double your progress',
-      price: '$44.99',
-      priceValue: 44.99,
+      name: 'Premium Yearly',
+      description: 'Boost your progress',
+      price: '$39.99',
+      priceValue: 39.99,
       period: 'yearly',
       features: [],
       iapProductId: 'com.fonoinc.app.premium.yearly',
-      bonusCoins: 2500,
-    },
-    {
-      id: 'premium-lifetime',
-      tier: 'lifetime',
-      name: 'Lifetime',
-      description: 'Forever access',
-      price: '$199.99',
-      priceValue: 199.99,
-      period: 'lifetime',
-      features: [],
-      iapProductId: 'com.fonoinc.app.lifetime',
-      bonusCoins: 10000,
+      bonusCoins: 1500,
     },
   ],
   dispatchSubscriptionChange: vi.fn(),
@@ -179,9 +179,18 @@ import { useStoreKit } from '@/hooks/useStoreKit';
 // Mock data for tests
 const mockProducts = [
   {
+    id: 'com.fonoinc.app.premium.weekly',
+    displayName: 'Premium Weekly',
+    description: 'Boost your progress',
+    price: '2.49',
+    displayPrice: '$2.49',
+    type: 'autoRenewable' as const,
+    subscriptionPeriod: { unit: 'week' as const, value: 1 },
+  },
+  {
     id: 'com.fonoinc.app.premium.monthly',
     displayName: 'Premium Monthly',
-    description: 'Double your progress',
+    description: 'Boost your progress',
     price: '5.99',
     displayPrice: '$5.99',
     type: 'autoRenewable' as const,
@@ -190,24 +199,16 @@ const mockProducts = [
   {
     id: 'com.fonoinc.app.premium.yearly',
     displayName: 'Premium Yearly',
-    description: 'Double your progress - save 37%',
-    price: '44.99',
-    displayPrice: '$44.99',
+    description: 'Boost your progress - save 44%',
+    price: '39.99',
+    displayPrice: '$39.99',
     type: 'autoRenewable' as const,
     subscriptionPeriod: { unit: 'year' as const, value: 1 },
   },
   {
-    id: 'com.fonoinc.app.lifetime',
-    displayName: 'Lifetime',
-    description: 'Forever access',
-    price: '199.99',
-    displayPrice: '$199.99',
-    type: 'nonConsumable' as const,
-  },
-  {
-    id: 'com.fonoinc.app.coins.starter',
-    displayName: 'Starter Coins',
-    description: '500 coins',
+    id: 'com.fonoinc.app.coins.handful',
+    displayName: 'Handful of Coins',
+    description: '400 coins + 100 bonus',
     price: '0.99',
     displayPrice: '$0.99',
     type: 'consumable' as const,
@@ -235,20 +236,7 @@ const mockActiveSubscriptionStatus = {
   purchasedProducts: [],
 };
 
-const mockLifetimeStatus = {
-  hasActiveSubscription: true,
-  activeSubscriptions: [],
-  purchasedProducts: [
-    {
-      productId: 'com.fonoinc.app.lifetime',
-      transactionId: 'txn_lifetime_123',
-      purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
-      expirationDate: null,
-      signedTransaction: 'signed_lifetime_txn',
-      environment: 'production' as const,
-    },
-  ],
-};
+// No lifetime status - only subscriptions now
 
 describe('useStoreKit', () => {
   const PREMIUM_STORAGE_KEY = 'petIsland_premium';
@@ -376,9 +364,9 @@ describe('useStoreKit', () => {
       expect(result.current.products).toEqual(mockProducts);
       expect(mockGetProducts).toHaveBeenCalledWith({
         productIds: expect.arrayContaining([
+          'com.fonoinc.app.premium.weekly',
           'com.fonoinc.app.premium.monthly',
           'com.fonoinc.app.premium.yearly',
-          'com.fonoinc.app.lifetime',
         ]),
       });
     });
@@ -741,7 +729,7 @@ describe('useStoreKit', () => {
             purchaseDate: Date.now() - 7 * 24 * 60 * 60 * 1000,
           },
           {
-            productId: 'com.fonoinc.app.lifetime',
+            productId: 'com.fonoinc.app.premium.yearly',
             transactionId: 'txn_restored_2',
             signedTransaction: 'mock_signed_transaction_2',
             purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000,
@@ -1041,8 +1029,19 @@ describe('useStoreKit', () => {
       expect(parsed.tier).toBe('premium');
     });
 
-    it('should detect lifetime purchase correctly', async () => {
-      mockGetSubscriptionStatus.mockResolvedValue(mockLifetimeStatus);
+    it('should detect weekly subscription correctly', async () => {
+      mockGetSubscriptionStatus.mockResolvedValue({
+        hasActiveSubscription: true,
+        activeSubscriptions: [
+          {
+            productId: 'com.fonoinc.app.premium.weekly',
+            transactionId: 'txn_weekly',
+            purchaseDate: Date.now(),
+            expirationDate: Date.now() + 7 * 24 * 60 * 60 * 1000,
+          },
+        ],
+        purchasedProducts: [],
+      });
 
       const { result } = renderHook(() => useStoreKit());
 
@@ -1054,37 +1053,7 @@ describe('useStoreKit', () => {
       expect(stored).not.toBeNull();
 
       const parsed = JSON.parse(stored!);
-      expect(parsed.tier).toBe('lifetime');
-      expect(parsed.expiresAt).toBeNull(); // Lifetime has no expiry
-    });
-
-    it('should prioritize active subscription over purchased products', async () => {
-      mockGetSubscriptionStatus.mockResolvedValue({
-        hasActiveSubscription: true,
-        activeSubscriptions: [
-          {
-            productId: 'com.fonoinc.app.premium.monthly',
-            transactionId: 'txn_active',
-            purchaseDate: Date.now(),
-            expirationDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
-          },
-        ],
-        purchasedProducts: [
-          {
-            productId: 'com.fonoinc.app.lifetime',
-            transactionId: 'txn_lifetime',
-            purchaseDate: Date.now() - 30 * 24 * 60 * 60 * 1000,
-          },
-        ],
-      });
-
-      const { result } = renderHook(() => useStoreKit());
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.subscriptionStatus?.hasActiveSubscription).toBe(true);
+      expect(parsed.tier).toBe('premium');
     });
   });
 

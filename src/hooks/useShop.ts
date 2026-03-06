@@ -9,12 +9,17 @@ import {
   PREMIUM_BACKGROUNDS,
   UTILITY_ITEMS,
   ALL_BUNDLES,
+  STARTER_BUNDLES,
 } from '@/data/ShopData';
+import { getEggById } from '@/data/EggData';
 import { dispatchAchievementEvent, ACHIEVEMENT_EVENTS } from '@/hooks/useAchievementTracking';
 import { useShopStore } from '@/stores';
+import { useLandStore } from '@/stores/landStore';
+import { useXPStore } from '@/stores/xpStore';
 import { syncPurchasedBundlesFromServer } from '@/stores/shopStore';
 import { IAP_EVENTS } from './useStoreKit';
 import { shopLogger } from '@/lib/logger';
+import { toast } from 'sonner';
 
 export interface PurchaseResult {
   success: boolean;
@@ -47,6 +52,14 @@ async function spendCoinsWithSync(
     ? 'Your balance has been updated. Please try again.'
     : 'Purchase failed. Please check your connection and try again.';
   return { ok: false, message };
+}
+
+/**
+ * Calculate discounted egg price for premium users.
+ */
+export function getEggDiscountedPrice(eggCoinPrice: number, discountPercent: number): number {
+  if (discountPercent <= 0) return eggCoinPrice;
+  return Math.ceil(eggCoinPrice * (1 - discountPercent / 100));
 }
 
 export const useShop = () => {
@@ -155,6 +168,32 @@ export const useShop = () => {
         if (streakFreezes && streakFreezes > 0) {
           for (let i = 0; i < streakFreezes; i++) {
             deps.streakSystem.earnStreakFreeze();
+          }
+        }
+
+        // Hatch eggs from bundle contents
+        if (productId) {
+          const bundleDef = STARTER_BUNDLES.find(b => b.iapProductId === productId);
+          const eggs = bundleDef?.contents?.eggs;
+          if (eggs && eggs.length > 0) {
+            const landStore = useLandStore.getState();
+            const playerLevel = useXPStore.getState().currentLevel;
+            let totalHatched = 0;
+
+            for (const eggEntry of eggs) {
+              const eggDef = getEggById(eggEntry.eggId);
+              if (!eggDef) continue;
+
+              for (let i = 0; i < eggEntry.quantity; i++) {
+                landStore.hatchEgg(eggDef, playerLevel);
+                landStore.placePendingPet();
+                totalHatched++;
+              }
+            }
+
+            if (totalHatched > 0) {
+              toast.success(`Hatched ${totalHatched} pet${totalHatched > 1 ? 's' : ''} from your bundle!`);
+            }
           }
         }
       } catch (e) {

@@ -42,6 +42,11 @@ vi.mock('@/stores/authStore', () => ({
   useIsGuestMode: () => false,
 }));
 
+// Mock useAuth
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => ({ session: null }),
+}));
+
 // Mock Supabase
 const mockSupabaseInvoke = vi.fn();
 const mockGetUser = vi.fn().mockResolvedValue({ data: { user: null }, error: null });
@@ -96,8 +101,6 @@ describe('usePremiumStatus', () => {
 
       expect(result.current.tier).toBe('free');
       expect(result.current.isPremium).toBe(false);
-      expect(result.current.isPremiumPlus).toBe(false);
-      expect(result.current.isLifetime).toBe(false);
       expect(result.current.expiresAt).toBeNull();
       expect(result.current.purchasedAt).toBeNull();
       expect(result.current.currentPlan).toBeNull();
@@ -120,11 +123,10 @@ describe('usePremiumStatus', () => {
 
       expect(result.current.tier).toBe('premium');
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(false);
       expect(result.current.expiresAt).toBe(savedState.expiresAt);
     });
 
-    it('should load premium_plus state correctly', async () => {
+    it('should normalize legacy premium_plus tier to premium on load', async () => {
       const savedState = {
         tier: 'premium_plus',
         expiresAt: getFutureDate(365),
@@ -139,13 +141,11 @@ describe('usePremiumStatus', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.tier).toBe('premium_plus');
+      expect(result.current.tier).toBe('premium');
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(true);
-      expect(result.current.isLifetime).toBe(false);
     });
 
-    it('should load lifetime state correctly', async () => {
+    it('should normalize legacy lifetime tier to premium on load', async () => {
       const savedState = {
         tier: 'lifetime',
         expiresAt: null,
@@ -160,11 +160,9 @@ describe('usePremiumStatus', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.tier).toBe('lifetime');
+      // lifetime gets normalized to premium
+      expect(result.current.tier).toBe('premium');
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(true);
-      expect(result.current.isLifetime).toBe(true);
-      expect(result.current.expiresAt).toBeNull();
     });
 
     it('should handle corrupted localStorage data gracefully', async () => {
@@ -241,24 +239,18 @@ describe('usePremiumStatus', () => {
 
       expect(result.current.tier).toBe('premium');
 
-      // Update localStorage and dispatch event
-      const newState = {
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: new Date().toISOString(),
-        planId: 'premium-plus-yearly',
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      // Update localStorage and dispatch event to free
+      localStorage.removeItem(STORAGE_KEY);
 
       act(() => {
-        dispatchSubscriptionChange('premium_plus');
+        dispatchSubscriptionChange('free');
       });
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
+        expect(result.current.tier).toBe('free');
       });
 
-      expect(result.current.isPremiumPlus).toBe(true);
+      expect(result.current.isPremium).toBe(false);
     });
 
     it('should handle downgrade to free tier via event', async () => {
@@ -297,8 +289,6 @@ describe('usePremiumStatus', () => {
 
       expect(result.current.tier).toBe('free');
       expect(result.current.isPremium).toBe(false);
-      expect(result.current.isPremiumPlus).toBe(false);
-      expect(result.current.isLifetime).toBe(false);
     });
 
     it('should correctly identify premium tier', async () => {
@@ -316,11 +306,11 @@ describe('usePremiumStatus', () => {
       });
 
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(false);
-      expect(result.current.isLifetime).toBe(false);
     });
+  });
 
-    it('should correctly identify premium_plus tier', async () => {
+  describe('Legacy Tier Migration', () => {
+    it('should normalize stored premium_plus to premium', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium_plus',
         expiresAt: getFutureDate(365),
@@ -331,15 +321,18 @@ describe('usePremiumStatus', () => {
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
+        expect(result.current.isLoading).toBe(false);
       });
 
+      expect(result.current.tier).toBe('premium');
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(true);
-      expect(result.current.isLifetime).toBe(false);
+
+      // Should have updated localStorage with normalized tier
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+      expect(saved.tier).toBe('premium');
     });
 
-    it('should correctly identify lifetime tier', async () => {
+    it('should normalize stored lifetime to premium', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'lifetime',
         expiresAt: null,
@@ -350,12 +343,34 @@ describe('usePremiumStatus', () => {
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
+        expect(result.current.isLoading).toBe(false);
       });
 
+      expect(result.current.tier).toBe('premium');
       expect(result.current.isPremium).toBe(true);
-      expect(result.current.isPremiumPlus).toBe(true);
-      expect(result.current.isLifetime).toBe(true);
+
+      // Should have updated localStorage with normalized tier
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+      expect(saved.tier).toBe('premium');
+    });
+
+    it('should normalize unknown tier to free', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tier: 'super_premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'some-plan',
+      }));
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Unknown tier normalizes to free, and free tier is not loaded
+      expect(result.current.tier).toBe('free');
+      expect(result.current.isPremium).toBe(false);
     });
   });
 
@@ -369,7 +384,11 @@ describe('usePremiumStatus', () => {
       expect(benefits.coinMultiplier).toBe(1);
       expect(benefits.xpMultiplier).toBe(1);
       expect(benefits.monthlyStreakFreezes).toBe(0);
-      expect(benefits.battlePassIncluded).toBe(false);
+      expect(benefits.soundMixingSlots).toBe(1);
+      expect(benefits.focusPresetSlots).toBe(1);
+      expect(benefits.loginCoinMultiplier).toBe(1);
+      expect(benefits.analyticsAccess).toBe('basic');
+      expect(benefits.eggDiscountPercent).toBe(0);
     });
 
     it('should return premium tier benefits for premium users', async () => {
@@ -389,56 +408,14 @@ describe('usePremiumStatus', () => {
       const benefits = result.current.getTierBenefits();
 
       expect(benefits).toEqual(TIER_BENEFITS.premium);
-      expect(benefits.coinMultiplier).toBe(1.5);
-      expect(benefits.xpMultiplier).toBe(1.5);
-      expect(benefits.monthlyStreakFreezes).toBe(2);
-      expect(benefits.battlePassIncluded).toBe(false);
-    });
-
-    it('should return premium_plus tier benefits', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
-      });
-
-      const benefits = result.current.getTierBenefits();
-
-      expect(benefits).toEqual(TIER_BENEFITS.premium_plus);
       expect(benefits.coinMultiplier).toBe(2);
       expect(benefits.xpMultiplier).toBe(2);
-      expect(benefits.monthlyStreakFreezes).toBe(5);
-      expect(benefits.battlePassIncluded).toBe(true);
-    });
-
-    it('should return lifetime tier benefits', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
-      });
-
-      const benefits = result.current.getTierBenefits();
-
-      expect(benefits).toEqual(TIER_BENEFITS.lifetime);
-      expect(benefits.coinMultiplier).toBe(2.5);
-      expect(benefits.xpMultiplier).toBe(2.5);
-      expect(benefits.monthlyStreakFreezes).toBe(7);
-      expect(benefits.battlePassIncluded).toBe(true);
+      expect(benefits.monthlyStreakFreezes).toBe(3);
+      expect(benefits.soundMixingSlots).toBe(3);
+      expect(benefits.focusPresetSlots).toBe(5);
+      expect(benefits.loginCoinMultiplier).toBe(2);
+      expect(benefits.analyticsAccess).toBe('full');
+      expect(benefits.eggDiscountPercent).toBe(15);
     });
   });
 
@@ -463,42 +440,30 @@ describe('usePremiumStatus', () => {
         expect(result.current.tier).toBe('premium');
       });
 
-      expect(result.current.getCoinMultiplier()).toBe(1.5);
+      expect(result.current.getCoinMultiplier()).toBe(2);
     });
 
-    it('should return correct XP multiplier for premium_plus tier', async () => {
+    it('should return correct XP multiplier for free tier', () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      expect(result.current.getXPMultiplier()).toBe(1);
+    });
+
+    it('should return correct XP multiplier for premium tier', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
+        tier: 'premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-monthly',
       }));
 
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
+        expect(result.current.tier).toBe('premium');
       });
 
       expect(result.current.getXPMultiplier()).toBe(2);
-    });
-
-    it('should return correct multipliers for lifetime tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
-      });
-
-      expect(result.current.getCoinMultiplier()).toBe(2.5);
-      expect(result.current.getXPMultiplier()).toBe(2.5);
     });
   });
 
@@ -509,7 +474,7 @@ describe('usePremiumStatus', () => {
       expect(result.current.getSoundMixingSlots()).toBe(1);
     });
 
-    it('should return 2 sound mixing slots for premium users', async () => {
+    it('should return 3 sound mixing slots for premium users', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -521,74 +486,18 @@ describe('usePremiumStatus', () => {
 
       await waitFor(() => {
         expect(result.current.tier).toBe('premium');
-      });
-
-      expect(result.current.getSoundMixingSlots()).toBe(2);
-    });
-
-    it('should return 3 sound mixing slots for premium_plus users', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
       });
 
       expect(result.current.getSoundMixingSlots()).toBe(3);
     });
 
-    it('should return correct focus preset slots for each tier', async () => {
-      // Free tier
-      const { result: freeResult } = renderHook(() => usePremiumStatus());
-      expect(freeResult.current.getFocusPresetSlots()).toBe(1);
-
-      // Premium tier
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium',
-        expiresAt: getFutureDate(30),
-        purchasedAt: getPastDate(5),
-        planId: 'premium-monthly',
-      }));
-
-      const { result: premiumResult } = renderHook(() => usePremiumStatus());
-      await waitFor(() => {
-        expect(premiumResult.current.tier).toBe('premium');
-      });
-      expect(premiumResult.current.getFocusPresetSlots()).toBe(3);
-    });
-
-    it('should return 10 focus preset slots for lifetime users', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
-      }));
-
+    it('should return 1 focus preset slot for free users', () => {
       const { result } = renderHook(() => usePremiumStatus());
 
-      await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
-      });
-
-      expect(result.current.getFocusPresetSlots()).toBe(10);
-    });
-  });
-
-  describe('Battle Pass Inclusion', () => {
-    it('should not include battle pass for free tier', () => {
-      const { result } = renderHook(() => usePremiumStatus());
-
-      expect(result.current.hasBattlePassIncluded()).toBe(false);
+      expect(result.current.getFocusPresetSlots()).toBe(1);
     });
 
-    it('should not include battle pass for premium tier', async () => {
+    it('should return 5 focus preset slots for premium users', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -602,41 +511,82 @@ describe('usePremiumStatus', () => {
         expect(result.current.tier).toBe('premium');
       });
 
-      expect(result.current.hasBattlePassIncluded()).toBe(false);
+      expect(result.current.getFocusPresetSlots()).toBe(5);
+    });
+  });
+
+  describe('Analytics Access', () => {
+    it('should return basic analytics for free tier', () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      expect(result.current.hasFullAnalytics()).toBe(false);
     });
 
-    it('should include battle pass for premium_plus tier', async () => {
+    it('should return full analytics for premium tier', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
+        tier: 'premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-monthly',
       }));
 
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
+        expect(result.current.tier).toBe('premium');
       });
 
-      expect(result.current.hasBattlePassIncluded()).toBe(true);
+      expect(result.current.hasFullAnalytics()).toBe(true);
+    });
+  });
+
+  describe('Egg Discount', () => {
+    it('should return 0% egg discount for free tier', () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      expect(result.current.getEggDiscountPercent()).toBe(0);
     });
 
-    it('should include battle pass for lifetime tier', async () => {
+    it('should return 15% egg discount for premium tier', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
+        tier: 'premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-monthly',
       }));
 
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
+        expect(result.current.tier).toBe('premium');
       });
 
-      expect(result.current.hasBattlePassIncluded()).toBe(true);
+      expect(result.current.getEggDiscountPercent()).toBe(15);
+    });
+  });
+
+  describe('Login Coin Multiplier', () => {
+    it('should return 1x login coin multiplier for free tier', () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      expect(result.current.getLoginCoinMultiplier()).toBe(1);
+    });
+
+    it('should return 2x login coin multiplier for premium tier', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tier: 'premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-monthly',
+      }));
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.tier).toBe('premium');
+      });
+
+      expect(result.current.getLoginCoinMultiplier()).toBe(2);
     });
   });
 
@@ -647,7 +597,7 @@ describe('usePremiumStatus', () => {
       expect(result.current.getMonthlyStreakFreezes()).toBe(0);
     });
 
-    it('should return 2 streak freezes for premium tier', async () => {
+    it('should return 3 streak freezes for premium tier', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -661,41 +611,7 @@ describe('usePremiumStatus', () => {
         expect(result.current.tier).toBe('premium');
       });
 
-      expect(result.current.getMonthlyStreakFreezes()).toBe(2);
-    });
-
-    it('should return 5 streak freezes for premium_plus tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
-      });
-
-      expect(result.current.getMonthlyStreakFreezes()).toBe(5);
-    });
-
-    it('should return 7 streak freezes for lifetime tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
-      });
-
-      expect(result.current.getMonthlyStreakFreezes()).toBe(7);
+      expect(result.current.getMonthlyStreakFreezes()).toBe(3);
     });
   });
 
@@ -738,7 +654,7 @@ describe('usePremiumStatus', () => {
         expect(dispatchEventSpy).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'petIsland_grantStreakFreezes',
-            detail: { amount: 2 },
+            detail: { amount: 3 },
           })
         );
       });
@@ -788,10 +704,10 @@ describe('usePremiumStatus', () => {
       lastMonth.setMonth(lastMonth.getMonth() - 1);
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
+        tier: 'premium',
         expiresAt: getFutureDate(365),
         purchasedAt: getPastDate(40),
-        planId: 'premium-plus-yearly',
+        planId: 'premium-yearly',
         lastStreakFreezeGrant: lastMonth.toISOString(),
       }));
 
@@ -802,12 +718,11 @@ describe('usePremiumStatus', () => {
       });
 
       // The useEffect automatically grants streak freezes on mount when last grant was previous month
-      // So we check that the event was dispatched during initialization
       await waitFor(() => {
         expect(dispatchEventSpy).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'petIsland_grantStreakFreezes',
-            detail: { amount: 5 },
+            detail: { amount: 3 },
           })
         );
       });
@@ -849,7 +764,7 @@ describe('usePremiumStatus', () => {
       expect(grantResult?.amount).toBe(0);
     });
 
-    it('should grant bonus coins for valid plan', async () => {
+    it('should grant 500 bonus coins for premium-monthly plan', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -882,6 +797,53 @@ describe('usePremiumStatus', () => {
       dispatchEventSpy.mockRestore();
     });
 
+    it('should grant 1500 bonus coins for premium-yearly plan', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tier: 'premium',
+        expiresAt: getFutureDate(365),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-yearly',
+      }));
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      let grantResult: { granted: boolean; amount: number } | undefined;
+      act(() => {
+        grantResult = result.current.grantBonusCoins('premium-yearly');
+      });
+
+      expect(grantResult?.granted).toBe(true);
+      expect(grantResult?.amount).toBe(1500);
+    });
+
+    it('should grant 0 bonus coins for premium-weekly plan', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tier: 'premium',
+        expiresAt: getFutureDate(7),
+        purchasedAt: getPastDate(1),
+        planId: 'premium-weekly',
+      }));
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      let grantResult: { granted: boolean; amount: number } | undefined;
+      act(() => {
+        grantResult = result.current.grantBonusCoins('premium-weekly');
+      });
+
+      // Weekly plan has 0 bonus coins, so nothing to grant
+      expect(grantResult?.granted).toBe(false);
+      expect(grantResult?.amount).toBe(0);
+    });
+
     it('should not grant bonus coins if already granted for same plan', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
@@ -908,10 +870,10 @@ describe('usePremiumStatus', () => {
 
     it('should grant bonus coins for different plan', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
+        tier: 'premium',
         expiresAt: getFutureDate(365),
         purchasedAt: getPastDate(5),
-        planId: 'premium-plus-yearly',
+        planId: 'premium-yearly',
         bonusCoinsGrantedForPlan: 'premium-monthly', // Previous plan
       }));
 
@@ -923,34 +885,11 @@ describe('usePremiumStatus', () => {
 
       let grantResult: { granted: boolean; amount: number } | undefined;
       act(() => {
-        grantResult = result.current.grantBonusCoins('premium-plus-yearly');
+        grantResult = result.current.grantBonusCoins('premium-yearly');
       });
 
       expect(grantResult?.granted).toBe(true);
-      expect(grantResult?.amount).toBe(5000);
-    });
-
-    it('should grant 10000 bonus coins for lifetime plan', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(1),
-        planId: 'premium-lifetime',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      let grantResult: { granted: boolean; amount: number } | undefined;
-      act(() => {
-        grantResult = result.current.grantBonusCoins('premium-lifetime');
-      });
-
-      expect(grantResult?.granted).toBe(true);
-      expect(grantResult?.amount).toBe(10000);
+      expect(grantResult?.amount).toBe(1500);
     });
   });
 
@@ -1069,8 +1008,8 @@ describe('usePremiumStatus', () => {
         data: {
           success: true,
           subscription: {
-            tier: 'premium_plus',
-            expiresAt: getFutureDate(365),
+            tier: 'premium',
+            expiresAt: getFutureDate(30),
             purchasedAt: new Date().toISOString(),
           },
         },
@@ -1086,7 +1025,7 @@ describe('usePremiumStatus', () => {
 
       await act(async () => {
         await result.current.validatePurchase(
-          'com.fonoinc.app.premiumplus.yearly',
+          'com.fonoinc.app.premium.monthly',
           'txn_456'
         );
       });
@@ -1094,15 +1033,64 @@ describe('usePremiumStatus', () => {
       expect(dispatchEventSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'petIsland_subscriptionChange',
-          detail: { tier: 'premium_plus' },
+          detail: { tier: 'premium' },
         })
       );
 
       dispatchEventSpy.mockRestore();
     });
+
+    it('should normalize legacy tier from server during validation', async () => {
+      mockSupabaseInvoke.mockResolvedValueOnce({
+        data: {
+          success: true,
+          subscription: {
+            tier: 'premium_plus', // legacy tier from server
+            expiresAt: getFutureDate(365),
+            purchasedAt: new Date().toISOString(),
+          },
+        },
+        error: null,
+      });
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      await act(async () => {
+        await result.current.validatePurchase(
+          'com.fonoinc.app.premium.yearly',
+          'txn_789'
+        );
+      });
+
+      // Should be normalized to 'premium'
+      expect(result.current.tier).toBe('premium');
+      expect(result.current.isPremium).toBe(true);
+    });
   });
 
   describe('purchaseSubscription (dev mode)', () => {
+    it('should simulate weekly subscription purchase in dev mode', async () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      let purchaseResult: { success: boolean; message: string } | undefined;
+      act(() => {
+        purchaseResult = result.current.purchaseSubscription('premium-weekly');
+      });
+
+      expect(purchaseResult?.success).toBe(true);
+      expect(purchaseResult?.message).toBe('Successfully subscribed to Premium Weekly!');
+      expect(result.current.tier).toBe('premium');
+      expect(result.current.expiresAt).not.toBeNull();
+    });
+
     it('should simulate monthly subscription purchase in dev mode', async () => {
       const { result } = renderHook(() => usePremiumStatus());
 
@@ -1116,7 +1104,7 @@ describe('usePremiumStatus', () => {
       });
 
       expect(purchaseResult?.success).toBe(true);
-      expect(purchaseResult?.message).toBe('Successfully subscribed to Premium!');
+      expect(purchaseResult?.message).toBe('Successfully subscribed to Premium Monthly!');
       expect(result.current.tier).toBe('premium');
       expect(result.current.expiresAt).not.toBeNull();
     });
@@ -1130,30 +1118,14 @@ describe('usePremiumStatus', () => {
 
       let purchaseResult: { success: boolean; message: string } | undefined;
       act(() => {
-        purchaseResult = result.current.purchaseSubscription('premium-plus-yearly');
+        purchaseResult = result.current.purchaseSubscription('premium-yearly');
       });
 
       expect(purchaseResult?.success).toBe(true);
-      expect(result.current.tier).toBe('premium_plus');
-      expect(result.current.isPremiumPlus).toBe(true);
-    });
-
-    it('should simulate lifetime purchase with no expiry', async () => {
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      let purchaseResult: { success: boolean; message: string } | undefined;
-      act(() => {
-        purchaseResult = result.current.purchaseSubscription('premium-lifetime');
-      });
-
-      expect(purchaseResult?.success).toBe(true);
-      expect(result.current.tier).toBe('lifetime');
-      expect(result.current.isLifetime).toBe(true);
-      expect(result.current.expiresAt).toBeNull();
+      expect(purchaseResult?.message).toBe('Successfully subscribed to Premium Yearly!');
+      expect(result.current.tier).toBe('premium');
+      expect(result.current.isPremium).toBe(true);
+      expect(result.current.expiresAt).not.toBeNull();
     });
 
     it('should fail for invalid plan ID', async () => {
@@ -1308,16 +1280,16 @@ describe('usePremiumStatus', () => {
 
     it('should clear localStorage on cancel', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
+        tier: 'premium',
+        expiresAt: getFutureDate(30),
+        purchasedAt: getPastDate(5),
+        planId: 'premium-monthly',
       }));
 
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
+        expect(result.current.tier).toBe('premium');
       });
 
       act(() => {
@@ -1364,12 +1336,14 @@ describe('usePremiumStatus', () => {
       expect(result.current.hasFeature('ambient_sounds')).toBe(false);
       expect(result.current.hasFeature('auto_breaks')).toBe(false);
       expect(result.current.hasFeature('session_notes')).toBe(false);
-      expect(result.current.hasFeature('battle_pass')).toBe(false);
-      expect(result.current.hasFeature('founder_badge')).toBe(false);
-      expect(result.current.hasFeature('founder_pet')).toBe(false);
+      expect(result.current.hasFeature('advanced_analytics')).toBe(false);
+      expect(result.current.hasFeature('sound_mixing')).toBe(false);
+      expect(result.current.hasFeature('focus_presets')).toBe(false);
+      expect(result.current.hasFeature('all_timer_backgrounds')).toBe(false);
+      expect(result.current.hasFeature('website_blocking')).toBe(false);
     });
 
-    it('should return true for basic premium features when premium tier', async () => {
+    it('should return true for all features when premium tier', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -1387,97 +1361,10 @@ describe('usePremiumStatus', () => {
       expect(result.current.hasFeature('auto_breaks')).toBe(true);
       expect(result.current.hasFeature('session_notes')).toBe(true);
       expect(result.current.hasFeature('advanced_analytics')).toBe(true);
-    });
-
-    it('should return false for premium_plus features when premium tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium',
-        expiresAt: getFutureDate(30),
-        purchasedAt: getPastDate(5),
-        planId: 'premium-monthly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium');
-      });
-
-      expect(result.current.hasFeature('battle_pass')).toBe(false);
-    });
-
-    it('should return false for lifetime-only features when premium tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium',
-        expiresAt: getFutureDate(30),
-        purchasedAt: getPastDate(5),
-        planId: 'premium-monthly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium');
-      });
-
-      expect(result.current.hasFeature('founder_badge')).toBe(false);
-      expect(result.current.hasFeature('founder_pet')).toBe(false);
-    });
-
-    it('should return true for battle_pass when premium_plus tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
-      });
-
-      expect(result.current.hasFeature('battle_pass')).toBe(true);
-    });
-
-    it('should return false for lifetime-only features when premium_plus tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'premium_plus',
-        expiresAt: getFutureDate(365),
-        purchasedAt: getPastDate(10),
-        planId: 'premium-plus-yearly',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('premium_plus');
-      });
-
-      expect(result.current.hasFeature('founder_badge')).toBe(false);
-      expect(result.current.hasFeature('founder_pet')).toBe(false);
-    });
-
-    it('should return true for all features including founder when lifetime tier', async () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
-      }));
-
-      const { result } = renderHook(() => usePremiumStatus());
-
-      await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
-      });
-
-      expect(result.current.hasFeature('ambient_sounds')).toBe(true);
-      expect(result.current.hasFeature('auto_breaks')).toBe(true);
-      expect(result.current.hasFeature('battle_pass')).toBe(true);
-      expect(result.current.hasFeature('founder_badge')).toBe(true);
-      expect(result.current.hasFeature('founder_pet')).toBe(true);
+      expect(result.current.hasFeature('sound_mixing')).toBe(true);
+      expect(result.current.hasFeature('focus_presets')).toBe(true);
+      expect(result.current.hasFeature('all_timer_backgrounds')).toBe(true);
+      expect(result.current.hasFeature('website_blocking')).toBe(true);
     });
   });
 
@@ -1488,7 +1375,7 @@ describe('usePremiumStatus', () => {
       expect(result.current.currentPlan).toBeNull();
     });
 
-    it('should return the correct plan details', async () => {
+    it('should return the correct plan details for monthly', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         tier: 'premium',
         expiresAt: getFutureDate(30),
@@ -1506,30 +1393,57 @@ describe('usePremiumStatus', () => {
       expect(plan).not.toBeNull();
       expect(plan?.id).toBe('premium-monthly');
       expect(plan?.tier).toBe('premium');
-      expect(plan?.price).toBe('$4.99');
+      expect(plan?.price).toBe('$5.99');
       expect(plan?.period).toBe('monthly');
+      expect(plan?.bonusCoins).toBe(500);
     });
 
-    it('should return lifetime plan details', async () => {
+    it('should return the correct plan details for weekly', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        tier: 'lifetime',
-        expiresAt: null,
-        purchasedAt: getPastDate(100),
-        planId: 'premium-lifetime',
+        tier: 'premium',
+        expiresAt: getFutureDate(7),
+        purchasedAt: getPastDate(1),
+        planId: 'premium-weekly',
       }));
 
       const { result } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(result.current.tier).toBe('lifetime');
+        expect(result.current.tier).toBe('premium');
       });
 
       const plan = result.current.currentPlan;
       expect(plan).not.toBeNull();
-      expect(plan?.id).toBe('premium-lifetime');
-      expect(plan?.tier).toBe('lifetime');
-      expect(plan?.price).toBe('$179.99');
-      expect(plan?.period).toBe('lifetime');
+      expect(plan?.id).toBe('premium-weekly');
+      expect(plan?.tier).toBe('premium');
+      expect(plan?.price).toBe('$2.49');
+      expect(plan?.period).toBe('weekly');
+      expect(plan?.bonusCoins).toBe(0);
+    });
+
+    it('should return the correct plan details for yearly', async () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        tier: 'premium',
+        expiresAt: getFutureDate(365),
+        purchasedAt: getPastDate(10),
+        planId: 'premium-yearly',
+      }));
+
+      const { result } = renderHook(() => usePremiumStatus());
+
+      await waitFor(() => {
+        expect(result.current.tier).toBe('premium');
+      });
+
+      const plan = result.current.currentPlan;
+      expect(plan).not.toBeNull();
+      expect(plan?.id).toBe('premium-yearly');
+      expect(plan?.tier).toBe('premium');
+      expect(plan?.price).toBe('$39.99');
+      expect(plan?.period).toBe('yearly');
+      expect(plan?.savings).toBe('Save 44%');
+      expect(plan?.isPopular).toBe(true);
+      expect(plan?.bonusCoins).toBe(1500);
     });
   });
 
@@ -1585,10 +1499,10 @@ describe('usePremiumStatus', () => {
 
     it('should handle subscription state across component remounts', async () => {
       const savedState = {
-        tier: 'premium_plus',
+        tier: 'premium',
         expiresAt: getFutureDate(200),
         purchasedAt: getPastDate(165),
-        planId: 'premium-plus-yearly',
+        planId: 'premium-yearly',
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState));
 
@@ -1596,7 +1510,7 @@ describe('usePremiumStatus', () => {
       const { result: firstResult, unmount } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(firstResult.current.tier).toBe('premium_plus');
+        expect(firstResult.current.tier).toBe('premium');
       });
 
       unmount();
@@ -1605,10 +1519,10 @@ describe('usePremiumStatus', () => {
       const { result: secondResult } = renderHook(() => usePremiumStatus());
 
       await waitFor(() => {
-        expect(secondResult.current.tier).toBe('premium_plus');
+        expect(secondResult.current.tier).toBe('premium');
       });
 
-      expect(secondResult.current.isPremiumPlus).toBe(true);
+      expect(secondResult.current.isPremium).toBe(true);
     });
 
     it('should handle subscription expiring in the future by 1 second', async () => {
@@ -1672,35 +1586,47 @@ describe('usePremiumStatus', () => {
 
   describe('Subscription Plans Data', () => {
     it('should have all required subscription plans', () => {
-      expect(SUBSCRIPTION_PLANS).toHaveLength(5);
+      expect(SUBSCRIPTION_PLANS).toHaveLength(3);
 
       const planIds = SUBSCRIPTION_PLANS.map(p => p.id);
+      expect(planIds).toContain('premium-weekly');
       expect(planIds).toContain('premium-monthly');
       expect(planIds).toContain('premium-yearly');
-      expect(planIds).toContain('premium-plus-monthly');
-      expect(planIds).toContain('premium-plus-yearly');
-      expect(planIds).toContain('premium-lifetime');
     });
 
     it('should have correct tier assignments for each plan', () => {
+      const premiumWeekly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-weekly');
+      expect(premiumWeekly?.tier).toBe('premium');
+
       const premiumMonthly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-monthly');
       expect(premiumMonthly?.tier).toBe('premium');
 
-      const premiumPlusYearly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-plus-yearly');
-      expect(premiumPlusYearly?.tier).toBe('premium_plus');
-
-      const lifetime = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-lifetime');
-      expect(lifetime?.tier).toBe('lifetime');
+      const premiumYearly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-yearly');
+      expect(premiumYearly?.tier).toBe('premium');
     });
 
     it('should have correct periods for each plan type', () => {
+      const weeklyPlans = SUBSCRIPTION_PLANS.filter(p => p.period === 'weekly');
       const monthlyPlans = SUBSCRIPTION_PLANS.filter(p => p.period === 'monthly');
       const yearlyPlans = SUBSCRIPTION_PLANS.filter(p => p.period === 'yearly');
-      const lifetimePlans = SUBSCRIPTION_PLANS.filter(p => p.period === 'lifetime');
 
-      expect(monthlyPlans).toHaveLength(2);
-      expect(yearlyPlans).toHaveLength(2);
-      expect(lifetimePlans).toHaveLength(1);
+      expect(weeklyPlans).toHaveLength(1);
+      expect(monthlyPlans).toHaveLength(1);
+      expect(yearlyPlans).toHaveLength(1);
+    });
+
+    it('should have correct prices for each plan', () => {
+      const weekly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-weekly');
+      expect(weekly?.price).toBe('$2.49');
+      expect(weekly?.priceValue).toBe(2.49);
+
+      const monthly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-monthly');
+      expect(monthly?.price).toBe('$5.99');
+      expect(monthly?.priceValue).toBe(5.99);
+
+      const yearly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-yearly');
+      expect(yearly?.price).toBe('$39.99');
+      expect(yearly?.priceValue).toBe(39.99);
     });
 
     it('should have bonus coins defined for each plan', () => {
@@ -1709,29 +1635,70 @@ describe('usePremiumStatus', () => {
         expect(typeof plan.bonusCoins).toBe('number');
         expect(plan.bonusCoins).toBeGreaterThanOrEqual(0);
       });
+
+      const weekly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-weekly');
+      expect(weekly?.bonusCoins).toBe(0);
+
+      const monthly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-monthly');
+      expect(monthly?.bonusCoins).toBe(500);
+
+      const yearly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-yearly');
+      expect(yearly?.bonusCoins).toBe(1500);
+    });
+
+    it('should mark yearly plan as popular with savings badge', () => {
+      const yearly = SUBSCRIPTION_PLANS.find(p => p.id === 'premium-yearly');
+      expect(yearly?.isPopular).toBe(true);
+      expect(yearly?.savings).toBe('Save 44%');
+      expect(yearly?.badges).toContain('Popular');
+      expect(yearly?.badges).toContain('Save 44%');
     });
   });
 
   describe('Tier Benefits Data', () => {
     it('should have correct multipliers for each tier', () => {
       expect(TIER_BENEFITS.free.coinMultiplier).toBe(1);
-      expect(TIER_BENEFITS.premium.coinMultiplier).toBe(1.5);
-      expect(TIER_BENEFITS.premium_plus.coinMultiplier).toBe(2);
-      expect(TIER_BENEFITS.lifetime.coinMultiplier).toBe(2.5);
+      expect(TIER_BENEFITS.premium.coinMultiplier).toBe(2);
+
+      expect(TIER_BENEFITS.free.xpMultiplier).toBe(1);
+      expect(TIER_BENEFITS.premium.xpMultiplier).toBe(2);
     });
 
-    it('should have increasing streak freezes by tier', () => {
+    it('should have correct streak freezes for each tier', () => {
       expect(TIER_BENEFITS.free.monthlyStreakFreezes).toBe(0);
-      expect(TIER_BENEFITS.premium.monthlyStreakFreezes).toBe(2);
-      expect(TIER_BENEFITS.premium_plus.monthlyStreakFreezes).toBe(5);
-      expect(TIER_BENEFITS.lifetime.monthlyStreakFreezes).toBe(7);
+      expect(TIER_BENEFITS.premium.monthlyStreakFreezes).toBe(3);
     });
 
-    it('should have battle pass included only for premium_plus and lifetime', () => {
-      expect(TIER_BENEFITS.free.battlePassIncluded).toBe(false);
-      expect(TIER_BENEFITS.premium.battlePassIncluded).toBe(false);
-      expect(TIER_BENEFITS.premium_plus.battlePassIncluded).toBe(true);
-      expect(TIER_BENEFITS.lifetime.battlePassIncluded).toBe(true);
+    it('should have correct sound mixing slots for each tier', () => {
+      expect(TIER_BENEFITS.free.soundMixingSlots).toBe(1);
+      expect(TIER_BENEFITS.premium.soundMixingSlots).toBe(3);
+    });
+
+    it('should have correct focus preset slots for each tier', () => {
+      expect(TIER_BENEFITS.free.focusPresetSlots).toBe(1);
+      expect(TIER_BENEFITS.premium.focusPresetSlots).toBe(5);
+    });
+
+    it('should have correct login coin multiplier for each tier', () => {
+      expect(TIER_BENEFITS.free.loginCoinMultiplier).toBe(1);
+      expect(TIER_BENEFITS.premium.loginCoinMultiplier).toBe(2);
+    });
+
+    it('should have correct analytics access for each tier', () => {
+      expect(TIER_BENEFITS.free.analyticsAccess).toBe('basic');
+      expect(TIER_BENEFITS.premium.analyticsAccess).toBe('full');
+    });
+
+    it('should have correct egg discount for each tier', () => {
+      expect(TIER_BENEFITS.free.eggDiscountPercent).toBe(0);
+      expect(TIER_BENEFITS.premium.eggDiscountPercent).toBe(15);
+    });
+
+    it('should only have free and premium tiers', () => {
+      const tierKeys = Object.keys(TIER_BENEFITS);
+      expect(tierKeys).toHaveLength(2);
+      expect(tierKeys).toContain('free');
+      expect(tierKeys).toContain('premium');
     });
   });
 
@@ -1751,18 +1718,64 @@ describe('usePremiumStatus', () => {
       dispatchEventSpy.mockRestore();
     });
 
-    it('should dispatch event for all tier types', () => {
+    it('should dispatch event for all valid tier types', () => {
       const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
 
-      const tiers: Array<'free' | 'premium' | 'premium_plus' | 'lifetime'> = ['free', 'premium', 'premium_plus', 'lifetime'];
+      const tiers: Array<'free' | 'premium'> = ['free', 'premium'];
 
       tiers.forEach(tier => {
         dispatchSubscriptionChange(tier);
       });
 
-      expect(dispatchEventSpy).toHaveBeenCalledTimes(4);
+      expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
 
       dispatchEventSpy.mockRestore();
+    });
+  });
+
+  describe('Hook return shape', () => {
+    it('should expose all expected properties and methods', () => {
+      const { result } = renderHook(() => usePremiumStatus());
+
+      // State
+      expect(result.current).toHaveProperty('tier');
+      expect(result.current).toHaveProperty('isPremium');
+      expect(result.current).toHaveProperty('isLoading');
+      expect(result.current).toHaveProperty('isVerifying');
+      expect(result.current).toHaveProperty('isGuestMode');
+      expect(result.current).toHaveProperty('expiresAt');
+      expect(result.current).toHaveProperty('purchasedAt');
+      expect(result.current).toHaveProperty('currentPlan');
+
+      // Subscription actions
+      expect(typeof result.current.purchaseSubscription).toBe('function');
+      expect(typeof result.current.validatePurchase).toBe('function');
+      expect(typeof result.current.restorePurchases).toBe('function');
+      expect(typeof result.current.cancelSubscription).toBe('function');
+      expect(typeof result.current.verifyWithServer).toBe('function');
+
+      // Feature checks
+      expect(typeof result.current.hasFeature).toBe('function');
+
+      // Tier benefits
+      expect(typeof result.current.getTierBenefits).toBe('function');
+      expect(typeof result.current.getCoinMultiplier).toBe('function');
+      expect(typeof result.current.getXPMultiplier).toBe('function');
+      expect(typeof result.current.getSoundMixingSlots).toBe('function');
+      expect(typeof result.current.getFocusPresetSlots).toBe('function');
+      expect(typeof result.current.getMonthlyStreakFreezes).toBe('function');
+      expect(typeof result.current.getLoginCoinMultiplier).toBe('function');
+      expect(typeof result.current.hasFullAnalytics).toBe('function');
+      expect(typeof result.current.getEggDiscountPercent).toBe('function');
+
+      // Grants
+      expect(typeof result.current.checkAndGrantMonthlyStreakFreezes).toBe('function');
+      expect(typeof result.current.grantBonusCoins).toBe('function');
+
+      // Should NOT have legacy properties
+      expect(result.current).not.toHaveProperty('isPremiumPlus');
+      expect(result.current).not.toHaveProperty('isLifetime');
+      expect(result.current).not.toHaveProperty('hasBattlePassIncluded');
     });
   });
 });

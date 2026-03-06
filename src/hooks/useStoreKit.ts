@@ -154,22 +154,19 @@ async function serverValidatePurchase(
 // All IAP product IDs
 const ALL_PRODUCT_IDS = [
   // Subscriptions
+  'com.fonoinc.app.premium.weekly',
   'com.fonoinc.app.premium.monthly',
   'com.fonoinc.app.premium.yearly',
-  'com.fonoinc.app.premiumplus.monthly',
-  'com.fonoinc.app.premiumplus.yearly',
-  'com.fonoinc.app.lifetime',
   // Coin Packs (Consumables)
-  'com.fonoinc.app.coins.value',
-  'com.fonoinc.app.coins.premium',
-  'com.fonoinc.app.coins.mega',
-  'com.fonoinc.app.coins.ultra',
-  'com.fonoinc.app.coins.legendary',
+  'com.fonoinc.app.coins.handful',
+  'com.fonoinc.app.coins.pouch',
+  'com.fonoinc.app.coins.chest',
+  'com.fonoinc.app.coins.trove',
+  'com.fonoinc.app.coins.hoard',
   // Starter Bundles (Non-Consumables)
   'com.fonoinc.app.bundle.welcome',
-  'com.fonoinc.app.bundle.starter',
-  'com.fonoinc.app.bundle.collector',
-  'com.fonoinc.app.bundle.ultimate',
+  'com.fonoinc.app.bundle.egghunter',
+  'com.fonoinc.app.bundle.islandmaster',
 ];
 
 // Custom events for IAP fulfillment
@@ -385,14 +382,8 @@ export const useStoreKit = (): UseStoreKitReturn => {
     setSubscriptionStatus(status);
 
     // Sync with local storage for offline access
-    // Check active subscriptions first, then look for lifetime purchase
-    // in purchasedProducts (non-consumable bundles are also in purchasedProducts
-    // but should NOT count as subscriptions)
     const activeSub = status.activeSubscriptions?.[0];
-    const lifetimePurchase = status.purchasedProducts?.find(
-      (p: { productId: string }) => SUBSCRIPTION_PLANS.some(plan => plan.iapProductId === p.productId)
-    );
-    const subscriptionProduct = activeSub || lifetimePurchase;
+    const subscriptionProduct = activeSub;
 
     if (subscriptionProduct) {
       const plan = SUBSCRIPTION_PLANS.find(p => p.iapProductId === subscriptionProduct.productId);
@@ -410,7 +401,7 @@ export const useStoreKit = (): UseStoreKitReturn => {
           localStorage.setItem(PREMIUM_STORAGE_KEY, JSON.stringify(premiumState));
         } catch { /* storage full */ }
 
-        // Dispatch subscription change event for other hooks (Battle Pass, streak freezes, etc.)
+        // Dispatch subscription change event for other hooks (streak freezes, etc.)
         dispatchSubscriptionChange(plan.tier);
 
         // Also validate with server if we have the signed transaction

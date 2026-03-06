@@ -8,7 +8,6 @@ export interface BoosterType {
   multiplier: number;
   durationDays: number;
   coinPrice: number;
-  iapPrice?: string; // For in-app purchase display
 }
 
 export interface ActiveBooster {
@@ -23,7 +22,8 @@ export interface BoosterState {
   boosterHistory: ActiveBooster[];
 }
 
-const STORAGE_KEY = 'petIsland_boosterSystem';
+const STORAGE_KEY = 'nomo_booster_system';
+const LEGACY_STORAGE_KEY = 'petIsland_boosterSystem';
 const BOOSTER_UPDATE_EVENT = 'petIsland_boosterUpdate';
 
 // Available booster types
@@ -35,7 +35,6 @@ export const BOOSTER_TYPES: BoosterType[] = [
     multiplier: 2,
     durationDays: 1,
     coinPrice: 400,
-    iapPrice: '€0,99',
   },
   {
     id: 'super_boost',
@@ -44,7 +43,6 @@ export const BOOSTER_TYPES: BoosterType[] = [
     multiplier: 3,
     durationDays: 3,
     coinPrice: 1000,
-    iapPrice: '€2,99',
   },
   {
     id: 'weekly_pass',
@@ -53,7 +51,6 @@ export const BOOSTER_TYPES: BoosterType[] = [
     multiplier: 1.5,
     durationDays: 7,
     coinPrice: 1500,
-    iapPrice: '€4,99',
   },
 ];
 
@@ -74,9 +71,20 @@ export const useCoinBooster = () => {
     return state;
   }, []);
 
-  // Load saved state from localStorage
+  // Load saved state from localStorage (with legacy key migration)
   useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
+    let savedData = localStorage.getItem(STORAGE_KEY);
+    if (!savedData) {
+      // Migrate from legacy key
+      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacy) {
+        savedData = legacy;
+        try {
+          localStorage.setItem(STORAGE_KEY, legacy);
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+        } catch { /* quota */ }
+      }
+    }
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
