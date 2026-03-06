@@ -169,7 +169,7 @@ function NestCard({
 }) {
   return (
     <div className={cn(
-      'egg-nest-card',
+      'egg-nest-card flex flex-col',
       RARITY_CARD_CLASS[egg.rarity],
     )}>
       {/* Rarity accent strip */}
@@ -190,7 +190,7 @@ function NestCard({
         )}
       </div>
 
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-3 flex flex-col flex-1">
         {/* Name */}
         <div className="text-center mb-2">
           <span className="font-bold text-xs" style={{ color: RARITY_DOT_COLORS[egg.rarity] }}>
@@ -199,7 +199,7 @@ function NestCard({
         </div>
 
         {/* Visual rarity meter */}
-        <div className="space-y-1 mb-3">
+        <div className="space-y-1 mb-3 flex-1">
           {RARITY_ORDER.map((rarity) => {
             const weight = egg.rarityWeights[rarity];
             if (weight === 0) return null;
@@ -228,7 +228,7 @@ function NestCard({
         </div>
 
         {/* Price + hatch */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-1">
             <PixelIcon name="coin" size={13} />
             <span className="font-black text-xs" style={{ color: '#7A5C20' }}>
