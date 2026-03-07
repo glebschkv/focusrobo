@@ -525,12 +525,21 @@ export const useTimerLogic = () => {
       });
     }
 
+    // Auto-hatch egg if user dismisses before animation finishes
+    if (pendingSessionEgg) {
+      const store = useLandStore.getState();
+      const pet = store.hatchSessionEgg();
+      if (pet) {
+        store.placePendingPet();
+      }
+    }
+
     // Clean up pet/egg state
     setLastPlacedPet(null);
     setLastPlacedCellIndex(-1);
     setPendingSessionEgg(null);
     setShowSessionComplete(false);
-  }, [saveSessionNote, lastSessionXP, updateSessionMeta]);
+  }, [saveSessionNote, lastSessionXP, updateSessionMeta, pendingSessionEgg]);
 
   const handleSessionCompleteTakeBreak = useCallback(() => {
     openBreakModal();
