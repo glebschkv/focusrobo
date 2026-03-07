@@ -188,32 +188,6 @@ export function cancelIdleCallback(handle: number): void {
 // MEMORY MANAGEMENT
 // ============================================================================
 
-/**
- * Hint garbage collection — no-op.
- *
- * Previously allocated a 1M-element array to "hint" GC, but that actually
- * causes memory pressure spikes on iOS WKWebView and can trigger jetsam kills.
- * The JS engine's GC runs automatically; manual hints are counterproductive.
- *
- * @deprecated No-op. Remove call sites when convenient.
- */
-export function hintGarbageCollection(): void {
-  // Intentionally empty — see JSDoc
-}
-
-/**
- * Clear image cache — no-op.
- *
- * Previously appended `?t=<timestamp>` to every <img> src on the page, which
- * forces the browser to re-download ALL images simultaneously. On iOS this
- * causes massive memory spikes and potential WKWebView crashes.
- *
- * @deprecated No-op. Remove call sites when convenient.
- */
-export function clearImageCache(): void {
-  // Intentionally empty — see JSDoc
-}
-
 // ============================================================================
 // KEYBOARD HANDLING
 // ============================================================================

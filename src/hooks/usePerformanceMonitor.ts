@@ -156,8 +156,9 @@ export const usePerformanceMonitor = () => {
     }
   }, [metrics.isLowPerformance, settings.autoOptimize, optimizePerformance]);
 
-  // Load settings from localStorage
+  // Load settings from localStorage (dev only — monitoring is disabled in production)
   useEffect(() => {
+    if (!IS_DEV) return;
     try {
       const saved = localStorage.getItem('performance-settings');
       if (saved) {

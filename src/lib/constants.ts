@@ -345,9 +345,6 @@ export const BOT_CONFIG = {
   } as const,
 } as const;
 
-/** @deprecated Use BOT_CONFIG */
-export const PET_CONFIG = BOT_CONFIG;
-
 // ============================================================================
 // ZONE SYSTEM
 // ============================================================================
@@ -388,9 +385,6 @@ export const ZONE_CONFIG = {
     'Deep Ocean': '🌊',
   } as const,
 } as const;
-
-/** @deprecated Use ZONE_CONFIG */
-export const BIOME_CONFIG = ZONE_CONFIG;
 
 // ============================================================================
 // BACKGROUND THEMES
