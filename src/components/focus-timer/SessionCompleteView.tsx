@@ -134,13 +134,26 @@ export const SessionCompleteView = ({
   const petGlow = petRarity ? RARITY_GLOW[petRarity] : null;
   const petScale = petSize ? GROWTH_SCALES[petSize] : 1;
 
-  // Reset egg phase when the view opens with a new egg
+  // Auto-start hatch animation when the view opens with a new egg
+  const autoHatchTriggeredRef = useRef(false);
   useEffect(() => {
     if (isVisible && pendingSessionEgg && !lastPlacedPet) {
       setEggPhase('idle');
       setCrackFrame(0);
+      autoHatchTriggeredRef.current = false;
     }
   }, [isVisible, pendingSessionEgg, lastPlacedPet]);
+
+  // Trigger hatch animation automatically after egg appears
+  useEffect(() => {
+    if (isVisible && pendingSessionEgg && !lastPlacedPet && eggPhase === 'idle' && !autoHatchTriggeredRef.current) {
+      autoHatchTriggeredRef.current = true;
+      const autoHatchDelay = setTimeout(() => {
+        handleTapToHatch();
+      }, 1200);
+      return () => clearTimeout(autoHatchDelay);
+    }
+  }, [isVisible, pendingSessionEgg, lastPlacedPet, eggPhase, handleTapToHatch]);
 
   // When lastPlacedPet appears (after hatch), transition to revealed
   useEffect(() => {
