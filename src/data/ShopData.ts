@@ -23,7 +23,7 @@ export type {
 export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   {
     id: 'bg-sky-islands',
-    name: 'Floating Archipelago',
+    name: 'Sky Islands',
     description: 'Majestic rocky islands rising from calm waters under a serene sky.',
     category: 'backgrounds',
     coinPrice: 1200,
@@ -35,7 +35,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-calm-seas',
-    name: 'Serene Tides',
+    name: 'Calm Seas',
     description: 'A peaceful ocean horizon under a beautiful gradient sky.',
     category: 'backgrounds',
     coinPrice: 1200,
@@ -47,7 +47,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-twilight-clouds',
-    name: 'Dusk Canopy',
+    name: 'Twilight Clouds',
     description: 'Dramatic clouds painted in soft twilight colors over the sea.',
     category: 'backgrounds',
     coinPrice: 1500,
@@ -59,7 +59,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-aurora-horizon',
-    name: 'Northern Glow',
+    name: 'Aurora Horizon',
     description: 'A mesmerizing sky with ethereal light dancing across the clouds.',
     category: 'backgrounds',
     coinPrice: 1500,
@@ -71,7 +71,7 @@ export const SKY_BUNDLE_BACKGROUNDS: PremiumBackground[] = [
   },
   {
     id: 'bg-sunset-clouds',
-    name: 'Golden Hour',
+    name: 'Sunset Clouds',
     description: 'Breathtaking sunset clouds reflected in still waters.',
     category: 'backgrounds',
     coinPrice: 1800,
@@ -461,7 +461,7 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
 // Shop categories for UI - 4 tabs: Hatchery, Worlds, Potions, Today's Finds
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'eggs', name: 'Hatchery', icon: 'egg' },
-  { id: 'customize', name: 'Backgrounds', icon: 'island' },
+  { id: 'customize', name: 'Worlds', icon: 'island' },
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },
 ];
