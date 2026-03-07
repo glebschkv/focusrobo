@@ -144,38 +144,6 @@ export const SessionCompleteView = ({
     }
   }, [isVisible, pendingSessionEgg, lastPlacedPet]);
 
-  // Trigger hatch animation automatically after egg appears
-  useEffect(() => {
-    if (isVisible && pendingSessionEgg && !lastPlacedPet && eggPhase === 'idle' && !autoHatchTriggeredRef.current) {
-      autoHatchTriggeredRef.current = true;
-      const autoHatchDelay = setTimeout(() => {
-        handleTapToHatch();
-      }, 1200);
-      return () => clearTimeout(autoHatchDelay);
-    }
-  }, [isVisible, pendingSessionEgg, lastPlacedPet, eggPhase, handleTapToHatch]);
-
-  // When lastPlacedPet appears (after hatch), transition to revealed
-  useEffect(() => {
-    if (lastPlacedPet && eggPhase === 'hatching') {
-      setEggPhase('revealed');
-    }
-  }, [lastPlacedPet, eggPhase]);
-
-  // Cleanup timers
-  useEffect(() => {
-    return () => {
-      if (hatchTimerRef.current) clearTimeout(hatchTimerRef.current);
-    };
-  }, []);
-
-  // Haptic on modal appear
-  useEffect(() => {
-    if (isVisible) {
-      haptic('success');
-    }
-  }, [isVisible, haptic]);
-
   const handleTapToHatch = useCallback(() => {
     if (!pendingSessionEgg || eggPhase !== 'idle') return;
 
@@ -207,6 +175,38 @@ export const SessionCompleteView = ({
       onHatchEgg();
     }, totalDuration);
   }, [pendingSessionEgg, eggPhase, haptic, onHatchEgg, prefersReducedMotion]);
+
+  // Trigger hatch animation automatically after egg appears
+  useEffect(() => {
+    if (isVisible && pendingSessionEgg && !lastPlacedPet && eggPhase === 'idle' && !autoHatchTriggeredRef.current) {
+      autoHatchTriggeredRef.current = true;
+      const autoHatchDelay = setTimeout(() => {
+        handleTapToHatch();
+      }, 1200);
+      return () => clearTimeout(autoHatchDelay);
+    }
+  }, [isVisible, pendingSessionEgg, lastPlacedPet, eggPhase, handleTapToHatch]);
+
+  // When lastPlacedPet appears (after hatch), transition to revealed
+  useEffect(() => {
+    if (lastPlacedPet && eggPhase === 'hatching') {
+      setEggPhase('revealed');
+    }
+  }, [lastPlacedPet, eggPhase]);
+
+  // Cleanup timers
+  useEffect(() => {
+    return () => {
+      if (hatchTimerRef.current) clearTimeout(hatchTimerRef.current);
+    };
+  }, []);
+
+  // Haptic on modal appear
+  useEffect(() => {
+    if (isVisible) {
+      haptic('success');
+    }
+  }, [isVisible, haptic]);
 
   const handleDone = useCallback(() => {
     onDismiss(notes, rating);
