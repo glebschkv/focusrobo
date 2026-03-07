@@ -56,13 +56,13 @@ export const SettingsAbout = () => {
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           </button>
 
-          <button onClick={() => openLink('mailto:support@phonoinc.com')} className="settings-link-row">
+          <button onClick={() => openLink('mailto:support@phonoinc.co')} className="settings-link-row">
             <MessageCircle className="w-5 h-5 text-[hsl(var(--primary))]" />
             <span className="flex-1 text-left">Contact Support</span>
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           </button>
 
-          <button onClick={() => openLink('https://phonoinc.com')} className="settings-link-row">
+          <button onClick={() => openLink('https://phonoinc.co')} className="settings-link-row">
             <Heart className="w-5 h-5 text-[hsl(var(--primary))]" />
             <span className="flex-1 text-left">Visit PhoNo Inc.</span>
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />

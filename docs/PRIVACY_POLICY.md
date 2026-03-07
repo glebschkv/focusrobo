@@ -96,7 +96,7 @@ You have the right to:
 - **Opt Out**: Disable push notifications through iOS Settings
 - **Cancel Subscriptions**: Manage or cancel subscriptions through the App Store
 
-To exercise these rights, contact us at privacy@phonoinc.com.
+To exercise these rights, contact us at privacy@phonoinc.co.
 
 ---
 
@@ -127,8 +127,8 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 If you have questions or concerns about this Privacy Policy or our data practices, please contact us:
 
 **PhoNo Inc.**
-Email: privacy@phonoinc.com
-Website: https://phonoinc.com
+Email: privacy@phonoinc.co
+Website: https://phonoinc.co
 
 ---
 
@@ -156,4 +156,4 @@ If you are in the European Economic Area, you have rights under GDPR including:
 
 Our legal basis for processing is your consent (for Screen Time access) and contract performance (for providing the service).
 
-Data Protection Officer contact: privacy@phonoinc.com
+Data Protection Officer contact: privacy@phonoinc.co

@@ -187,8 +187,8 @@ These Terms, together with our Privacy Policy, constitute the entire agreement b
 For questions about these Terms, contact us:
 
 **PhoNo Inc.**
-Email: support@phonoinc.com
-Website: https://phonoinc.com
+Email: support@phonoinc.co
+Website: https://phonoinc.co
 
 ---
 

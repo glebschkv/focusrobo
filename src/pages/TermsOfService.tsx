@@ -207,8 +207,8 @@ const TermsOfServiceContent = () => {
             </p>
             <div className="bg-white/5 rounded-lg p-4 space-y-1">
               <p className="text-white font-medium">PhoNo Inc.</p>
-              <p className="text-white/80">Email: support@phonoinc.com</p>
-              <p className="text-white/80">Website: https://phonoinc.com</p>
+              <p className="text-white/80">Email: support@phonoinc.co</p>
+              <p className="text-white/80">Website: https://phonoinc.co</p>
             </div>
           </section>
 
