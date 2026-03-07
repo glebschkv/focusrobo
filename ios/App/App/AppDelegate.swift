@@ -5,7 +5,7 @@ import Capacitor
 /**
  * AppDelegate
  *
- * Main application delegate for BotBlock.
+ * Main application delegate for PhoNo.
  * Handles app launch, scene configuration, URL schemes, and background tasks.
  *
  * UIScene lifecycle adopted — SceneDelegate handles per-scene events
@@ -204,7 +204,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // conflict with iOS system gesture recognizers, preventing the
 // "System gesture gate timed out" error on touch interactions.
 
-class BotBlockViewController: CAPBridgeViewController {
+class PhoNoViewController: CAPBridgeViewController {
 
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
@@ -251,7 +251,7 @@ class BotBlockViewController: CAPBridgeViewController {
 // without needing a separate file in the build sources list.
 
 /// Native animated splash screen shown AFTER the static LaunchScreen.storyboard
-/// and BEFORE WKWebView content is ready.  Displays the branded BotBlock design
+/// and BEFORE WKWebView content is ready.  Displays the branded PhoNo design
 /// with layered glow effects, scanlines, and smooth entrance animations.
 ///
 /// Lifecycle:

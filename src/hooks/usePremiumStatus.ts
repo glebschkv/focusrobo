@@ -85,7 +85,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     priceValue: 2.49,
     period: 'weekly',
     features: PREMIUM_FEATURES,
-    iapProductId: 'com.fonoinc.app.premium.weekly',
+    iapProductId: 'co.phonoinc.app.premium.weekly',
     bonusCoins: 0,
   },
   {
@@ -97,7 +97,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     priceValue: 5.99,
     period: 'monthly',
     features: PREMIUM_FEATURES,
-    iapProductId: 'com.fonoinc.app.premium.monthly',
+    iapProductId: 'co.phonoinc.app.premium.monthly',
     bonusCoins: 500,
   },
   {
@@ -109,7 +109,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     priceValue: 39.99,
     period: 'yearly',
     features: PREMIUM_FEATURES,
-    iapProductId: 'com.fonoinc.app.premium.yearly',
+    iapProductId: 'co.phonoinc.app.premium.yearly',
     savings: 'Save 44%',
     isPopular: true,
     bonusCoins: 1500,

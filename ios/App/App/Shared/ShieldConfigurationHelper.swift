@@ -199,15 +199,15 @@ class ShieldConfigurationHelper {
     // MARK: - Accessibility
 
     static var shieldAccessibilityDescription: String {
-        "This app is blocked to help you stay focused. Tap the button to return to BotBlock."
+        "This app is blocked to help you stay focused. Tap the button to return to PhoNo."
     }
 
     static var returnButtonAccessibilityLabel: String {
-        "Return to BotBlock app"
+        "Return to PhoNo app"
     }
 
     static var returnButtonAccessibilityHint: String {
-        "Double tap to close this blocked app and return to BotBlock"
+        "Double tap to close this blocked app and return to PhoNo"
     }
 }
 

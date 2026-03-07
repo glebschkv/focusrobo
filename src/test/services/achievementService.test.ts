@@ -800,7 +800,7 @@ describe('achievementService', () => {
       const text = generateShareText(achievement);
 
       expect(text).toContain('Focus Master');
-      expect(text).toContain('#BotBlock');
+      expect(text).toContain('#PhoNo');
       expect(text).toContain('Achievement Unlocked');
     });
 

@@ -11,7 +11,7 @@ import Foundation
  */
 enum SharedConstants {
     // MARK: - App Group
-    static let appGroupIdentifier = "group.com.fonoinc.app"
+    static let appGroupIdentifier = "group.co.phonoinc.app"
 
     // MARK: - Shared UserDefaults
     static var sharedUserDefaults: UserDefaults? {

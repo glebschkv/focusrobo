@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockTimerWidget - "Focus Bot" Widget
+ * PhoNoTimerWidget - "Focus Bot" Widget
  *
  * Shows your active bot alongside the focus timer.
  * Robot-themed messages powered by WidgetBotMessages.
@@ -15,8 +15,8 @@ import WidgetKit
  * - High contrast support
  * - Reduced motion support
  */
-struct BotBlockTimerWidget: Widget {
-    let kind = "BotBlockTimerWidget"
+struct PhoNoTimerWidget: Widget {
+    let kind = "PhoNoTimerWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TimerProvider()) { entry in

@@ -14,10 +14,10 @@ export const SettingsAbout = () => {
       {/* App Info Hero */}
       <div className="settings-about-hero">
         <div className="settings-about-icon">
-          <img src="/app-icon.png" alt="BotBlock" width={42} height={42} className="rounded-lg" draggable={false} />
+          <img src="/app-icon.png" alt="PhoNo" width={42} height={42} className="rounded-lg" draggable={false} />
         </div>
 
-        <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-1">BotBlock</h2>
+        <h2 className="text-xl font-bold text-[hsl(var(--foreground))] mb-1">PhoNo</h2>
         <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">Put down your phone, grow your island</p>
 
         {/* Version Badge */}
@@ -56,15 +56,15 @@ export const SettingsAbout = () => {
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           </button>
 
-          <button onClick={() => openLink('mailto:support@fonoinc.com')} className="settings-link-row">
+          <button onClick={() => openLink('mailto:support@phonoinc.co')} className="settings-link-row">
             <MessageCircle className="w-5 h-5 text-[hsl(var(--primary))]" />
             <span className="flex-1 text-left">Contact Support</span>
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           </button>
 
-          <button onClick={() => openLink('https://fonoinc.com')} className="settings-link-row">
+          <button onClick={() => openLink('https://phonoinc.co')} className="settings-link-row">
             <Heart className="w-5 h-5 text-[hsl(var(--primary))]" />
-            <span className="flex-1 text-left">Visit BotBlock Inc.</span>
+            <span className="flex-1 text-left">Visit PhoNo Inc.</span>
             <ExternalLink className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
           </button>
         </div>
@@ -73,7 +73,7 @@ export const SettingsAbout = () => {
       {/* Footer */}
       <div className="text-center py-3">
         <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
-          &copy; {new Date().getFullYear()} BotBlock Inc. All rights reserved.
+          &copy; {new Date().getFullYear()} PhoNo Inc. All rights reserved.
         </p>
       </div>
     </div>

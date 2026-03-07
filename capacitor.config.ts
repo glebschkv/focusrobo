@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.fonoinc.app',
-  appName: 'BotBlock',
+  appId: 'co.phonoinc.app',
+  appName: 'PhoNo',
   webDir: 'dist',
   ios: {
     // Set WKWebView background to dark so there's no white flash between
@@ -31,7 +31,7 @@ const config: CapacitorConfig = {
       }
     },
     BackgroundTask: {
-      label: "com.fonoinc.app.background-tracking",
+      label: "co.phonoinc.app.background-tracking",
       description: "Tracks app usage and awards points for time away from device"
     }
   },

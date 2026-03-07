@@ -14,6 +14,7 @@ import { App as CapApp } from '@capacitor/app';
 import { DeviceActivity } from '@/plugins/device-activity';
 import { TIMER_VALIDATION } from '@/lib/validation';
 import { MAX_COUNTUP_DURATION } from '@/components/focus-timer/constants';
+import { timerLogger } from '@/lib/logger';
 
 const STORAGE_KEY = 'petIsland_unifiedTimer';
 const BLOCKING_ACTIVE_KEY = 'petIsland_blockingActive';
@@ -44,7 +45,7 @@ async function stopBlockingWithRetry(): Promise<boolean> {
   }
   // All retries failed — leave the BLOCKING_ACTIVE_KEY so the next
   // foreground resume will try again
-  console.error('[TimerExpiryGuard] Failed to stop app blocking after 3 attempts');
+  timerLogger.error('[TimerExpiryGuard] Failed to stop app blocking after 3 attempts');
   return false;
 }
 

@@ -1,12 +1,12 @@
-# BotBlock - iOS Extensions Setup Guide
+# PhoNo - iOS Extensions Setup Guide
 
 ## Overview
 
-BotBlock uses three iOS app extensions:
+PhoNo uses three iOS app extensions:
 
 1. **ShieldConfiguration** — Custom UI when users try to open blocked apps
 2. **DeviceActivityMonitor** — Monitors device activity lifecycle (session start/end)
-3. **BotBlockWidget** — Home screen widgets (timer, streak, progress, stats)
+3. **PhoNoWidget** — Home screen widgets (timer, streak, progress, stats)
 
 ## Why Extensions Must Be Added Manually
 
@@ -19,10 +19,10 @@ cannot be added programmatically — you must create them in Xcode. They persist
 - Xcode 16.0+ (for iOS 18 SDK; iOS 26 runtime requires Xcode 18 beta)
 - Physical iOS device (Family Controls does NOT work in Simulator)
 - Apple Developer account with **Family Controls** capability enabled for:
-  - `com.fonoinc.app` (main app)
-  - `com.fonoinc.app.ShieldConfiguration`
-  - `com.fonoinc.app.DeviceActivityMonitor`
-- App Group `group.com.fonoinc.app` registered for all bundle IDs above + widget
+  - `co.phonoinc.app` (main app)
+  - `co.phonoinc.app.ShieldConfiguration`
+  - `co.phonoinc.app.DeviceActivityMonitor`
+- App Group `group.co.phonoinc.app` registered for all bundle IDs above + widget
 
 ## Extension Setup
 
@@ -32,7 +32,7 @@ cannot be added programmatically — you must create them in Xcode. They persist
 1. In Xcode: **File → New → Target**
 2. Search for and select **Shield Configuration Extension**
 3. Product Name: `ShieldConfiguration` (MUST match exactly — the Info.plist uses `$(PRODUCT_MODULE_NAME).ShieldConfigurationExtension` to find the class)
-4. Bundle Identifier: `com.fonoinc.app.ShieldConfiguration`
+4. Bundle Identifier: `co.phonoinc.app.ShieldConfiguration`
 5. Embed in Application: **App**
 6. Language: Swift
 7. Click **Finish**
@@ -62,7 +62,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities** (Signing & Capabilities):
 - **Family Controls**
-- **App Groups** → add `group.com.fonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -75,7 +75,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 1. **File → New → Target**
 2. Search for and select **Device Activity Monitor Extension**
 3. Product Name: `DeviceActivityMonitor` (MUST match exactly)
-4. Bundle Identifier: `com.fonoinc.app.DeviceActivityMonitor`
+4. Bundle Identifier: `co.phonoinc.app.DeviceActivityMonitor`
 5. Embed in Application: **App**
 6. Click **Finish**
 
@@ -97,20 +97,20 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities:**
 - **Family Controls**
-- **App Groups** → add `group.com.fonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 15.0
 
 ---
 
-### 3. BotBlockWidget Extension
+### 3. PhoNoWidget Extension
 
 **Create the target:**
 1. **File → New → Target**
 2. Search for and select **Widget Extension**
-3. Product Name: `BotBlockWidget`
-4. Bundle Identifier: `com.fonoinc.app.BotBlockWidget`
+3. Product Name: `PhoNoWidget`
+4. Bundle Identifier: `co.phonoinc.app.PhoNoWidget`
 5. Embed in Application: **App**
 6. Uncheck "Include Live Activity" and "Include Configuration App Intent"
 7. Click **Finish**
@@ -118,15 +118,15 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 **Replace auto-generated files:**
 1. Delete ALL auto-generated files in the new target folder
 2. In Build Settings:
-   - **Info.plist File**: `App/Extensions/BotBlockWidget/Info.plist`
-   - **Code Sign Entitlements**: `App/Extensions/BotBlockWidget/BotBlockWidget.entitlements`
+   - **Info.plist File**: `App/Extensions/PhoNoWidget/Info.plist`
+   - **Code Sign Entitlements**: `App/Extensions/PhoNoWidget/PhoNoWidget.entitlements`
 
 **Add source files to target:**
-- All `.swift` files in `App/Extensions/BotBlockWidget/` and `App/Extensions/BotBlockWidget/Widgets/`
+- All `.swift` files in `App/Extensions/PhoNoWidget/` and `App/Extensions/PhoNoWidget/Widgets/`
 - `App/Shared/SharedConstants.swift`
 
 **Add capabilities:**
-- **App Groups** → add `group.com.fonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -140,7 +140,7 @@ After adding all three targets:
 1. In `project.pbxproj`, the `targets` array should list 4 targets (App + 3 extensions)
 2. The main App target should have an **Embed App Extensions** build phase containing all 3 `.appex` products
 3. Build the project (Cmd+B) — all 4 targets should compile successfully
-4. Check the built `.app` bundle contains `PlugIns/ShieldConfiguration.appex`, `PlugIns/DeviceActivityMonitor.appex`, and `PlugIns/BotBlockWidget.appex`
+4. Check the built `.app` bundle contains `PlugIns/ShieldConfiguration.appex`, `PlugIns/DeviceActivityMonitor.appex`, and `PlugIns/PhoNoWidget.appex`
 
 ## Common Issues
 
@@ -178,7 +178,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.fonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 
@@ -188,7 +188,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.fonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 
@@ -200,7 +200,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.fonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 
@@ -222,17 +222,17 @@ ios/App/App/
     │   ├── DeviceActivityMonitorExtension.swift
     │   ├── Info.plist
     │   └── DeviceActivityMonitor.entitlements
-    └── BotBlockWidget/
-        ├── BotBlockWidgetBundle.swift
+    └── PhoNoWidget/
+        ├── PhoNoWidgetBundle.swift
         ├── Info.plist
-        ├── BotBlockWidget.entitlements
+        ├── PhoNoWidget.entitlements
         ├── WidgetColors.swift
         ├── WidgetStrings.swift
         ├── AccessibilityUtilities.swift
         ├── WidgetAccessibilityStrings.swift
         └── Widgets/
-            ├── BotBlockTimerWidget.swift
-            ├── BotBlockStreakWidget.swift
-            ├── BotBlockProgressWidget.swift
-            └── BotBlockStatsWidget.swift
+            ├── PhoNoTimerWidget.swift
+            ├── PhoNoStreakWidget.swift
+            ├── PhoNoProgressWidget.swift
+            └── PhoNoStatsWidget.swift
 ```

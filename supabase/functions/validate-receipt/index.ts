@@ -74,18 +74,18 @@ at+qIxUCMG1mihDK1A3UT82NQz60imOlM27jbdoXt2QfyFMm+YhidDkLF1vLUagM
 
 // Subscription tier mapping
 const SUBSCRIPTION_PRODUCTS: Record<string, { tier: 'premium'; period: 'weekly' | 'monthly' | 'yearly' }> = {
-  'com.fonoinc.app.premium.weekly': { tier: 'premium', period: 'weekly' },
-  'com.fonoinc.app.premium.monthly': { tier: 'premium', period: 'monthly' },
-  'com.fonoinc.app.premium.yearly': { tier: 'premium', period: 'yearly' },
+  'co.phonoinc.app.premium.weekly': { tier: 'premium', period: 'weekly' },
+  'co.phonoinc.app.premium.monthly': { tier: 'premium', period: 'monthly' },
+  'co.phonoinc.app.premium.yearly': { tier: 'premium', period: 'yearly' },
 };
 
 // Coin pack definitions (consumables)
 const COIN_PACK_PRODUCTS: Record<string, { coins: number; bonusCoins: number }> = {
-  'com.fonoinc.app.coins.handful': { coins: 400, bonusCoins: 100 },
-  'com.fonoinc.app.coins.pouch': { coins: 1400, bonusCoins: 600 },
-  'com.fonoinc.app.coins.chest': { coins: 3500, bonusCoins: 2000 },
-  'com.fonoinc.app.coins.trove': { coins: 8000, bonusCoins: 6000 },
-  'com.fonoinc.app.coins.hoard': { coins: 17000, bonusCoins: 18000 },
+  'co.phonoinc.app.coins.handful': { coins: 400, bonusCoins: 100 },
+  'co.phonoinc.app.coins.pouch': { coins: 1400, bonusCoins: 600 },
+  'co.phonoinc.app.coins.chest': { coins: 3500, bonusCoins: 2000 },
+  'co.phonoinc.app.coins.trove': { coins: 8000, bonusCoins: 6000 },
+  'co.phonoinc.app.coins.hoard': { coins: 17000, bonusCoins: 18000 },
 };
 
 // Starter bundle definitions (non-consumables)
@@ -95,12 +95,12 @@ const STARTER_BUNDLE_PRODUCTS: Record<string, {
   streakFreezes?: number;
   eggs?: Array<{ eggId: string; quantity: number }>;
 }> = {
-  'com.fonoinc.app.bundle.welcome': {
+  'co.phonoinc.app.bundle.welcome': {
     coins: 1500,
     streakFreezes: 1,
     eggs: [{ eggId: 'egg-rare', quantity: 1 }],
   },
-  'com.fonoinc.app.bundle.egghunter': {
+  'co.phonoinc.app.bundle.egghunter': {
     coins: 1000,
     boosterId: 'focus_boost',
     eggs: [
@@ -108,7 +108,7 @@ const STARTER_BUNDLE_PRODUCTS: Record<string, {
       { eggId: 'egg-epic', quantity: 1 },
     ],
   },
-  'com.fonoinc.app.bundle.islandmaster': {
+  'co.phonoinc.app.bundle.islandmaster': {
     coins: 5000,
     boosterId: 'super_boost',
     streakFreezes: 3,
@@ -129,7 +129,7 @@ function getProductType(productId: string): ProductType | null {
 }
 
 // Expected bundle ID
-const EXPECTED_BUNDLE_ID = 'com.fonoinc.app';
+const EXPECTED_BUNDLE_ID = 'co.phonoinc.app';
 
 interface JWSTransactionDecodedPayload {
   transactionId: string;

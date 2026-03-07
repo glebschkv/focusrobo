@@ -197,7 +197,7 @@ export const SplashScreen = () => {
           className="text-2xl font-bold tracking-wide mb-1"
           style={{ color: '#1C211E' }}
         >
-          BotBlock
+          PhoNo
         </h1>
 
         {/* Tagline */}

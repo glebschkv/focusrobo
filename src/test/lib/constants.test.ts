@@ -14,10 +14,10 @@ import {
 
 describe('APP_CONFIG', () => {
   it('should have valid app configuration', () => {
-    expect(APP_CONFIG.APP_NAME).toBe('BotBlock');
+    expect(APP_CONFIG.APP_NAME).toBe('PhoNo');
     expect(APP_CONFIG.APP_VERSION).toBe('1.0.0');
     expect(APP_CONFIG.STORAGE_PREFIX).toBe('nomo_');
-    expect(APP_CONFIG.APP_GROUP_IDENTIFIER).toBe('group.com.fonoinc.app');
+    expect(APP_CONFIG.APP_GROUP_IDENTIFIER).toBe('group.co.phonoinc.app');
   });
 });
 

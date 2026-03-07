@@ -13,7 +13,7 @@ import OSLog
  *   Log.deviceActivity.debug("Monitoring started")
  */
 enum Log {
-    private static let subsystem = Bundle.main.bundleIdentifier ?? "com.fonoinc.app"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "co.phonoinc.app"
 
     // MARK: - Category Loggers
 

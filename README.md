@@ -1,10 +1,10 @@
-# BotBlock 
+# PhoNo 
 
 A robot-themed focus timer app that rewards users with collectible robots for putting down their phone. Build better screen time habits while assembling your ultimate robot collection.
 
 ## Overview
 
-BotBlock is a full-stack React + Capacitor mobile application that turns digital wellness into a fun, engaging experience. Users earn rewards, collect robots, complete quests, and build streaks by spending time away from their phones.
+PhoNo is a full-stack React + Capacitor mobile application that turns digital wellness into a fun, engaging experience. Users earn rewards, collect robots, complete quests, and build streaks by spending time away from their phones.
 
 ### Key Features
 

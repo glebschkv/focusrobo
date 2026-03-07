@@ -1,4 +1,3 @@
-// TODO: Supabase will be replaced with a new backend solution. These types will need to be updated during migration.
 export type Json =
   | string
   | number

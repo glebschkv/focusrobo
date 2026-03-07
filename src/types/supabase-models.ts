@@ -1,4 +1,3 @@
-// TODO: Supabase will be replaced with a new backend solution. These model types will need to be updated during migration.
 // Supabase Database Model Types
 // These types represent the database schema for Supabase tables
 // Note: These are separate from local analytics types (see analytics.ts)
@@ -70,7 +69,7 @@ export interface DBFocusSession {
 export const createDefaultProfile = (userId: string): UserProfile => ({
   id: `profile-${userId}`,
   user_id: userId,
-  display_name: 'BotBlock Player',
+  display_name: 'PhoNo Player',
   avatar_url: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),

@@ -10,10 +10,10 @@
 // ============================================================================
 
 export const APP_CONFIG = {
-  APP_NAME: 'BotBlock',
+  APP_NAME: 'PhoNo',
   APP_VERSION: '1.0.0',
-  APP_GROUP_IDENTIFIER: 'group.com.fonoinc.app',
-  BUNDLE_IDENTIFIER: 'com.fonoinc.app',
+  APP_GROUP_IDENTIFIER: 'group.co.phonoinc.app',
+  BUNDLE_IDENTIFIER: 'co.phonoinc.app',
   STORAGE_PREFIX: 'nomo_',
 } as const;
 
@@ -345,9 +345,6 @@ export const BOT_CONFIG = {
   } as const,
 } as const;
 
-/** @deprecated Use BOT_CONFIG */
-export const PET_CONFIG = BOT_CONFIG;
-
 // ============================================================================
 // ZONE SYSTEM
 // ============================================================================
@@ -388,9 +385,6 @@ export const ZONE_CONFIG = {
     'Deep Ocean': '🌊',
   } as const,
 } as const;
-
-/** @deprecated Use ZONE_CONFIG */
-export const BIOME_CONFIG = ZONE_CONFIG;
 
 // ============================================================================
 // BACKGROUND THEMES
@@ -515,7 +509,7 @@ export const UI_CONFIG = {
 
 export const IOS_CONFIG = {
   /** Background task identifier */
-  BACKGROUND_TASK_ID: 'com.fonoinc.app.background-tracking',
+  BACKGROUND_TASK_ID: 'co.phonoinc.app.background-tracking',
 
   /** Background refresh interval in minutes */
   BACKGROUND_REFRESH_INTERVAL_MINUTES: 15,
@@ -526,19 +520,19 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
-    PREMIUM_WEEKLY: 'com.fonoinc.app.premium.weekly',
-    PREMIUM_MONTHLY: 'com.fonoinc.app.premium.monthly',
-    PREMIUM_YEARLY: 'com.fonoinc.app.premium.yearly',
+    PREMIUM_WEEKLY: 'co.phonoinc.app.premium.weekly',
+    PREMIUM_MONTHLY: 'co.phonoinc.app.premium.monthly',
+    PREMIUM_YEARLY: 'co.phonoinc.app.premium.yearly',
     // Coin Packs
-    COINS_HANDFUL: 'com.fonoinc.app.coins.handful',
-    COINS_POUCH: 'com.fonoinc.app.coins.pouch',
-    COINS_CHEST: 'com.fonoinc.app.coins.chest',
-    COINS_TROVE: 'com.fonoinc.app.coins.trove',
-    COINS_HOARD: 'com.fonoinc.app.coins.hoard',
+    COINS_HANDFUL: 'co.phonoinc.app.coins.handful',
+    COINS_POUCH: 'co.phonoinc.app.coins.pouch',
+    COINS_CHEST: 'co.phonoinc.app.coins.chest',
+    COINS_TROVE: 'co.phonoinc.app.coins.trove',
+    COINS_HOARD: 'co.phonoinc.app.coins.hoard',
     // Starter Bundles
-    BUNDLE_WELCOME: 'com.fonoinc.app.bundle.welcome',
-    BUNDLE_EGGHUNTER: 'com.fonoinc.app.bundle.egghunter',
-    BUNDLE_ISLANDMASTER: 'com.fonoinc.app.bundle.islandmaster',
+    BUNDLE_WELCOME: 'co.phonoinc.app.bundle.welcome',
+    BUNDLE_EGGHUNTER: 'co.phonoinc.app.bundle.egghunter',
+    BUNDLE_ISLANDMASTER: 'co.phonoinc.app.bundle.islandmaster',
   } as const,
 } as const;
 

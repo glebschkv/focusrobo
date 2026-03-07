@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockProgressWidget - "Daily Quest" Widget
+ * PhoNoProgressWidget - "Daily Quest" Widget
  *
  * RPG-styled daily progress tracker. Shows focus minutes
  * as a quest with a pixel-art progress bar and fun messages.
@@ -12,8 +12,8 @@ import WidgetKit
  * - Dynamic Type support
  * - High contrast support
  */
-struct BotBlockProgressWidget: Widget {
-    let kind = "BotBlockProgressWidget"
+struct PhoNoProgressWidget: Widget {
+    let kind = "PhoNoProgressWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: ProgressProvider()) { entry in
