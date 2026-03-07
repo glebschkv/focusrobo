@@ -1,8 +1,8 @@
 /**
  * Skeleton Loaders
  *
- * Loading skeleton components for better perceived performance.
- * Shows content structure while data is loading.
+ * Themed loading skeleton components matching the pixel art island aesthetic.
+ * Uses sage-green shimmer instead of generic gray pulse.
  */
 
 import { memo } from 'react';
@@ -15,7 +15,20 @@ import { cn } from '@/lib/utils';
 
 export const PetCardSkeleton = memo(() => (
   <div className="retro-card p-2 space-y-2">
-    <Skeleton className="aspect-square rounded-lg" />
+    <div className="relative aspect-square rounded-lg overflow-hidden">
+      <Skeleton className="absolute inset-0" />
+      {/* Pet ear silhouette hints — tells users "a pet goes here" */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08]">
+        <div className="relative w-8 h-8">
+          {/* Body */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-5 rounded-full bg-current" />
+          {/* Left ear */}
+          <div className="absolute top-0 left-1.5 w-2 h-3 rounded-full bg-current" />
+          {/* Right ear */}
+          <div className="absolute top-0 right-1.5 w-2 h-3 rounded-full bg-current" />
+        </div>
+      </div>
+    </div>
     <div className="space-y-1">
       <Skeleton className="h-3 w-3/4" />
       <Skeleton className="h-2 w-1/2" />
@@ -44,7 +57,7 @@ export const ShopItemSkeleton = memo(() => (
     <Skeleton className="h-20 rounded-lg" />
     <Skeleton className="h-4 w-2/3" />
     <div className="flex items-center gap-2">
-      <Skeleton className="h-5 w-5 rounded-full" />
+      <Skeleton className="h-5 w-5 rounded-full skeleton-gold" />
       <Skeleton className="h-4 w-16" />
     </div>
   </div>
@@ -143,7 +156,17 @@ QuestCardSkeleton.displayName = 'QuestCardSkeleton';
 
 export const TimerDisplaySkeleton = memo(() => (
   <div className="flex flex-col items-center justify-center p-6 space-y-4">
-    <Skeleton className="h-40 w-40 rounded-full" />
+    {/* Timer circle with rotating dashed border */}
+    <div className="relative h-40 w-40">
+      <Skeleton className="absolute inset-0 rounded-full" />
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{
+          border: '2px dashed hsl(152 44% 45% / 0.15)',
+          animation: 'timer-ring-spin 12s linear infinite',
+        }}
+      />
+    </div>
     <Skeleton className="h-6 w-32" />
     <div className="flex gap-2">
       <Skeleton className="h-10 w-24 rounded-lg" />
@@ -238,9 +261,34 @@ export const HomePageSkeleton = memo(({ className }: PageSkeletonProps) => (
       <Skeleton className="h-8 w-8 rounded-full" />
     </div>
 
-    {/* Main content area */}
+    {/* Island silhouette — diamond shape with pet dots */}
     <div className="flex-1 flex items-center justify-center p-6">
-      <Skeleton className="h-48 w-48 rounded-full" />
+      <div className="relative">
+        {/* Diamond island shape */}
+        <div
+          className="skeleton-themed w-36 h-36"
+          style={{
+            transform: 'rotate(45deg)',
+            borderRadius: '4px',
+          }}
+        />
+        {/* Pet placeholder dots floating above the diamond */}
+        {[
+          { top: '20%', left: '35%' },
+          { top: '40%', left: '55%' },
+          { top: '30%', left: '65%' },
+        ].map((pos, i) => (
+          <div
+            key={i}
+            className="skeleton-themed absolute w-4 h-4 rounded-full"
+            style={{
+              top: pos.top,
+              left: pos.left,
+              animation: `gentle-float 3s ease-in-out infinite ${i * 0.4}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
 
     {/* Bottom action area */}
@@ -280,7 +328,7 @@ export const ShopPageSkeleton = memo(({ className }: PageSkeletonProps) => (
     <div className="flex items-center justify-between p-3 border-b">
       <Skeleton className="h-6 w-24" />
       <div className="flex items-center gap-2">
-        <Skeleton className="h-5 w-5 rounded-full" />
+        <Skeleton className="h-5 w-5 rounded-full skeleton-gold" />
         <Skeleton className="h-5 w-16" />
       </div>
     </div>

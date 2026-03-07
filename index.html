@@ -3,120 +3,138 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>PhoNo</title>
-    <meta name="description" content="Stay focused, grow your island. PhoNo rewards you for putting down your phone with adorable pets and achievements." />
-    <meta name="author" content="PhoNo" />
-    <meta name="apple-mobile-web-app-title" content="PhoNo" />
+    <title>BotBlock</title>
+    <meta name="description" content="Stay focused, grow your island. BotBlock rewards you for putting down your phone with adorable pets and achievements." />
+    <meta name="author" content="BotBlock" />
+    <meta name="apple-mobile-web-app-title" content="BotBlock" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#0a0014" />
+    <meta name="theme-color" content="#6BB8E0" />
 
-    <meta property="og:title" content="PhoNo - Focus Timer & Pet Rewards" />
-    <meta property="og:description" content="Stay focused, grow your island. PhoNo rewards you for putting down your phone with adorable pets and achievements." />
+    <meta property="og:title" content="BotBlock - Focus Timer & Pet Rewards" />
+    <meta property="og:description" content="Stay focused, grow your island. BotBlock rewards you for putting down your phone with adorable pets and achievements." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fonoinc.com" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="PhoNo - Focus Timer & Pet Rewards" />
-    <meta name="twitter:description" content="Stay focused, grow your island. PhoNo rewards you for putting down your phone." />
+    <meta name="twitter:title" content="BotBlock - Focus Timer & Pet Rewards" />
+    <meta name="twitter:description" content="Stay focused, grow your island. BotBlock rewards you for putting down your phone." />
 
     <!-- CSP: mitigate XSS and injection attacks -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self';">
   </head>
 
-  <body style="background: #080012;">
+  <body style="background: #A5D8EF;">
     <!-- Inline splash screen shown instantly while WKWebView cold-starts and
          React loads. Lives OUTSIDE #root so React's createRoot() doesn't destroy
          it. Removed by App.tsx useEffect after React mounts with a fade-out. -->
     <div id="splash-screen" style="
       position: fixed; inset: 0; z-index: 9999;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: linear-gradient(180deg, #080012 0%, #16042a 40%, #0a0018 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #6BB8E0 0%, #A5D8EF 35%, #D0EAF5 65%, #EEF4F0 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
       overflow: hidden;
       transition: opacity 0.4s ease-out;
     ">
-      <!-- Scanlines overlay -->
+      <!-- Sun glow -->
       <div style="
-        position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
-        background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,1) 2px, rgba(255,255,255,1) 4px);
-      "></div>
-
-      <!-- Radial glow -->
-      <div style="
-        position: absolute; width: 360px; height: 360px;
-        top: 50%; left: 50%; transform: translate(-50%, calc(-50% - 60px));
-        background: radial-gradient(circle, rgba(168,85,247,0.22) 0%, rgba(126,34,206,0.08) 45%, transparent 100%);
+        position: absolute; top: 8%; right: 12%;
+        width: 24px; height: 24px; border-radius: 50%;
+        background: radial-gradient(circle, #FFFFFF 0%, #FFFDE7 20%, #FFF3C4 40%, rgba(255,224,130,0.4) 65%, transparent 100%);
+        box-shadow: 0 0 12px 4px rgba(255,250,230,0.8), 0 0 30px 12px rgba(255,220,100,0.3), 0 0 60px 24px rgba(255,200,80,0.12);
         pointer-events: none;
-        animation: splash-glow 3s ease-in-out infinite alternate;
+        animation: splash-sun-breathe 5s ease-in-out infinite;
       "></div>
 
-      <!-- Content wrapper for entrance animation -->
-      <div style="animation: splash-entrance 0.6s ease-out 0.05s both;">
-        <!-- App icon -->
-        <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-          <img src="/app-icon.png" alt="" width="96" height="96" style="
-            border-radius: 22px;
-            box-shadow: 0 0 48px rgba(168, 85, 247, 0.5), 0 6px 24px rgba(0,0,0,0.5);
-          " />
+      <!-- Clouds -->
+      <div style="
+        position: absolute; top: 14%; left: 8%;
+        width: 80px; height: 24px; border-radius: 40px;
+        background: rgba(255,255,255,0.65); filter: blur(1px);
+        pointer-events: none;
+        animation: splash-cloud-drift 8s ease-in-out infinite alternate;
+      "></div>
+      <div style="
+        position: absolute; top: 22%; right: 15%;
+        width: 56px; height: 18px; border-radius: 30px;
+        background: rgba(255,255,255,0.5); filter: blur(1px);
+        pointer-events: none;
+        animation: splash-cloud-drift 10s ease-in-out infinite alternate-reverse;
+      "></div>
+
+      <!-- Content wrapper with entrance animation -->
+      <div style="animation: splash-entrance 0.7s ease-out 0.05s both;">
+        <!-- Island silhouette SVG -->
+        <div style="display: flex; justify-content: center; margin-bottom: 32px; animation: splash-island-rise 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;">
+          <svg width="140" height="96" viewBox="0 0 160 110" fill="none">
+            <polygon points="80,8 152,48 80,88 8,48" fill="#7CB97A"/>
+            <polygon points="80,28 116,48 80,68 44,48" fill="#8AC888" opacity="0.5"/>
+            <polygon points="8,48 80,88 80,108 8,68" fill="#8B6B4A"/>
+            <polygon points="152,48 80,88 80,108 152,68" fill="#A0805C"/>
+          </svg>
         </div>
 
-        <!-- PhoNo title -->
+        <!-- App name -->
         <div style="
-          font-size: 42px; font-weight: 800; letter-spacing: 12px;
-          color: #f0e6ff; text-align: center;
-          text-shadow: 0 0 16px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.25);
-          margin-bottom: 10px;
-        ">PHONO</div>
+          font-size: 24px; font-weight: 700; letter-spacing: 1.5px;
+          color: #1C211E; text-align: center; margin-bottom: 4px;
+        ">BotBlock</div>
 
         <!-- Tagline -->
         <div style="
-          font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
-          color: rgba(168, 140, 210, 0.55); margin-bottom: 44px; text-align: center;
+          font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+          color: rgba(28, 33, 30, 0.45); margin-bottom: 40px; text-align: center;
         ">Focus &middot; Grow &middot; Collect</div>
 
-        <!-- Loading bar -->
-        <div style="
-          width: 220px; height: 4px; border-radius: 2px; margin: 0 auto;
-          background: rgba(168, 85, 247, 0.08);
-          overflow: hidden; position: relative;
-        ">
-          <div style="
-            width: 25%; height: 100%; border-radius: 2px;
-            background: linear-gradient(90deg, #a855f7, #c084fc);
-            animation: splash-fill 2s ease-in-out infinite alternate;
-            position: relative;
-          ">
+        <!-- Egg loading indicator -->
+        <div style="display: flex; justify-content: center;">
+          <div style="animation: splash-egg-rock 1.5s ease-in-out infinite;">
             <div style="
-              position: absolute; inset: 0;
-              background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
-              animation: splash-shimmer 1.6s ease-in-out infinite;
+              width: 20px; height: 26px;
+              background: linear-gradient(180deg, #E8F5E1 0%, #C5DFB8 40%, #A8C99B 100%);
+              border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+              box-shadow: 0 2px 6px rgba(64,133,106,0.2);
+              border: 1px solid rgba(64,133,106,0.15);
             "></div>
           </div>
         </div>
       </div>
 
       <style>
-        @keyframes splash-fill {
-          0% { width: 25%; }
-          100% { width: 80%; }
+        @keyframes splash-sun-breathe {
+          0%, 100% {
+            box-shadow: 0 0 12px 4px rgba(255,250,230,0.8), 0 0 30px 12px rgba(255,220,100,0.3), 0 0 60px 24px rgba(255,200,80,0.12);
+          }
+          50% {
+            box-shadow: 0 0 16px 6px rgba(255,250,230,0.9), 0 0 36px 16px rgba(255,220,100,0.35), 0 0 72px 30px rgba(255,200,80,0.15);
+          }
         }
-        @keyframes splash-shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(300%); }
+        @keyframes splash-cloud-drift {
+          0% { transform: translateX(-20px); }
+          100% { transform: translateX(20px); }
         }
         @keyframes splash-entrance {
-          0% { opacity: 0; transform: translateY(14px); }
+          0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-        @keyframes splash-glow {
-          0% { transform: translate(-50%, calc(-50% - 60px)) scale(1); opacity: 1; }
-          100% { transform: translate(-50%, calc(-50% - 60px)) scale(1.12); opacity: 0.7; }
+        @keyframes splash-island-rise {
+          0% { transform: translateY(30px); opacity: 0; }
+          60% { transform: translateY(-4px); opacity: 1; }
+          80% { transform: translateY(2px); }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes splash-egg-rock {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(8deg); }
+          75% { transform: rotate(-8deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { animation-duration: 0.01ms !important; }
         }
       </style>
     </div>
 
-    <div id="root" style="background: #0a0014; min-height: 100vh;"></div>
+    <div id="root" style="background: #EEF4F0; min-height: 100vh;"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

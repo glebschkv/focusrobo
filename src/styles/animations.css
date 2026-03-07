@@ -277,6 +277,112 @@
     animation: fire-dance 0.4s ease-in-out infinite alternate;
   }
 
+  /* ---- LOADING SCREEN ANIMATIONS ---- */
+
+  /* Themed skeleton — sage-green base with shimmer sweep */
+  .skeleton-themed {
+    background-color: hsl(152 30% 91%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skeleton-themed::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(152 44% 45% / 0.07) 40%,
+      hsl(152 44% 45% / 0.12) 50%,
+      hsl(152 44% 45% / 0.07) 60%,
+      transparent 100%
+    );
+    animation: skeleton-shimmer 2s ease-in-out infinite;
+  }
+
+  .dark .skeleton-themed {
+    background-color: hsl(150 8% 18%);
+  }
+
+  .dark .skeleton-themed::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(152 44% 45% / 0.06) 40%,
+      hsl(152 44% 45% / 0.10) 50%,
+      hsl(152 44% 45% / 0.06) 60%,
+      transparent 100%
+    );
+  }
+
+  /* Gold-tinted skeleton variant for coin/currency elements */
+  .skeleton-gold {
+    background-color: hsl(42 40% 89%) !important;
+  }
+
+  .skeleton-gold::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(42 65% 52% / 0.10) 40%,
+      hsl(42 65% 52% / 0.16) 50%,
+      hsl(42 65% 52% / 0.10) 60%,
+      transparent 100%
+    ) !important;
+  }
+
+  /* Skeleton shimmer — sage-green gradient sweep */
+  @keyframes skeleton-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Egg rocking — gentle tilt for splash loader */
+  @keyframes egg-rock {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(8deg); }
+    75% { transform: rotate(-8deg); }
+  }
+
+  /* Egg crack — scale bounce then vanish */
+  @keyframes egg-crack {
+    0% { transform: scale(1); opacity: 1; }
+    40% { transform: scale(1.25); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+  }
+
+  /* Island rise — float up into frame with spring feel */
+  @keyframes island-rise {
+    0% { transform: translateY(30px); opacity: 0; }
+    60% { transform: translateY(-4px); opacity: 1; }
+    80% { transform: translateY(2px); }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Cloud drift for splash screen */
+  @keyframes cloud-drift-splash {
+    0% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
+  }
+
+  /* Timer ring rotation for skeleton */
+  @keyframes timer-ring-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Reduced motion overrides */
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer-anim,
+    .egg-rock-anim,
+    .island-rise-anim,
+    .cloud-drift-anim,
+    .timer-ring-anim {
+      animation: none !important;
+    }
+  }
+
   /* ---- LEGACY SUPPORT (keeping for backwards compatibility) ---- */
   .topbar-container {
     display: none;
