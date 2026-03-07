@@ -127,11 +127,11 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         {/* Sparkle effects */}
         {isAnimating && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
-            <Sparkles className="absolute top-6 left-6 w-6 h-6 text-yellow-400 animate-ping" />
-            <Sparkles className="absolute top-10 right-10 w-4 h-4 text-yellow-400 animate-ping" style={{ animationDelay: '0.1s' }} />
-            <Sparkles className="absolute bottom-24 left-10 w-5 h-5 text-yellow-400 animate-ping" style={{ animationDelay: '0.2s' }} />
-            <Star className="absolute top-16 right-6 w-5 h-5 text-yellow-300 animate-spin" />
-            <Star className="absolute bottom-32 right-12 w-4 h-4 text-teal-400 animate-spin" style={{ animationDelay: '0.3s' }} />
+            <Sparkles className="absolute top-6 left-6 w-6 h-6 text-amber-500 animate-ping" />
+            <Sparkles className="absolute top-10 right-10 w-4 h-4 text-amber-500 animate-ping" style={{ animationDelay: '0.1s' }} />
+            <Sparkles className="absolute bottom-24 left-10 w-5 h-5 text-amber-500 animate-ping" style={{ animationDelay: '0.2s' }} />
+            <Star className="absolute top-16 right-6 w-5 h-5 text-amber-400 animate-spin" />
+            <Star className="absolute bottom-32 right-12 w-4 h-4 text-teal-500 animate-spin" style={{ animationDelay: '0.3s' }} />
           </div>
         )}
 
@@ -139,11 +139,11 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         <div className="relative z-10 p-6 text-center">
           {/* Header */}
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Trophy className="w-5 h-5 text-yellow-400" />
+            <Trophy className="w-5 h-5 text-amber-600" />
             <span className="text-sm font-bold retro-pixel-text retro-neon-yellow uppercase tracking-wider">
               Achievement Unlocked!
             </span>
-            <Trophy className="w-5 h-5 text-yellow-400" />
+            <Trophy className="w-5 h-5 text-amber-600" />
           </div>
 
           {/* Achievement Icon */}
@@ -192,41 +192,39 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
           </h2>
 
           {/* Description */}
-          <p className="text-sm text-purple-300/80 mb-5 px-2">
+          <p className="text-sm mb-5 px-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {achievement.description}
           </p>
 
           {/* Rewards Box */}
           <div className="retro-game-card p-4 mb-5">
-            <p className="text-[10px] text-purple-400 uppercase tracking-wider mb-3 retro-pixel-text">
+            <p className="text-[10px] uppercase tracking-wider mb-3 retro-pixel-text" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Rewards
             </p>
             <div className="flex justify-center gap-4">
               {rewards.xp > 0 && (
                 <div className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-lg",
-                  "bg-gradient-to-b from-blue-500/30 to-blue-600/30",
-                  "border-2 border-blue-400/50",
+                  "bg-blue-50 border-2 border-blue-200",
                   isAnimating && "animate-pulse"
                 )}>
-                  <Star className="w-5 h-5 text-blue-400" />
+                  <Star className="w-5 h-5 text-blue-600" />
                   <div className="text-left">
-                    <div className="text-lg font-bold text-blue-400 retro-pixel-text">+{rewards.xp}</div>
-                    <div className="text-[10px] text-blue-400/70 uppercase">XP</div>
+                    <div className="text-lg font-bold text-blue-700 retro-pixel-text">+{rewards.xp}</div>
+                    <div className="text-[10px] text-blue-600/80 uppercase">XP</div>
                   </div>
                 </div>
               )}
               {rewards.coins > 0 && (
                 <div className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-lg",
-                  "bg-gradient-to-b from-yellow-500/30 to-yellow-600/30",
-                  "border-2 border-yellow-400/50",
+                  "bg-amber-50 border-2 border-amber-200",
                   isAnimating && "animate-pulse"
                 )}>
                   <PixelIcon name="coin" size={24} />
                   <div className="text-left">
-                    <div className="text-lg font-bold text-yellow-400 retro-pixel-text">+{rewards.coins}</div>
-                    <div className="text-[10px] text-yellow-400/70 uppercase">Coins</div>
+                    <div className="text-lg font-bold retro-pixel-text" style={{ color: 'hsl(42 65% 38%)' }}>+{rewards.coins}</div>
+                    <div className="text-[10px] uppercase" style={{ color: 'hsl(42 55% 35%)' }}>Coins</div>
                   </div>
                 </div>
               )}

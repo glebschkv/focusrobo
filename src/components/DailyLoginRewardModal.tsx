@@ -247,8 +247,8 @@ export const DailyLoginRewardModal = ({
                   ? 'hsl(42 65% 52% / 0.12)'
                   : 'hsl(152 44% 45% / 0.1)',
                 color: isMegaReward
-                  ? 'hsl(42 65% 38%)'
-                  : 'hsl(152 44% 38%)',
+                  ? 'hsl(42 65% 30%)'
+                  : 'hsl(152 44% 34%)',
               }}
             >
               Day {currentDayInCycle}
@@ -277,7 +277,7 @@ export const DailyLoginRewardModal = ({
             {displayReward.coins > 0 && (
               <div className="flex items-center justify-center gap-1.5 mt-1">
                 <PixelIcon name="coin" size={16} />
-                <span className="text-[13px] font-semibold tabular-nums" style={{ color: 'hsl(42 55% 40%)' }}>
+                <span className="text-[13px] font-semibold tabular-nums" style={{ color: 'hsl(42 55% 32%)' }}>
                   +{displayReward.coins} Coins
                 </span>
               </div>

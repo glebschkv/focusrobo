@@ -126,12 +126,12 @@ export const MilestoneCelebration = ({ onClaimReward, suppress }: MilestoneCeleb
 
             {/* Title */}
             <h2
-              className="text-2xl font-black uppercase tracking-tight text-white mb-1"
-              style={{ textShadow: '0 0 15px hsl(45 100% 50% / 0.5), 0 0 30px hsl(280 80% 60% / 0.3), 0 2px 0 rgba(0,0,0,0.3)' }}
+              className="text-2xl font-black uppercase tracking-tight mb-1"
+              style={{ color: 'hsl(var(--foreground))', textShadow: 'none' }}
             >
               {displayCelebration.title}
             </h2>
-            <p className="text-sm text-purple-200/80" style={{ textShadow: '0 1px 0 rgba(0,0,0,0.3)' }}>
+            <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))', textShadow: 'none' }}>
               {displayCelebration.description}
             </p>
           </div>
@@ -144,7 +144,7 @@ export const MilestoneCelebration = ({ onClaimReward, suppress }: MilestoneCeleb
             <div className="space-y-1.5">
               <div
                 className="text-[9px] font-black uppercase tracking-[0.2em] text-center"
-                style={{ color: 'hsl(260 25% 45%)' }}
+                style={{ color: 'hsl(var(--muted-foreground))' }}
               >
                 Rewards
               </div>
@@ -154,14 +154,14 @@ export const MilestoneCelebration = ({ onClaimReward, suppress }: MilestoneCeleb
                     <div
                       className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'hsl(260 30% 18%)',
-                        border: '2px solid hsl(260 35% 30%)',
+                        background: 'hsl(42 40% 92%)',
+                        border: '1.5px solid hsl(42 35% 78%)',
                       }}
                     >
                       <PixelIcon name="star" size={16} />
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-bold text-amber-300">+{displayCelebration.rewards.xp} XP</span>
+                      <span className="text-sm font-bold" style={{ color: 'hsl(42 65% 38%)' }}>+{displayCelebration.rewards.xp} XP</span>
                     </div>
                   </div>
                 )}
@@ -170,14 +170,14 @@ export const MilestoneCelebration = ({ onClaimReward, suppress }: MilestoneCeleb
                     <div
                       className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'hsl(260 30% 18%)',
-                        border: '2px solid hsl(260 35% 30%)',
+                        background: 'hsl(42 40% 92%)',
+                        border: '1.5px solid hsl(42 35% 78%)',
                       }}
                     >
                       <PixelIcon name="coin" size={16} />
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-bold text-amber-300">+{displayCelebration.rewards.coins} Coins</span>
+                      <span className="text-sm font-bold" style={{ color: 'hsl(42 65% 38%)' }}>+{displayCelebration.rewards.coins} Coins</span>
                     </div>
                   </div>
                 )}
@@ -186,14 +186,14 @@ export const MilestoneCelebration = ({ onClaimReward, suppress }: MilestoneCeleb
                     <div
                       className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                       style={{
-                        background: 'hsl(280 30% 20%)',
-                        border: '2px solid hsl(280 40% 35%)',
+                        background: 'hsl(262 35% 92%)',
+                        border: '1.5px solid hsl(262 30% 78%)',
                       }}
                     >
                       <PixelIcon name="sports-medal" size={16} />
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-bold text-purple-200/90">New Badge!</span>
+                      <span className="text-sm font-bold" style={{ color: 'hsl(262 55% 42%)' }}>New Badge!</span>
                     </div>
                   </div>
                 )}
