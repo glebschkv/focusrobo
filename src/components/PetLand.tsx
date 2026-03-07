@@ -311,8 +311,8 @@ function useIslandParallax() {
   }, [animateParallaxSpring, animatePanSpring]);
 
   // Mouse wheel zoom
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (e.cancelable) e.preventDefault();
     const delta = e.deltaY > 0 ? -ZOOM_WHEEL_STEP : ZOOM_WHEEL_STEP;
     const newZoom = clampZoom(currentZoom.current + delta);
     smoothZoomTo(newZoom);
@@ -348,7 +348,7 @@ function useIslandParallax() {
         const center = getTouchCenter(e);
         pinchCenterX.current = center.x;
         pinchCenterY.current = center.y;
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
       }
 
       if (e.touches.length === 1) {
@@ -367,7 +367,7 @@ function useIslandParallax() {
             smoothZoomTo(ZOOM_DOUBLE_TAP);
           }
           lastTapTime.current = 0;
-          e.preventDefault();
+          if (e.cancelable) e.preventDefault();
         } else {
           lastTapTime.current = now;
         }
@@ -390,7 +390,7 @@ function useIslandParallax() {
 
         clampPan();
         updateCSS();
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
       }
     }
 
@@ -410,14 +410,16 @@ function useIslandParallax() {
     wrapper.addEventListener('touchmove', onTouchMove, { passive: false });
     wrapper.addEventListener('touchend', onTouchEnd);
     wrapper.addEventListener('touchcancel', onTouchEnd);
+    wrapper.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
       wrapper.removeEventListener('touchstart', onTouchStart);
       wrapper.removeEventListener('touchmove', onTouchMove);
       wrapper.removeEventListener('touchend', onTouchEnd);
       wrapper.removeEventListener('touchcancel', onTouchEnd);
+      wrapper.removeEventListener('wheel', handleWheel);
     };
-  }, [updateCSS, smoothZoomTo, clampPan]);
+  }, [updateCSS, smoothZoomTo, clampPan, handleWheel]);
 
   useEffect(() => {
     return () => cancelAnimationFrame(animFrameId.current);
@@ -464,7 +466,6 @@ function useIslandParallax() {
       onPointerMove: handlePointerMove,
       onPointerUp: handlePointerUp,
       onPointerCancel: handlePointerUp,
-      onWheel: handleWheel,
     },
     setZoom: (z: number) => {
       targetZoom.current = clampZoom(z);
