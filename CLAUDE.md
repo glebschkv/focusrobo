@@ -117,6 +117,10 @@ src/
 │   ├── FeatureErrorBoundary.tsx # Feature-scoped error boundary
 │   ├── PageErrorBoundary.tsx  # Page-scoped error boundary
 │   ├── PluginUnavailableBanner.tsx # Native plugin unavailable warning
+│   ├── IslandExpansionModal.tsx # Island tier expansion celebration modal
+│   ├── LandCompleteModal.tsx  # Celebration when island is fully filled
+│   ├── PetDetailCard.tsx      # Detailed pet info card
+│   ├── PetTooltip.tsx         # Pet tap tooltip on island (name, rarity, size)
 │   ├── collection/            # Pet collection sub-components (modular tabs)
 │   │   ├── index.ts           # Barrel exports
 │   │   ├── constants.ts       # Rarity labels/colors, size labels, shared mappings
@@ -280,6 +284,7 @@ src/
 │   ├── usePerformanceMonitor.ts # Performance metrics logging
 │   ├── useReducedMotion.ts    # Reduced motion preference detection
 │   ├── useServiceWorker.ts    # Service worker registration
+│   ├── usePassiveIncome.ts    # Passive coin income system
 │   └── use-mobile.tsx         # Mobile device detection
 ├── data/
 │   ├── PetDatabase.ts         # 41 pet species definitions, rarity weights, growth sizes, random roll
@@ -392,6 +397,9 @@ scripts/                       # Build & generation scripts
 
 docs/                          # Documentation
 ├── API.md                     # API documentation
+├── APP_STORE_CONNECT_IAP_SETUP.txt # Copy-paste guide for ASC IAP config, pricing, metadata
+├── IAP_STRATEGY.md            # In-app purchase strategy and product definitions
+├── IOS_SETUP.md               # iOS setup instructions (Apple Developer Portal, Xcode, certs)
 ├── PRIVACY_POLICY.md          # Privacy policy
 ├── TERMS_OF_SERVICE.md        # Terms of service
 ├── TESTING.md                 # Testing guide
@@ -665,6 +673,7 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 | `useReducedMotion` | Respects `prefers-reduced-motion` |
 | `usePerformanceMonitor` | Performance metrics logging |
 | `useOfflineSyncManager` | Offline action queue processing |
+| `usePassiveIncome` | Passive coin income system |
 
 ### Timer Hooks (`focus-timer/hooks/`)
 
@@ -771,21 +780,31 @@ Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (1
 ## StoreKit Product IDs
 
 ```
-Subscriptions:
-  co.phonoinc.app.premium.weekly
-  co.phonoinc.app.premium.monthly
-  co.phonoinc.app.premium.yearly
+Subscriptions (Auto-Renewable):
+  co.phonoinc.app.premium.weekly    — $1.99/week
+  co.phonoinc.app.premium.monthly   — $4.99/month
+  co.phonoinc.app.premium.yearly    — $29.99/year
 
-Coin Packs:
-  co.phonoinc.app.coins.handful / pouch / chest / trove / hoard
+Coin Packs (Consumable):
+  co.phonoinc.app.coins.handful     — $0.99  (100 coins)
+  co.phonoinc.app.coins.pouch       — $2.99  (350 coins)
+  co.phonoinc.app.coins.chest       — $4.99  (650 coins)
+  co.phonoinc.app.coins.trove       — $9.99  (1,500 coins)
+  co.phonoinc.app.coins.hoard       — $19.99 (3,500 coins)
 
-Bundles:
-  co.phonoinc.app.bundle.welcome / egghunter / islandmaster
+Bundles (Non-Consumable):
+  co.phonoinc.app.bundle.welcome       — $1.99
+  co.phonoinc.app.bundle.egghunter     — $4.99
+  co.phonoinc.app.bundle.islandmaster  — $9.99
 ```
+
+Full IAP setup details (pricing, localizations, review notes): `docs/APP_STORE_CONNECT_IAP_SETUP.txt`
 
 ## What's Next (TODO)
 
-- [ ] LandCompleteModal — celebration when island fully expanded and filled
+- [x] LandCompleteModal — celebration when island fully expanded and filled
 - [ ] Generate final pet pixel art assets (current ones are placeholders)
 - [ ] Update onboarding flow for pet/island theme
 - [ ] Remove debug "Award Pet" button from PetLand before production
+- [ ] Upload screenshots and app icon to App Store Connect
+- [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)

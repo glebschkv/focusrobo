@@ -234,6 +234,9 @@ Age Rating (complete questionnaire — answer these):
   Sexual Content or Nudity: None
   Unrestricted Web Access: No
   Gambling and Contests: No
+  Loot Boxes: YES — eggs are purchased with coins (which can be
+    bought with real money) and produce randomized pets. Odds are
+    already disclosed in the egg shop UI per Apple's requirement.
   Result: 4+
 
 
