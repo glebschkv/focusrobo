@@ -143,7 +143,7 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
 
         // Then - verify key messages exist
         XCTAssertTrue(messages.contains("You set this up yourself. Think about that."))
-        XCTAssertTrue(messages.contains("Plot twist: the app you actually need is already open."))
+        XCTAssertTrue(messages.contains("A baby bunny earned XP for you today. Don't betray the baby bunny."))
         XCTAssertTrue(messages.contains("The best version of you doesn't need to open this right now."))
     }
 
@@ -228,10 +228,10 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
 
-        // Then - verify deep dark purple matching splash #080012
-        XCTAssertEqual(red, 8.0/255.0, accuracy: 0.01)
-        XCTAssertEqual(green, 0.0, accuracy: 0.01)
-        XCTAssertEqual(blue, 18.0/255.0, accuracy: 0.01)
+        // Then - verify warm cream matching PhoNo --background #F8F8F4
+        XCTAssertEqual(red, 248.0/255.0, accuracy: 0.01)
+        XCTAssertEqual(green, 248.0/255.0, accuracy: 0.01)
+        XCTAssertEqual(blue, 244.0/255.0, accuracy: 0.01)
         XCTAssertEqual(alpha, 0.97, accuracy: 0.01)
     }
 
@@ -303,10 +303,10 @@ final class ShieldConfigurationExtensionTests: XCTestCase {
 
     // MARK: - Title Tests
 
-    func testGetTitleAlwaysReturnsBOTBLOCK() {
+    func testGetTitleAlwaysReturnsPhoNo() {
         // Title is always the brand name — messages go in subtitle
         for _ in 0..<10 {
-            XCTAssertEqual(sut.getTitle(), "BOTBLOCK")
+            XCTAssertEqual(sut.getTitle(), "PhoNo")
         }
     }
 
