@@ -3,7 +3,7 @@ project_id = "xizxkpofwpxerqlokyuw"
 [auth]
 enabled = true
 site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "capacitor://localhost", "com.fonoinc.app://callback"]
+additional_redirect_urls = ["https://localhost:3000", "capacitor://localhost", "com.phonoinc.app://callback"]
 
 [auth.email]
 enable_signup = true

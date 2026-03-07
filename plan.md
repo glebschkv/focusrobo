@@ -1,8 +1,8 @@
-# BotBlock iOS Design Improvement Plan
+# PhoNo iOS Design Improvement Plan
 
 ## Executive Summary
 
-BotBlock is a well-built React + Capacitor focus timer app with pet collection gamification. The current design uses a "Sage Focus" / Atelier white theme with pixel art pets on a floating isometric island. After a thorough audit of every major component, style file, and interaction pattern, this plan identifies **32 design improvements** across 8 categories, prioritized by impact.
+PhoNo is a well-built React + Capacitor focus timer app with pet collection gamification. The current design uses a "Sage Focus" / Atelier white theme with pixel art pets on a floating isometric island. After a thorough audit of every major component, style file, and interaction pattern, this plan identifies **32 design improvements** across 8 categories, prioritized by impact.
 
 The app already does many things well: safe area handling, haptic feedback, 44px+ touch targets, reduced motion support, and a cohesive sage-green accent color. The improvements below focus on elevating the design from "good" to "polished iOS-native."
 

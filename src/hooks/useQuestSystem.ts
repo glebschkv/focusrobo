@@ -101,7 +101,7 @@ const WEEKLY_QUEST_TEMPLATES: QuestTemplate[] = [
 const STORY_QUESTS = [
   {
     id: 'story-1',
-    title: "Welcome to BotBlock",
+    title: "Welcome to PhoNo",
     description: "Begin your journey by activating your first bot",
     objectives: [{ type: 'bot_interaction', target: 1, description: "Activate your first bot" }],
     rewards: [{ type: 'bot_unlock', itemId: 'bolt-bot', description: "Unlock Bolt Bot companion" }, { type: 'xp', amount: 100, description: "+100 XP" }],

@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockStreakWidget - "Streak Fire" Widget
+ * PhoNoStreakWidget - "Streak Fire" Widget
  *
  * Shows your focus streak with escalating fire emojis and
  * sassy/funny messages that change based on streak length.
@@ -13,8 +13,8 @@ import WidgetKit
  * - Dynamic Type support
  * - High contrast support
  */
-struct BotBlockStreakWidget: Widget {
-    let kind = "BotBlockStreakWidget"
+struct PhoNoStreakWidget: Widget {
+    let kind = "PhoNoStreakWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: StreakProvider()) { entry in

@@ -417,8 +417,8 @@ export default function Auth() {
           const hashedNonce = await sha256(rawNonce);
 
           const result = await SignInWithApple.authorize({
-            clientId: 'com.fonoinc.app',
-            redirectURI: 'https://fonoinc.com',
+            clientId: 'com.phonoinc.app',
+            redirectURI: 'https://phonoinc.com',
             scopes: 'email name',
             state: crypto.randomUUID(),
             nonce: hashedNonce,
@@ -460,8 +460,8 @@ export default function Auth() {
         const hashedNonce = await sha256(rawNonce);
 
         const result = await SignInWithApple.authorize({
-          clientId: 'com.fonoinc.app',
-          redirectURI: 'https://fonoinc.com',
+          clientId: 'com.phonoinc.app',
+          redirectURI: 'https://phonoinc.com',
           scopes: 'email name',
           state: crypto.randomUUID(),
           nonce: hashedNonce,
@@ -540,7 +540,7 @@ export default function Auth() {
             <div className="relative inline-block mb-3">
               <img
                 src="/app-icon.png"
-                alt="BotBlock"
+                alt="PhoNo"
                 className="relative w-20 h-20 mx-auto rounded-2xl"
                 style={{
                   boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)',
@@ -548,7 +548,7 @@ export default function Auth() {
               />
             </div>
             <h1 className="text-3xl font-black tracking-tight text-stone-800" style={{ letterSpacing: '-0.01em' }}>
-              BotBlock
+              PhoNo
             </h1>
             <p className="text-sm text-stone-400">Focus, grow, and collect bots!</p>
           </div>
@@ -921,7 +921,7 @@ export default function Auth() {
                   />
                   <img
                     src="/app-icon.png"
-                    alt="BotBlock"
+                    alt="PhoNo"
                     className="relative w-14 h-14 mx-auto rounded-xl"
                     style={{
                       boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
@@ -930,7 +930,7 @@ export default function Auth() {
                 </div>
                 <h2 className="text-xl font-bold text-stone-900">Create Account</h2>
                 <p className="text-sm text-stone-400">
-                  Join BotBlock and sync your progress
+                  Join PhoNo and sync your progress
                 </p>
               </div>
 

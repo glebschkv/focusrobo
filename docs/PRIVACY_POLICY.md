@@ -1,10 +1,10 @@
 # Privacy Policy
 
-**BotBlock**
+**PhoNo**
 **Last Updated: January 26, 2025**
 **Effective Date: December 3, 2024**
 
-NoMo Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the BotBlock mobile application (the "App").
+PhoNo Inc. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the PhoNo mobile application (the "App").
 
 Please read this Privacy Policy carefully. By using the App, you agree to the collection and use of information in accordance with this policy.
 
@@ -47,12 +47,12 @@ We use the information we collect to:
 
 ## 3. Screen Time and Family Controls
 
-BotBlock uses Apple's Screen Time APIs (DeviceActivityMonitor, ManagedSettings) to provide its core functionality. Specifically:
+PhoNo uses Apple's Screen Time APIs (DeviceActivityMonitor, ManagedSettings) to provide its core functionality. Specifically:
 
 - **What We Access**: We detect when your device screen is off or when you're not actively using apps, allowing us to measure focus time.
 - **What We Do NOT Access**: We cannot see which specific apps you use, your browsing history, or any content within apps.
 - **Data Storage**: Screen Time detection happens entirely on your device. Focus session durations are stored locally and synced to your account if you're signed in.
-- **Your Control**: You can revoke Screen Time access at any time through iOS Settings > Screen Time > BotBlock.
+- **Your Control**: You can revoke Screen Time access at any time through iOS Settings > Screen Time > PhoNo.
 
 ---
 
@@ -80,7 +80,7 @@ We do not use any third-party analytics, advertising, or tracking services.
 
 ## 6. Children's Privacy
 
-BotBlock is designed to promote healthy screen time habits and is suitable for users of all ages. We do not knowingly collect personal information from children under 13 without parental consent.
+PhoNo is designed to promote healthy screen time habits and is suitable for users of all ages. We do not knowingly collect personal information from children under 13 without parental consent.
 
 If you are a parent or guardian and believe your child has provided us with personal information, please contact us at the email below, and we will delete such information.
 
@@ -96,7 +96,7 @@ You have the right to:
 - **Opt Out**: Disable push notifications through iOS Settings
 - **Cancel Subscriptions**: Manage or cancel subscriptions through the App Store
 
-To exercise these rights, contact us at privacy@fonoinc.com.
+To exercise these rights, contact us at privacy@phonoinc.com.
 
 ---
 
@@ -126,9 +126,9 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 If you have questions or concerns about this Privacy Policy or our data practices, please contact us:
 
-**NoMo Inc.**
-Email: privacy@fonoinc.com
-Website: https://fonoinc.com
+**PhoNo Inc.**
+Email: privacy@phonoinc.com
+Website: https://phonoinc.com
 
 ---
 
@@ -156,4 +156,4 @@ If you are in the European Economic Area, you have rights under GDPR including:
 
 Our legal basis for processing is your consent (for Screen Time access) and contract performance (for providing the service).
 
-Data Protection Officer contact: privacy@fonoinc.com
+Data Protection Officer contact: privacy@phonoinc.com

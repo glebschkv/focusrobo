@@ -1,6 +1,6 @@
-# BotBlock — IAP & Monetization Strategy
+# PhoNo — IAP & Monetization Strategy
 
-> Comprehensive in-app purchase strategy for BotBlock, a gamified focus timer with pet collection. This document covers competitor analysis, pricing rationale, product catalog design, subscription tiers, consumables, bundles, and revenue maximization tactics.
+> Comprehensive in-app purchase strategy for PhoNo, a gamified focus timer with pet collection. This document covers competitor analysis, pricing rationale, product catalog design, subscription tiers, consumables, bundles, and revenue maximization tactics.
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## 1. Executive Summary
 
-BotBlock's monetization should follow a **hybrid model**: a generous free tier that hooks users into the pet-collection loop, a premium subscription that amplifies the experience (not gates it), and consumable coin packs for impulse spenders. The egg/gacha system is BotBlock's strongest differentiator in the focus-timer market — no competitor has it — and should be the primary coin sink driving consumable revenue.
+PhoNo's monetization should follow a **hybrid model**: a generous free tier that hooks users into the pet-collection loop, a premium subscription that amplifies the experience (not gates it), and consumable coin packs for impulse spenders. The egg/gacha system is PhoNo's strongest differentiator in the focus-timer market — no competitor has it — and should be the primary coin sink driving consumable revenue.
 
 **Key recommendations:**
 - Simplify from 4 subscription tiers to 3 (Free / Premium / Lifetime)
@@ -52,7 +52,7 @@ BotBlock's monetization should follow a **hybrid model**: a generous free tier t
                         |
            Finch ($9.99/mo)
                         |
-    -------- BotBlock TARGET ($5.99/mo) --------
+    -------- PhoNo TARGET ($5.99/mo) --------
                         |
      Forest ($5.99/mo)  |  Habitica ($4.99/mo)
                         |
@@ -61,7 +61,7 @@ BotBlock's monetization should follow a **hybrid model**: a generous free tier t
                     LOW PRICE
                         |
   SIMPLE ————————————————————————————— GAMIFIED
-  (Tide, Forest)                (Habitica, BotBlock, Finch)
+  (Tide, Forest)                (Habitica, PhoNo, Finch)
 ```
 
 ### Competitor Pricing Summary
@@ -83,15 +83,15 @@ BotBlock's monetization should follow a **hybrid model**: a generous free tier t
 
 1. **Finch is the closest comparable** — pet collection + gamification + self-care. Generates ~$2M/month revenue. Validates that users pay $9.99/mo for this model. But Finch has broader wellness positioning (journaling, exercises, mood tracking) that justifies the premium.
 
-2. **No competitor has egg/gacha mechanics** — BotBlock's randomized pet acquisition with rarity tiers is genuinely unique in the focus-timer space. This is the #1 differentiator and should be the core monetization hook.
+2. **No competitor has egg/gacha mechanics** — PhoNo's randomized pet acquisition with rarity tiers is genuinely unique in the focus-timer space. This is the #1 differentiator and should be the core monetization hook.
 
-3. **$4.99–$5.99/mo is the sweet spot** for gamified focus apps. Finch and Tide command premiums ($9.99+) because they offer broader wellness features. BotBlock's tighter focus on timer + pets warrants the mid-range.
+3. **$4.99–$5.99/mo is the sweet spot** for gamified focus apps. Finch and Tide command premiums ($9.99+) because they offer broader wellness features. PhoNo's tighter focus on timer + pets warrants the mid-range.
 
-4. **Dual revenue streams win** — Forest (sub + crystals) and Habitica (sub + gems) generate more than pure-subscription apps. BotBlock's sub + coin model is the right structure.
+4. **Dual revenue streams win** — Forest (sub + crystals) and Habitica (sub + gems) generate more than pure-subscription apps. PhoNo's sub + coin model is the right structure.
 
 5. **Lifetime purchases are risky** — Focus To-Do ($11.99 lifetime) and BFT ($1.99) are among the lowest-revenue apps. Price lifetime high ($49.99+) to serve as a premium anchor, not an escape hatch.
 
-6. **Ad-free is table stakes** for the premium tier of this market. Forest, Finch, Habitica, Tide = all ad-free. BotBlock should never introduce ads.
+6. **Ad-free is table stakes** for the premium tier of this market. Forest, Finch, Habitica, Tide = all ad-free. PhoNo should never introduce ads.
 
 ---
 
@@ -138,10 +138,10 @@ BotBlock's monetization should follow a **hybrid model**: a generous free tier t
 ├─────────────────────────────────────────────────┤
 │                                                   │
 │  SUBSCRIPTIONS (recurring revenue core)           │
-│  ├── BotBlock Premium Weekly    — $2.49/week     │
-│  ├── BotBlock Premium Monthly   — $5.99/month    │
-│  ├── BotBlock Premium Yearly    — $39.99/year    │
-│  └── BotBlock Lifetime          — $49.99 once    │
+│  ├── PhoNo Premium Weekly    — $2.49/week     │
+│  ├── PhoNo Premium Monthly   — $5.99/month    │
+│  ├── PhoNo Premium Yearly    — $39.99/year    │
+│  └── PhoNo Lifetime          — $49.99 once    │
 │                                                   │
 │  COIN PACKS (impulse + whale capture)            │
 │  ├── Handful of Coins    — $0.99  →    500       │
@@ -179,7 +179,7 @@ The current Premium / Premium+ split fails for several reasons:
 
 4. **Simplicity sells** — The most successful apps in this space (Forest, Habitica, Focus Plant) offer ONE premium tier. Finch also has ONE tier. The "good/better/best" approach only works when tiers map to clearly different user needs (e.g., personal vs team vs enterprise).
 
-**Recommendation:** Merge the best of both tiers into a single "BotBlock Premium" at the lower price point. This feels generous and removes friction.
+**Recommendation:** Merge the best of both tiers into a single "PhoNo Premium" at the lower price point. This feels generous and removes friction.
 
 ---
 
@@ -207,7 +207,7 @@ Everything that makes the app fun stays free. This is critical — the free tier
 
 **Rationale:** The free user must experience the full dopamine loop — timer → pet reward → island placement → collection growth. If this loop is gated, users never get hooked enough to convert.
 
-### BotBlock Premium — $5.99/mo | $39.99/yr | $2.49/week
+### PhoNo Premium — $5.99/mo | $39.99/yr | $2.49/week
 
 | Feature | Free | Premium |
 |---------|------|---------|
@@ -235,12 +235,12 @@ Everything that makes the app fun stays free. This is critical — the free tier
 | Yearly | $39.99 | $3.33 | **44% savings** | Aggressive discount to push annual adoption. Annual subscribers retain at 36% vs 22% for monthly. $39.99 < Habitica yearly ($47.99). |
 
 **Why $5.99/mo and not $4.99 or $9.99:**
-- $4.99 leaves money on the table — Habitica charges this with fewer engagement features than BotBlock
-- $9.99 requires Finch-level breadth (journaling, exercises, reflections) — BotBlock doesn't have this yet
+- $4.99 leaves money on the table — Habitica charges this with fewer engagement features than PhoNo
+- $9.99 requires Finch-level breadth (journaling, exercises, reflections) — PhoNo doesn't have this yet
 - $5.99 is the exact median IAP price on iOS in 2025 and matches Forest's subscription
 - The extra $1/mo over $4.99 = ~$12/yr additional revenue per subscriber with minimal conversion impact at this price point
 
-### BotBlock Lifetime — $49.99
+### PhoNo Lifetime — $49.99
 
 | Feature | Lifetime |
 |---------|----------|
@@ -254,7 +254,7 @@ Everything that makes the app fun stays free. This is critical — the free tier
 
 **Pricing Rationale:**
 - $49.99 = 1.25x yearly ($39.99). This is intentionally LOW relative to typical 2.5-3x ratios.
-- **Why price it relatively low?** BotBlock is a new app without established brand trust. A $179.99 lifetime (current) is Calm/Headspace territory — users won't pay that for an unknown timer app. $49.99 feels like "a year and a bit" — achievable and fair.
+- **Why price it relatively low?** PhoNo is a new app without established brand trust. A $179.99 lifetime (current) is Calm/Headspace territory — users won't pay that for an unknown timer app. $49.99 feels like "a year and a bit" — achievable and fair.
 - The Founder badge + exclusive pet skin create urgency ("available to early adopters only") and FOMO.
 - Once the subscriber base matures (6-12 months post-launch), raise lifetime to $79.99, then $99.99.
 - Lifetime users become brand advocates — they've invested enough to feel ownership.
@@ -360,7 +360,7 @@ Show coins-per-dollar ratio as a subtle bar or percentage on each pack to make t
 
 ## 8. Seasonal & Event Economy
 
-This is where BotBlock can generate excitement, FOMO, and significant revenue spikes. The egg/gacha system is uniquely suited to seasonal events.
+This is where PhoNo can generate excitement, FOMO, and significant revenue spikes. The egg/gacha system is uniquely suited to seasonal events.
 
 ### Seasonal Pet Events (Quarterly)
 
@@ -412,7 +412,7 @@ These create weekly engagement touchpoints and purchase opportunities without re
 
 ## 9. Gifting System
 
-Gifting drives viral acquisition. When a user gifts BotBlock Premium to a friend, that's a new user acquired at zero CAC.
+Gifting drives viral acquisition. When a user gifts PhoNo Premium to a friend, that's a new user acquired at zero CAC.
 
 ### Gift Options
 
@@ -427,7 +427,7 @@ Gifting drives viral acquisition. When a user gifts BotBlock Premium to a friend
 ### How Gifting Works
 
 1. Buyer selects gift from the Shop → Gift tab
-2. Buyer enters recipient's BotBlock username or generates a gift link
+2. Buyer enters recipient's PhoNo username or generates a gift link
 3. Recipient receives a push notification / in-app banner: "You received a gift!"
 4. Recipient opens a gift-unwrapping animation → reveals contents
 5. If recipient doesn't have the app, the gift link leads to App Store download
@@ -464,7 +464,7 @@ Show exactly 3 options on the paywall:
 ```
 ┌──────────────────────────────────────────────────────┐
 │                                                        │
-│          Unlock BotBlock Premium                       │
+│          Unlock PhoNo Premium                       │
 │                                                        │
 │   ┌──────────┐  ┌──────────────┐  ┌──────────┐       │
 │   │  Weekly   │  │   Yearly     │  │ Monthly  │       │
@@ -636,11 +636,11 @@ Payment failures = 20-40% of all churn. Implement:
 
 ### Loot Box / Gacha Regulations
 
-BotBlock's egg system is a gacha mechanic. Compliance requirements:
+PhoNo's egg system is a gacha mechanic. Compliance requirements:
 
-- **Apple App Store Review Guideline 3.1.1**: Apps offering loot boxes or gacha must disclose the odds of receiving each type of item before purchase. BotBlock already defines odds in `EggData.ts` — these MUST be displayed in the egg purchase UI.
+- **Apple App Store Review Guideline 3.1.1**: Apps offering loot boxes or gacha must disclose the odds of receiving each type of item before purchase. PhoNo already defines odds in `EggData.ts` — these MUST be displayed in the egg purchase UI.
 - **Belgium & Netherlands**: Paid loot boxes are banned. If launching in these markets, eggs must be purchasable ONLY with earned coins (not coins bought with real money). Consider geo-fencing IAP coin packs or adding a "coins from IAP cannot buy eggs" restriction for these regions.
-- **Japan**: Gacha odds must be disclosed. "Complete gacha" (requiring collecting a full set for a reward) is banned. BotBlock's system doesn't require complete sets, so this is fine.
+- **Japan**: Gacha odds must be disclosed. "Complete gacha" (requiring collecting a full set for a reward) is banned. PhoNo's system doesn't require complete sets, so this is fine.
 - **China**: Gacha odds must be published. Unlikely to launch there, but noted.
 
 **Recommendation:** Display odds prominently on every egg purchase screen. Example: "Common 40% | Uncommon 35% | Rare 20% | Epic 5%" shown directly below the egg card. This is both a legal requirement and builds user trust.
@@ -654,7 +654,7 @@ BotBlock's egg system is a gacha mechanic. Compliance requirements:
 
 ### Age Rating
 
-The gacha/egg system may affect the app's age rating. Apps with simulated gambling mechanics may receive a higher age rating. Since BotBlock eggs use in-game currency (not direct real-money gambling), this typically stays at 12+ but should be verified with Apple during review.
+The gacha/egg system may affect the app's age rating. Apps with simulated gambling mechanics may receive a higher age rating. Since PhoNo eggs use in-game currency (not direct real-money gambling), this typically stays at 12+ but should be verified with Apple during review.
 
 ---
 
@@ -662,58 +662,58 @@ The gacha/egg system may affect the app's age rating. Apps with simulated gambli
 
 ```
 # Subscriptions (auto-renewable)
-com.fonoinc.app.premium.weekly
-com.fonoinc.app.premium.monthly
-com.fonoinc.app.premium.yearly
+com.phonoinc.app.premium.weekly
+com.phonoinc.app.premium.monthly
+com.phonoinc.app.premium.yearly
 
 # Lifetime (non-consumable)
-com.fonoinc.app.lifetime
+com.phonoinc.app.lifetime
 
 # Coin Packs (consumable)
-com.fonoinc.app.coins.handful       # $0.99
-com.fonoinc.app.coins.pouch         # $2.99
-com.fonoinc.app.coins.chest         # $6.99
-com.fonoinc.app.coins.trove         # $14.99
-com.fonoinc.app.coins.hoard         # $29.99
+com.phonoinc.app.coins.handful       # $0.99
+com.phonoinc.app.coins.pouch         # $2.99
+com.phonoinc.app.coins.chest         # $6.99
+com.phonoinc.app.coins.trove         # $14.99
+com.phonoinc.app.coins.hoard         # $29.99
 
 # Bundles (non-consumable, one-time)
-com.fonoinc.app.bundle.welcome      # $2.99 (24hr)
-com.fonoinc.app.bundle.egghunter    # $4.99
-com.fonoinc.app.bundle.islandmaster # $14.99
+com.phonoinc.app.bundle.welcome      # $2.99 (24hr)
+com.phonoinc.app.bundle.egghunter    # $4.99
+com.phonoinc.app.bundle.islandmaster # $14.99
 
 # Seasonal (non-consumable, limited-time)
-com.fonoinc.app.seasonal.spring2026  # varies
-com.fonoinc.app.seasonal.summer2026  # varies
-com.fonoinc.app.seasonal.fall2026    # varies
-com.fonoinc.app.seasonal.winter2026  # varies
+com.phonoinc.app.seasonal.spring2026  # varies
+com.phonoinc.app.seasonal.summer2026  # varies
+com.phonoinc.app.seasonal.fall2026    # varies
+com.phonoinc.app.seasonal.winter2026  # varies
 
 # Gifts (consumable)
-com.fonoinc.app.gift.egg.rare       # $1.99
-com.fonoinc.app.gift.egg.legendary  # $4.99
+com.phonoinc.app.gift.egg.rare       # $1.99
+com.phonoinc.app.gift.egg.legendary  # $4.99
 ```
 
 ### Products to Remove
 
 ```
 # Remove (Premium+ tier eliminated)
-com.fonoinc.app.premiumplus.monthly
-com.fonoinc.app.premiumplus.yearly
+com.phonoinc.app.premiumplus.monthly
+com.phonoinc.app.premiumplus.yearly
 
 # Remove (replaced with new packs)
-com.fonoinc.app.coins.value
-com.fonoinc.app.coins.premium
-com.fonoinc.app.coins.mega
-com.fonoinc.app.coins.ultra
-com.fonoinc.app.coins.legendary
+com.phonoinc.app.coins.value
+com.phonoinc.app.coins.premium
+com.phonoinc.app.coins.mega
+com.phonoinc.app.coins.ultra
+com.phonoinc.app.coins.legendary
 
 # Remove (replaced with themed bundles)
-com.fonoinc.app.bundle.starter
-com.fonoinc.app.bundle.collector
-com.fonoinc.app.bundle.ultimate
+com.phonoinc.app.bundle.starter
+com.phonoinc.app.bundle.collector
+com.phonoinc.app.bundle.ultimate
 
 # Remove (dead code, never implemented)
-com.fonoinc.app.battlepass.premium
-com.fonoinc.app.battlepass.premium.plus
+com.phonoinc.app.battlepass.premium
+com.phonoinc.app.battlepass.premium.plus
 ```
 
 ---

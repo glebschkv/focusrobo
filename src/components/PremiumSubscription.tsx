@@ -50,7 +50,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Weekly',
     period: '/week',
     price: '$2.49',
-    iapProductId: 'com.fonoinc.app.premium.weekly',
+    iapProductId: 'com.phonoinc.app.premium.weekly',
     highlighted: false,
   },
   {
@@ -58,7 +58,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Yearly',
     period: '/year',
     price: '$39.99',
-    iapProductId: 'com.fonoinc.app.premium.yearly',
+    iapProductId: 'com.phonoinc.app.premium.yearly',
     highlighted: true,
     badge: 'Best Value',
     savingsBadge: 'Save 44%',
@@ -68,7 +68,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Monthly',
     period: '/month',
     price: '$5.99',
-    iapProductId: 'com.fonoinc.app.premium.monthly',
+    iapProductId: 'com.phonoinc.app.premium.monthly',
     highlighted: false,
   },
 ];
@@ -216,7 +216,7 @@ export const PremiumSubscription = ({ isOpen, onClose }: PremiumSubscriptionProp
               <div>
                 <span className="text-[13px] font-bold text-[hsl(145_45%_35%)]">{currentPlan.name} Active</span>
                 <span className="text-[11px] block text-[hsl(145_20%_55%)]">
-                  Thank you for supporting BotBlock!
+                  Thank you for supporting PhoNo!
                 </span>
               </div>
             </div>

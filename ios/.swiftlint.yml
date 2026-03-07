@@ -1,4 +1,4 @@
-# SwiftLint Configuration for BotBlock iOS App
+# SwiftLint Configuration for PhoNo iOS App
 
 disabled_rules:
   - trailing_whitespace

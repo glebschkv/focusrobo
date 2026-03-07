@@ -68,11 +68,11 @@ export const VersionNotice = () => {
                   If something isn't working right, send us an email and we'll look into it.
                 </p>
                 <a
-                  href="mailto:report@fonoinc.com?subject=Bug%20Report%20-%20v1.0"
+                  href="mailto:report@phonoinc.com?subject=Bug%20Report%20-%20v1.0"
                   className="inline-flex items-center gap-1.5 mt-2 font-bold text-primary hover:opacity-80 transition-opacity"
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  report@fonoinc.com
+                  report@phonoinc.com
                 </a>
               </div>
             </div>

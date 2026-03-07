@@ -1,4 +1,4 @@
-# BotBlock — Architecture Reference
+# PhoNo — Architecture Reference
 
 > Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (expands 5×5→20×20), archive it, start a new one. Players can also buy eggs in the shop to hatch pets with custom rarity weights. Built with React + Capacitor, deployed as a native iOS app.
 
@@ -30,10 +30,10 @@ Shop → buy egg (common/rare/epic/legendary) with coins
 
 ## Quick Facts
 
-- **App name**: BotBlock
-- **Bundle ID**: `com.fonoinc.app`
-- **App Group**: `group.com.fonoinc.app`
-- **Package name**: `botblock` (in package.json)
+- **App name**: PhoNo
+- **Bundle ID**: `com.phonoinc.app`
+- **App Group**: `group.com.phonoinc.app`
+- **Package name**: `phono` (in package.json)
 - **Storage prefix**: `nomo_` (all localStorage keys)
 
 ## Tech Stack
@@ -772,15 +772,15 @@ Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (1
 
 ```
 Subscriptions:
-  com.fonoinc.app.premium.weekly
-  com.fonoinc.app.premium.monthly
-  com.fonoinc.app.premium.yearly
+  com.phonoinc.app.premium.weekly
+  com.phonoinc.app.premium.monthly
+  com.phonoinc.app.premium.yearly
 
 Coin Packs:
-  com.fonoinc.app.coins.handful / pouch / chest / trove / hoard
+  com.phonoinc.app.coins.handful / pouch / chest / trove / hoard
 
 Bundles:
-  com.fonoinc.app.bundle.welcome / egghunter / islandmaster
+  com.phonoinc.app.bundle.welcome / egghunter / islandmaster
 ```
 
 ## What's Next (TODO)

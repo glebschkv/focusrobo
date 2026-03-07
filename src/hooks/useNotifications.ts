@@ -221,7 +221,7 @@ export const useNotifications = () => {
               attachments: options.attachments || [],
               actionTypeId: 'default',
               extra: {
-                source: 'botblock',
+                source: 'phono',
                 timestamp: Date.now()
               },
             },

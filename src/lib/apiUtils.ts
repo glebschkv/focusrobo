@@ -267,7 +267,7 @@ export function getAppBaseUrl(): string {
       window.location.protocol === 'capacitor:' ||
       window.location.protocol === 'ionic:'
     ) {
-      return 'com.fonoinc.app://callback';
+      return 'com.phonoinc.app://callback';
     }
 
     // On web, use the current origin
@@ -277,7 +277,7 @@ export function getAppBaseUrl(): string {
   }
 
   // Fallback for server-side or unknown environments
-  return 'com.fonoinc.app://callback';
+  return 'com.phonoinc.app://callback';
 }
 
 /**

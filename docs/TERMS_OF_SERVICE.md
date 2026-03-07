@@ -1,10 +1,10 @@
 # Terms of Service
 
-**BotBlock**
+**PhoNo**
 **Last Updated: December 3, 2024**
 **Effective Date: December 3, 2024**
 
-Welcome to BotBlock. These Terms of Service ("Terms") govern your use of the BotBlock mobile application (the "App") provided by NoMo Inc. ("we," "our," or "us").
+Welcome to PhoNo. These Terms of Service ("Terms") govern your use of the PhoNo mobile application (the "App") provided by PhoNo Inc. ("we," "our," or "us").
 
 By downloading, installing, or using the App, you agree to be bound by these Terms. If you do not agree to these Terms, do not use the App.
 
@@ -12,7 +12,7 @@ By downloading, installing, or using the App, you agree to be bound by these Ter
 
 ## 1. Description of Service
 
-BotBlock is a focus and digital wellness application that:
+PhoNo is a focus and digital wellness application that:
 - Tracks time spent away from your phone using iOS Screen Time APIs
 - Rewards you with virtual coins for maintaining focus
 - Allows you to collect virtual robots and build virtual worlds
@@ -98,7 +98,7 @@ You agree not to:
 
 ## 8. Intellectual Property
 
-- The App, including all content, features, and functionality, is owned by NoMo Inc.
+- The App, including all content, features, and functionality, is owned by PhoNo Inc.
 - All trademarks, logos, and service marks are our property
 - You may not copy, modify, distribute, sell, or lease any part of the App
 - You may not use our intellectual property without written permission
@@ -133,7 +133,7 @@ Some jurisdictions do not allow the exclusion of certain warranties or limitatio
 
 ## 11. Indemnification
 
-You agree to indemnify and hold harmless NoMo Inc. and its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from:
+You agree to indemnify and hold harmless PhoNo Inc. and its officers, directors, employees, and agents from any claims, damages, losses, or expenses arising from:
 - Your use of the App
 - Your violation of these Terms
 - Your violation of any third-party rights
@@ -178,7 +178,7 @@ If any provision of these Terms is found unenforceable, the remaining provisions
 
 ## 17. Entire Agreement
 
-These Terms, together with our Privacy Policy, constitute the entire agreement between you and NoMo Inc. regarding the App.
+These Terms, together with our Privacy Policy, constitute the entire agreement between you and PhoNo Inc. regarding the App.
 
 ---
 
@@ -186,9 +186,9 @@ These Terms, together with our Privacy Policy, constitute the entire agreement b
 
 For questions about these Terms, contact us:
 
-**NoMo Inc.**
-Email: support@fonoinc.com
-Website: https://fonoinc.com
+**PhoNo Inc.**
+Email: support@phonoinc.com
+Website: https://phonoinc.com
 
 ---
 
@@ -196,7 +196,7 @@ Website: https://fonoinc.com
 
 The following additional terms apply to your use of the App on Apple devices:
 
-- These Terms are between you and NoMo Inc. (BotBlock), not Apple
+- These Terms are between you and PhoNo Inc. (PhoNo), not Apple
 - Apple has no obligation to provide maintenance or support
 - Apple is not responsible for any claims related to the App
 - Apple is a third-party beneficiary of these Terms

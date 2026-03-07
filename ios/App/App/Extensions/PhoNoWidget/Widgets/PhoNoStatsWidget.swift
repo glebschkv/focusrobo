@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /**
- * BotBlockStatsWidget - "Bot Stats" Widget
+ * PhoNoStatsWidget - "Bot Stats" Widget
  *
  * Trading card-style layout showing your level, XP, and
  * focus stats with your bot's emoji and funny rank titles.
@@ -13,8 +13,8 @@ import WidgetKit
  * - Dynamic Type support
  * - High contrast support
  */
-struct BotBlockStatsWidget: Widget {
-    let kind = "BotBlockStatsWidget"
+struct PhoNoStatsWidget: Widget {
+    let kind = "PhoNoStatsWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: StatsProvider()) { entry in
