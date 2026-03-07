@@ -12,8 +12,8 @@
 export const APP_CONFIG = {
   APP_NAME: 'PhoNo',
   APP_VERSION: '1.0.0',
-  APP_GROUP_IDENTIFIER: 'group.com.phonoinc.app',
-  BUNDLE_IDENTIFIER: 'com.phonoinc.app',
+  APP_GROUP_IDENTIFIER: 'group.co.phonoinc.app',
+  BUNDLE_IDENTIFIER: 'co.phonoinc.app',
   STORAGE_PREFIX: 'nomo_',
 } as const;
 
@@ -509,7 +509,7 @@ export const UI_CONFIG = {
 
 export const IOS_CONFIG = {
   /** Background task identifier */
-  BACKGROUND_TASK_ID: 'com.phonoinc.app.background-tracking',
+  BACKGROUND_TASK_ID: 'co.phonoinc.app.background-tracking',
 
   /** Background refresh interval in minutes */
   BACKGROUND_REFRESH_INTERVAL_MINUTES: 15,
@@ -520,19 +520,19 @@ export const IOS_CONFIG = {
   /** StoreKit product IDs */
   PRODUCT_IDS: {
     // Subscriptions
-    PREMIUM_WEEKLY: 'com.phonoinc.app.premium.weekly',
-    PREMIUM_MONTHLY: 'com.phonoinc.app.premium.monthly',
-    PREMIUM_YEARLY: 'com.phonoinc.app.premium.yearly',
+    PREMIUM_WEEKLY: 'co.phonoinc.app.premium.weekly',
+    PREMIUM_MONTHLY: 'co.phonoinc.app.premium.monthly',
+    PREMIUM_YEARLY: 'co.phonoinc.app.premium.yearly',
     // Coin Packs
-    COINS_HANDFUL: 'com.phonoinc.app.coins.handful',
-    COINS_POUCH: 'com.phonoinc.app.coins.pouch',
-    COINS_CHEST: 'com.phonoinc.app.coins.chest',
-    COINS_TROVE: 'com.phonoinc.app.coins.trove',
-    COINS_HOARD: 'com.phonoinc.app.coins.hoard',
+    COINS_HANDFUL: 'co.phonoinc.app.coins.handful',
+    COINS_POUCH: 'co.phonoinc.app.coins.pouch',
+    COINS_CHEST: 'co.phonoinc.app.coins.chest',
+    COINS_TROVE: 'co.phonoinc.app.coins.trove',
+    COINS_HOARD: 'co.phonoinc.app.coins.hoard',
     // Starter Bundles
-    BUNDLE_WELCOME: 'com.phonoinc.app.bundle.welcome',
-    BUNDLE_EGGHUNTER: 'com.phonoinc.app.bundle.egghunter',
-    BUNDLE_ISLANDMASTER: 'com.phonoinc.app.bundle.islandmaster',
+    BUNDLE_WELCOME: 'co.phonoinc.app.bundle.welcome',
+    BUNDLE_EGGHUNTER: 'co.phonoinc.app.bundle.egghunter',
+    BUNDLE_ISLANDMASTER: 'co.phonoinc.app.bundle.islandmaster',
   } as const,
 } as const;
 

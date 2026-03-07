@@ -417,7 +417,7 @@ export default function Auth() {
           const hashedNonce = await sha256(rawNonce);
 
           const result = await SignInWithApple.authorize({
-            clientId: 'com.phonoinc.app',
+            clientId: 'co.phonoinc.app',
             redirectURI: 'https://phonoinc.co',
             scopes: 'email name',
             state: crypto.randomUUID(),
@@ -460,7 +460,7 @@ export default function Auth() {
         const hashedNonce = await sha256(rawNonce);
 
         const result = await SignInWithApple.authorize({
-          clientId: 'com.phonoinc.app',
+          clientId: 'co.phonoinc.app',
           redirectURI: 'https://phonoinc.co',
           scopes: 'email name',
           state: crypto.randomUUID(),

@@ -17,7 +17,7 @@ describe('APP_CONFIG', () => {
     expect(APP_CONFIG.APP_NAME).toBe('PhoNo');
     expect(APP_CONFIG.APP_VERSION).toBe('1.0.0');
     expect(APP_CONFIG.STORAGE_PREFIX).toBe('nomo_');
-    expect(APP_CONFIG.APP_GROUP_IDENTIFIER).toBe('group.com.phonoinc.app');
+    expect(APP_CONFIG.APP_GROUP_IDENTIFIER).toBe('group.co.phonoinc.app');
   });
 });
 

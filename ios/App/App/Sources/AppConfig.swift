@@ -24,9 +24,9 @@ enum AppConfig {
 
     /// App Group identifier - references SharedConstants for consistency with extensions
     static let appGroupIdentifier = SharedConstants.appGroupIdentifier
-    static let bundleIdentifier = "com.phonoinc.app"
+    static let bundleIdentifier = "co.phonoinc.app"
     static let appName = "PhoNo"
-    static let merchantIdentifier = "merchant.com.phonoinc.app"
+    static let merchantIdentifier = "merchant.co.phonoinc.app"
 
     static var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
@@ -43,7 +43,7 @@ enum AppConfig {
     // MARK: - Background Tasks
 
     enum BackgroundTask {
-        static let identifier = "com.phonoinc.app.background-tracking"
+        static let identifier = "co.phonoinc.app.background-tracking"
         static let refreshIntervalMinutes: TimeInterval = 15
         static let refreshIntervalSeconds: TimeInterval = 15 * 60
     }
@@ -75,24 +75,24 @@ enum AppConfig {
 
     enum ProductIDs {
         // Subscriptions
-        static let premiumMonthly = "com.phonoinc.app.premium.monthly"
-        static let premiumYearly = "com.phonoinc.app.premium.yearly"
-        static let premiumPlusMonthly = "com.phonoinc.app.premiumplus.monthly"
-        static let premiumPlusYearly = "com.phonoinc.app.premiumplus.yearly"
-        static let lifetime = "com.phonoinc.app.lifetime"
+        static let premiumMonthly = "co.phonoinc.app.premium.monthly"
+        static let premiumYearly = "co.phonoinc.app.premium.yearly"
+        static let premiumPlusMonthly = "co.phonoinc.app.premiumplus.monthly"
+        static let premiumPlusYearly = "co.phonoinc.app.premiumplus.yearly"
+        static let lifetime = "co.phonoinc.app.lifetime"
 
         // Coin Packs (Consumables)
-        static let coinsValue = "com.phonoinc.app.coins.value"
-        static let coinsPremium = "com.phonoinc.app.coins.premium"
-        static let coinsMega = "com.phonoinc.app.coins.mega"
-        static let coinsUltra = "com.phonoinc.app.coins.ultra"
-        static let coinsLegendary = "com.phonoinc.app.coins.legendary"
+        static let coinsValue = "co.phonoinc.app.coins.value"
+        static let coinsPremium = "co.phonoinc.app.coins.premium"
+        static let coinsMega = "co.phonoinc.app.coins.mega"
+        static let coinsUltra = "co.phonoinc.app.coins.ultra"
+        static let coinsLegendary = "co.phonoinc.app.coins.legendary"
 
         // Starter Bundles (Non-Consumables)
-        static let bundleWelcome = "com.phonoinc.app.bundle.welcome"
-        static let bundleStarter = "com.phonoinc.app.bundle.starter"
-        static let bundleCollector = "com.phonoinc.app.bundle.collector"
-        static let bundleUltimate = "com.phonoinc.app.bundle.ultimate"
+        static let bundleWelcome = "co.phonoinc.app.bundle.welcome"
+        static let bundleStarter = "co.phonoinc.app.bundle.starter"
+        static let bundleCollector = "co.phonoinc.app.bundle.collector"
+        static let bundleUltimate = "co.phonoinc.app.bundle.ultimate"
 
         static let allProducts: [String] = [
             premiumMonthly,

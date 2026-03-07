@@ -50,7 +50,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Weekly',
     period: '/week',
     price: '$2.49',
-    iapProductId: 'com.phonoinc.app.premium.weekly',
+    iapProductId: 'co.phonoinc.app.premium.weekly',
     highlighted: false,
   },
   {
@@ -58,7 +58,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Yearly',
     period: '/year',
     price: '$39.99',
-    iapProductId: 'com.phonoinc.app.premium.yearly',
+    iapProductId: 'co.phonoinc.app.premium.yearly',
     highlighted: true,
     badge: 'Best Value',
     savingsBadge: 'Save 44%',
@@ -68,7 +68,7 @@ const PLAN_DEFS: PlanDef[] = [
     label: 'Monthly',
     period: '/month',
     price: '$5.99',
-    iapProductId: 'com.phonoinc.app.premium.monthly',
+    iapProductId: 'co.phonoinc.app.premium.monthly',
     highlighted: false,
   },
 ];

@@ -19,10 +19,10 @@ cannot be added programmatically — you must create them in Xcode. They persist
 - Xcode 16.0+ (for iOS 18 SDK; iOS 26 runtime requires Xcode 18 beta)
 - Physical iOS device (Family Controls does NOT work in Simulator)
 - Apple Developer account with **Family Controls** capability enabled for:
-  - `com.phonoinc.app` (main app)
-  - `com.phonoinc.app.ShieldConfiguration`
-  - `com.phonoinc.app.DeviceActivityMonitor`
-- App Group `group.com.phonoinc.app` registered for all bundle IDs above + widget
+  - `co.phonoinc.app` (main app)
+  - `co.phonoinc.app.ShieldConfiguration`
+  - `co.phonoinc.app.DeviceActivityMonitor`
+- App Group `group.co.phonoinc.app` registered for all bundle IDs above + widget
 
 ## Extension Setup
 
@@ -32,7 +32,7 @@ cannot be added programmatically — you must create them in Xcode. They persist
 1. In Xcode: **File → New → Target**
 2. Search for and select **Shield Configuration Extension**
 3. Product Name: `ShieldConfiguration` (MUST match exactly — the Info.plist uses `$(PRODUCT_MODULE_NAME).ShieldConfigurationExtension` to find the class)
-4. Bundle Identifier: `com.phonoinc.app.ShieldConfiguration`
+4. Bundle Identifier: `co.phonoinc.app.ShieldConfiguration`
 5. Embed in Application: **App**
 6. Language: Swift
 7. Click **Finish**
@@ -62,7 +62,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities** (Signing & Capabilities):
 - **Family Controls**
-- **App Groups** → add `group.com.phonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -75,7 +75,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 1. **File → New → Target**
 2. Search for and select **Device Activity Monitor Extension**
 3. Product Name: `DeviceActivityMonitor` (MUST match exactly)
-4. Bundle Identifier: `com.phonoinc.app.DeviceActivityMonitor`
+4. Bundle Identifier: `co.phonoinc.app.DeviceActivityMonitor`
 5. Embed in Application: **App**
 6. Click **Finish**
 
@@ -97,7 +97,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 
 **Add capabilities:**
 - **Family Controls**
-- **App Groups** → add `group.com.phonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 15.0
@@ -110,7 +110,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 1. **File → New → Target**
 2. Search for and select **Widget Extension**
 3. Product Name: `PhoNoWidget`
-4. Bundle Identifier: `com.phonoinc.app.PhoNoWidget`
+4. Bundle Identifier: `co.phonoinc.app.PhoNoWidget`
 5. Embed in Application: **App**
 6. Uncheck "Include Live Activity" and "Include Configuration App Intent"
 7. Click **Finish**
@@ -126,7 +126,7 @@ missing, the extension will fail to compile with "undeclared identifier" errors.
 - `App/Shared/SharedConstants.swift`
 
 **Add capabilities:**
-- **App Groups** → add `group.com.phonoinc.app`
+- **App Groups** → add `group.co.phonoinc.app`
 
 **Set deployment target:**
 - Minimum Deployments: iOS 16.0
@@ -178,7 +178,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.phonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 
@@ -188,7 +188,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.phonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 
@@ -200,7 +200,7 @@ After adding all three targets:
 <true/>
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.phonoinc.app</string>
+    <string>group.co.phonoinc.app</string>
 </array>
 ```
 

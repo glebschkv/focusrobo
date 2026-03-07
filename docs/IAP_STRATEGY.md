@@ -662,58 +662,58 @@ The gacha/egg system may affect the app's age rating. Apps with simulated gambli
 
 ```
 # Subscriptions (auto-renewable)
-com.phonoinc.app.premium.weekly
-com.phonoinc.app.premium.monthly
-com.phonoinc.app.premium.yearly
+co.phonoinc.app.premium.weekly
+co.phonoinc.app.premium.monthly
+co.phonoinc.app.premium.yearly
 
 # Lifetime (non-consumable)
-com.phonoinc.app.lifetime
+co.phonoinc.app.lifetime
 
 # Coin Packs (consumable)
-com.phonoinc.app.coins.handful       # $0.99
-com.phonoinc.app.coins.pouch         # $2.99
-com.phonoinc.app.coins.chest         # $6.99
-com.phonoinc.app.coins.trove         # $14.99
-com.phonoinc.app.coins.hoard         # $29.99
+co.phonoinc.app.coins.handful       # $0.99
+co.phonoinc.app.coins.pouch         # $2.99
+co.phonoinc.app.coins.chest         # $6.99
+co.phonoinc.app.coins.trove         # $14.99
+co.phonoinc.app.coins.hoard         # $29.99
 
 # Bundles (non-consumable, one-time)
-com.phonoinc.app.bundle.welcome      # $2.99 (24hr)
-com.phonoinc.app.bundle.egghunter    # $4.99
-com.phonoinc.app.bundle.islandmaster # $14.99
+co.phonoinc.app.bundle.welcome      # $2.99 (24hr)
+co.phonoinc.app.bundle.egghunter    # $4.99
+co.phonoinc.app.bundle.islandmaster # $14.99
 
 # Seasonal (non-consumable, limited-time)
-com.phonoinc.app.seasonal.spring2026  # varies
-com.phonoinc.app.seasonal.summer2026  # varies
-com.phonoinc.app.seasonal.fall2026    # varies
-com.phonoinc.app.seasonal.winter2026  # varies
+co.phonoinc.app.seasonal.spring2026  # varies
+co.phonoinc.app.seasonal.summer2026  # varies
+co.phonoinc.app.seasonal.fall2026    # varies
+co.phonoinc.app.seasonal.winter2026  # varies
 
 # Gifts (consumable)
-com.phonoinc.app.gift.egg.rare       # $1.99
-com.phonoinc.app.gift.egg.legendary  # $4.99
+co.phonoinc.app.gift.egg.rare       # $1.99
+co.phonoinc.app.gift.egg.legendary  # $4.99
 ```
 
 ### Products to Remove
 
 ```
 # Remove (Premium+ tier eliminated)
-com.phonoinc.app.premiumplus.monthly
-com.phonoinc.app.premiumplus.yearly
+co.phonoinc.app.premiumplus.monthly
+co.phonoinc.app.premiumplus.yearly
 
 # Remove (replaced with new packs)
-com.phonoinc.app.coins.value
-com.phonoinc.app.coins.premium
-com.phonoinc.app.coins.mega
-com.phonoinc.app.coins.ultra
-com.phonoinc.app.coins.legendary
+co.phonoinc.app.coins.value
+co.phonoinc.app.coins.premium
+co.phonoinc.app.coins.mega
+co.phonoinc.app.coins.ultra
+co.phonoinc.app.coins.legendary
 
 # Remove (replaced with themed bundles)
-com.phonoinc.app.bundle.starter
-com.phonoinc.app.bundle.collector
-com.phonoinc.app.bundle.ultimate
+co.phonoinc.app.bundle.starter
+co.phonoinc.app.bundle.collector
+co.phonoinc.app.bundle.ultimate
 
 # Remove (dead code, never implemented)
-com.phonoinc.app.battlepass.premium
-com.phonoinc.app.battlepass.premium.plus
+co.phonoinc.app.battlepass.premium
+co.phonoinc.app.battlepass.premium.plus
 ```
 
 ---

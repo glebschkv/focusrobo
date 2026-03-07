@@ -154,19 +154,19 @@ async function serverValidatePurchase(
 // All IAP product IDs
 const ALL_PRODUCT_IDS = [
   // Subscriptions
-  'com.phonoinc.app.premium.weekly',
-  'com.phonoinc.app.premium.monthly',
-  'com.phonoinc.app.premium.yearly',
+  'co.phonoinc.app.premium.weekly',
+  'co.phonoinc.app.premium.monthly',
+  'co.phonoinc.app.premium.yearly',
   // Coin Packs (Consumables)
-  'com.phonoinc.app.coins.handful',
-  'com.phonoinc.app.coins.pouch',
-  'com.phonoinc.app.coins.chest',
-  'com.phonoinc.app.coins.trove',
-  'com.phonoinc.app.coins.hoard',
+  'co.phonoinc.app.coins.handful',
+  'co.phonoinc.app.coins.pouch',
+  'co.phonoinc.app.coins.chest',
+  'co.phonoinc.app.coins.trove',
+  'co.phonoinc.app.coins.hoard',
   // Starter Bundles (Non-Consumables)
-  'com.phonoinc.app.bundle.welcome',
-  'com.phonoinc.app.bundle.egghunter',
-  'com.phonoinc.app.bundle.islandmaster',
+  'co.phonoinc.app.bundle.welcome',
+  'co.phonoinc.app.bundle.egghunter',
+  'co.phonoinc.app.bundle.islandmaster',
 ];
 
 // Custom events for IAP fulfillment

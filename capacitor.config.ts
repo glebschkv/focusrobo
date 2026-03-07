@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.phonoinc.app',
+  appId: 'co.phonoinc.app',
   appName: 'PhoNo',
   webDir: 'dist',
   ios: {
@@ -31,7 +31,7 @@ const config: CapacitorConfig = {
       }
     },
     BackgroundTask: {
-      label: "com.phonoinc.app.background-tracking",
+      label: "co.phonoinc.app.background-tracking",
       description: "Tracks app usage and awards points for time away from device"
     }
   },

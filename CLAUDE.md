@@ -31,8 +31,8 @@ Shop → buy egg (common/rare/epic/legendary) with coins
 ## Quick Facts
 
 - **App name**: PhoNo
-- **Bundle ID**: `com.phonoinc.app`
-- **App Group**: `group.com.phonoinc.app`
+- **Bundle ID**: `co.phonoinc.app`
+- **App Group**: `group.co.phonoinc.app`
 - **Package name**: `phono` (in package.json)
 - **Storage prefix**: `nomo_` (all localStorage keys)
 
@@ -772,15 +772,15 @@ Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (1
 
 ```
 Subscriptions:
-  com.phonoinc.app.premium.weekly
-  com.phonoinc.app.premium.monthly
-  com.phonoinc.app.premium.yearly
+  co.phonoinc.app.premium.weekly
+  co.phonoinc.app.premium.monthly
+  co.phonoinc.app.premium.yearly
 
 Coin Packs:
-  com.phonoinc.app.coins.handful / pouch / chest / trove / hoard
+  co.phonoinc.app.coins.handful / pouch / chest / trove / hoard
 
 Bundles:
-  com.phonoinc.app.bundle.welcome / egghunter / islandmaster
+  co.phonoinc.app.bundle.welcome / egghunter / islandmaster
 ```
 
 ## What's Next (TODO)

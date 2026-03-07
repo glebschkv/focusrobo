@@ -70,10 +70,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.phonoinc.app</string>
+			<string>co.phonoinc.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.phonoinc.app</string>
+				<string>co.phonoinc.app</string>
 			</array>
 		</dict>
 	</array>
@@ -93,7 +93,7 @@
 	<!-- Background Task Identifiers -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.phonoinc.app.background-tracking</string>
+		<string>co.phonoinc.app.background-tracking</string>
 	</array>
 
 	<!-- Screen Time API Usage -->
