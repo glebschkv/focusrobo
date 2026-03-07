@@ -88,17 +88,17 @@ export const XPRewardModal = ({
             )}
             <div className="flex items-center justify-center gap-2">
               <PixelIcon name="star" size={20} />
-              <span className="text-2xl font-black tabular-nums text-amber-600">
+              <span className="text-2xl font-black tabular-nums" style={{ color: 'hsl(42 65% 38%)' }}>
                 +{displayReward.xpGained}
               </span>
-              <span className="text-sm font-bold text-amber-500/70">XP</span>
+              <span className="text-sm font-bold" style={{ color: 'hsl(42 55% 35%)' }}>XP</span>
             </div>
             {displayReward.hasBonusXP && displayReward.bonusXP > 0 && (
-              <p className="text-[10px] text-green-400 font-bold">
+              <p className="text-[10px] font-bold" style={{ color: 'hsl(152 44% 38%)' }}>
                 (+{displayReward.bonusXP} bonus XP!)
               </p>
             )}
-            <p className="text-[10px] text-amber-400/50">
+            <p className="text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Great focus session!
             </p>
           </div>
@@ -173,11 +173,11 @@ export const XPRewardModal = ({
                       className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                       style={{
                         background: unlock.type === 'zone'
-                          ? 'linear-gradient(180deg, hsl(260 30% 22%), hsl(260 35% 16%))'
-                          : 'linear-gradient(180deg, hsl(320 35% 25%), hsl(320 30% 18%))',
+                          ? 'hsl(152 30% 92%)'
+                          : 'hsl(330 30% 92%)',
                         border: unlock.type === 'zone'
-                          ? '2px solid hsl(260 35% 30%)'
-                          : '2px solid hsl(320 40% 35%)',
+                          ? '1.5px solid hsl(152 25% 78%)'
+                          : '1.5px solid hsl(330 25% 80%)',
                       }}
                     >
                       {unlock.type === 'zone' ? (
@@ -188,22 +188,22 @@ export const XPRewardModal = ({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-purple-100/90">{unlock.name}</span>
+                        <span className="text-sm font-bold" style={{ color: 'hsl(var(--foreground))' }}>{unlock.name}</span>
                         <span
                           className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded"
                           style={{
                             background: unlock.type === 'zone'
-                              ? 'hsl(260 40% 30%)'
-                              : 'hsl(320 40% 30%)',
+                              ? 'hsl(152 30% 90%)'
+                              : 'hsl(330 30% 90%)',
                             color: unlock.type === 'zone'
-                              ? 'hsl(260 60% 75%)'
-                              : 'hsl(320 60% 75%)',
+                              ? 'hsl(152 40% 35%)'
+                              : 'hsl(330 40% 38%)',
                           }}
                         >
                           {unlock.type === 'zone' ? 'World' : 'Pet'}
                         </span>
                       </div>
-                      <p className="text-[10px] text-purple-300/50">
+                      <p className="text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
                         {unlock.description}
                       </p>
                     </div>

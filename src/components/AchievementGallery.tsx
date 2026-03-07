@@ -19,7 +19,7 @@ export interface AchievementGalleryProps {
 const TIER_COLORS_EMBEDDED: Record<string, { bg: string; border: string; text: string }> = {
   bronze: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
   silver: { bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-600' },
-  gold: { bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-700' },
+  gold: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-800' },
   platinum: { bg: 'bg-teal-100', border: 'border-teal-300', text: 'text-teal-700' },
   diamond: { bg: 'bg-violet-100', border: 'border-violet-300', text: 'text-violet-700' },
 };
