@@ -1,0 +1,419 @@
+============================================================
+APP STORE CONNECT — REMAINING CONFIGURATION
+Copy-paste reference for PhoNo (App ID: 6760226513)
+============================================================
+
+CHARACTER LIMITS REFERENCE (Apple official):
+- App Name: 30 chars
+- Subtitle: 30 chars
+- Description: 4,000 chars
+- Keywords: 100 chars (comma-separated, no spaces after commas)
+- Promotional Text: 170 chars
+- What's New: 4,000 chars
+- IAP Display Name: 35 chars
+- IAP Description: 55 chars
+
+
+============================================================
+SECTION 1: SUBSCRIPTION GROUP — SET RANKING
+============================================================
+
+Go to: App Store Connect > PhoNo > Monetization > Subscriptions > PhoNo Premium
+
+Set subscription ranking (drag to reorder):
+  Level 1 (top): Premium Yearly    — co.phonoinc.app.premium.yearly
+  Level 2:       Premium Monthly   — co.phonoinc.app.premium.monthly
+  Level 3:       Premium Weekly    — co.phonoinc.app.premium.weekly
+
+
+============================================================
+SECTION 2: SUBSCRIPTIONS — PRICING & LOCALIZATIONS
+============================================================
+
+For each subscription below:
+1. Click the subscription name
+2. Go to "Subscription Prices" > click "+" > base country: United States
+3. Set the USD price > Next > auto-generate all territories > Create
+4. Go to "Localizations" > "+" > English (U.S.)
+5. Paste Display Name and Description from below
+6. Add Review Notes from below
+7. Save
+
+---------- co.phonoinc.app.premium.weekly ----------
+
+Duration:     1 Week
+Price (USD):  $1.99
+
+Display Name (20 chars):
+PhoNo Premium Weekly
+
+Description (53 chars):
+2x XP & coins, streak freezes, sound slots, egg deal
+
+Review Notes:
+Auto-renewable subscription for premium features. Users can manage or cancel anytime in iOS Settings > Subscriptions.
+
+---------- co.phonoinc.app.premium.monthly ----------
+
+Duration:     1 Month
+Price (USD):  $4.99
+
+Display Name (21 chars):
+PhoNo Premium Monthly
+
+Description (53 chars):
+2x XP & coins, streak freezes, sound slots, egg deal
+
+Review Notes:
+Auto-renewable subscription for premium features. Users can manage or cancel anytime in iOS Settings > Subscriptions.
+
+---------- co.phonoinc.app.premium.yearly ----------
+
+Duration:     1 Year
+Price (USD):  $29.99
+
+Display Name (20 chars):
+PhoNo Premium Yearly
+
+Description (55 chars):
+2x XP & coins, streak freezes, sound slots. Best value!
+
+Review Notes:
+Auto-renewable subscription for premium features. Users can manage or cancel anytime in iOS Settings > Subscriptions.
+
+
+============================================================
+SECTION 3: CONSUMABLE IAPs — PRICING & LOCALIZATIONS
+============================================================
+
+For each consumable below:
+1. Go to App Store Connect > PhoNo > Monetization > In-App Purchases
+2. Click the product name
+3. Go to "Price Schedule" > "+" > base country: United States
+4. Set the USD price > Next > auto-generate all territories > Save
+5. Go to "Localizations" > "+" > English (U.S.)
+6. Paste Display Name and Description from below
+7. Add Review Notes from below
+8. Save
+
+---------- co.phonoinc.app.coins.handful (IAP ID: 6760227183) ----------
+
+Price (USD):  $0.99
+
+Display Name (16 chars):
+Handful of Coins
+
+Description (30 chars):
+100 coins for eggs and items
+
+Review Notes:
+Consumable coin pack. Coins are used to purchase in-game eggs that hatch into collectible pets, cosmetic backgrounds, and power-up items.
+
+---------- co.phonoinc.app.coins.pouch (IAP ID: 6760230505) ----------
+
+Price (USD):  $2.99
+
+Display Name (14 chars):
+Pouch of Coins
+
+Description (39 chars):
+350 coins — extra for your collection
+
+Review Notes:
+Consumable coin pack. Coins are used to purchase in-game eggs that hatch into collectible pets, cosmetic backgrounds, and power-up items.
+
+---------- co.phonoinc.app.coins.chest (IAP ID: 6760231646) ----------
+
+Price (USD):  $4.99
+
+Display Name (14 chars):
+Chest of Coins
+
+Description (40 chars):
+650 coins — stock up on eggs & power-ups
+
+Review Notes:
+Consumable coin pack. Coins are used to purchase in-game eggs that hatch into collectible pets, cosmetic backgrounds, and power-up items.
+
+---------- co.phonoinc.app.coins.trove (IAP ID: 6760230511) ----------
+
+Price (USD):  $9.99
+
+Display Name (14 chars):
+Trove of Coins
+
+Description (42 chars):
+1,500 coins — great value for collectors
+
+Review Notes:
+Consumable coin pack. Coins are used to purchase in-game eggs that hatch into collectible pets, cosmetic backgrounds, and power-up items.
+
+---------- co.phonoinc.app.coins.hoard (IAP ID: 6760230005) ----------
+
+Price (USD):  $19.99
+
+Display Name (14 chars):
+Hoard of Coins
+
+Description (44 chars):
+3,500 coins — the ultimate pack for players
+
+Review Notes:
+Consumable coin pack. Coins are used to purchase in-game eggs that hatch into collectible pets, cosmetic backgrounds, and power-up items.
+
+
+============================================================
+SECTION 4: NON-CONSUMABLE IAPs — PRICING & LOCALIZATIONS
+============================================================
+
+Same steps as Section 3.
+
+---------- co.phonoinc.app.bundle.welcome (IAP ID: 6760231672) ----------
+
+Price (USD):  $1.99
+
+Display Name (14 chars):
+Welcome Bundle
+
+Description (51 chars):
+200 coins, 1 Rare Egg, and a bonus background theme
+
+Review Notes:
+Non-consumable starter bundle. Includes coins, an egg that hatches into a collectible pet, and a cosmetic island background. One-time purchase.
+
+---------- co.phonoinc.app.bundle.egghunter (IAP ID: 6760228942) ----------
+
+Price (USD):  $4.99
+
+Display Name (17 chars):
+Egg Hunter Bundle
+
+Description (53 chars):
+500 coins, 2 Rare Eggs, 1 Epic Egg, and a background
+
+Review Notes:
+Non-consumable bundle for pet collectors. Includes coins, eggs that hatch into collectible pets, and a cosmetic island background. One-time purchase.
+
+---------- co.phonoinc.app.bundle.islandmaster (IAP ID: 6760230031) ----------
+
+Price (USD):  $9.99
+
+Display Name (20 chars):
+Island Master Bundle
+
+Description (55 chars):
+1,200 coins, Epic & Legendary Eggs, backgrounds, boost
+
+Review Notes:
+Non-consumable premium bundle. Includes coins, rare eggs, cosmetic backgrounds, and a temporary coin booster. One-time purchase.
+
+
+============================================================
+SECTION 5: APP INFORMATION
+============================================================
+
+Go to: App Store Connect > PhoNo > App Information (left sidebar)
+
+Category:
+  Primary:   Productivity
+  Secondary: Health & Fitness
+
+Content Rights:
+  Select: "This app does not contain, show, or access third-party content"
+
+Age Rating (complete questionnaire — answer these):
+  Cartoon or Fantasy Violence: None
+  Realistic Violence: None
+  Prolonged Graphic or Sadistic Realistic Violence: None
+  Profanity or Crude Humor: None
+  Mature/Suggestive Themes: None
+  Horror/Fear Themes: None
+  Medical/Treatment Information: None
+  Alcohol, Tobacco, or Drug Use or References: None
+  Simulated Gambling: None
+  Sexual Content or Nudity: None
+  Unrestricted Web Access: No
+  Gambling and Contests: No
+  Result: 4+
+
+
+============================================================
+SECTION 6: APP PRIVACY (NUTRITION LABELS)
+============================================================
+
+Go to: App Store Connect > PhoNo > App Privacy (left sidebar)
+
+Click "Get Started" or "Edit" for each data type.
+
+DATA COLLECTED:
+
+1. Contact Info
+   - Data type: Email Address
+   - Usage: App Functionality
+   - Linked to user: Yes
+   - Tracking: No
+   - Purpose: Account creation via Sign in with Apple
+
+2. Identifiers
+   - Data type: User ID
+   - Usage: App Functionality
+   - Linked to user: Yes
+   - Tracking: No
+   - Purpose: User account identification
+
+3. Usage Data
+   - Data type: Product Interaction
+   - Usage: App Functionality, Analytics
+   - Linked to user: Yes
+   - Tracking: No
+   - Purpose: Focus session stats, streaks, achievements
+
+4. Purchases
+   - Data type: Purchase History
+   - Usage: App Functionality
+   - Linked to user: Yes
+   - Tracking: No
+   - Purpose: In-app purchase verification and coin balance
+
+DATA NOT COLLECTED (mark as "No" / do not select):
+  - Location
+  - Health & Fitness
+  - Financial Info
+  - Browsing History
+  - Search History
+  - Contacts
+  - Photos or Videos
+  - Audio Data
+  - Sensitive Info
+  - Diagnostics
+
+
+============================================================
+SECTION 7: URLs
+============================================================
+
+Go to: App Store Connect > PhoNo > App Information
+
+Privacy Policy URL:
+https://phonoinc.co/privacy
+
+Support URL:
+https://phonoinc.co/support
+
+Marketing URL:
+https://phonoinc.co
+
+
+============================================================
+SECTION 8: VERSION METADATA — PREPARE FOR SUBMISSION
+============================================================
+
+Go to: App Store Connect > PhoNo > the version (e.g., 1.0)
+
+--- Promotional Text (170 char max) ---
+(can be updated anytime without a new version)
+
+Block distracting apps, stay focused, and collect adorable pixel art pets on your own floating island. The cutest way to build better habits.
+
+--- Description (4,000 char max — this is 933 chars) ---
+
+PhoNo helps you stay focused by blocking distracting apps while you study or work. Complete focus sessions to earn XP, collect adorable pixel art pets, and build your own floating island.
+
+HOW IT WORKS
+• Set a focus timer (25–180 minutes) and optionally block distracting apps
+• Complete sessions to earn coins and XP
+• Each session rewards you with a random pixel art pet
+• Place pets on your floating isometric island
+• Fill your island, archive it, and start a new one
+
+COLLECT & GROW
+• 41 unique pet species across 5 rarity tiers
+• Pets grow based on session length — baby, adolescent, or adult
+• Buy eggs in the shop for custom drop rates
+• Track your collection in the species catalog
+
+STAY MOTIVATED
+• Daily login rewards and streak bonuses
+• Daily and weekly quests
+• Achievement milestones and celebrations
+• Detailed focus analytics and insights
+
+PREMIUM FEATURES
+• 2x XP and coin multipliers
+• 3 streak freezes per month
+• 3 ambient sound mixer slots
+• 15% egg discount
+
+Focus more. Collect pets. Build your island.
+
+--- Keywords (100 char max — this is exactly 100 chars) ---
+
+focus timer,screen time,phone detox,study,productivity,pomodoro,app blocker,pet collection,pixel art
+
+--- What's New (for v1.0) ---
+
+Welcome to PhoNo! Start your focus journey, collect pixel art pets, and build your floating island.
+
+--- Subtitle (30 char max — this is 30 chars) ---
+
+Focus, Collect Pets & Detox
+
+--- App Review Notes ---
+
+PhoNo is a focus timer that optionally blocks apps using the Screen Time API (FamilyControls). To test:
+1. Tap the Timer tab
+2. Set a 25-minute focus session
+3. Optionally select apps to block in "Focus Shield"
+4. Start the session — selected apps will be shielded
+5. Complete the session to receive a pet reward
+
+Sign in with Apple or use Guest Mode. No login is required to test core functionality.
+
+Sandbox test account credentials: [use your sandbox Apple ID]
+
+--- Copyright ---
+
+© 2026 PhoNo Inc.
+
+
+============================================================
+CHECKLIST — TICK OFF AS YOU GO
+============================================================
+
+SUBSCRIPTIONS:
+[ ] Set ranking: Yearly > Monthly > Weekly
+[ ] Weekly — price $1.99, localization added, review notes added
+[ ] Monthly — price $4.99, localization added, review notes added
+[ ] Yearly — price $29.99, localization added, review notes added
+
+CONSUMABLES:
+[ ] Handful — price $0.99, localization added, review notes added
+[ ] Pouch — price $2.99, localization added, review notes added
+[ ] Chest — price $4.99, localization added, review notes added
+[ ] Trove — price $9.99, localization added, review notes added
+[ ] Hoard — price $19.99, localization added, review notes added
+
+NON-CONSUMABLES:
+[ ] Welcome — price $1.99, localization added, review notes added
+[ ] Egg Hunter — price $4.99, localization added, review notes added
+[ ] Island Master — price $9.99, localization added, review notes added
+
+APP INFO:
+[ ] Categories set (Productivity + Health & Fitness)
+[ ] Content rights declared
+[ ] Age rating completed (4+)
+[ ] Privacy nutrition labels filled in
+[ ] Privacy Policy URL added
+[ ] Support URL added
+[ ] Marketing URL added
+
+VERSION METADATA:
+[ ] Promotional text added
+[ ] Description added
+[ ] Keywords added
+[ ] Subtitle added
+[ ] What's New text added
+[ ] Copyright added
+[ ] App review notes added
+[ ] Screenshots uploaded (do separately)
+[ ] App icon uploaded (1024x1024, no transparency, no rounded corners)
