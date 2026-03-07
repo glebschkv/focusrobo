@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /// Helper for the ShieldConfiguration extension.
-/// Neon-branded shield matching the app's splash screen aesthetic.
+/// Pet-themed warm Atelier design matching PhoNo's pixel art aesthetic.
 class ShieldConfigurationHelper {
 
     // MARK: - Properties
@@ -40,24 +40,24 @@ class ShieldConfigurationHelper {
 
     static let shieldMessages = [
         "You set this up yourself. Think about that.",
-        "This app will still be here later. So will your regret.",
-        "Nothing on this app is more important than what you're supposed to be doing.",
-        "The people who built this app want you to open it. We don't.",
-        "Your bot is upgrading itself while you're not looking. Don't ruin that.",
-        "You were doing so well. Keep going.",
-        "Three minutes from now you won't even remember why you wanted this.",
-        "This is the part where the main character puts the phone down.",
-        "Your focus session called. It misses you.",
-        "Somewhere in a parallel universe, you didn't tap this. Be that person.",
-        "The notification can wait. It's never as urgent as it feels.",
-        "Plot twist: the app you actually need is already open.",
-        "You're not bored. You're avoiding something. Go do that thing instead.",
-        "Every cycle your bot doesn't get is a cycle wasted.",
+        "A baby bunny earned XP for you today. Don't betray the baby bunny.",
+        "Your island pets are literally watching you right now. Awkward.",
+        "Every time you open a blocked app, a pixel pet loses its shimmer.",
+        "There's a legendary pet waiting at the end of this session. This isn't it.",
+        "Your pets pooled their coins to block this. Respect the hustle.",
+        "You literally set this up. Your pets are proud of that.",
         "This is a sign. Not a metaphorical one. A literal one. Go back.",
-        "Fun fact: the average person checks their phone 96 times a day. Be below average.",
-        "Whatever you were about to scroll through, it wasn't worth it.",
-        "Your screen time report will remember this. Even if you won't.",
+        "Plot twist: the app you actually need is already open.",
+        "Three minutes from now you won't even remember why you tapped this.",
+        "This screen has a 100% success rate. Nobody has ever died from not scrolling.",
+        "Whatever you were about to scroll through — it wasn't worth it.",
+        "The notification can wait. It's never as urgent as it feels.",
+        "You were on a roll. This is the part where the main character stays focused.",
         "Close your eyes. Take a breath. Now go do literally anything else.",
+        "No.",
+        "Nope. Not today.",
+        "Nice try though.",
+        "Your screen time report will remember this. Even if you won't.",
         "The best version of you doesn't need to open this right now.",
     ]
 
@@ -72,13 +72,13 @@ class ShieldConfigurationHelper {
     // MARK: - Title
 
     func getTitle() -> String {
-        return "BOTBLOCK"
+        return "PhoNo"
     }
 
-    // MARK: - Neon App Icon
+    // MARK: - Pixel Art App Icon
 
-    /// Creates a large glowing "BB" neon sign icon with radial glow backdrop.
-    /// Matches the app's splash screen aesthetic with layered Core Graphics glow.
+    /// Creates a pixel art bunny icon with "PhoNo" text and sage-green glow.
+    /// Matches PhoNo's warm pixel art pet aesthetic.
     /// Rendered at 240x120pt @3x (720x360px) for maximum visual impact.
     func createAppIcon() -> UIImage? {
         let size = CGSize(width: 240, height: 120)
@@ -91,13 +91,13 @@ class ShieldConfigurationHelper {
         return renderer.image { ctx in
             let context = ctx.cgContext
 
-            // Radial glow backdrop — soft purple light cone behind the text
-            let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let radius = size.width * 0.45
+            // Radial glow backdrop — soft sage-green light behind the bunny
+            let center = CGPoint(x: size.width / 2, y: size.height / 2 - 8)
+            let radius = size.width * 0.40
             let colorSpace = CGColorSpaceCreateDeviceRGB()
             let glowColors = [
-                NeonColors.purple.withAlphaComponent(0.18).cgColor,
-                NeonColors.purple.withAlphaComponent(0.06).cgColor,
+                PhoNoColors.primary.withAlphaComponent(0.15).cgColor,
+                PhoNoColors.primary.withAlphaComponent(0.05).cgColor,
                 UIColor.clear.cgColor,
             ] as CFArray
             let locations: [CGFloat] = [0.0, 0.5, 1.0]
@@ -110,15 +110,57 @@ class ShieldConfigurationHelper {
                 )
             }
 
-            // Text setup — SF Pro Rounded Heavy, wide kerning
-            let text = "BB"
-            let fontSize: CGFloat = 52
+            // Pixel art bunny face — 14 columns × 10 rows
+            // Color codes: 0=transparent, 1=white, 2=pink, 3=dark (eyes), 4=sage outline
+            let bunnyPixels: [[Int]] = [
+                [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],  // ear tips
+                [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],  // ears
+                [0, 0, 0, 1, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0],  // ears pink
+                [0, 0, 0, 1, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0],  // ears pink
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],  // head top
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],  // head
+                [0, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 0],  // eyes
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],  // face
+                [0, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 0],  // nose
+                [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],  // chin
+            ]
+
+            let pixelColors: [UIColor] = [
+                .clear,                                                              // 0: transparent
+                UIColor.white,                                                       // 1: white body
+                UIColor(red: 255/255, green: 182/255, blue: 193/255, alpha: 1.0),   // 2: pink
+                PhoNoColors.textColor,                                               // 3: dark eyes
+            ]
+
+            let pixelSize: CGFloat = 5.0
+            let bunnyWidth = 14
+            let bunnyHeight = 10
+            let originX = (size.width - CGFloat(bunnyWidth) * pixelSize) / 2
+            let originY = (size.height - CGFloat(bunnyHeight) * pixelSize) / 2 - 16
+
+            for row in 0..<bunnyHeight {
+                for col in 0..<bunnyWidth {
+                    let colorCode = bunnyPixels[row][col]
+                    guard colorCode != 0 else { continue }
+                    context.setFillColor(pixelColors[colorCode].cgColor)
+                    context.fill(CGRect(
+                        x: originX + CGFloat(col) * pixelSize,
+                        y: originY + CGFloat(row) * pixelSize,
+                        width: pixelSize,
+                        height: pixelSize
+                    ))
+                }
+            }
+
+            // "PhoNo" text below the bunny
+            let text = "PhoNo"
+            let fontSize: CGFloat = 18
             let font: UIFont
-            if let desc = UIFont.systemFont(ofSize: fontSize, weight: .heavy)
+            if let desc = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
                         .fontDescriptor.withDesign(.rounded) {
                 font = UIFont(descriptor: desc, size: fontSize)
             } else {
-                font = UIFont.systemFont(ofSize: fontSize, weight: .heavy)
+                font = UIFont.systemFont(ofSize: fontSize, weight: .semibold)
             }
 
             let paragraphStyle = NSMutableParagraphStyle()
@@ -126,8 +168,8 @@ class ShieldConfigurationHelper {
 
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: font,
-                .foregroundColor: NeonColors.textColor,
-                .kern: 14.0,
+                .foregroundColor: PhoNoColors.primary,
+                .kern: 2.0,
                 .paragraphStyle: paragraphStyle,
             ]
 
@@ -135,43 +177,10 @@ class ShieldConfigurationHelper {
             let textSize = attrString.size()
             let textRect = CGRect(
                 x: (size.width - textSize.width) / 2,
-                y: (size.height - textSize.height) / 2,
+                y: originY + CGFloat(bunnyHeight) * pixelSize + 6,
                 width: textSize.width,
                 height: textSize.height
             )
-
-            // Build neon glow with 5 shadow passes for a rich, layered effect
-            // Pass 1: Wide ambient glow
-            context.saveGState()
-            context.setShadow(offset: .zero, blur: 36, color: NeonColors.purple.withAlphaComponent(0.25).cgColor)
-            attrString.draw(in: textRect)
-            context.restoreGState()
-
-            // Pass 2: Outer glow
-            context.saveGState()
-            context.setShadow(offset: .zero, blur: 22, color: NeonColors.purple.withAlphaComponent(0.4).cgColor)
-            attrString.draw(in: textRect)
-            context.restoreGState()
-
-            // Pass 3: Mid glow
-            context.saveGState()
-            context.setShadow(offset: .zero, blur: 14, color: NeonColors.purple.withAlphaComponent(0.6).cgColor)
-            attrString.draw(in: textRect)
-            context.restoreGState()
-
-            // Pass 4: Inner glow (lighter purple for hot center)
-            context.saveGState()
-            context.setShadow(offset: .zero, blur: 6, color: NeonColors.purpleLight.withAlphaComponent(0.8).cgColor)
-            attrString.draw(in: textRect)
-            context.restoreGState()
-
-            // Pass 5: Bright core halo
-            context.saveGState()
-            context.setShadow(offset: .zero, blur: 2, color: UIColor.white.withAlphaComponent(0.3).cgColor)
-            attrString.draw(in: textRect)
-            context.restoreGState()
-
-            // Final crisp text pass (no shadow)
             attrString.draw(in: textRect)
         }
     }
@@ -180,7 +189,7 @@ class ShieldConfigurationHelper {
 
     static let secondaryButtonTexts = [
         "I can wait",
-        "Fine.",
+        "My pets need me",
         "You're right",
         "Fair enough",
     ]
@@ -191,10 +200,10 @@ class ShieldConfigurationHelper {
 
     // MARK: - Colors
 
-    static var shieldBackgroundColor: UIColor { NeonColors.background }
-    static var shieldTitleColor: UIColor { NeonColors.textColor }
-    static var shieldSubtitleColor: UIColor { NeonColors.subtitleColor }
-    static var shieldButtonColor: UIColor { NeonColors.purple }
+    static var shieldBackgroundColor: UIColor { PhoNoColors.background }
+    static var shieldTitleColor: UIColor { PhoNoColors.textColor }
+    static var shieldSubtitleColor: UIColor { PhoNoColors.subtitleColor }
+    static var shieldButtonColor: UIColor { PhoNoColors.primary }
 
     // MARK: - Accessibility
 
@@ -211,21 +220,21 @@ class ShieldConfigurationHelper {
     }
 }
 
-// MARK: - Neon Color Palette (matches splash screen)
+// MARK: - PhoNo Color Palette (warm Atelier theme)
 
-private enum NeonColors {
-    /// Purple accent — matches splash #a855f7
-    static let purple = UIColor(red: 168/255, green: 85/255, blue: 247/255, alpha: 1.0)
+private enum PhoNoColors {
+    /// Sage green primary — matches PhoNo --primary #40856A
+    static let primary = UIColor(red: 64/255, green: 133/255, blue: 106/255, alpha: 1.0)
 
-    /// Light purple — matches splash #c084fc
-    static let purpleLight = UIColor(red: 192/255, green: 132/255, blue: 252/255, alpha: 1.0)
+    /// Light sage accent — lighter variant of primary
+    static let primaryLight = UIColor(red: 90/255, green: 174/255, blue: 137/255, alpha: 1.0)
 
-    /// Near-white text — matches splash #f0e6ff
-    static let textColor = UIColor(red: 240/255, green: 230/255, blue: 255/255, alpha: 1.0)
+    /// Deep forest text — matches PhoNo --foreground #1C211E
+    static let textColor = UIColor(red: 28/255, green: 33/255, blue: 30/255, alpha: 1.0)
 
-    /// Bright lavender subtitle — readable enough to screenshot
-    static let subtitleColor = UIColor(red: 215/255, green: 195/255, blue: 245/255, alpha: 1.0)
+    /// Sage grey subtitle — matches PhoNo --muted-foreground #5E6961
+    static let subtitleColor = UIColor(red: 94/255, green: 105/255, blue: 97/255, alpha: 1.0)
 
-    /// Deep dark purple background — matches splash #080012
-    static let background = UIColor(red: 8/255, green: 0, blue: 18/255, alpha: 0.97)
+    /// Warm cream background — matches PhoNo --background #F8F8F4
+    static let background = UIColor(red: 248/255, green: 248/255, blue: 244/255, alpha: 0.97)
 }

@@ -6,7 +6,7 @@ import os.log
 private let log = OSLog(subsystem: "co.phonoinc.app.ShieldConfiguration", category: "Shield")
 
 /// Custom shield shown when a user tries to open a blocked app.
-/// Neon-branded design matching the app's splash screen aesthetic.
+/// Pet-themed warm Atelier design matching PhoNo's pixel art aesthetic.
 /// NOTE: Do NOT import FamilyControls here — it crashes the extension on launch.
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
 
@@ -41,7 +41,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         let secondaryText = helper.getSecondaryButtonText()
 
         return ShieldConfiguration(
-            backgroundBlurStyle: .systemThickMaterialDark,
+            backgroundBlurStyle: .systemThickMaterialLight,
             backgroundColor: ShieldConfigurationHelper.shieldBackgroundColor,
             icon: helper.createAppIcon(),
             title: ShieldConfiguration.Label(
