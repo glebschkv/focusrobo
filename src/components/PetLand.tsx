@@ -18,6 +18,8 @@ import { getIslandScale, getAvailableCellCount, getIslandPosition } from '@/data
 import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
+import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
+import { WeatherParticles, getTimePeriod, getWeatherType, getSkyColors } from '@/components/WeatherParticles';
 import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
@@ -645,19 +647,51 @@ export const PetLand = () => {
   // Performance class: disable heavy animations when many pets
   const perfClass = petCount > 100 ? 'pet-land--perf-low' : petCount > 60 ? 'pet-land--perf-med' : '';
 
-  // Time-of-day tinting — subtle color temperature overlay
-  const timeOfDayClass = useMemo(() => {
-    const hour = new Date().getHours();
-    if (hour >= 6 && hour < 8) return 'pet-land--dawn';
-    if (hour >= 18 && hour < 20) return 'pet-land--dusk';
-    if (hour >= 20 || hour < 6) return 'pet-land--nighttime';
-    return '';
+  // Island mood based on last session recency
+  const getIslandMood = useLandStore((s) => s.getIslandMood);
+  const mood = getIslandMood();
+  const moodClass = mood !== 'happy' ? `pet-land--mood-${mood}` : '';
+
+  // Zzz particles for sleepy/lonely mood
+  const zzzCount = mood === 'lonely' ? 5 : mood === 'sleepy' ? 3 : 0;
+  const zzzParticles = useMemo(() => {
+    return Array.from({ length: zzzCount }, (_, i) => ({
+      id: i,
+      left: `${30 + Math.random() * 40}%`,
+      top: `${20 + Math.random() * 30}%`,
+      delay: `${i * 0.8}s`,
+    }));
+  }, [zzzCount]);
+
+  // Time-of-day + weather system
+  const [timePeriod, setTimePeriod] = useState(getTimePeriod);
+  const [weather, setWeather] = useState(() => getWeatherType(getTimePeriod()));
+
+  // Refresh time period every 30 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const tp = getTimePeriod();
+      setTimePeriod(tp);
+      setWeather(getWeatherType(tp));
+    }, 30 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[1]} 35%, ${theme.sky[2]} 65%, ${theme.sky[3]} 100%)`;
+  // Override sky colors for time of day
+  const timeSkyCols = getSkyColors(timePeriod);
+
+  const timeOfDayClass = useMemo(() => {
+    if (timePeriod === 'dawn') return 'pet-land--dawn-atmo';
+    if (timePeriod === 'night') return 'pet-land--night';
+    if (timePeriod === 'dusk') return 'pet-land--dusk';
+    return '';
+  }, [timePeriod]);
+
+  const skyColors = timeSkyCols || theme.sky;
+  const skyGradient = `linear-gradient(180deg, ${skyColors[0]} 0%, ${skyColors[1]} 35%, ${skyColors[2]} 65%, ${skyColors[3]} 100%)`;
 
   return (
-    <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass}`} style={{ background: skyGradient }}>
+    <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass} ${moodClass}`} style={{ background: skyGradient }}>
       {/* Sky — parallax layer (slowest), theme-responsive cloud/sun colors */}
       {/* Sky — parallax layer (slowest), all decorative */}
       <div
@@ -690,7 +724,26 @@ export const PetLand = () => {
         <div className="pet-land__treeline" />
 
         <div className="pet-land__haze" />
+
+        {/* Weather particles (rain/petals/fireflies/stars) */}
+        <WeatherParticles timePeriod={timePeriod} weather={weather} />
       </div>
+
+      {/* Zzz particles for sleepy/lonely mood */}
+      {zzzParticles.map(z => (
+        <div
+          key={`zzz-${z.id}`}
+          className="pet-land__zzz"
+          style={{
+            left: z.left,
+            top: z.top,
+            animationDelay: z.delay,
+          }}
+          aria-hidden="true"
+        >
+          💤
+        </div>
+      ))}
 
       {/* Floating island — parallax drag handler */}
       <div
@@ -808,25 +861,8 @@ export const PetLand = () => {
         </div>
       </div>
 
-      {/* Contextual nudge chip */}
-      {filledCount > 0 && filledCount < tierCapacity && (
-        <button
-          className="pet-land__nudge"
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'timer' }));
-          }}
-        >
-          <span className="pet-land__nudge-text">
-            {tierCapacity - filledCount <= 3
-              ? `Almost full! ${tierCapacity - filledCount} more to expand`
-              : `${filledCount}/${tierCapacity} pets · Focus to discover more`
-            }
-          </span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
-      )}
+      {/* Home Goals Widget (replaces old nudge chip) */}
+      {filledCount > 0 && <HomeGoalsWidget />}
 
       {/* Island progress ring */}
       {filledCount > 0 && (

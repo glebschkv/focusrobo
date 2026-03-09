@@ -7,6 +7,8 @@
  * Replaces the old RobotDatabase / AnimalDatabase.
  */
 
+import { PITY_CONFIG } from '@/lib/constants';
+
 export type PetRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 export type GrowthSize = 'baby' | 'adolescent' | 'adult';
 
@@ -197,6 +199,11 @@ const PREMIUM_RARITY_BOOST: Record<PetRarity, number> = {
   legendary: +1,
 };
 
+/** Rarity order for pity threshold comparison */
+const RARITY_ORDER: Record<PetRarity, number> = {
+  common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4,
+};
+
 /**
  * Randomly select a pet species from the available pool,
  * weighted by rarity. Optionally accepts custom rarity weights
@@ -204,12 +211,14 @@ const PREMIUM_RARITY_BOOST: Record<PetRarity, number> = {
  * If wishedSpecies is provided, that species gets a +5% boost
  * when its rarity tier is selected.
  * If premiumBoost is true, shifts rarity weights toward higher tiers.
+ * If pityCounter is provided, may force a minimum rarity based on thresholds.
  */
 export function rollRandomPet(
   playerLevel: number,
   customWeights?: Partial<Record<PetRarity, number>>,
   wishedSpecies?: string | null,
   premiumBoost?: boolean,
+  pityCounter?: number,
 ): PetSpecies {
   const pool = getAvailablePets(playerLevel);
   const weights = customWeights
@@ -243,6 +252,18 @@ export function rollRandomPet(
     totalWeight += weights[rarity];
   }
 
+  // Determine minimum rarity from pity counter (session rolls only, not eggs)
+  let minRarity: PetRarity = 'common';
+  if (pityCounter != null && !customWeights) {
+    if (pityCounter >= PITY_CONFIG.LEGENDARY_THRESHOLD) {
+      minRarity = 'legendary';
+    } else if (pityCounter >= PITY_CONFIG.EPIC_THRESHOLD) {
+      minRarity = 'epic';
+    } else if (pityCounter >= PITY_CONFIG.RARE_THRESHOLD) {
+      minRarity = 'rare';
+    }
+  }
+
   // Roll for rarity
   let roll = Math.random() * totalWeight;
   let selectedRarity: PetRarity = 'common';
@@ -252,6 +273,18 @@ export function rollRandomPet(
     if (roll <= 0) {
       selectedRarity = rarity;
       break;
+    }
+  }
+
+  // Enforce pity minimum rarity — upgrade if rolled below threshold
+  if (RARITY_ORDER[selectedRarity] < RARITY_ORDER[minRarity]) {
+    // Find the closest available rarity at or above minRarity
+    const availableRarities = Object.keys(rarityGroups) as PetRarity[];
+    const eligible = availableRarities.filter(r => RARITY_ORDER[r] >= RARITY_ORDER[minRarity]);
+    if (eligible.length > 0) {
+      // Pick the lowest eligible rarity (most fair pity outcome)
+      eligible.sort((a, b) => RARITY_ORDER[a] - RARITY_ORDER[b]);
+      selectedRarity = eligible[0];
     }
   }
 
