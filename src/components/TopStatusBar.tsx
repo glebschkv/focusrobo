@@ -121,7 +121,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
               animationDelay: `${i * 0.2}s`,
             } as React.CSSProperties}
           >
-            +{r.amount} {r.type === 'coin' ? '🪙' : 'XP'}
+            +{r.amount} {r.type === 'coin' ? 'coins' : 'XP'}
           </span>
         ))}
         {/* Chips row: level, coins, streak */}
@@ -140,13 +140,11 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                           key={i}
                           style={{
                             fontSize: '7px',
-                            color: prestigeLevel >= 10
-                              ? 'hsl(42 75% 52%)'
-                              : prestigeLevel >= 7
-                                ? 'hsl(42 75% 52%)'
-                                : prestigeLevel >= 4
-                                  ? 'hsl(0 0% 70%)'
-                                  : 'hsl(30 60% 50%)',
+                            color: prestigeLevel >= 7
+                              ? 'hsl(var(--warning, 42 75% 52%))'
+                              : prestigeLevel >= 4
+                                ? 'hsl(var(--muted-foreground))'
+                                : 'hsl(30 60% 50%)',
                           }}
                         >★</span>
                       ))}
@@ -305,7 +303,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                   </div>
                 </div>
                 {hasActiveStreak && (
-                  <p className="text-[11px] text-center mt-2" style={{ color: 'hsl(20 70% 45%)' }}>
+                  <p className="text-[11px] text-center mt-2 text-primary">
                     Keep it up! Streaks boost your XP.
                   </p>
                 )}

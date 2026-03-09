@@ -182,8 +182,8 @@ const PrestigeSection = () => {
           <button
             className="w-full py-2.5 rounded-xl text-sm font-bold text-white touch-manipulation"
             style={{
-              background: 'linear-gradient(135deg, hsl(42 75% 52%), hsl(35 80% 55%))',
-              boxShadow: '0 3px 0 hsl(42 75% 40%), 0 6px 12px hsl(42 75% 52% / 0.2)',
+              background: 'linear-gradient(135deg, hsl(var(--warning, 42 75% 52%)), hsl(35 80% 55%))',
+              boxShadow: '0 3px 0 hsl(var(--warning, 42 75% 52%) / 0.7), 0 6px 12px hsl(var(--warning, 42 75% 52%) / 0.2)',
             }}
           >
             ★ Prestige {prestigeLevel + 1}

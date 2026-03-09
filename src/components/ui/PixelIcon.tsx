@@ -68,6 +68,11 @@ const ICON_NAMES = new Set([
   'koala',
   // Egg icons
   'egg', 'egg-rare', 'egg-epic', 'egg-legendary',
+  // Egg crack animation frames
+  'egg-crack-1', 'egg-crack-2', 'egg-crack-3',
+  'egg-rare-crack-1', 'egg-rare-crack-2', 'egg-rare-crack-3',
+  'egg-epic-crack-1', 'egg-epic-crack-2', 'egg-epic-crack-3',
+  'egg-legendary-crack-1', 'egg-legendary-crack-2', 'egg-legendary-crack-3',
   // Additional missing icons now generated
   'palm-tree',
   // Tab bar / navigation icons

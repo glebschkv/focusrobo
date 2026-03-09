@@ -3,7 +3,8 @@ import { AppSettings } from "@/hooks/useSettings";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Volume2, VolumeX, Music, Play, Leaf, Sparkles, MousePointerClick } from "lucide-react";
+import { Volume2, VolumeX, Play, MousePointerClick } from "lucide-react";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { setClickSoundEnabled } from "@/hooks/useClickSound";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -15,9 +16,9 @@ interface SettingsSoundProps {
 }
 
 const soundThemes = [
-  { value: "default", label: "Classic", icon: Music },
-  { value: "nature", label: "Nature", icon: Leaf },
-  { value: "minimal", label: "Minimal", icon: Sparkles },
+  { value: "default", label: "Classic", pixelIcon: "radio" },
+  { value: "nature", label: "Nature", pixelIcon: "leaf" },
+  { value: "minimal", label: "Minimal", pixelIcon: "sparkles" },
 ];
 
 export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
@@ -73,7 +74,6 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
               <Label className="text-xs font-semibold text-[hsl(var(--muted-foreground))] mb-2 block">Sound Theme</Label>
               <div className="flex gap-2">
                 {soundThemes.map((theme) => {
-                  const Icon = theme.icon;
                   const isSelected = settings.soundTheme === theme.value;
                   return (
                     <button
@@ -81,7 +81,7 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
                       onClick={() => onUpdate({ soundTheme: theme.value as 'default' | 'nature' | 'minimal' })}
                       className={cn("settings-sound-pill", isSelected ? "settings-sound-pill--selected" : "settings-sound-pill--unselected")}
                     >
-                      <Icon className="w-4 h-4" />
+                      <PixelIcon name={theme.pixelIcon} size={16} />
                       <span className="text-[11px] font-bold">{theme.label}</span>
                     </button>
                   );
@@ -125,7 +125,7 @@ const IslandAmbientToggle = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={cn("settings-icon-box", islandAmbientEnabled ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
-            <Leaf className="w-4 h-4" />
+            <PixelIcon name="leaf" size={16} />
           </div>
           <div>
             <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Island Ambiance</Label>

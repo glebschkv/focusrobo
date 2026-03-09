@@ -6,9 +6,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { getPetById, RARITY_GLOW, type PetRarity, type GrowthSize } from '@/data/PetDatabase';
+import { getPetById, RARITY_GLOW, RARITY_STYLES, type PetRarity, type GrowthSize } from '@/data/PetDatabase';
 import { PixelIcon } from '@/components/ui/PixelIcon';
-import { Star } from 'lucide-react';
 import type { PendingPet } from '@/stores/landStore';
 
 const EGG_ICON_MAP: Record<string, string> = {
@@ -16,20 +15,6 @@ const EGG_ICON_MAP: Record<string, string> = {
   rare: 'egg-rare',
   epic: 'egg-epic',
   legendary: 'egg-legendary',
-};
-
-const RARITY_CONFIG: Record<PetRarity, {
-  label: string;
-  color: string;
-  bgFrom: string;
-  bgTo: string;
-  particleColor: string;
-}> = {
-  common: { label: 'Common', color: '#78909C', bgFrom: '#ECEFF1', bgTo: '#CFD8DC', particleColor: '#90A4AE' },
-  uncommon: { label: 'Uncommon', color: '#43A047', bgFrom: '#E8F5E9', bgTo: '#C8E6C9', particleColor: '#66BB6A' },
-  rare: { label: 'Rare', color: '#1E88E5', bgFrom: '#E3F2FD', bgTo: '#BBDEFB', particleColor: '#42A5F5' },
-  epic: { label: 'Epic', color: '#8E24AA', bgFrom: '#F3E5F5', bgTo: '#CE93D8', particleColor: '#AB47BC' },
-  legendary: { label: 'Legendary', color: '#F57F17', bgFrom: '#FFF8E1', bgTo: '#FFE082', particleColor: '#FFB300' },
 };
 
 interface EggHatchAnimationProps {
@@ -60,7 +45,7 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
 
   const species = getPetById(result.petId);
   const rarity = result.rarity as PetRarity;
-  const config = RARITY_CONFIG[rarity];
+  const style = RARITY_STYLES[rarity];
   const glowColor = RARITY_GLOW[rarity];
   const isHighRarity = rarity === 'epic' || rarity === 'legendary';
   const particleCount = isHighRarity ? 12 : 8;
@@ -103,8 +88,8 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
         className="max-w-[320px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl"
         style={{
           background: phase === 'info' || phase === 'reveal'
-            ? `linear-gradient(180deg, ${config.bgFrom} 0%, ${config.bgTo} 100%)`
-            : 'linear-gradient(180deg, #F5F0E8 0%, #E8E0D0 100%)',
+            ? `linear-gradient(180deg, ${style.bg} 0%, ${style.bgEnd} 100%)`
+            : 'linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%)',
         }}
         onClick={handleSkip}
       >
@@ -116,7 +101,7 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
           {/* Flash overlay for epic/legendary */}
           {isHighRarity && (phase === 'reveal') && !skipped && (
             <div
-              className="absolute inset-0 bg-white pointer-events-none rounded-2xl z-10"
+              className="absolute inset-0 bg-background pointer-events-none rounded-2xl z-10"
               style={{ animation: 'egg-flash 0.3s ease-out forwards' }}
             />
           )}
@@ -135,16 +120,16 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
             >
               <PixelIcon name={EGG_ICON_MAP[eggRarity] || 'egg'} size={128} />
 
-              {/* Crack lines */}
+              {/* Crack lines — use foreground color with glow for visibility on any bg */}
               {phase === 'crack' && !skipped && (
                 <svg
-                  className="absolute inset-0 w-full h-full"
+                  className="absolute inset-0 w-full h-full text-foreground"
                   viewBox="0 0 128 128"
                   style={{ opacity: 0, animation: 'fade-in 0.3s ease-out forwards' }}
                 >
-                  <line x1="52" y1="35" x2="42" y2="70" stroke="white" strokeWidth="2.5" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
-                  <line x1="64" y1="28" x2="72" y2="65" stroke="white" strokeWidth="2" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
-                  <line x1="78" y1="40" x2="86" y2="68" stroke="white" strokeWidth="2.5" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
+                  <line x1="52" y1="35" x2="42" y2="70" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
+                  <line x1="64" y1="28" x2="72" y2="65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
+                  <line x1="78" y1="40" x2="86" y2="68" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))' }} />
                 </svg>
               )}
             </div>
@@ -163,7 +148,7 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
                       style={{
                         width: 6,
                         height: 6,
-                        backgroundColor: config.particleColor,
+                        backgroundColor: style.accent,
                         left: '50%',
                         top: '50%',
                         '--dx': `${p.dx}px`,
@@ -179,8 +164,8 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
               <div
                 className="relative w-32 h-32 flex items-center justify-center rounded-2xl mb-4"
                 style={{
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4))',
-                  border: `3px solid ${config.color}40`,
+                  background: 'linear-gradient(180deg, hsl(var(--card) / 0.8), hsl(var(--card) / 0.4))',
+                  border: `3px solid ${style.border}`,
                   boxShadow: glowColor
                     ? `0 0 24px ${glowColor}, 0 4px 16px rgba(0,0,0,0.08)`
                     : '0 4px 16px rgba(0,0,0,0.08)',
@@ -205,7 +190,7 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
                   className="text-center space-y-2"
                   style={{ animation: skipped ? 'none' : 'fade-in 0.3s ease-out' }}
                 >
-                  <h3 className="text-xl font-black tracking-tight" style={{ color: '#37474F' }}>
+                  <h3 className="text-xl font-black tracking-tight text-foreground">
                     {species.name}
                   </h3>
 
@@ -213,16 +198,16 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
                     <span
                       className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full tracking-wide"
                       style={{
-                        background: `${config.color}18`,
-                        color: config.color,
-                        border: `1.5px solid ${config.color}30`,
+                        background: style.bg,
+                        color: style.color,
+                        border: `1.5px solid ${style.border}`,
                       }}
                     >
-                      {config.label}
+                      {style.label}
                     </span>
                   </div>
 
-                  <p className="text-xs leading-relaxed px-4" style={{ color: '#78909C' }}>
+                  <p className="text-xs leading-relaxed px-4 text-muted-foreground">
                     {species.description}
                   </p>
                 </div>
@@ -232,10 +217,7 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
 
           {/* Skip hint (small, non-intrusive) */}
           {phase !== 'info' && !skipped && (
-            <p
-              className="absolute bottom-4 text-[10px] font-medium"
-              style={{ color: 'rgba(0,0,0,0.25)' }}
-            >
+            <p className="absolute bottom-4 text-[10px] font-medium text-muted-foreground/40">
               Tap to skip
             </p>
           )}
@@ -249,30 +231,16 @@ export const EggHatchAnimation = ({ isOpen, onClose, eggRarity, result }: EggHat
                 e.stopPropagation();
                 onClose();
               }}
-              className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px]"
+              className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px] text-white"
               style={{
-                background: config.color,
-                color: '#fff',
-                boxShadow: `0 3px 0 ${config.color}90, 0 6px 16px ${config.color}30`,
+                background: style.color,
+                boxShadow: `0 3px 0 ${style.text}, 0 6px 16px ${style.accent}40`,
               }}
             >
               Done
             </button>
           </div>
         )}
-
-        <style>{`
-          @keyframes pet-hatch-bounce {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.15); opacity: 1; }
-            70% { transform: scale(0.95); }
-            100% { transform: scale(1); }
-          }
-          @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-        `}</style>
       </DialogContent>
     </Dialog>
   );

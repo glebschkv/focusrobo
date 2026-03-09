@@ -123,6 +123,79 @@ export const RARITY_COLORS: Record<PetRarity, { tooltip: string }> = {
 };
 
 /**
+ * Unified rarity style palette — single source of truth for rarity-based
+ * UI styling across modals, badges, cards, and animations.
+ * Uses HSL values for theme consistency and dark-mode compatibility.
+ */
+export const RARITY_STYLES: Record<PetRarity, {
+  label: string;
+  color: string;
+  bg: string;
+  bgEnd: string;
+  accent: string;
+  border: string;
+  text: string;
+  starCount: number;
+  showSparkles: boolean;
+}> = {
+  common: {
+    label: 'Common',
+    color: 'hsl(200 10% 55%)',
+    bg: 'hsl(200 10% 92%)',
+    bgEnd: 'hsl(200 10% 85%)',
+    accent: 'hsl(200 10% 65%)',
+    border: 'hsl(200 10% 75%)',
+    text: 'hsl(200 10% 40%)',
+    starCount: 1,
+    showSparkles: false,
+  },
+  uncommon: {
+    label: 'Uncommon',
+    color: 'hsl(140 40% 42%)',
+    bg: 'hsl(140 40% 92%)',
+    bgEnd: 'hsl(140 40% 82%)',
+    accent: 'hsl(140 40% 55%)',
+    border: 'hsl(140 40% 68%)',
+    text: 'hsl(140 40% 35%)',
+    starCount: 2,
+    showSparkles: false,
+  },
+  rare: {
+    label: 'Rare',
+    color: 'hsl(210 70% 50%)',
+    bg: 'hsl(210 70% 93%)',
+    bgEnd: 'hsl(210 70% 83%)',
+    accent: 'hsl(210 70% 60%)',
+    border: 'hsl(210 70% 70%)',
+    text: 'hsl(210 70% 35%)',
+    starCount: 3,
+    showSparkles: true,
+  },
+  epic: {
+    label: 'Epic',
+    color: 'hsl(280 60% 55%)',
+    bg: 'hsl(280 60% 94%)',
+    bgEnd: 'hsl(280 60% 82%)',
+    accent: 'hsl(280 60% 60%)',
+    border: 'hsl(280 60% 72%)',
+    text: 'hsl(280 60% 40%)',
+    starCount: 4,
+    showSparkles: true,
+  },
+  legendary: {
+    label: 'Legendary',
+    color: 'hsl(42 80% 50%)',
+    bg: 'hsl(42 80% 93%)',
+    bgEnd: 'hsl(42 80% 82%)',
+    accent: 'hsl(42 80% 55%)',
+    border: 'hsl(42 80% 68%)',
+    text: 'hsl(42 80% 35%)',
+    starCount: 5,
+    showSparkles: true,
+  },
+};
+
+/**
  * Determine growth size from session duration in minutes.
  *
  * - Baby: 25-45 min sessions

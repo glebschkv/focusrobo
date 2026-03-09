@@ -160,7 +160,14 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
                 animationDelay: `${i * 0.08}s`,
               } as React.CSSProperties}
             >
-              {isLegendary ? '⭐' : '❤️'}
+              <img
+                src={isLegendary ? '/assets/icons/star.png' : '/assets/icons/heart.png'}
+                alt=""
+                width={10}
+                height={10}
+                style={{ imageRendering: 'pixelated' }}
+                draggable={false}
+              />
             </span>
           ))}
         </div>

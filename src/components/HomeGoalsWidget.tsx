@@ -9,6 +9,7 @@ import { useQuestStore, useDailyChallenge, useRefreshDailyChallenge, useWeeklyCh
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
 import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, DIFFICULTY_COLORS } from '@/data/GamificationData';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 
 /** Find the nearest (closest-to-unlock) locked achievement */
 function getNearestAchievement(achievements: { id: string; title: string; progress: number; target: number; isUnlocked: boolean }[]) {
@@ -189,7 +190,7 @@ export const HomeGoalsWidget = () => {
               <div className="home-goals-card__challenge">
                 <div className="home-goals-card__row-info">
                   <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
-                    ⚡ {challengeTemplate.title}
+                    <PixelIcon name="lightning" size={12} className="inline mr-0.5 align-middle" /> {challengeTemplate.title}
                   </span>
                   <span className="home-goals-card__row-progress" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span
@@ -230,7 +231,7 @@ export const HomeGoalsWidget = () => {
                 )}
                 {dailyChallenge.challengeStreak > 0 && !dailyChallenge.completed && (
                   <span style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px' }}>
-                    🔥 {dailyChallenge.challengeStreak} day challenge streak
+                    <PixelIcon name="fire" size={10} className="inline mr-0.5 align-middle" /> {dailyChallenge.challengeStreak} day challenge streak
                   </span>
                 )}
               </div>
@@ -274,7 +275,7 @@ export const HomeGoalsWidget = () => {
               <div className="home-goals-card__weekly">
                 <div className="home-goals-card__row-info">
                   <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
-                    🌟 {weeklyChallengeTemplate.title}
+                    <PixelIcon name="star" size={12} className="inline mr-0.5 align-middle" /> {weeklyChallengeTemplate.title}
                   </span>
                   <span style={{ fontSize: '9px', opacity: 0.6 }}>{weeklyTimeRemaining}</span>
                 </div>
@@ -312,7 +313,7 @@ export const HomeGoalsWidget = () => {
               >
                 <div className="home-goals-card__row-info">
                   <span className="home-goals-card__row-label">
-                    🏆 {nearest.name}
+                    <PixelIcon name="trophy" size={12} className="inline mr-0.5 align-middle" /> {nearest.name}
                   </span>
                   <span className="home-goals-card__row-progress">
                     {Math.round(nearest.pct * 100)}%

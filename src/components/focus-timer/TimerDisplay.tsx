@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 import { TimerPreset, formatTime, MAX_COUNTUP_DURATION } from "./constants";
 import { ariaLabel, formatTimeForScreenReader } from "@/lib/accessibility";
 import { useThemeColors, withAlpha } from "./backgrounds/ThemeContext";
@@ -47,11 +47,11 @@ export const TimerDisplay = ({
       // Default theme colors
       return { start: colors.ringStart, mid: colors.ringMid, end: colors.ringEnd, glow: colors.glow };
     } else if (progress < 80) {
-      // Warm amber transition
-      return { start: 'hsl(35 80% 55%)', mid: 'hsl(40 70% 50%)', end: 'hsl(45 75% 55%)', glow: 'hsla(40, 70%, 50%, 0.4)' };
+      // Warm amber transition — these are decorative progress colors, not text
+      return { start: 'hsl(35 80% 55%)', mid: 'hsl(40 70% 50%)', end: 'hsl(45 75% 55%)', glow: 'hsl(40 70% 50% / 0.4)' };
     } else {
-      // Green finish
-      return { start: 'hsl(142 60% 50%)', mid: 'hsl(152 55% 45%)', end: 'hsl(160 50% 50%)', glow: 'hsla(142, 60%, 50%, 0.4)' };
+      // Green finish — decorative progress colors
+      return { start: 'hsl(142 60% 50%)', mid: 'hsl(152 55% 45%)', end: 'hsl(160 50% 50%)', glow: 'hsl(142 60% 50% / 0.4)' };
     }
   }, [progress, colors]);
 
@@ -96,9 +96,9 @@ export const TimerDisplay = ({
           style={{ background: withAlpha(colors.text, 0.06) }}
         >
           {soundEnabled ? (
-            <Volume2 className="w-4 h-4" style={{ color: colors.text }} aria-hidden="true" />
+            <PixelIcon name="volume-on" size={16} className="opacity-90" aria-hidden="true" />
           ) : (
-            <VolumeX className="w-4 h-4" style={{ color: colors.textSecondary }} aria-hidden="true" />
+            <PixelIcon name="volume-off" size={16} className="opacity-60" aria-hidden="true" />
           )}
         </button>
       </div>

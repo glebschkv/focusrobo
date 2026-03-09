@@ -998,11 +998,11 @@ export const PetLand = () => {
                 <div className="pet-land__empty-hint">
                   <div className="pet-land__empty-egg">
                     <svg width="48" height="56" viewBox="0 0 48 56" fill="none">
-                      <ellipse cx="24" cy="32" rx="18" ry="22" fill="white" fillOpacity="0.9" stroke="hsl(150 40% 45%)" strokeWidth="2"/>
-                      <ellipse cx="24" cy="28" rx="12" ry="14" fill="hsl(150 40% 90%)" fillOpacity="0.6"/>
-                      <path d="M18 20c2-4 10-4 12 0" stroke="hsl(150 40% 60%)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                      <circle cx="20" cy="36" r="2" fill="hsl(150 40% 75%)" fillOpacity="0.5"/>
-                      <circle cx="28" cy="38" r="1.5" fill="hsl(150 40% 75%)" fillOpacity="0.4"/>
+                      <ellipse cx="24" cy="32" rx="18" ry="22" fill="hsl(var(--card))" fillOpacity="0.9" stroke="hsl(var(--primary))" strokeWidth="2"/>
+                      <ellipse cx="24" cy="28" rx="12" ry="14" fill="hsl(var(--primary) / 0.15)" fillOpacity="0.6"/>
+                      <path d="M18 20c2-4 10-4 12 0" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                      <circle cx="20" cy="36" r="2" fill="hsl(var(--primary) / 0.3)" fillOpacity="0.5"/>
+                      <circle cx="28" cy="38" r="1.5" fill="hsl(var(--primary) / 0.3)" fillOpacity="0.4"/>
                     </svg>
                     <div className="pet-land__empty-sparkle-ring" />
                   </div>
