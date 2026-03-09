@@ -54,6 +54,8 @@ export const UnifiedFocusTimer = () => {
     lastCoinsEarned,
     lastSessionTaskLabel,
     lastSessionDuration,
+    lastQuestDeltas,
+    lastStreakDay,
     autoBreakEnabled,
     setPreset,
     requestStartTimer,
@@ -168,6 +170,8 @@ export const UnifiedFocusTimer = () => {
               onGoToIsland={handleGoToIsland}
               taskLabel={lastSessionTaskLabel}
               showBreakOption={autoBreakEnabled}
+              questDeltas={lastQuestDeltas}
+              streakDay={lastStreakDay}
             />
           </>
         )}

@@ -11,10 +11,14 @@
  * - reducedAnimations mode disables bob + filter animations for 60+ pets
  */
 
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useRef } from 'react';
 import { getPetById, GROWTH_SCALES } from '@/data/PetDatabase';
 import { getIslandPosition, getDepthScale, getDepthZIndex, getGridDensityScale } from '@/data/islandPositions';
 import type { LandCell } from '@/stores/landStore';
+
+/** Heart particle positions for tap reaction */
+const HEART_OFFSETS = [-12, 0, 12];
+const STAR_OFFSETS = [-16, -6, 6, 16];
 
 /** Build the sprite path, trying growth-specific first (e.g. polar-bear-baby.png) */
 function getSpritePath(petId: string, size: string, basePath: string): { primary: string; fallback: string } {
@@ -36,12 +40,34 @@ interface IslandPetProps {
 export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, reducedAnimations }: IslandPetProps) => {
   const [imageError, setImageError] = useState(false);
   const [useGrowthSprite, setUseGrowthSprite] = useState(true);
+  const [tapped, setTapped] = useState(false);
+  const [hearts, setHearts] = useState<number[]>([]);
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout>>();
+  const heartIdRef = useRef(0);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    onToggleTooltip(index, rect);
-  }, [onToggleTooltip, index]);
+
+    // Tap reaction: bounce + hearts
+    if (!reducedAnimations) {
+      setTapped(true);
+      const isLegendary = cell.rarity === 'legendary' || cell.rarity === 'epic';
+      const offsets = isLegendary ? STAR_OFFSETS : HEART_OFFSETS;
+      const ids = offsets.map(() => ++heartIdRef.current);
+      setHearts(ids.map((id, i) => i)); // indices into offsets
+      setTimeout(() => setTapped(false), 400);
+      setTimeout(() => setHearts([]), 900);
+
+      // Delay tooltip to allow bounce animation
+      if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
+      tooltipTimer.current = setTimeout(() => {
+        onToggleTooltip(index, rect);
+      }, 400);
+    } else {
+      onToggleTooltip(index, rect);
+    }
+  }, [onToggleTooltip, index, reducedAnimations, cell.rarity]);
 
   const species = getPetById(cell.petId);
   if (!species) return null;
@@ -85,9 +111,13 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
     );
   }
 
+  const tappedClass = tapped ? 'island-pet--tapped' : '';
+  const isLegendary = cell.rarity === 'legendary' || cell.rarity === 'epic';
+  const particleOffsets = isLegendary ? STAR_OFFSETS : HEART_OFFSETS;
+
   return (
     <div
-      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''} ${animClass}`}
+      className={`island-pet ${rarityClass} ${isNew ? 'island-pet--new' : ''} ${animClass} ${tappedClass}`}
       style={{
         left: `${pos.x}%`,
         top: `${pos.y}%`,
@@ -117,6 +147,24 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
 
       {/* Legendary shimmer — only if not in reduced mode */}
       {cell.rarity === 'legendary' && !reducedAnimations && <div className="island-pet__shimmer" />}
+
+      {/* Tap reaction hearts/stars */}
+      {hearts.length > 0 && (
+        <div className="island-pet__hearts" aria-hidden="true">
+          {hearts.map((offsetIdx, i) => (
+            <span
+              key={i}
+              className={`island-pet__heart ${isLegendary ? 'island-pet__heart--star' : ''}`}
+              style={{
+                '--hx': `${particleOffsets[offsetIdx]}px`,
+                animationDelay: `${i * 0.08}s`,
+              } as React.CSSProperties}
+            >
+              {isLegendary ? '⭐' : '❤️'}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 });

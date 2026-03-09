@@ -353,6 +353,41 @@
     animation: guild-contribute 0.5s ease-out forwards;
   }
 
+  /* ---- ACHIEVEMENT SHOWCASE SHIMMER ---- */
+
+  @keyframes achievement-shimmer {
+    0% { background-position: 200% 50%; }
+    100% { background-position: -200% 50%; }
+  }
+
+  .achievement-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .achievement-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.15) 45%,
+      rgba(255, 255, 255, 0.05) 55%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: achievement-shimmer 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .achievement-shimmer::after {
+      animation: none;
+    }
+  }
+
   /* ============================================
      RETRO ARCADE CHALLENGES THEME
      ============================================ */

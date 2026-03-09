@@ -89,6 +89,7 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
 
     const xpReward = achievement.rewards.find(r => r.type === 'xp')?.amount || 0;
     const coinReward = achievement.rewards.find(r => r.type === 'coins')?.amount || 0;
+    const isRareTier = achievement.tier === 'gold' || achievement.tier === 'platinum' || achievement.tier === 'diamond';
 
     if (embedded) {
       // ── Green-themed card for collection tab ──
@@ -99,7 +100,8 @@ export const AchievementGallery: React.FC<AchievementGalleryProps> = ({ onClose,
             ? "bg-amber-50 border-amber-300 shadow-sm"
             : isUnlocked
             ? "bg-[hsl(var(--card))] border-[hsl(var(--border))]"
-            : "bg-[hsl(var(--muted))] border-[hsl(var(--border))]"
+            : "bg-[hsl(var(--muted))] border-[hsl(var(--border))]",
+          isUnlocked && isRareTier && "achievement-shimmer"
         )}>
           <div className="flex items-start gap-3 mb-3">
             <div className={cn(

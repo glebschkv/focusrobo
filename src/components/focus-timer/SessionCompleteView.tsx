@@ -16,6 +16,13 @@ import { useHaptics } from "@/hooks/useHaptics";
 import { getPetById, GROWTH_SCALES, RARITY_GLOW, type GrowthSize, type PetRarity, type EggTier } from "@/data/PetDatabase";
 import type { PendingPet, PendingEgg } from "@/stores/landStore";
 
+export interface QuestDelta {
+  name: string;
+  oldPct: number;
+  newPct: number;
+  completed: boolean;
+}
+
 interface SessionCompleteViewProps {
   isVisible: boolean;
   onDismiss: (notes: string, rating: number) => void;
@@ -38,6 +45,10 @@ interface SessionCompleteViewProps {
   taskLabel?: string;
   /** Whether break option is available */
   showBreakOption: boolean;
+  /** Quest progress deltas for impact summary */
+  questDeltas?: QuestDelta[];
+  /** Current streak day count */
+  streakDay?: number;
 }
 
 const MOOD_OPTIONS = [
@@ -113,6 +124,8 @@ export const SessionCompleteView = ({
   onGoToIsland,
   taskLabel,
   showBreakOption,
+  questDeltas = [],
+  streakDay = 0,
 }: SessionCompleteViewProps) => {
   const [rating, setRating] = useState(3);
   const [notes, setNotes] = useState("");
@@ -507,6 +520,74 @@ export const SessionCompleteView = ({
                     </span>
                     <span className="text-xs font-bold text-primary/70">Coins</span>
                   </div>
+                </motion.div>
+              )}
+
+              {/* Session Impact — quest progress + streak */}
+              {(questDeltas.length > 0 || streakDay > 0) && (
+                <motion.div
+                  className="rounded-xl border border-border bg-card p-4 space-y-3"
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={cardIndex++}
+                >
+                  <p className="text-xs font-bold text-foreground">Session Impact</p>
+
+                  {/* Quest progress rows */}
+                  {questDeltas.map((delta, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-medium text-foreground truncate flex-1 mr-2">
+                          {delta.name}
+                        </span>
+                        {delta.completed ? (
+                          <span
+                            className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
+                            style={{
+                              background: 'hsl(42 75% 90%)',
+                              color: 'hsl(42 75% 35%)',
+                              border: '1px solid hsl(42 75% 70%)',
+                            }}
+                          >
+                            Completed!
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground tabular-nums">
+                            {Math.round(delta.newPct)}%
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{
+                            background: delta.completed
+                              ? 'hsl(42 75% 52%)'
+                              : 'hsl(var(--primary))',
+                          }}
+                          initial={{ width: `${delta.oldPct}%` }}
+                          animate={{ width: `${Math.min(delta.newPct, 100)}%` }}
+                          transition={
+                            prefersReducedMotion
+                              ? { duration: 0 }
+                              : { duration: 0.5, delay: 0.15 * i, ease: [0.4, 0, 0.2, 1] }
+                          }
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Streak day */}
+                  {streakDay > 0 && (
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className="text-base">🔥</span>
+                      <span className="text-[11px] font-bold text-foreground">
+                        Day {streakDay}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">streak</span>
+                    </div>
+                  )}
                 </motion.div>
               )}
 

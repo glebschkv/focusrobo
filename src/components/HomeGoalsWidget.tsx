@@ -5,8 +5,9 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useQuestStore } from '@/stores/questStore';
+import { useQuestStore, useDailyChallenge, useRefreshDailyChallenge, useWeeklyChallenge, useRefreshWeeklyChallenge } from '@/stores/questStore';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
+import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, DIFFICULTY_COLORS } from '@/data/GamificationData';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /** Find the nearest (closest-to-unlock) locked achievement */
@@ -30,6 +31,54 @@ export const HomeGoalsWidget = () => {
 
   const quests = useQuestStore((s) => s.quests);
   const { achievements } = useAchievementSystem();
+  const dailyChallenge = useDailyChallenge();
+  const refreshDailyChallenge = useRefreshDailyChallenge();
+  const weeklyChallenge = useWeeklyChallenge();
+  const refreshWeeklyChallenge = useRefreshWeeklyChallenge();
+
+  // Auto-generate daily + weekly challenges on mount
+  useEffect(() => {
+    refreshDailyChallenge();
+    refreshWeeklyChallenge();
+  }, [refreshDailyChallenge, refreshWeeklyChallenge]);
+
+  // Get the challenge template for display
+  const challengeTemplate = useMemo(() => {
+    if (!dailyChallenge) return null;
+    return DAILY_CHALLENGES.find(c => c.id === dailyChallenge.templateId) ?? null;
+  }, [dailyChallenge]);
+
+  // Get weekly challenge template
+  const weeklyChallengeTemplate = useMemo(() => {
+    if (!weeklyChallenge) return null;
+    return WEEKLY_CHALLENGES.find(c => c.id === weeklyChallenge.templateId) ?? null;
+  }, [weeklyChallenge]);
+
+  // Time remaining until midnight (daily)
+  const timeRemaining = useMemo(() => {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diffMs = midnight.getTime() - now.getTime();
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}h ${mins}m left`;
+  }, [expanded]); // recalc on expand
+
+  // Time remaining until Sunday midnight (weekly)
+  const weeklyTimeRemaining = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun
+    const daysUntilSunday = day === 0 ? 0 : 7 - day;
+    const endOfWeek = new Date(now);
+    endOfWeek.setDate(now.getDate() + daysUntilSunday);
+    endOfWeek.setHours(24, 0, 0, 0);
+    const diffMs = endOfWeek.getTime() - now.getTime();
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    if (days > 0) return `${days}d ${hours}h left`;
+    return `${hours}h left`;
+  }, [expanded]);
 
   // Active daily quests (not completed, not expired)
   const activeDaily = useMemo(() => {
@@ -135,6 +184,58 @@ export const HomeGoalsWidget = () => {
               </button>
             </div>
 
+            {/* Daily Challenge (featured) */}
+            {dailyChallenge && challengeTemplate && (
+              <div className="home-goals-card__challenge">
+                <div className="home-goals-card__row-info">
+                  <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
+                    ⚡ {challengeTemplate.title}
+                  </span>
+                  <span className="home-goals-card__row-progress" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span
+                      className="home-goals-card__difficulty-badge"
+                      style={{
+                        background: DIFFICULTY_COLORS[challengeTemplate.difficulty].bg,
+                        color: DIFFICULTY_COLORS[challengeTemplate.difficulty].text,
+                        border: `1px solid ${DIFFICULTY_COLORS[challengeTemplate.difficulty].border}`,
+                        fontSize: '8px',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        padding: '1px 5px',
+                        borderRadius: '6px',
+                      }}
+                    >
+                      {challengeTemplate.difficulty}
+                    </span>
+                    <span style={{ fontSize: '9px', opacity: 0.6 }}>{timeRemaining}</span>
+                  </span>
+                </div>
+                <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
+                  <span style={{ fontSize: '10px', opacity: 0.7 }}>{challengeTemplate.description}</span>
+                  <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                    {dailyChallenge.progress}/{dailyChallenge.target}
+                  </span>
+                </div>
+                <div className="home-goals-card__bar">
+                  <div
+                    className="home-goals-card__bar-fill"
+                    style={{
+                      width: `${Math.min(100, (dailyChallenge.progress / dailyChallenge.target) * 100)}%`,
+                      background: dailyChallenge.completed ? 'hsl(42 75% 52%)' : undefined,
+                    }}
+                  />
+                </div>
+                {dailyChallenge.completed && (
+                  <span className="home-goals-card__completed">Completed!</span>
+                )}
+                {dailyChallenge.challengeStreak > 0 && !dailyChallenge.completed && (
+                  <span style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px' }}>
+                    🔥 {dailyChallenge.challengeStreak} day challenge streak
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Quest rows */}
             {activeDaily.map((quest) => {
               const firstObj = quest.objectives[0];
@@ -167,6 +268,38 @@ export const HomeGoalsWidget = () => {
                 </button>
               );
             })}
+
+            {/* Weekly Challenge */}
+            {weeklyChallenge && weeklyChallengeTemplate && (
+              <div className="home-goals-card__weekly">
+                <div className="home-goals-card__row-info">
+                  <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
+                    🌟 {weeklyChallengeTemplate.title}
+                  </span>
+                  <span style={{ fontSize: '9px', opacity: 0.6 }}>{weeklyTimeRemaining}</span>
+                </div>
+                <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
+                  <span style={{ fontSize: '10px', opacity: 0.7 }}>{weeklyChallengeTemplate.description}</span>
+                  <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                    {weeklyChallenge.progress}/{weeklyChallenge.target}
+                  </span>
+                </div>
+                <div className="home-goals-card__bar">
+                  <div
+                    className="home-goals-card__bar-fill"
+                    style={{
+                      width: `${Math.min(100, (weeklyChallenge.progress / weeklyChallenge.target) * 100)}%`,
+                      background: weeklyChallenge.completed
+                        ? 'linear-gradient(90deg, hsl(var(--primary)), hsl(42 75% 52%))'
+                        : 'linear-gradient(90deg, hsl(var(--primary)), hsl(200 60% 50%))',
+                    }}
+                  />
+                </div>
+                {weeklyChallenge.completed && (
+                  <span className="home-goals-card__completed">Completed!</span>
+                )}
+              </div>
+            )}
 
             {/* Nearest achievement */}
             {nearest && (

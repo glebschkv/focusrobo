@@ -38,6 +38,7 @@ import { useCallback, useMemo, useEffect, useRef } from 'react';
 import { useCoinStore } from '@/stores/coinStore';
 import { dispatchAchievementEvent, ACHIEVEMENT_EVENTS } from '@/hooks/useAchievementTracking';
 import { usePremiumStore } from '@/stores/premiumStore';
+import { useXPStore } from '@/stores/xpStore';
 import { coinLogger } from '@/lib/logger';
 import { COIN_CONFIG, RATE_LIMIT_CONFIG } from '@/lib/constants';
 import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
@@ -477,10 +478,14 @@ export const useCoinSystem = () => {
     const bonus = calculateRandomBonus();
     const subscriptionMultiplier = getSubscriptionMultiplier();
 
-    // Apply subscription multiplier first, then random bonus, then booster
+    // Apply subscription multiplier first, then random bonus, then booster, then prestige
     const coinsAfterSubscription = Math.round(baseCoins * subscriptionMultiplier);
     const coinsAfterBonus = Math.round(coinsAfterSubscription * bonus.bonusMultiplier);
-    const finalCoins = Math.round(coinsAfterBonus * validMultiplier);
+    const coinsAfterBooster = Math.round(coinsAfterBonus * validMultiplier);
+    // Prestige bonus: +5% per prestige level (max 10 = +50%)
+    const prestigeLevel = useXPStore.getState().prestigeLevel || 0;
+    const prestigeMultiplier = 1 + (prestigeLevel * 0.05);
+    const finalCoins = Math.round(coinsAfterBooster * prestigeMultiplier);
     const bonusCoins = finalCoins - baseCoins;
 
     // Generate session ID if not provided (for deduplication)
@@ -545,6 +550,11 @@ export const useCoinSystem = () => {
       total: totalEarned + finalCoins,
     });
 
+    // Dispatch floating reward event for TopStatusBar
+    window.dispatchEvent(new CustomEvent('reward-earned', {
+      detail: { type: 'coin', amount: finalCoins },
+    }));
+
     return {
       coinsGained: finalCoins,
       baseCoins,
@@ -605,6 +615,11 @@ export const useCoinSystem = () => {
         amount,
         total: totalEarned + amount,
       });
+
+      // Dispatch floating reward event for TopStatusBar
+      window.dispatchEvent(new CustomEvent('reward-earned', {
+        detail: { type: 'coin', amount: validAmount },
+      }));
     }
   }, [storeAddCoins, storeSyncFromServer, totalEarned, totalSpent]);
 

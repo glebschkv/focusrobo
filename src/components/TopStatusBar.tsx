@@ -11,6 +11,7 @@ import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
+import { usePrestigeLevel } from "@/stores/xpStore";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 
 // ── Floating reward numbers ──────────────────────────────────────
@@ -41,6 +42,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     streakData,
   } = useAppState();
   const coinSystem = useCoinSystem();
+  const prestigeLevel = usePrestigeLevel();
   const speciesCatalog = useSpeciesCatalog();
   const filledCount = useLandStore((s) => s.getFilledCount)();
   const currentLand = useLandStore((s) => s.currentLand);
@@ -131,6 +133,25 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
             <PopoverTrigger asChild>
               <button className="level-badge-btn" aria-label="View stats">
                 <div className="level-badge-inner">
+                  {prestigeLevel > 0 && (
+                    <span className="prestige-stars" style={{ marginRight: '2px', display: 'inline-flex', gap: '1px' }}>
+                      {Array.from({ length: Math.min(prestigeLevel, 10) }, (_, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            fontSize: '7px',
+                            color: prestigeLevel >= 10
+                              ? 'hsl(42 75% 52%)'
+                              : prestigeLevel >= 7
+                                ? 'hsl(42 75% 52%)'
+                                : prestigeLevel >= 4
+                                  ? 'hsl(0 0% 70%)'
+                                  : 'hsl(30 60% 50%)',
+                          }}
+                        >★</span>
+                      ))}
+                    </span>
+                  )}
                   <span className="level-star">★</span>
                   <span className="level-number">{currentLevel}</span>
                 </div>

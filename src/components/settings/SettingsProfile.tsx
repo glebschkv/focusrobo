@@ -7,6 +7,18 @@ import { toast } from "sonner";
 import { User, Pencil, Check, X, Camera } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
+import { useXPStore, useCurrentLevel, usePrestigeLevel, MAX_LEVEL } from "@/stores/xpStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const AVATAR_OPTIONS = [
   { id: 'default', icon: 'panda', label: 'Panda' },
@@ -143,6 +155,66 @@ export const SettingsProfile = () => {
           </div>
         )}
       </div>
+
+      {/* Prestige Section */}
+      <PrestigeSection />
+    </div>
+  );
+};
+
+const PrestigeSection = () => {
+  const currentLevel = useCurrentLevel();
+  const prestigeLevel = usePrestigeLevel();
+  const prestige = useXPStore((s) => s.prestige);
+
+  if (currentLevel < MAX_LEVEL || prestigeLevel >= 10) return null;
+
+  const nextBonus = (prestigeLevel + 1) * 5;
+
+  return (
+    <div className="mt-4 p-4 rounded-xl border border-border bg-card">
+      <h3 className="text-sm font-bold text-foreground mb-1">Prestige Available!</h3>
+      <p className="text-[11px] text-muted-foreground mb-3">
+        Reset to Level 1 and gain a permanent +{nextBonus}% coin bonus. You keep all pets, coins, and islands.
+      </p>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button
+            className="w-full py-2.5 rounded-xl text-sm font-bold text-white touch-manipulation"
+            style={{
+              background: 'linear-gradient(135deg, hsl(42 75% 52%), hsl(35 80% 55%))',
+              boxShadow: '0 3px 0 hsl(42 75% 40%), 0 6px 12px hsl(42 75% 52% / 0.2)',
+            }}
+          >
+            ★ Prestige {prestigeLevel + 1}
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Prestige to Level {prestigeLevel + 1}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your level will reset to 1. You keep all pets, coins, and islands.
+              You gain a permanent +{nextBonus}% coin bonus on all future earnings.
+              {prestigeLevel > 0 && ` Current bonus: +${prestigeLevel * 5}%.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                const success = prestige();
+                if (success) {
+                  toast.success(`Prestige ${prestigeLevel + 1} activated!`, {
+                    description: `You now earn +${nextBonus}% more coins permanently.`,
+                  });
+                }
+              }}
+            >
+              Prestige
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

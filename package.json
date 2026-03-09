@@ -57,6 +57,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^12.23.9",
+    "html-to-image": "^1.11.13",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",
@@ -77,6 +78,7 @@
     "minimatch": "^10.2.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.4.2",
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/typography": "^0.5.15",
@@ -95,7 +97,6 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "jsdom": "^24.0.0",
-    "@capacitor/cli": "^7.4.2",
     "msw": "^2.2.0",
     "playwright": "^1.57.0",
     "postcss": "^8.4.47",

@@ -46,6 +46,7 @@ export interface XPState {
   unlockedPets: string[];
   currentZone: string;
   availableZones: string[];
+  prestigeLevel: number;
 }
 
 interface XPStore extends XPState {
@@ -58,6 +59,7 @@ interface XPStore extends XPState {
   addZone: (zoneName: string) => void;
   updateState: (partial: Partial<XPState>) => void;
   resetXP: () => void;
+  prestige: () => boolean;
 }
 
 const initialState: XPState = {
@@ -68,6 +70,7 @@ const initialState: XPState = {
   unlockedPets: [],
   currentZone: 'Assembly Line',
   availableZones: ['Assembly Line'],
+  prestigeLevel: 0,
 };
 
 export const useXPStore = create<XPStore>()(
@@ -109,6 +112,21 @@ export const useXPStore = create<XPStore>()(
         },
         updateState: (partial) => set((s) => ({ ...s, ...partial })),
         resetXP: () => set(initialState),
+        prestige: () => {
+          const state = get();
+          if (state.currentLevel < MAX_LEVEL || state.prestigeLevel >= 10) return false;
+          const newPrestige = state.prestigeLevel + 1;
+          const level1XP = calculateLevelRequirement(1);
+          set({
+            currentXP: 0,
+            currentLevel: 0,
+            xpToNextLevel: level1XP,
+            totalXPForCurrentLevel: 0,
+            prestigeLevel: newPrestige,
+          });
+          xpLogger.info(`Prestige ${newPrestige} activated. Reset to level 0 with +${newPrestige * 5}% coin bonus.`);
+          return true;
+        },
       }),
       {
         name: 'nomo_xp_system',
@@ -157,6 +175,7 @@ export const useXPStore = create<XPStore>()(
 export const useCurrentXP = () => useXPStore((s) => s.currentXP);
 export const useCurrentLevel = () => useXPStore((s) => s.currentLevel);
 export const useUnlockedPets = () => useXPStore((s) => s.unlockedPets);
+export const usePrestigeLevel = () => useXPStore((s) => s.prestigeLevel);
 
 // Subscribe to XP changes for cross-component communication
 // This replaces the window.dispatchEvent pattern

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { questLogger } from '@/lib/logger';
+import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, type ChallengeTemplate, type ChallengeDifficulty, type WeeklyChallengeTemplate } from '@/data/GamificationData';
 
 export interface QuestObjective {
   id: string;
@@ -31,10 +32,29 @@ export interface Quest {
   expiresAt?: number;
 }
 
+export interface DailyChallenge {
+  templateId: string;
+  date: string;
+  progress: number;
+  target: number;
+  completed: boolean;
+  challengeStreak: number;
+}
+
+export interface WeeklyChallenge {
+  templateId: string;
+  weekStart: string; // ISO date string of Monday
+  progress: number;
+  target: number;
+  completed: boolean;
+}
+
 interface QuestState {
   quests: Quest[];
   lastDailyReset: string | null;
   lastWeeklyReset: string | null;
+  dailyChallenge: DailyChallenge | null;
+  weeklyChallenge: WeeklyChallenge | null;
 }
 
 interface QuestStore extends QuestState {
@@ -49,9 +69,54 @@ interface QuestStore extends QuestState {
   getDailyQuests: () => Quest[];
   getWeeklyQuests: () => Quest[];
   resetQuests: () => void;
+  getDailyChallenge: () => DailyChallenge | null;
+  refreshDailyChallenge: () => void;
+  updateDailyChallengeProgress: (type: string, amount: number) => void;
+  getWeeklyChallenge: () => WeeklyChallenge | null;
+  refreshWeeklyChallenge: () => void;
+  updateWeeklyChallengeProgress: (type: string, amount: number) => void;
 }
 
-const initialState: QuestState = { quests: [], lastDailyReset: null, lastWeeklyReset: null };
+const initialState: QuestState = { quests: [], lastDailyReset: null, lastWeeklyReset: null, dailyChallenge: null, weeklyChallenge: null };
+
+/** Deterministic daily challenge selection seeded by date string */
+function hashDate(dateStr: string): number {
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getWeekStartISO(): string {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? 6 : day - 1; // Monday = 0
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diff);
+  return monday.toISOString().slice(0, 10);
+}
+
+function pickWeeklyChallenge(weekStart: string): WeeklyChallengeTemplate {
+  const seed = hashDate(weekStart + '-weekly');
+  return WEEKLY_CHALLENGES[seed % WEEKLY_CHALLENGES.length];
+}
+
+function pickDailyChallenge(dateStr: string): ChallengeTemplate {
+  const seed = hashDate(dateStr);
+  // Weighted selection: 50% easy, 35% medium, 15% hard
+  const roll = (seed % 100);
+  let pool: ChallengeTemplate[];
+  if (roll < 50) {
+    pool = DAILY_CHALLENGES.filter(c => c.difficulty === 'easy');
+  } else if (roll < 85) {
+    pool = DAILY_CHALLENGES.filter(c => c.difficulty === 'medium');
+  } else {
+    pool = DAILY_CHALLENGES.filter(c => c.difficulty === 'hard');
+  }
+  return pool[seed % pool.length];
+}
 
 export const useQuestStore = create<QuestStore>()(
   persist(
@@ -80,6 +145,95 @@ export const useQuestStore = create<QuestStore>()(
       getDailyQuests: () => get().quests.filter(q => q.type === 'daily' && (!q.expiresAt || q.expiresAt > Date.now())),
       getWeeklyQuests: () => get().quests.filter(q => q.type === 'weekly' && (!q.expiresAt || q.expiresAt > Date.now())),
       resetQuests: () => set(initialState),
+      getDailyChallenge: () => {
+        const state = get();
+        const today = new Date().toDateString();
+        if (state.dailyChallenge && state.dailyChallenge.date === today) {
+          return state.dailyChallenge;
+        }
+        return null;
+      },
+      refreshDailyChallenge: () => {
+        const today = new Date().toDateString();
+        const existing = get().dailyChallenge;
+        if (existing && existing.date === today) return;
+
+        const prevStreak = existing?.challengeStreak ?? 0;
+        const wasCompletedYesterday = existing?.completed ?? false;
+        const newStreak = wasCompletedYesterday ? prevStreak + 1 : 0;
+
+        const template = pickDailyChallenge(today);
+        set({
+          dailyChallenge: {
+            templateId: template.id,
+            date: today,
+            progress: 0,
+            target: template.target,
+            completed: false,
+            challengeStreak: newStreak,
+          },
+        });
+      },
+      updateDailyChallengeProgress: (type: string, amount: number) => {
+        const dc = get().dailyChallenge;
+        if (!dc || dc.completed) return;
+        const today = new Date().toDateString();
+        if (dc.date !== today) return;
+
+        const template = DAILY_CHALLENGES.find(c => c.id === dc.templateId);
+        if (!template || template.objectiveType !== type) return;
+
+        const newProgress = Math.min(dc.target, dc.progress + amount);
+        set({
+          dailyChallenge: {
+            ...dc,
+            progress: newProgress,
+            completed: newProgress >= dc.target,
+          },
+        });
+      },
+      getWeeklyChallenge: () => {
+        const state = get();
+        const currentWeek = getWeekStartISO();
+        if (state.weeklyChallenge && state.weeklyChallenge.weekStart === currentWeek) {
+          return state.weeklyChallenge;
+        }
+        return null;
+      },
+      refreshWeeklyChallenge: () => {
+        const currentWeek = getWeekStartISO();
+        const existing = get().weeklyChallenge;
+        if (existing && existing.weekStart === currentWeek) return;
+
+        const template = pickWeeklyChallenge(currentWeek);
+        set({
+          weeklyChallenge: {
+            templateId: template.id,
+            weekStart: currentWeek,
+            progress: 0,
+            target: template.target,
+            completed: false,
+          },
+        });
+      },
+      updateWeeklyChallengeProgress: (type: string, amount: number) => {
+        const wc = get().weeklyChallenge;
+        if (!wc || wc.completed) return;
+        const currentWeek = getWeekStartISO();
+        if (wc.weekStart !== currentWeek) return;
+
+        const template = WEEKLY_CHALLENGES.find(c => c.id === wc.templateId);
+        if (!template || template.objectiveType !== type) return;
+
+        const newProgress = Math.min(wc.target, wc.progress + amount);
+        set({
+          weeklyChallenge: {
+            ...wc,
+            progress: newProgress,
+            completed: newProgress >= wc.target,
+          },
+        });
+      },
     }),
     {
       name: 'nomo_quest_system',
@@ -109,3 +263,7 @@ export const useQuests = () => useQuestStore((s) => s.quests);
 export const useActiveQuests = () => useQuestStore((s) => s.quests.filter(q => !q.isCompleted && (!q.expiresAt || q.expiresAt > Date.now())));
 export const useDailyQuests = () => useQuestStore((s) => s.quests.filter(q => q.type === 'daily' && (!q.expiresAt || q.expiresAt > Date.now())));
 export const useWeeklyQuests = () => useQuestStore((s) => s.quests.filter(q => q.type === 'weekly' && (!q.expiresAt || q.expiresAt > Date.now())));
+export const useDailyChallenge = () => useQuestStore((s) => s.dailyChallenge);
+export const useRefreshDailyChallenge = () => useQuestStore((s) => s.refreshDailyChallenge);
+export const useWeeklyChallenge = () => useQuestStore((s) => s.weeklyChallenge);
+export const useRefreshWeeklyChallenge = () => useQuestStore((s) => s.refreshWeeklyChallenge);

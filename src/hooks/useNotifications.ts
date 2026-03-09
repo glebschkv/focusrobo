@@ -369,6 +369,76 @@ export const useNotifications = () => {
     });
   }, [scheduleLocalNotification]);
 
+  // Smart notifications
+  const scheduleDailyChallengeReminder = useCallback(() => {
+    // Afternoon reminder if daily challenge is incomplete
+    const now = new Date();
+    const reminderTime = new Date(now);
+    reminderTime.setHours(14, 0, 0, 0); // 2 PM
+    if (reminderTime.getTime() <= now.getTime()) return; // too late today
+    const delayMs = reminderTime.getTime() - now.getTime();
+    scheduleLocalNotification({
+      title: '⚡ Daily challenge waiting!',
+      body: "You're close to completing today's challenge. One more session!",
+      delay: delayMs,
+      id: 1010,
+    });
+  }, [scheduleLocalNotification]);
+
+  const schedulePetMissYouNotification = useCallback(() => {
+    // 36 hours after last session
+    scheduleLocalNotification({
+      title: '😴 Your pets are sleepy...',
+      body: "Your island pets miss you! Start a focus session to cheer them up.",
+      delay: 36 * 60 * 60 * 1000,
+      id: 1011,
+    });
+  }, [scheduleLocalNotification]);
+
+  const scheduleWeeklyChallengeReminder = useCallback(() => {
+    // Sunday morning reminder
+    const now = new Date();
+    const daysUntilSunday = (7 - now.getDay()) % 7;
+    if (daysUntilSunday === 0 && now.getHours() >= 9) return;
+    const sunday9AM = new Date(now);
+    sunday9AM.setDate(sunday9AM.getDate() + (daysUntilSunday || 7));
+    sunday9AM.setHours(9, 0, 0, 0);
+    const delayMs = sunday9AM.getTime() - now.getTime();
+    if (delayMs > 0) {
+      scheduleLocalNotification({
+        title: '🏆 Weekly challenge ending!',
+        body: "Your weekly challenge ends tonight. Finish strong!",
+        delay: delayMs,
+        id: 1012,
+      });
+    }
+  }, [scheduleLocalNotification]);
+
+  const scheduleStreakRiskNotification = useCallback((currentStreak: number) => {
+    // Evening reminder if no session today
+    const now = new Date();
+    const tonight9PM = new Date(now);
+    tonight9PM.setHours(21, 0, 0, 0);
+    if (tonight9PM.getTime() <= now.getTime()) return;
+    const delayMs = tonight9PM.getTime() - now.getTime();
+    scheduleLocalNotification({
+      title: `🔥 Save your ${currentStreak}-day streak!`,
+      body: "Focus now to keep your streak alive!",
+      delay: delayMs,
+      id: 1013,
+    });
+  }, [scheduleLocalNotification]);
+
+  const schedulePassiveIncomeFullNotification = useCallback(() => {
+    // 3 days from now
+    scheduleLocalNotification({
+      title: '💰 Passive income full!',
+      body: "Your passive coin storage is full. Collect before you lose earnings!",
+      delay: 3 * 24 * 60 * 60 * 1000,
+      id: 1014,
+    });
+  }, [scheduleLocalNotification]);
+
   const cancelAllNotifications = useCallback(async () => {
     try {
       if (Capacitor.isNativePlatform()) {
@@ -443,6 +513,11 @@ export const useNotifications = () => {
     cancelBossChallengeReminder,
     scheduleRewardNotification,
     scheduleStreakNotification,
+    scheduleDailyChallengeReminder,
+    schedulePetMissYouNotification,
+    scheduleWeeklyChallengeReminder,
+    scheduleStreakRiskNotification,
+    schedulePassiveIncomeFullNotification,
     cancelAllNotifications,
     initializeNotifications,
   };

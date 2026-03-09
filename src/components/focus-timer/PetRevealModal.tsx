@@ -20,6 +20,13 @@ interface PetChoice {
   size: string;
 }
 
+export interface QuestDelta {
+  name: string;
+  oldPct: number;
+  newPct: number;
+  completed: boolean;
+}
+
 interface PetRevealModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -34,6 +41,12 @@ interface PetRevealModalProps {
   rewardMinutes?: number;
   /** Player level for re-generating pet on pick */
   rewardLevel?: number;
+  /** Quest progress deltas for impact summary */
+  questDeltas?: QuestDelta[];
+  /** Achievements unlocked during this session */
+  unlockedAchievements?: string[];
+  /** Current streak day count */
+  streakDay?: number;
 }
 
 const SIZE_LABELS: Record<GrowthSize, string> = {
@@ -122,8 +135,12 @@ export const PetRevealModal = ({
   petChoices = [],
   rewardMinutes = 0,
   rewardLevel = 1,
+  questDeltas = [],
+  unlockedAchievements = [],
+  streakDay = 0,
 }: PetRevealModalProps) => {
-  const [phase, setPhase] = useState<'choice' | 'reveal'>('choice');
+  const [phase, setPhase] = useState<'choice' | 'reveal' | 'impact'>('choice');
+  const hasImpactContent = questDeltas.length > 0 || unlockedAchievements.length > 0;
   const [revealPetId, setRevealPetId] = useState<string | null>(null);
   const [revealSize, setRevealSize] = useState<GrowthSize | null>(null);
   const [revealRarity, setRevealRarity] = useState<PetRarity | null>(null);
@@ -152,6 +169,18 @@ export const PetRevealModal = ({
     setRevealRarity(pending.rarity as PetRarity);
     setPhase('reveal');
   }, [canAffordPick, rewardMinutes]);
+
+  const handleContinueFromReveal = useCallback(() => {
+    if (hasImpactContent) {
+      setPhase('impact');
+    } else {
+      setPhase('choice');
+      setRevealPetId(null);
+      setRevealSize(null);
+      setRevealRarity(null);
+      onClose();
+    }
+  }, [hasImpactContent, onClose]);
 
   const handleClose = useCallback(() => {
     setPhase('choice');
@@ -413,7 +442,7 @@ export const PetRevealModal = ({
         {/* Continue button */}
         <div className="px-5 pb-5 pt-2">
           <button
-            onClick={handleClose}
+            onClick={handleContinueFromReveal}
             className="w-full py-3 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-[0.97] touch-manipulation min-h-[48px]"
             style={{
               background: config.color,

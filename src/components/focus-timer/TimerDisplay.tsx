@@ -35,10 +35,38 @@ export const TimerDisplay = ({
   const progressPercent = Math.round(progress);
 
   const ringSize = 240;
-  const strokeWidth = 12;
+  const isFinalStretch = !isCountup && timeLeft <= 300 && isRunning; // last 5 min
+  const strokeWidth = isFinalStretch ? 14 : 12;
   const radius = (ringSize - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  // Color progression based on progress %
+  const ringColors = useMemo(() => {
+    if (progress < 40) {
+      // Default theme colors
+      return { start: colors.ringStart, mid: colors.ringMid, end: colors.ringEnd, glow: colors.glow };
+    } else if (progress < 80) {
+      // Warm amber transition
+      return { start: 'hsl(35 80% 55%)', mid: 'hsl(40 70% 50%)', end: 'hsl(45 75% 55%)', glow: 'hsla(40, 70%, 50%, 0.4)' };
+    } else {
+      // Green finish
+      return { start: 'hsl(142 60% 50%)', mid: 'hsl(152 55% 45%)', end: 'hsl(160 50% 50%)', glow: 'hsla(142, 60%, 50%, 0.4)' };
+    }
+  }, [progress, colors]);
+
+  // Sparkle positions around the ring for final stretch
+  const sparklePositions = useMemo(() => {
+    if (!isFinalStretch) return [];
+    return Array.from({ length: 6 }, (_, i) => {
+      const angle = (i / 6) * 2 * Math.PI - Math.PI / 2;
+      return {
+        x: ringSize / 2 + radius * Math.cos(angle),
+        y: ringSize / 2 + radius * Math.sin(angle),
+        delay: i * 0.3,
+      };
+    });
+  }, [isFinalStretch, radius, ringSize]);
 
   // Compute position of progress head (glowing dot at arc tip)
   const progressAngle = useMemo(() => {
@@ -78,6 +106,19 @@ export const TimerDisplay = ({
       {/* Timer ring with enhanced frosted backdrop */}
       <div className="flex flex-col items-center">
         <div className="relative" style={{ width: ringSize, height: ringSize }}>
+          {/* Breathing background pulse */}
+          {isRunning && (
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `radial-gradient(circle, ${ringColors.glow} 0%, transparent 70%)`,
+                animation: `timer-breathe ${progress > 60 ? '6s' : '4s'} ease-in-out infinite`,
+                opacity: 0.04,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+
           {/* Multi-layer frosted backdrop circle */}
           <div
             className="absolute inset-0 rounded-full"
@@ -101,9 +142,9 @@ export const TimerDisplay = ({
           >
             <defs>
               <linearGradient id="timer-ring-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={colors.ringStart} />
-                <stop offset="50%" stopColor={colors.ringMid} />
-                <stop offset="100%" stopColor={colors.ringEnd} />
+                <stop offset="0%" stopColor={ringColors.start} />
+                <stop offset="50%" stopColor={ringColors.mid} />
+                <stop offset="100%" stopColor={ringColors.end} />
               </linearGradient>
             </defs>
             {/* Track */}
@@ -128,8 +169,8 @@ export const TimerDisplay = ({
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               style={{
-                transition: 'stroke-dashoffset 0.5s ease-out',
-                filter: `drop-shadow(0 0 12px ${colors.glow})`,
+                transition: 'stroke-dashoffset 0.5s ease-out, stroke-width 0.5s ease',
+                filter: `drop-shadow(0 0 ${isFinalStretch ? '24px' : '12px'} ${ringColors.glow})`,
               }}
             />
           </svg>
@@ -149,6 +190,25 @@ export const TimerDisplay = ({
               }}
             />
           )}
+
+          {/* Sparkle dots around ring (final 5 min) */}
+          {sparklePositions.map((spark, i) => (
+            <div
+              key={i}
+              className="absolute pointer-events-none"
+              style={{
+                left: spark.x - 2,
+                top: spark.y - 2,
+                width: 4,
+                height: 4,
+                borderRadius: '50%',
+                backgroundColor: '#fff',
+                animation: `ring-sparkle 1.5s ease-in-out infinite`,
+                animationDelay: `${spark.delay}s`,
+                boxShadow: `0 0 4px 1px ${ringColors.glow}`,
+              }}
+            />
+          ))}
 
           {/* Center time display */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">

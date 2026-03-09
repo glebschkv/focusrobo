@@ -36,6 +36,10 @@ import { markBlockingStopped } from "@/hooks/useTimerExpiryGuard";
 import { useLandStore, type PendingPet, type PendingEgg } from "@/stores/landStore";
 import { useNavigationStore } from "@/stores/navigationStore";
 import { usePremiumStore } from "@/stores/premiumStore";
+import { useQuestStore } from "@/stores/questStore";
+import { useStreakStore } from "@/stores/streakStore";
+import { WEEKLY_CHALLENGES } from "@/data/GamificationData";
+import type { QuestDelta } from "../SessionCompleteView";
 
 export const useTimerLogic = () => {
   const { awardXP, coinSystem, xpSystem } = useBackendAppState();
@@ -89,6 +93,8 @@ export const useTimerLogic = () => {
   const [lastCoinsEarned, setLastCoinsEarned] = useState(0);
   const [lastSessionTaskLabel, setLastSessionTaskLabel] = useState<string | undefined>();
   const [lastSessionDuration, setLastSessionDuration] = useState(0);
+  const [lastQuestDeltas, setLastQuestDeltas] = useState<QuestDelta[]>([]);
+  const [lastStreakDay, setLastStreakDay] = useState(0);
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
   // them from timerState before the notes modal opens, so we snapshot here.
   const lastSessionMetaRef = useRef<{ category?: string; taskLabel?: string; sessionDuration: number; sessionId?: string }>({
@@ -259,6 +265,19 @@ export const useTimerLogic = () => {
         playSoundEffect('timerComplete');
       }
 
+      // Snapshot quest progress before rewards are applied
+      const questSnapshot = state.timerState.sessionType !== 'break'
+        ? useQuestStore.getState().quests
+            .filter(q => !q.isCompleted && (!q.expiresAt || q.expiresAt > Date.now()))
+            .map(q => ({
+              id: q.id,
+              title: q.title,
+              pct: q.objectives.length > 0
+                ? q.objectives.reduce((sum, o) => sum + Math.min(o.current / o.target, 1), 0) / q.objectives.length * 100
+                : 0,
+            }))
+        : [];
+
       let xpEarned = 0;
       let coinsEarned = 0;
       if (state.timerState.sessionType !== 'break') {
@@ -336,6 +355,30 @@ export const useTimerLogic = () => {
         }
       }
 
+      // Update daily + weekly challenge progress
+      if (state.timerState.sessionType !== 'break' && completedMinutes >= 1) {
+        const questStoreState = useQuestStore.getState();
+        questStoreState.updateDailyChallengeProgress('sessions', 1);
+        questStoreState.updateDailyChallengeProgress('focus_time', completedMinutes);
+        questStoreState.updateWeeklyChallengeProgress('sessions', 1);
+        questStoreState.updateWeeklyChallengeProgress('focus_time', completedMinutes);
+        if (shieldAttempts === 0 && state.hasAppsConfigured) {
+          questStoreState.updateDailyChallengeProgress('perfect_focus', 1);
+          questStoreState.updateWeeklyChallengeProgress('perfect_focus', 1);
+        }
+        // For streak-type weekly challenges, set progress to current streak value
+        const currentStreak = useStreakStore.getState().currentStreak;
+        if (currentStreak > 0) {
+          const wc = questStoreState.getWeeklyChallenge();
+          if (wc && !wc.completed) {
+            const template = WEEKLY_CHALLENGES.find(c => c.id === wc.templateId);
+            if (template?.objectiveType === 'streak' && currentStreak > wc.progress) {
+              questStoreState.updateWeeklyChallengeProgress('streak', currentStreak - wc.progress);
+            }
+          }
+        }
+      }
+
       // Generate a session egg reward for work sessions (≥25 min)
       if (state.timerState.sessionType !== 'break' && completedMinutes >= 25) {
         try {
@@ -404,6 +447,28 @@ export const useTimerLogic = () => {
         setLastCoinsEarned(coinsEarned);
         setLastSessionTaskLabel(state.timerState.taskLabel);
         setLastSessionDuration(actualSeconds);
+
+        // Compute quest deltas by comparing snapshot to current state
+        const currentQuests = useQuestStore.getState().quests;
+        const deltas: QuestDelta[] = [];
+        for (const snap of questSnapshot) {
+          const current = currentQuests.find(q => q.id === snap.id);
+          if (!current) continue;
+          const newPct = current.objectives.length > 0
+            ? current.objectives.reduce((sum, o) => sum + Math.min(o.current / o.target, 1), 0) / current.objectives.length * 100
+            : 0;
+          if (newPct > snap.pct || current.isCompleted) {
+            deltas.push({
+              name: snap.title,
+              oldPct: snap.pct,
+              newPct,
+              completed: current.isCompleted,
+            });
+          }
+        }
+        setLastQuestDeltas(deltas);
+        setLastStreakDay(useStreakStore.getState().currentStreak);
+
         setShowSessionComplete(true);
       } else {
         toast.info('Break Complete!', {
@@ -635,6 +700,8 @@ export const useTimerLogic = () => {
     lastCoinsEarned,
     lastSessionTaskLabel,
     lastSessionDuration,
+    lastQuestDeltas,
+    lastStreakDay,
     autoBreakEnabled,
 
     // Actions

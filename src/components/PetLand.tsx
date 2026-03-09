@@ -20,6 +20,11 @@ import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
 import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
 import { WeatherParticles, getTimePeriod, getWeatherType, getSkyColors } from '@/components/WeatherParticles';
+import { useIslandAmbientEnabled, useIslandAmbientVolume } from '@/stores/soundStore';
+import { useXPStore } from '@/stores/xpStore';
+import { useStreakStore } from '@/stores/streakStore';
+import { toPng } from 'html-to-image';
+import { toast } from 'sonner';
 import type { LandCell } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
@@ -491,7 +496,80 @@ function useIslandParallax() {
   };
 }
 
+/** Plays a soft ambient brown noise on the island when enabled */
+function useIslandAmbientAudio() {
+  const enabled = useIslandAmbientEnabled();
+  const volume = useIslandAmbientVolume();
+  const contextRef = useRef<AudioContext | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
+
+  useEffect(() => {
+    if (!enabled) {
+      if (sourceRef.current) {
+        sourceRef.current.stop();
+        sourceRef.current = null;
+      }
+      if (contextRef.current) {
+        contextRef.current.close();
+        contextRef.current = null;
+      }
+      return;
+    }
+
+    try {
+      const ctx = new AudioContext();
+      contextRef.current = ctx;
+
+      // Generate brown noise buffer (2 seconds, looped)
+      const sampleRate = ctx.sampleRate;
+      const bufferSize = sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, sampleRate);
+      const data = buffer.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        last = (last + 0.02 * white) / 1.02;
+        data[i] = last * 3.5; // normalize
+      }
+
+      const gain = ctx.createGain();
+      gain.gain.value = (volume / 100) * 0.15; // keep it very soft
+      gain.connect(ctx.destination);
+      gainRef.current = gain;
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      source.connect(gain);
+      source.start();
+      sourceRef.current = source;
+    } catch {
+      // Web Audio not available
+    }
+
+    return () => {
+      if (sourceRef.current) {
+        try { sourceRef.current.stop(); } catch { /* noop */ }
+        sourceRef.current = null;
+      }
+      if (contextRef.current) {
+        try { contextRef.current.close(); } catch { /* noop */ }
+        contextRef.current = null;
+      }
+    };
+  }, [enabled]);
+
+  // Update volume without recreating the audio
+  useEffect(() => {
+    if (gainRef.current) {
+      gainRef.current.gain.value = (volume / 100) * 0.15;
+    }
+  }, [volume]);
+}
+
 export const PetLand = () => {
+  useIslandAmbientAudio();
   const currentLand = useLandStore((s) => s.currentLand);
   const filledCount = useLandStore((s) => s.getFilledCount)();
   const lastPlacedIndex = useLandStore((s) => s.lastPlacedIndex);
@@ -513,6 +591,91 @@ export const PetLand = () => {
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [celebrationBurst, setCelebrationBurst] = useState(false);
+  const [shareFlash, setShareFlash] = useState(false);
+  const islandCaptureRef = useRef<HTMLDivElement>(null);
+
+  const handleShareIsland = useCallback(async () => {
+    const captureEl = islandCaptureRef.current;
+    if (!captureEl || filledCount === 0) return;
+
+    haptic('light');
+    setShareFlash(true);
+    setTimeout(() => setShareFlash(false), 400);
+
+    try {
+      const level = useXPStore.getState().currentLevel;
+      const streak = useStreakStore.getState().currentStreak;
+      const petCountForShare = filledCount;
+
+      const dataUrl = await toPng(captureEl, {
+        pixelRatio: 2,
+        backgroundColor: undefined,
+        width: captureEl.offsetWidth,
+        height: captureEl.offsetHeight,
+      });
+
+      // Create a canvas to add stats overlay
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = reject;
+      });
+
+      const size = Math.max(img.width, img.height);
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d')!;
+
+      // Center the island capture in a square
+      const offsetX = (size - img.width) / 2;
+      const offsetY = (size - img.height) / 2;
+      ctx.drawImage(img, offsetX, offsetY);
+
+      // Stats banner at bottom
+      const bannerHeight = 60;
+      const bannerY = size - bannerHeight;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fillRect(0, bannerY, size, bannerHeight);
+
+      ctx.font = 'bold 24px -apple-system, "SF Pro Display", sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const statsText = `Lv.${level} · ${petCountForShare} Pets · ${streak}-day Streak`;
+      ctx.fillText(statsText, size / 2, bannerY + bannerHeight / 2 - 2);
+
+      // Small watermark
+      ctx.font = '12px -apple-system, "SF Pro Display", sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.textAlign = 'right';
+      ctx.fillText('PhoNo', size - 12, bannerY + bannerHeight - 10);
+
+      const shareDataUrl = canvas.toDataURL('image/png');
+
+      if (navigator.share) {
+        const blob = await (await fetch(shareDataUrl)).blob();
+        const file = new File([blob], 'my-island.png', { type: 'image/png' });
+        await navigator.share({
+          title: 'My PhoNo Island',
+          text: `Lv.${level} · ${petCountForShare} Pets · ${streak}-day Streak`,
+          files: [file],
+        });
+      } else {
+        // Fallback: download the image
+        const link = document.createElement('a');
+        link.download = 'my-island.png';
+        link.href = shareDataUrl;
+        link.click();
+        toast.success('Island saved!', { description: 'Image downloaded' });
+      }
+    } catch (e) {
+      if ((e as Error)?.name !== 'AbortError') {
+        toast.error("Couldn't capture island");
+      }
+    }
+  }, [filledCount, haptic]);
 
   // Listen for help open event from TopStatusBar
   useEffect(() => {
@@ -729,6 +892,14 @@ export const PetLand = () => {
         <WeatherParticles timePeriod={timePeriod} weather={weather} />
       </div>
 
+      {/* Share flash overlay */}
+      {shareFlash && (
+        <div
+          className="pet-land__share-flash"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Zzz particles for sleepy/lonely mood */}
       {zzzParticles.map(z => (
         <div
@@ -810,6 +981,7 @@ export const PetLand = () => {
         >
           {/* Island scaler — tier growth animation */}
           <div
+            ref={islandCaptureRef}
             className="pet-land__island-scaler"
             style={{ transform: `scale(${tierScale})` }}
           >
@@ -920,6 +1092,21 @@ export const PetLand = () => {
           </span>
           <span className="pet-land__milestone-sub">Your island is expanding</span>
         </div>
+      )}
+
+      {/* Share island button */}
+      {filledCount > 0 && (
+        <button
+          className="pet-land__share-btn"
+          onClick={handleShareIsland}
+          aria-label="Share island screenshot"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
+            <polyline points="16 6 12 2 8 6" />
+            <line x1="12" y1="2" x2="12" y2="15" />
+          </svg>
+        </button>
       )}
 
       {/* Theme switcher */}

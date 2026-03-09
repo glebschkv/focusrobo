@@ -7,6 +7,7 @@ import { Volume2, VolumeX, Music, Play, Leaf, Sparkles, MousePointerClick } from
 import { cn } from "@/lib/utils";
 import { setClickSoundEnabled } from "@/hooks/useClickSound";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useSoundStore, useIslandAmbientEnabled } from "@/stores/soundStore";
 
 interface SettingsSoundProps {
   settings: AppSettings;
@@ -108,6 +109,33 @@ export const SettingsSound = ({ settings, onUpdate }: SettingsSoundProps) => {
             onCheckedChange={(checked) => { setClickSoundOn(checked); setClickSoundEnabled(checked); }}
           />
         </div>
+      </div>
+      {/* Island Ambient Sound */}
+      <IslandAmbientToggle />
+    </div>
+  );
+};
+
+const IslandAmbientToggle = () => {
+  const islandAmbientEnabled = useIslandAmbientEnabled();
+  const setEnabled = useSoundStore((s) => s.setIslandAmbientEnabled);
+
+  return (
+    <div className="settings-card">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={cn("settings-icon-box", islandAmbientEnabled ? "settings-icon-box--active" : "settings-icon-box--inactive")}>
+            <Leaf className="w-4 h-4" />
+          </div>
+          <div>
+            <Label className="text-sm font-bold text-[hsl(var(--foreground))]">Island Ambiance</Label>
+            <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Soft nature sounds on home screen</p>
+          </div>
+        </div>
+        <Switch
+          checked={islandAmbientEnabled}
+          onCheckedChange={setEnabled}
+        />
       </div>
     </div>
   );
