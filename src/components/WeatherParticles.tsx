@@ -1,0 +1,194 @@
+/**
+ * WeatherParticles — Lightweight weather effects for the island sky.
+ * Rain, cherry blossoms, fireflies, or stars depending on time + seed.
+ */
+
+import { useMemo } from 'react';
+
+export type WeatherType = 'clear' | 'rain' | 'petals' | 'fireflies';
+export type TimePeriod = 'dawn' | 'day' | 'dusk' | 'night';
+
+/** Deterministic seed from date string */
+function hashDate(dateStr: string): number {
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+/** Seeded pseudo-random from hash */
+function seededRandom(seed: number, index: number): number {
+  const x = Math.sin(seed + index * 9301 + 49297) * 49297;
+  return x - Math.floor(x);
+}
+
+export function getTimePeriod(): TimePeriod {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 7) return 'dawn';
+  if (hour >= 7 && hour < 17) return 'day';
+  if (hour >= 17 && hour < 20) return 'dusk';
+  return 'night';
+}
+
+export function getWeatherType(timePeriod: TimePeriod): WeatherType {
+  const seed = hashDate(new Date().toDateString());
+  const roll = seededRandom(seed, 0);
+  if (roll < 0.10) return 'rain';
+  if (roll < 0.15) return 'petals';
+  if (roll < 0.20 && timePeriod === 'night') return 'fireflies';
+  return 'clear';
+}
+
+export function getSkyColors(timePeriod: TimePeriod) {
+  switch (timePeriod) {
+    case 'dawn':
+      return ['#F4B183', '#F9D5A7', '#D0EAF5', '#EEF4F0'];
+    case 'dusk':
+      return ['#E8857A', '#F0B088', '#C5A0D0', '#E8E0F0'];
+    case 'night':
+      return ['#1a1a3e', '#2d2d5e', '#1e3a5f', '#0d1b2a'];
+    default:
+      return null; // Use theme default
+  }
+}
+
+interface WeatherParticlesProps {
+  timePeriod: TimePeriod;
+  weather: WeatherType;
+}
+
+export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps) => {
+  const particles = useMemo(() => {
+    const seed = hashDate(new Date().toDateString());
+
+    // Stars for night
+    if (timePeriod === 'night') {
+      return Array.from({ length: 20 }, (_, i) => ({
+        type: 'star' as const,
+        key: `star-${i}`,
+        left: `${seededRandom(seed, i * 3) * 95}%`,
+        top: `${seededRandom(seed, i * 3 + 1) * 60}%`,
+        delay: `${seededRandom(seed, i * 3 + 2) * 4}s`,
+        duration: `${2 + seededRandom(seed, i * 5) * 3}s`,
+      }));
+    }
+    return [];
+  }, [timePeriod]);
+
+  const weatherParticles = useMemo(() => {
+    const seed = hashDate(new Date().toDateString());
+
+    switch (weather) {
+      case 'rain':
+        return Array.from({ length: 15 }, (_, i) => ({
+          type: 'rain' as const,
+          key: `rain-${i}`,
+          left: `${seededRandom(seed, i * 7) * 100}%`,
+          delay: `${seededRandom(seed, i * 7 + 1) * 2}s`,
+          duration: `${1 + seededRandom(seed, i * 7 + 2)}s`,
+        }));
+      case 'petals':
+        return Array.from({ length: 10 }, (_, i) => ({
+          type: 'petal' as const,
+          key: `petal-${i}`,
+          left: `${seededRandom(seed, i * 11) * 100}%`,
+          delay: `${seededRandom(seed, i * 11 + 1) * 5}s`,
+          duration: `${3 + seededRandom(seed, i * 11 + 2) * 3}s`,
+        }));
+      case 'fireflies':
+        return Array.from({ length: 8 }, (_, i) => ({
+          type: 'firefly' as const,
+          key: `fly-${i}`,
+          left: `${10 + seededRandom(seed, i * 13) * 80}%`,
+          top: `${20 + seededRandom(seed, i * 13 + 1) * 50}%`,
+          delay: `${seededRandom(seed, i * 13 + 2) * 4}s`,
+          duration: `${3 + seededRandom(seed, i * 13 + 3) * 3}s`,
+        }));
+      default:
+        return [];
+    }
+  }, [weather]);
+
+  return (
+    <>
+      {/* Stars */}
+      {particles.map(p => (
+        <div
+          key={p.key}
+          className="weather-star"
+          style={{
+            left: p.left,
+            top: p.top,
+            animationDelay: p.delay,
+            animationDuration: p.duration,
+          }}
+        />
+      ))}
+
+      {/* Weather effects */}
+      {weatherParticles.map(p => {
+        if (p.type === 'rain') {
+          return (
+            <div
+              key={p.key}
+              className="weather-rain"
+              style={{
+                left: p.left,
+                animationDelay: p.delay,
+                '--rain-dur': p.duration,
+              } as React.CSSProperties}
+            />
+          );
+        }
+        if (p.type === 'petal') {
+          return (
+            <div
+              key={p.key}
+              className="weather-petal"
+              style={{
+                left: p.left,
+                animationDelay: p.delay,
+                '--petal-dur': p.duration,
+              } as React.CSSProperties}
+            />
+          );
+        }
+        if (p.type === 'firefly') {
+          return (
+            <div
+              key={p.key}
+              className="weather-firefly"
+              style={{
+                left: p.left,
+                top: (p as any).top,
+                animationDelay: p.delay,
+                '--firefly-dur': p.duration,
+              } as React.CSSProperties}
+            />
+          );
+        }
+        return null;
+      })}
+
+      {/* Moon for night */}
+      {timePeriod === 'night' && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '8%',
+            right: '12%',
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 40% 40%, #fffde7, #ffd54f)',
+            boxShadow: '0 0 12px rgba(255, 213, 79, 0.4)',
+            zIndex: 3,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+    </>
+  );
+};

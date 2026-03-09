@@ -11,6 +11,7 @@ import { EGG_TYPES, SPECIES_SELECTOR_DISCOVERED_PRICE, SPECIES_SELECTOR_UNDISCOV
 import type { EggType } from '@/data/EggData';
 import type { PetRarity } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
+import type { PendingPet } from '@/stores/landStore';
 import { useCoinSystem } from '@/hooks/useCoinSystem';
 import { useCurrentLevel } from '@/stores/xpStore';
 import { usePremiumStatus } from '@/hooks/usePremiumStatus';
@@ -18,6 +19,7 @@ import { getEggDiscountedPrice } from '@/hooks/useShop';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 import { SpeciesSelectorModal } from '../SpeciesSelectorModal';
+import { EggHatchAnimation } from '../EggHatchAnimation';
 
 import { RARITY_DOT_COLORS, RARITY_CARD_CLASS, RARITY_STRIP_COLORS } from '../styles';
 
@@ -38,6 +40,7 @@ interface EggsTabProps {
 export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const [hatching, setHatching] = useState(false);
   const [selectorOpen, setSelectorOpen] = useState(false);
+  const [hatchResult, setHatchResult] = useState<{ eggRarity: string; pet: PendingPet } | null>(null);
   const hatchEgg = useLandStore((s) => s.hatchEgg);
   const selectSpecies = useLandStore((s) => s.selectSpecies);
   const placePendingPet = useLandStore((s) => s.placePendingPet);
@@ -84,19 +87,23 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       const spent = await coinSystem.spendCoins(effectivePrice, 'shop_purchase');
       if (!spent) {
         toast.error('Purchase failed!');
+        setHatching(false);
         return;
       }
       const pet = hatchEgg(egg, currentLevel);
       placePendingPet();
       playSoundEffect('purchase');
-      toast.success(`Hatched a ${pet.rarity} ${pet.petId}!`, {
-        description: 'A new friend has arrived on your island!',
-      });
+      // Show hatch animation instead of toast
+      setHatchResult({ eggRarity: egg.rarity, pet });
     } catch {
       toast.error('Something went wrong');
-    } finally {
       setHatching(false);
     }
+  };
+
+  const handleHatchClose = () => {
+    setHatchResult(null);
+    setHatching(false);
   };
 
   return (
@@ -172,6 +179,16 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
         speciesCatalog={speciesCatalog}
         playerLevel={currentLevel}
       />
+
+      {/* Egg Hatch Animation */}
+      {hatchResult && (
+        <EggHatchAnimation
+          isOpen={true}
+          onClose={handleHatchClose}
+          eggRarity={hatchResult.eggRarity}
+          result={hatchResult.pet}
+        />
+      )}
     </div>
   );
 };

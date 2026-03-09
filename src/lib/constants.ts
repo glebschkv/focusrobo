@@ -537,6 +537,19 @@ export const IOS_CONFIG = {
 } as const;
 
 // ============================================================================
+// PITY SYSTEM
+// ============================================================================
+
+export const PITY_CONFIG = {
+  /** After this many rolls without rare+, guarantee rare */
+  RARE_THRESHOLD: 15,
+  /** After this many rolls without epic+, guarantee epic */
+  EPIC_THRESHOLD: 40,
+  /** After this many rolls without legendary, guarantee legendary */
+  LEGENDARY_THRESHOLD: 80,
+} as const;
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 

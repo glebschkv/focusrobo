@@ -90,6 +90,7 @@ export const xpSystemSchema = z.preprocess(
     unlockedPets: safeArray(safeString(100), 500).default([]),
     currentZone: safeString(100).default('Assembly Line'),
     availableZones: safeArray(safeString(100), 50).default(['Assembly Line']),
+    prestigeLevel: safeNonNegativeInt.max(10).default(0),
   }),
 );
 

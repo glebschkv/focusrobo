@@ -11,7 +11,18 @@ import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
+import { usePrestigeLevel } from "@/stores/xpStore";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
+
+// ── Floating reward numbers ──────────────────────────────────────
+interface FloatingReward {
+  id: number;
+  type: 'coin' | 'xp';
+  amount: number;
+  offsetX: number;
+}
+
+let floatingId = 0;
 
 interface TopStatusBarProps {
   currentTab: string;
@@ -31,6 +42,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     streakData,
   } = useAppState();
   const coinSystem = useCoinSystem();
+  const prestigeLevel = usePrestigeLevel();
   const speciesCatalog = useSpeciesCatalog();
   const filledCount = useLandStore((s) => s.getFilledCount)();
   const currentLand = useLandStore((s) => s.currentLand);
@@ -55,16 +67,63 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     return () => clearTimeout(timer);
   }, [showPremiumNudge]);
 
+  // ── Floating reward numbers ──────────────────────────────────
+  const [floatingRewards, setFloatingRewards] = useState<FloatingReward[]>([]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { type, amount } = (e as CustomEvent).detail as { type: 'coin' | 'xp'; amount: number };
+      if (!amount || amount <= 0) return;
+      const id = ++floatingId;
+      const offsetX = Math.random() * 16 - 8;
+      setFloatingRewards(prev => {
+        const next = [...prev, { id, type, amount, offsetX }];
+        return next.length > 5 ? next.slice(-5) : next;
+      });
+      setTimeout(() => {
+        setFloatingRewards(prev => prev.filter(r => r.id !== id));
+      }, 1300);
+    };
+    window.addEventListener('reward-earned', handler);
+    return () => window.removeEventListener('reward-earned', handler);
+  }, []);
+
   if (currentTab !== "home") return null;
 
   const progress = getLevelProgress();
   const hasActiveStreak = streakData.currentStreak >= 3;
   const speciesFound = Object.keys(speciesCatalog).length;
 
+  // Streak risk warning: check if streak might be lost today
+  const streakRiskClass = (() => {
+    if (streakData.currentStreak <= 0) return '';
+    // Check if user has completed a session today
+    const lastSession = streakData.lastSessionDate;
+    const today = new Date().toDateString();
+    if (lastSession === today) return ''; // Already focused today
+    const hour = new Date().getHours();
+    if (hour >= 21) return 'streak-at-risk--urgent'; // After 9 PM
+    if (hour >= 18) return 'streak-at-risk'; // After 6 PM
+    return '';
+  })();
+
   return (
     <div className="status-bar-container">
       {/* Game-style unified top bar */}
-      <div className="game-top-bar">
+      <div className="game-top-bar" style={{ position: 'relative' }}>
+        {/* Floating reward numbers */}
+        {floatingRewards.map((r, i) => (
+          <span
+            key={r.id}
+            className={`floating-reward floating-reward--${r.type}`}
+            style={{
+              '--float-x': `${r.offsetX}px`,
+              animationDelay: `${i * 0.2}s`,
+            } as React.CSSProperties}
+          >
+            +{r.amount} {r.type === 'coin' ? 'coins' : 'XP'}
+          </span>
+        ))}
         {/* Chips row: level, coins, streak */}
         <div className="game-top-bar-chips">
         {/* Left section: Level */}
@@ -74,6 +133,23 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
             <PopoverTrigger asChild>
               <button className="level-badge-btn" aria-label="View stats">
                 <div className="level-badge-inner">
+                  {prestigeLevel > 0 && (
+                    <span className="prestige-stars" style={{ marginRight: '2px', display: 'inline-flex', gap: '1px' }}>
+                      {Array.from({ length: Math.min(prestigeLevel, 10) }, (_, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            fontSize: '7px',
+                            color: prestigeLevel >= 7
+                              ? 'hsl(var(--warning, 42 75% 52%))'
+                              : prestigeLevel >= 4
+                                ? 'hsl(var(--muted-foreground))'
+                                : 'hsl(30 60% 50%)',
+                          }}
+                        >★</span>
+                      ))}
+                    </span>
+                  )}
                   <span className="level-star">★</span>
                   <span className="level-number">{currentLevel}</span>
                 </div>
@@ -205,7 +281,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
         <div className="top-bar-right">
           <Popover open={streakOpen} onOpenChange={setStreakOpen}>
             <PopoverTrigger asChild>
-              <button className={`stat-chip streak-chip ${hasActiveStreak ? 'active' : ''}`} aria-label="View daily streak">
+              <button className={`stat-chip streak-chip ${hasActiveStreak ? 'active' : ''} ${streakRiskClass}`} aria-label="View daily streak">
                 <PixelIcon name="flame-streak" size={18} className="chip-icon streak-icon" />
                 <span className="chip-value">{streakData.currentStreak}</span>
               </button>
@@ -227,7 +303,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                   </div>
                 </div>
                 {hasActiveStreak && (
-                  <p className="text-[11px] text-center mt-2" style={{ color: 'hsl(20 70% 45%)' }}>
+                  <p className="text-[11px] text-center mt-2 text-primary">
                     Keep it up! Streaks boost your XP.
                   </p>
                 )}

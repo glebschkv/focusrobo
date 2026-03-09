@@ -383,6 +383,166 @@
     }
   }
 
+  /* ---- FLOATING REWARD NUMBERS ---- */
+
+  @keyframes float-reward {
+    0% {
+      opacity: 1;
+      transform: translateY(0) translateX(var(--float-x, 0px));
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-36px) translateX(var(--float-x, 0px));
+    }
+  }
+
+  .floating-reward {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    pointer-events: none;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    z-index: 100;
+    animation: float-reward 1.2s ease-out forwards;
+  }
+
+  .floating-reward--coin {
+    color: hsl(42 75% 52%);
+  }
+
+  .floating-reward--xp {
+    color: hsl(270 50% 60%);
+  }
+
+  /* ---- EGG HATCHING ---- */
+
+  @keyframes egg-hatch-wobble {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-8deg); }
+    40% { transform: rotate(8deg); }
+    60% { transform: rotate(-6deg); }
+    80% { transform: rotate(6deg); }
+  }
+
+  @keyframes burst-particle {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(0.3);
+    }
+  }
+
+  @keyframes egg-flash {
+    0% { opacity: 0; }
+    30% { opacity: 0.3; }
+    100% { opacity: 0; }
+  }
+
+  /* ---- PET TAP REACTIONS ---- */
+
+  @keyframes pet-tap-bounce {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-8px) scale(1.08); }
+    60% { transform: translateY(-2px) scale(1.02); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  @keyframes heart-float {
+    0% {
+      opacity: 1;
+      transform: translate(var(--hx, 0px), 0) scale(0.5);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--hx, 0px), -24px) scale(1);
+    }
+  }
+
+  /* ---- STREAK RISK WARNING ---- */
+
+  @keyframes streak-risk-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(0 65% 55% / 0);
+    }
+    50% {
+      box-shadow: 0 0 0 4px hsl(0 65% 55% / 0.25);
+    }
+  }
+
+  .streak-at-risk {
+    animation: streak-risk-pulse 2s ease-in-out infinite;
+  }
+
+  .streak-at-risk--urgent {
+    animation: streak-risk-pulse 1.2s ease-in-out infinite;
+    border-color: hsl(0 65% 55% / 0.4) !important;
+  }
+
+  /* ---- REDUCED MOTION: disable all new animations ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .floating-reward,
+    .streak-at-risk,
+    .streak-at-risk--urgent {
+      animation: none !important;
+    }
+
+    .floating-reward {
+      display: none;
+    }
+  }
+
+  /* ---- SESSION COMPLETE / EGG HATCH ANIMATIONS ---- */
+
+  @keyframes pet-reveal-bounce {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.15); opacity: 1; }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  .pet-reveal-bounce {
+    animation: pet-reveal-bounce 0.6s ease-out;
+  }
+
+  @keyframes egg-idle-wobble {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    15% { transform: rotate(-2deg) translateY(-1px); }
+    30% { transform: rotate(2deg) translateY(0); }
+    45% { transform: rotate(-1deg) translateY(-0.5px); }
+    60% { transform: rotate(1deg); }
+    75% { transform: rotate(0deg); }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* pet-hatch-bounce used by EggHatchAnimation reveal */
+  @keyframes pet-hatch-bounce {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pet-reveal-bounce {
+      animation: none !important;
+    }
+  }
+
   /* ---- LEGACY SUPPORT (keeping for backwards compatibility) ---- */
   .topbar-container {
     display: none;

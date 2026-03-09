@@ -18,9 +18,15 @@ export interface AmbientSoundState {
   volume: number;
 }
 
+export interface IslandAmbientState {
+  enabled: boolean;
+  volume: number;
+}
+
 interface SoundState {
   mixer: SoundMixerState;
   ambient: AmbientSoundState;
+  islandAmbient: IslandAmbientState;
   isPlaying: boolean;
 }
 
@@ -33,12 +39,15 @@ interface SoundStore extends SoundState {
   setAmbientSound: (soundId: string | null) => void;
   setAmbientVolume: (volume: number) => void;
   setPlaying: (playing: boolean) => void;
+  setIslandAmbientEnabled: (enabled: boolean) => void;
+  setIslandAmbientVolume: (volume: number) => void;
   resetSound: () => void;
 }
 
 const initialState: SoundState = {
   mixer: { layers: [], masterVolume: 70 },
   ambient: { selectedSoundId: null, volume: 70 },
+  islandAmbient: { enabled: false, volume: 30 },
   isPlaying: false,
 };
 
@@ -60,11 +69,13 @@ export const useSoundStore = create<SoundStore>()(
       setAmbientSound: (soundId) => set((s) => ({ ambient: { ...s.ambient, selectedSoundId: soundId } })),
       setAmbientVolume: (volume) => set((s) => ({ ambient: { ...s.ambient, volume } })),
       setPlaying: (playing) => set({ isPlaying: playing }),
+      setIslandAmbientEnabled: (enabled) => set((s) => ({ islandAmbient: { ...s.islandAmbient, enabled } })),
+      setIslandAmbientVolume: (volume) => set((s) => ({ islandAmbient: { ...s.islandAmbient, volume } })),
       resetSound: () => set(initialState),
     }),
     {
       name: 'nomo_sound',
-      partialize: (state) => ({ mixer: { layers: state.mixer.layers, masterVolume: state.mixer.masterVolume }, ambient: state.ambient }),
+      partialize: (state) => ({ mixer: { layers: state.mixer.layers, masterVolume: state.mixer.masterVolume }, ambient: state.ambient, islandAmbient: state.islandAmbient }),
       onRehydrateStorage: () => (state) => {
         if (!state) {
           try {
@@ -94,3 +105,5 @@ export const useMasterVolume = () => useSoundStore((s) => s.mixer.masterVolume);
 export const useAmbientSound = () => useSoundStore((s) => s.ambient.selectedSoundId);
 export const useAmbientVolume = () => useSoundStore((s) => s.ambient.volume);
 export const useIsSoundPlaying = () => useSoundStore((s) => s.isPlaying);
+export const useIslandAmbientEnabled = () => useSoundStore((s) => s.islandAmbient.enabled);
+export const useIslandAmbientVolume = () => useSoundStore((s) => s.islandAmbient.volume);

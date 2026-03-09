@@ -140,6 +140,8 @@ const landStoreSchema = z.object({
   wishedSpecies: z.union([z.string().max(100), z.null()]).default(null),
   speciesAffinity: z.record(z.string(), z.number().int().min(0)).default({}),
   lastOfflineCheck: z.number().min(0).default(Date.now()),
+  pityCounter: z.number().int().min(0).max(1000).default(0),
+  lastSessionTimestamp: z.number().min(0).default(0),
 });
 
 // ============================================================================
@@ -241,6 +243,8 @@ interface LandStoreState {
   wishedSpecies: string | null;
   speciesAffinity: Record<string, number>;
   lastOfflineCheck: number;
+  pityCounter: number;
+  lastSessionTimestamp: number;
   lastPlacedIndex: number | null;
   landJustCompleted: number | null;
   milestoneReached: number | null;
@@ -272,6 +276,7 @@ interface LandStoreActions {
   growPet: (cellIndex: number, targetSize: 'adolescent' | 'adult') => boolean;
   collectOfflineIncome: () => number;
   getDailyIncomeRate: () => number;
+  getIslandMood: () => 'happy' | 'neutral' | 'sleepy' | 'lonely';
   clearLastPlaced: () => void;
   clearLandCompleted: () => void;
   clearMilestone: () => void;
@@ -291,6 +296,8 @@ const initialState: LandStoreState = {
   wishedSpecies: null,
   speciesAffinity: {},
   lastOfflineCheck: Date.now(),
+  pityCounter: 0,
+  lastSessionTimestamp: 0,
   lastPlacedIndex: null,
   landJustCompleted: null,
   milestoneReached: null,
@@ -302,9 +309,13 @@ export const useLandStore = create<LandStore>()(
       ...initialState,
 
       generateRandomPet: (sessionMinutes: number, playerLevel: number, premiumBoost?: boolean) => {
-        const { wishedSpecies } = get();
-        const species = rollRandomPet(playerLevel, undefined, wishedSpecies, premiumBoost);
+        const { wishedSpecies, pityCounter } = get();
+        const species = rollRandomPet(playerLevel, undefined, wishedSpecies, premiumBoost, pityCounter);
         const size = getGrowthSize(sessionMinutes);
+
+        // Update pity counter: reset on rare+, increment otherwise
+        const isRarePlus = species.rarity === 'rare' || species.rarity === 'epic' || species.rarity === 'legendary';
+        const newPityCounter = isRarePlus ? 0 : pityCounter + 1;
 
         const pending: PendingPet = {
           petId: species.id,
@@ -313,7 +324,7 @@ export const useLandStore = create<LandStore>()(
           sessionMinutes,
         };
 
-        set({ pendingPet: pending });
+        set({ pendingPet: pending, pityCounter: newPityCounter });
         return pending;
       },
 
@@ -526,6 +537,7 @@ export const useLandStore = create<LandStore>()(
           speciesAffinity: newAffinity,
           pendingPet: null,
           lastPlacedIndex: cellIndex,
+          lastSessionTimestamp: Date.now(),
           ...(hit !== null ? { milestoneReached: hit } : {}),
         });
 
@@ -642,6 +654,16 @@ export const useLandStore = create<LandStore>()(
         return rate;
       },
 
+      getIslandMood: () => {
+        const { lastSessionTimestamp } = get();
+        if (lastSessionTimestamp === 0) return 'neutral';
+        const hoursSince = (Date.now() - lastSessionTimestamp) / (1000 * 60 * 60);
+        if (hoursSince < 6) return 'happy';
+        if (hoursSince < 24) return 'neutral';
+        if (hoursSince < 48) return 'sleepy';
+        return 'lonely';
+      },
+
       clearLastPlaced: () => {
         set({ lastPlacedIndex: null });
       },
@@ -676,6 +698,8 @@ export const useLandStore = create<LandStore>()(
         wishedSpecies: state.wishedSpecies,
         speciesAffinity: state.speciesAffinity,
         lastOfflineCheck: state.lastOfflineCheck,
+        pityCounter: state.pityCounter,
+        lastSessionTimestamp: state.lastSessionTimestamp,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
@@ -745,6 +769,8 @@ export const usePendingPet = () => useLandStore((s) => s.pendingPet);
 export const usePendingEgg = () => useLandStore((s) => s.pendingEgg);
 export const useOwnedThemes = () => useLandStore((s) => s.ownedThemes);
 export const useWishedSpecies = () => useLandStore((s) => s.wishedSpecies);
+export const usePityCounter = () => useLandStore((s) => s.pityCounter);
+export const useLastSessionTimestamp = () => useLandStore((s) => s.lastSessionTimestamp);
 
 export const useSpeciesCompletion = () => useLandStore((s) => {
   let totalVariants = 0;

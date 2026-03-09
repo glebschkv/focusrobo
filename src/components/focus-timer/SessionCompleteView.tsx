@@ -13,8 +13,15 @@ import { PixelIcon } from "@/components/ui/PixelIcon";
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useHaptics } from "@/hooks/useHaptics";
-import { getPetById, GROWTH_SCALES, RARITY_GLOW, type GrowthSize, type PetRarity, type EggTier } from "@/data/PetDatabase";
+import { getPetById, GROWTH_SCALES, RARITY_GLOW, RARITY_STYLES, type GrowthSize, type PetRarity, type EggTier } from "@/data/PetDatabase";
 import type { PendingPet, PendingEgg } from "@/stores/landStore";
+
+export interface QuestDelta {
+  name: string;
+  oldPct: number;
+  newPct: number;
+  completed: boolean;
+}
 
 interface SessionCompleteViewProps {
   isVisible: boolean;
@@ -38,6 +45,10 @@ interface SessionCompleteViewProps {
   taskLabel?: string;
   /** Whether break option is available */
   showBreakOption: boolean;
+  /** Quest progress deltas for impact summary */
+  questDeltas?: QuestDelta[];
+  /** Current streak day count */
+  streakDay?: number;
 }
 
 const MOOD_OPTIONS = [
@@ -54,10 +65,10 @@ const SIZE_LABELS: Record<GrowthSize, string> = {
   adult: 'Adult',
 };
 
-const SIZE_EMOJI: Record<GrowthSize, string> = {
-  baby: '\u{1F331}',
-  adolescent: '\u{1F33F}',
-  adult: '\u{1F333}',
+const SIZE_ICONS: Record<GrowthSize, string> = {
+  baby: 'sprout',
+  adolescent: 'four-leaf-clover',
+  adult: 'mushroom',
 };
 
 const EGG_SIZE_LABELS: Record<GrowthSize, string> = {
@@ -66,13 +77,12 @@ const EGG_SIZE_LABELS: Record<GrowthSize, string> = {
   adult: 'Large',
 };
 
-const RARITY_BADGE_COLORS: Record<PetRarity, { bg: string; text: string; border: string }> = {
-  common: { bg: 'hsl(140 6% 90%)', text: 'hsl(140 6% 40%)', border: 'hsl(140 6% 80%)' },
-  uncommon: { bg: 'hsl(160 40% 90%)', text: 'hsl(160 40% 35%)', border: 'hsl(160 40% 75%)' },
-  rare: { bg: 'hsl(200 60% 90%)', text: 'hsl(200 60% 35%)', border: 'hsl(200 60% 75%)' },
-  epic: { bg: 'hsl(270 50% 92%)', text: 'hsl(270 50% 40%)', border: 'hsl(270 50% 78%)' },
-  legendary: { bg: 'hsl(42 75% 90%)', text: 'hsl(42 75% 35%)', border: 'hsl(42 75% 70%)' },
-};
+/** Badge colors derived from shared RARITY_STYLES */
+const RARITY_BADGE_COLORS = Object.fromEntries(
+  (Object.entries(RARITY_STYLES) as [PetRarity, typeof RARITY_STYLES[PetRarity]][]).map(
+    ([key, style]) => [key, { bg: style.bg, text: style.text, border: style.border }]
+  )
+) as Record<PetRarity, { bg: string; text: string; border: string }>;
 
 /** Map egg tier to its icon name and rarity badge color key */
 const EGG_TIER_CONFIG: Record<EggTier, { icon: string; badgeKey: PetRarity; label: string }> = {
@@ -113,6 +123,8 @@ export const SessionCompleteView = ({
   onGoToIsland,
   taskLabel,
   showBreakOption,
+  questDeltas = [],
+  streakDay = 0,
 }: SessionCompleteViewProps) => {
   const [rating, setRating] = useState(3);
   const [notes, setNotes] = useState("");
@@ -121,7 +133,7 @@ export const SessionCompleteView = ({
   const [crackFrame, setCrackFrame] = useState(0);
   const prefersReducedMotion = useReducedMotion();
   const { haptic } = useHaptics();
-  const hatchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hatchTimerIds = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const animatedXP = useAnimatedCounter(xpEarned, prefersReducedMotion ? 0 : 900, isVisible);
   const animatedCoins = useAnimatedCounter(coinsEarned, prefersReducedMotion ? 0 : 700, isVisible);
@@ -154,26 +166,30 @@ export const SessionCompleteView = ({
     const totalDuration = prefersReducedMotion ? 300 : HATCH_DURATIONS[tier];
     const frameDelay = totalDuration / 4; // 3 crack frames + final hatch
 
+    // Clear any previous timers
+    hatchTimerIds.current.forEach(clearTimeout);
+    hatchTimerIds.current = [];
+
     // Frame 1 (small cracks)
-    hatchTimerRef.current = setTimeout(() => {
+    hatchTimerIds.current.push(setTimeout(() => {
       setCrackFrame(1);
-    }, frameDelay);
+    }, frameDelay));
 
     // Frame 2 (bigger cracks)
-    setTimeout(() => {
+    hatchTimerIds.current.push(setTimeout(() => {
       setCrackFrame(2);
-    }, frameDelay * 2);
+    }, frameDelay * 2));
 
     // Frame 3 (fully cracked)
-    setTimeout(() => {
+    hatchTimerIds.current.push(setTimeout(() => {
       setCrackFrame(3);
       haptic('success');
-    }, frameDelay * 3);
+    }, frameDelay * 3));
 
     // Hatch! Pet emerges
-    setTimeout(() => {
+    hatchTimerIds.current.push(setTimeout(() => {
       onHatchEgg();
-    }, totalDuration);
+    }, totalDuration));
   }, [pendingSessionEgg, eggPhase, haptic, onHatchEgg, prefersReducedMotion]);
 
   // Trigger hatch animation automatically after egg appears
@@ -197,7 +213,8 @@ export const SessionCompleteView = ({
   // Cleanup timers
   useEffect(() => {
     return () => {
-      if (hatchTimerRef.current) clearTimeout(hatchTimerRef.current);
+      hatchTimerIds.current.forEach(clearTimeout);
+      hatchTimerIds.current = [];
     };
   }, []);
 
@@ -477,7 +494,7 @@ export const SessionCompleteView = ({
                           {petRarity}
                         </span>
                         <span className="text-[10px] text-muted-foreground font-medium">
-                          {SIZE_EMOJI[petSize!]} {SIZE_LABELS[petSize!]}
+                          <PixelIcon name={SIZE_ICONS[petSize!]} size={12} className="inline-block mr-0.5" /> {SIZE_LABELS[petSize!]}
                         </span>
                       </div>
                       <button
@@ -507,6 +524,74 @@ export const SessionCompleteView = ({
                     </span>
                     <span className="text-xs font-bold text-primary/70">Coins</span>
                   </div>
+                </motion.div>
+              )}
+
+              {/* Session Impact — quest progress + streak */}
+              {(questDeltas.length > 0 || streakDay > 0) && (
+                <motion.div
+                  className="rounded-xl border border-border bg-card p-4 space-y-3"
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={cardIndex++}
+                >
+                  <p className="text-xs font-bold text-foreground">Session Impact</p>
+
+                  {/* Quest progress rows */}
+                  {questDeltas.map((delta, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-medium text-foreground truncate flex-1 mr-2">
+                          {delta.name}
+                        </span>
+                        {delta.completed ? (
+                          <span
+                            className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
+                            style={{
+                              background: RARITY_STYLES.legendary.bg,
+                              color: RARITY_STYLES.legendary.text,
+                              border: `1px solid ${RARITY_STYLES.legendary.border}`,
+                            }}
+                          >
+                            Completed!
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground tabular-nums">
+                            {Math.round(delta.newPct)}%
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{
+                            background: delta.completed
+                              ? RARITY_STYLES.legendary.color
+                              : 'hsl(var(--primary))',
+                          }}
+                          initial={{ width: `${delta.oldPct}%` }}
+                          animate={{ width: `${Math.min(delta.newPct, 100)}%` }}
+                          transition={
+                            prefersReducedMotion
+                              ? { duration: 0 }
+                              : { duration: 0.5, delay: 0.15 * i, ease: [0.4, 0, 0.2, 1] }
+                          }
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Streak day */}
+                  {streakDay > 0 && (
+                    <div className="flex items-center gap-2 pt-1">
+                      <PixelIcon name="fire" size={16} />
+                      <span className="text-[11px] font-bold text-foreground">
+                        Day {streakDay}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">streak</span>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
@@ -617,40 +702,6 @@ export const SessionCompleteView = ({
             </div>
           </motion.div>
 
-          {/* Animations */}
-          <style>{`
-            @keyframes pet-reveal-bounce {
-              0% { transform: scale(0.3); opacity: 0; }
-              50% { transform: scale(1.15); opacity: 1; }
-              70% { transform: scale(0.95); }
-              100% { transform: scale(1); }
-            }
-            @keyframes egg-idle-wobble {
-              0%, 100% { transform: rotate(0deg) translateY(0); }
-              15% { transform: rotate(-2deg) translateY(-1px); }
-              30% { transform: rotate(2deg) translateY(0); }
-              45% { transform: rotate(-1deg) translateY(-0.5px); }
-              60% { transform: rotate(1deg); }
-              75% { transform: rotate(0deg); }
-            }
-            @keyframes egg-hatch-wobble {
-              0% { transform: rotate(0deg); }
-              15% { transform: rotate(-6deg); }
-              30% { transform: rotate(6deg); }
-              45% { transform: rotate(-8deg); }
-              60% { transform: rotate(8deg); }
-              75% { transform: rotate(-4deg); }
-              100% { transform: rotate(0deg); }
-            }
-            @keyframes sparkle {
-              0%, 100% { opacity: 0; transform: scale(0); }
-              50% { opacity: 1; transform: scale(1); }
-            }
-            @keyframes pulse {
-              0%, 100% { opacity: 0.6; }
-              50% { opacity: 1; }
-            }
-          `}</style>
         </motion.div>
       )}
     </AnimatePresence>

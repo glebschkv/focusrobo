@@ -391,6 +391,13 @@ export const useXPSystem = () => {
 
     syncToBackend(newTotalXP, newLevel, validMinutes, xpGained);
 
+    // Dispatch floating reward event for TopStatusBar
+    if (xpGained > 0) {
+      window.dispatchEvent(new CustomEvent('reward-earned', {
+        detail: { type: 'xp', amount: xpGained },
+      }));
+    }
+
     return {
       xpGained, baseXP, bonusXP,
       bonusMultiplier: bonus.bonusMultiplier,
@@ -449,6 +456,13 @@ export const useXPSystem = () => {
     });
 
     syncToBackend(newTotalXP, newLevel);
+
+    // Dispatch floating reward event for TopStatusBar
+    if (validAmount > 0) {
+      window.dispatchEvent(new CustomEvent('reward-earned', {
+        detail: { type: 'xp', amount: validAmount },
+      }));
+    }
 
     return {
       xpGained: validAmount, baseXP: validAmount, bonusXP: 0,
