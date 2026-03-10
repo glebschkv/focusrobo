@@ -13,6 +13,7 @@
   --z-progress: 30;
   --z-burst: 40;
   --z-milestone: 45;
+  --z-empty-tiles: 49;
   --z-buttons: 50;
   --z-land-complete: 55;
   --z-theme-picker: 100;
@@ -1397,8 +1398,8 @@
 
 .pet-land__share-btn {
   position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 136px);
-  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--dock-offset, 82px) + 68px);
+  right: 16px;
   z-index: var(--z-buttons);
   width: 40px;
   height: 40px;
@@ -1439,121 +1440,7 @@
   100% { opacity: 0; }
 }
 
-/* ── Theme Switcher ────────────────────────────────────────────── */
-
-.pet-land__theme-btn {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
-  right: 12px;
-  z-index: var(--z-buttons);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(50, 60, 55, 0.7);
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.pet-land__theme-btn:active {
-  transform: scale(0.92);
-}
-
-.pet-land__theme-picker {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-theme-picker);
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
-  background: rgba(0, 0, 0, 0.15);
-  animation: pet-land-picker-backdrop 0.2s ease-out;
-  cursor: pointer;
-}
-
-@keyframes pet-land-picker-backdrop {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.pet-land__theme-strip {
-  display: flex;
-  gap: 8px;
-  padding: 14px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  animation: pet-land-strip-slide 0.25s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-@keyframes pet-land-strip-slide {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.pet-land__theme-chip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 10px;
-  min-height: 44px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background: rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  flex-shrink: 0;
-  min-width: 60px;
-  transition: border-color 0.15s;
-  touch-action: manipulation;
-  position: relative;
-}
-
-.pet-land__theme-chip--active {
-  border-color: hsl(150 40% 45%);
-  background: rgba(100, 180, 100, 0.1);
-}
-
-.pet-land__theme-chip--locked {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.pet-land__theme-swatch {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.pet-land__theme-name {
-  font-size: 10px;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-  white-space: nowrap;
-}
-
-.pet-land__theme-lock {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  color: hsl(var(--muted-foreground));
-  opacity: 0.6;
-  line-height: 1;
-}
+/* Theme Switcher moved to Settings > Appearance */
 
 /* ── Help overlay (bottom sheet style) ──────────────────────────── */
 
@@ -1752,11 +1639,9 @@
    FOCUS-VISIBLE — keyboard navigation rings
    ═══════════════════════════════════════════════════════════════ */
 
-.pet-land__theme-btn:focus-visible,
 .pet-land__nudge:focus-visible,
 .pet-land__empty-cta:focus-visible,
-.pet-land__help-close:focus-visible,
-.pet-land__theme-chip:focus-visible {
+.pet-land__help-close:focus-visible {
   outline: 2px solid hsl(142 60% 45%);
   outline-offset: 2px;
 }
@@ -2044,27 +1929,32 @@
   50% { border-color: rgba(255, 255, 255, 0.2); }
 }
 
-/* Empty tile tap targets (shown in decor mode) */
-.island-empty-tile {
+/* Decoration placement mode — dim pets when selecting decoration */
+.pet-land--decor-active .island-pet {
+  opacity: 0.45;
+  transition: opacity 0.3s ease;
+}
+
+/* Ghost preview — shows where decoration will be placed */
+.island-ghost-preview {
   position: absolute;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
-  border: 2px dashed rgba(74, 222, 128, 0.5);
-  border-radius: 6px;
-  background: rgba(74, 222, 128, 0.08);
-  cursor: pointer;
-  animation: empty-tile-pulse 2s ease-in-out infinite;
-  -webkit-tap-highlight-color: transparent;
+  pointer-events: none;
+  z-index: var(--z-empty-tiles, 49);
+  opacity: 0.6;
+  filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.5));
+  animation: ghost-preview-pulse 1.5s ease-in-out infinite;
 }
 
-.island-empty-tile:active {
-  background: rgba(74, 222, 128, 0.2);
+.island-ghost-preview__sprite {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
-@keyframes empty-tile-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+@keyframes ghost-preview-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
 }
 
 /* ── Decorate button ────────────────────────────────────────── */
@@ -2351,10 +2241,261 @@
   transform: scale(0.95);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Island Switcher — horizontal pill bar for archipelago
+   ═══════════════════════════════════════════════════════════════════ */
+
+.island-switcher {
+  position: absolute;
+  top: calc(var(--status-bar-height, 56px) + 32px);
+  left: 0;
+  right: 0;
+  z-index: var(--z-buttons);
+  pointer-events: none;
+}
+
+.island-switcher__scroll {
+  display: flex;
+  gap: 6px;
+  padding: 0 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+
+.island-switcher__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.island-switcher__pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-switcher__pill--active {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: hsl(150 40% 45%);
+  box-shadow: 0 2px 8px rgba(74, 222, 128, 0.2);
+}
+
+.island-switcher__pill--locked {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.island-switcher__pill--complete {
+  border-color: rgba(234, 179, 8, 0.5);
+}
+
+.island-switcher__pill:active:not(.island-switcher__pill--locked) {
+  transform: scale(0.95);
+}
+
+.island-switcher__icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.island-switcher__name {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.island-switcher__lock {
+  color: hsl(var(--muted-foreground));
+  flex-shrink: 0;
+}
+
+.island-switcher__pct {
+  font-size: 9px;
+  font-weight: 700;
+  color: hsl(150 40% 40%);
+  background: rgba(74, 222, 128, 0.12);
+  padding: 1px 4px;
+  border-radius: 6px;
+}
+
+.island-switcher__check {
+  color: hsl(45 90% 45%);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Island Unlock Modal
+   ═══════════════════════════════════════════════════════════════════ */
+
+.island-unlock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  animation: pet-land-picker-backdrop 0.2s ease-out;
+  padding: 24px;
+}
+
+.island-unlock-modal {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: island-unlock-pop 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes island-unlock-pop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.island-unlock-modal__preview {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.island-unlock-modal__icon {
+  font-size: 48px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+}
+
+.island-unlock-modal__content {
+  padding: 20px;
+  text-align: center;
+}
+
+.island-unlock-modal__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  margin: 0 0 6px;
+}
+
+.island-unlock-modal__desc {
+  font-size: 13px;
+  color: hsl(var(--muted-foreground));
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.island-unlock-modal__reqs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.island-unlock-modal__req {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(0 60% 50%);
+}
+
+.island-unlock-modal__req--met {
+  color: hsl(142 60% 40%);
+}
+
+.island-unlock-modal__bonus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  margin-bottom: 16px;
+}
+
+.island-unlock-modal__bonus-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+}
+
+.island-unlock-modal__bonus-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(45 90% 35%);
+}
+
+.island-unlock-modal__btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: hsl(150 40% 45%);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  touch-action: manipulation;
+}
+
+.island-unlock-modal__btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.island-unlock-modal__btn--disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.island-unlock-modal__cost {
+  font-weight: 800;
+}
+
+.island-unlock-modal__need {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.island-unlock-modal__close {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .island-decoration--sways .island-decoration__sprite,
   .island-decoration--edit::after,
-  .island-empty-tile {
+  .island-ghost-preview {
     animation: none;
   }
 }

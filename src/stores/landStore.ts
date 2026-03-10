@@ -89,6 +89,18 @@ export interface PendingEgg {
   playerLevel: number;
 }
 
+/** An island in the archipelago — wraps a Land with biome and unlock state */
+export interface ArchipelagoIsland {
+  /** Island definition ID (e.g., 'home', 'coral-reef') */
+  islandId: string;
+  /** The land data (grid, cells, etc.) */
+  land: Land;
+  /** Whether the player has unlocked this island */
+  isUnlocked: boolean;
+  /** Whether the player has purchased (paid coins for) this island */
+  isPurchased: boolean;
+}
+
 // ============================================================================
 // Constants
 // ============================================================================
@@ -124,7 +136,8 @@ const landSchema = z.object({
   theme: z.string().max(100),
   // Accept both old 100-cell and new 400-cell arrays, including decoration cells
   cells: z.array(anyCellSchema).max(LAND_SIZE),
-  gridSize: z.number().int().min(MIN_GRID_TIER).max(MAX_GRID_TIER).default(MIN_GRID_TIER),
+  // Accept up to 20 for backward compat with old data; migration caps at MAX_GRID_TIER
+  gridSize: z.number().int().min(MIN_GRID_TIER).max(20).default(MIN_GRID_TIER),
   startedAt: z.number().min(0),
   completedAt: z.union([z.number().min(0), z.null()]),
   totalFocusMinutes: z.number().min(0),
@@ -151,6 +164,13 @@ const pendingEggSchema = z.object({
   playerLevel: z.number().int().min(0).max(50),
 });
 
+const archipelagoIslandSchema = z.object({
+  islandId: z.string().max(100),
+  land: landSchema,
+  isUnlocked: z.boolean(),
+  isPurchased: z.boolean(),
+});
+
 const landStoreSchema = z.object({
   currentLand: landSchema,
   completedLands: z.array(landSchema).max(1000),
@@ -165,6 +185,8 @@ const landStoreSchema = z.object({
   pityCounter: z.number().int().min(0).max(1000).default(0),
   lastSessionTimestamp: z.number().min(0).default(0),
   decorationInventory: z.record(z.string(), z.number().int().min(0)).default({}),
+  archipelago: z.array(archipelagoIslandSchema).max(20).default([]),
+  activeIslandIndex: z.number().int().min(0).max(20).default(0),
 });
 
 // ============================================================================
@@ -273,6 +295,10 @@ interface LandStoreState {
   milestoneReached: number | null;
   /** Decoration inventory: decorationId → quantity owned (unplaced) */
   decorationInventory: Record<string, number>;
+  /** Archipelago islands */
+  archipelago: ArchipelagoIsland[];
+  /** Currently active island index in archipelago */
+  activeIslandIndex: number;
 }
 
 interface PetChoice {
@@ -312,6 +338,11 @@ interface LandStoreActions {
   removeDecoration: (cellIndex: number) => boolean;
   moveDecoration: (fromIndex: number, toIndex: number) => boolean;
   getDecorationCount: () => number;
+  // Archipelago actions
+  switchIsland: (index: number) => void;
+  unlockIsland: (index: number) => boolean;
+  getActiveIsland: () => ArchipelagoIsland | null;
+  getCompletedIslandBonuses: () => { type: string; value: number }[];
 }
 
 type LandStore = LandStoreState & LandStoreActions;
@@ -333,6 +364,8 @@ const initialState: LandStoreState = {
   landJustCompleted: null,
   milestoneReached: null,
   decorationInventory: {},
+  archipelago: [],
+  activeIslandIndex: 0,
 };
 
 export const useLandStore = create<LandStore>()(
@@ -786,6 +819,58 @@ export const useLandStore = create<LandStore>()(
         return get().currentLand.cells.filter(c => c !== null && 'decorationId' in c).length;
       },
 
+      // ── Archipelago actions ──────────────────────────────────────
+      switchIsland: (index: number) => {
+        const { archipelago } = get();
+        if (index < 0 || index >= archipelago.length) return;
+        const island = archipelago[index];
+        if (!island.isUnlocked || !island.isPurchased) return;
+        // Save current land back to archipelago, then switch
+        const { currentLand, activeIslandIndex } = get();
+        const updated = [...archipelago];
+        updated[activeIslandIndex] = { ...updated[activeIslandIndex], land: currentLand };
+        set({
+          archipelago: updated,
+          activeIslandIndex: index,
+          currentLand: island.land,
+        });
+      },
+
+      unlockIsland: (index: number) => {
+        const { archipelago } = get();
+        if (index < 0 || index >= archipelago.length) return false;
+        const island = archipelago[index];
+        if (island.isUnlocked && island.isPurchased) return false;
+        const updated = [...archipelago];
+        updated[index] = { ...island, isUnlocked: true, isPurchased: true };
+        set({ archipelago: updated });
+        return true;
+      },
+
+      getActiveIsland: () => {
+        const { archipelago, activeIslandIndex } = get();
+        return archipelago[activeIslandIndex] ?? null;
+      },
+
+      getCompletedIslandBonuses: () => {
+        const { archipelago } = get();
+        // Import would create circular dep, so inline the check
+        return archipelago
+          .filter(island => island.land.completedAt !== null)
+          .map(island => {
+            // Match island ID to known bonuses
+            const bonusMap: Record<string, { type: string; value: number }> = {
+              'coral-reef': { type: 'coinRate', value: 10 },
+              'snow-peak': { type: 'streakFreeze', value: 1 },
+              'desert-oasis': { type: 'xpBoost', value: 15 },
+              'moonlit-garden': { type: 'passiveCoins', value: 5 },
+              'sakura-valley': { type: 'eggDiscount', value: 25 },
+            };
+            return bonusMap[island.islandId];
+          })
+          .filter((b): b is { type: string; value: number } => b !== undefined);
+      },
+
       resetLand: () => {
         set(initialState);
       },
@@ -811,6 +896,8 @@ export const useLandStore = create<LandStore>()(
         pityCounter: state.pityCounter,
         lastSessionTimestamp: state.lastSessionTimestamp,
         decorationInventory: state.decorationInventory,
+        archipelago: state.archipelago,
+        activeIslandIndex: state.activeIslandIndex,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
@@ -868,6 +955,28 @@ export const useLandStore = create<LandStore>()(
         if (!state.decorationInventory) {
           state.decorationInventory = {};
         }
+        // Migrate: cap island at MAX_GRID_TIER (12). If existing island is
+        // larger, archive it and start a new one so players aren't stuck on
+        // an oversized island.
+        if (state.currentLand && state.currentLand.gridSize > MAX_GRID_TIER) {
+          const oldLand = state.currentLand;
+          oldLand.completedAt = Date.now();
+          state.completedLands = [...(state.completedLands ?? []), oldLand];
+          state.currentLand = createEmptyLand((state.completedLands?.length ?? 0) + 1, 'day');
+        }
+        // Migrate: initialize archipelago from currentLand if it doesn't exist yet
+        if (!state.archipelago || state.archipelago.length === 0) {
+          const ISLAND_IDS = ['home', 'coral-reef', 'snow-peak', 'desert-oasis', 'moonlit-garden', 'sakura-valley'];
+          state.archipelago = ISLAND_IDS.map((id, index) => ({
+            islandId: id,
+            land: index === 0
+              ? state.currentLand
+              : createEmptyLand(1, id),
+            isUnlocked: index === 0,
+            isPurchased: index === 0,
+          }));
+          state.activeIslandIndex = 0;
+        }
       },
     }
   )
@@ -886,6 +995,8 @@ export const useOwnedThemes = () => useLandStore((s) => s.ownedThemes);
 export const useWishedSpecies = () => useLandStore((s) => s.wishedSpecies);
 export const usePityCounter = () => useLandStore((s) => s.pityCounter);
 export const useLastSessionTimestamp = () => useLandStore((s) => s.lastSessionTimestamp);
+export const useArchipelago = () => useLandStore((s) => s.archipelago);
+export const useActiveIslandIndex = () => useLandStore((s) => s.activeIslandIndex);
 
 export const useSpeciesCompletion = () => useLandStore((s) => {
   let totalVariants = 0;
