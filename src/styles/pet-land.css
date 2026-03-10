@@ -1962,3 +1962,399 @@
     display: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Island Decorations
+   ═══════════════════════════════════════════════════════════════════ */
+
+.island-decoration {
+  position: absolute;
+  transform: translate(-50%, -55%) scale(var(--deco-scale, 1));
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-decoration__sprite {
+  width: 74px;
+  height: 74px;
+  object-fit: contain;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (max-width: 374px) {
+  .island-decoration__sprite { width: 64px; height: 64px; }
+}
+@media (min-width: 375px) {
+  .island-decoration__sprite { width: 80px; height: 80px; }
+}
+@media (min-width: 390px) {
+  .island-decoration__sprite { width: 88px; height: 88px; }
+}
+@media (min-width: 420px) {
+  .island-decoration__sprite { width: 96px; height: 96px; }
+}
+@media (min-width: 768px) {
+  .island-decoration__sprite { width: 110px; height: 110px; }
+}
+
+.island-decoration__fallback {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  opacity: 0.4;
+}
+
+/* Gentle sway for trees/flowers */
+.island-decoration--sways .island-decoration__sprite {
+  animation: deco-sway 4s ease-in-out infinite;
+}
+
+@keyframes deco-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
+}
+
+/* Edit mode highlight */
+.island-decoration--edit {
+  cursor: grab;
+}
+
+.island-decoration--edit::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  pointer-events: none;
+  animation: deco-edit-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes deco-edit-pulse {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.6); }
+  50% { border-color: rgba(255, 255, 255, 0.2); }
+}
+
+/* Empty tile tap targets (shown in decor mode) */
+.island-empty-tile {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border: 2px dashed rgba(74, 222, 128, 0.5);
+  border-radius: 6px;
+  background: rgba(74, 222, 128, 0.08);
+  cursor: pointer;
+  animation: empty-tile-pulse 2s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-empty-tile:active {
+  background: rgba(74, 222, 128, 0.2);
+}
+
+@keyframes empty-tile-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ── Decorate button ────────────────────────────────────────── */
+
+.pet-land__decor-btn {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--dock-offset, 82px) + 16px);
+  right: 16px;
+  z-index: var(--z-buttons);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5C3D1A;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pet-land__decor-btn--active {
+  background: #4ADE80;
+  color: white;
+  box-shadow: 0 2px 12px rgba(74, 222, 128, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Decoration Picker (Bottom Sheet)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.decoration-picker {
+  position: absolute;
+  bottom: calc(var(--dock-offset, 82px) + 8px);
+  left: 12px;
+  right: 12px;
+  z-index: var(--z-theme-picker);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 12px 14px 14px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.decoration-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.decoration-picker__title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #5C3D1A;
+  letter-spacing: -0.02em;
+}
+
+.decoration-picker__done-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4ADE80;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+
+.decoration-picker__empty {
+  text-align: center;
+  padding: 16px 0;
+  color: #8B7355;
+  font-size: 13px;
+}
+
+.decoration-picker__empty-hint {
+  display: block;
+  font-size: 11px;
+  color: #A89070;
+  margin-top: 4px;
+}
+
+.decoration-picker__grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.decoration-picker__item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 76px;
+}
+
+.decoration-picker__item--selected {
+  border-color: #4ADE80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.decoration-picker__sprite {
+  width: 36px;
+  height: 36px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.decoration-picker__name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #5C3D1A;
+  white-space: nowrap;
+}
+
+.decoration-picker__qty {
+  font-size: 10px;
+  font-weight: 700;
+  color: #8B7355;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Decor Shop Tab
+   ═══════════════════════════════════════════════════════════════════ */
+
+.decor-tab__filters {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.decor-tab__filter-pill {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(92, 61, 26, 0.15);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8B7355;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.decor-tab__filter-pill.active {
+  background: #5C3D1A;
+  color: white;
+  border-color: #5C3D1A;
+}
+
+.decor-tab__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.decor-tab__card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(92, 61, 26, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.decor-tab__card--locked {
+  opacity: 0.5;
+}
+
+.decor-tab__card--expensive {
+  opacity: 0.7;
+}
+
+.decor-tab__card-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  min-height: 80px;
+}
+
+.decor-tab__card-sprite {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.decor-tab__card-lock {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #8B7355;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.decor-tab__card-owned {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4ADE80;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.decor-tab__card-info {
+  padding: 8px 10px 6px;
+}
+
+.decor-tab__card-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5C3D1A;
+  display: block;
+}
+
+.decor-tab__card-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.decor-tab__card-rarity {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.decor-tab__card-buy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px;
+  margin: 4px 8px 8px;
+  border-radius: 8px;
+  border: none;
+  background: #F5E6C8;
+  color: #7A5C20;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.decor-tab__card-buy:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.decor-tab__card-buy:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island-decoration--sways .island-decoration__sprite,
+  .island-decoration--edit::after,
+  .island-empty-tile {
+    animation: none;
+  }
+}
