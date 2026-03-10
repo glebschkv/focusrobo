@@ -461,6 +461,7 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
 // Shop categories for UI - 4 tabs: Hatchery, Worlds, Potions, Today's Finds
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'eggs', name: 'Hatchery', icon: 'egg' },
+  { id: 'decor', name: 'Decor', icon: 'tree' },
   { id: 'customize', name: 'Worlds', icon: 'island' },
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },

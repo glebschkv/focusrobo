@@ -41,11 +41,26 @@ export interface LandCell {
   timestamp: number;
 }
 
+export interface DecorationCell {
+  decorationId: string;
+  timestamp: number;
+}
+
+/** Type guard: is this cell a pet? */
+export function isPetCell(cell: LandCell | DecorationCell | null): cell is LandCell {
+  return cell !== null && 'petId' in cell;
+}
+
+/** Type guard: is this cell a decoration? */
+export function isDecorationCell(cell: LandCell | DecorationCell | null): cell is DecorationCell {
+  return cell !== null && 'decorationId' in cell;
+}
+
 export interface Land {
   id: string;
   number: number;
   theme: string;
-  cells: (LandCell | null)[];
+  cells: (LandCell | DecorationCell | null)[];
   /** Current expansion tier — grid is gridSize × gridSize centered in 20×20 */
   gridSize: number;
   startedAt: number;
@@ -96,12 +111,19 @@ const landCellSchema = z.object({
   timestamp: z.number().min(0),
 });
 
+const decorationCellSchema = z.object({
+  decorationId: z.string().max(100),
+  timestamp: z.number().min(0),
+});
+
+const anyCellSchema = z.union([landCellSchema, decorationCellSchema, z.null()]);
+
 const landSchema = z.object({
   id: z.string().max(100),
   number: z.number().int().min(1).max(10000),
   theme: z.string().max(100),
-  // Accept both old 100-cell and new 400-cell arrays
-  cells: z.array(z.union([landCellSchema, z.null()])).max(LAND_SIZE),
+  // Accept both old 100-cell and new 400-cell arrays, including decoration cells
+  cells: z.array(anyCellSchema).max(LAND_SIZE),
   gridSize: z.number().int().min(MIN_GRID_TIER).max(MAX_GRID_TIER).default(MIN_GRID_TIER),
   startedAt: z.number().min(0),
   completedAt: z.union([z.number().min(0), z.null()]),
@@ -142,6 +164,7 @@ const landStoreSchema = z.object({
   lastOfflineCheck: z.number().min(0).default(Date.now()),
   pityCounter: z.number().int().min(0).max(1000).default(0),
   lastSessionTimestamp: z.number().min(0).default(0),
+  decorationInventory: z.record(z.string(), z.number().int().min(0)).default({}),
 });
 
 // ============================================================================
@@ -165,7 +188,7 @@ function createEmptyLand(number: number, theme: string): Land {
  * Pick the empty cell that is farthest from any already-placed pet.
  * Only considers cells within the current expansion tier.
  */
-function getNextEmptyCellIndex(cells: (LandCell | null)[], gridSize: number): number {
+function getNextEmptyCellIndex(cells: (LandCell | DecorationCell | null)[], gridSize: number): number {
   const available = getAvailableCellIndices(gridSize);
   const emptyIndices: number[] = [];
   const filledIndices: number[] = [];
@@ -248,6 +271,8 @@ interface LandStoreState {
   lastPlacedIndex: number | null;
   landJustCompleted: number | null;
   milestoneReached: number | null;
+  /** Decoration inventory: decorationId → quantity owned (unplaced) */
+  decorationInventory: Record<string, number>;
 }
 
 interface PetChoice {
@@ -281,6 +306,12 @@ interface LandStoreActions {
   clearLandCompleted: () => void;
   clearMilestone: () => void;
   resetLand: () => void;
+  // Decoration actions
+  addDecorationToInventory: (decorationId: string, qty?: number) => void;
+  placeDecoration: (decorationId: string, cellIndex: number) => boolean;
+  removeDecoration: (cellIndex: number) => boolean;
+  moveDecoration: (fromIndex: number, toIndex: number) => boolean;
+  getDecorationCount: () => number;
 }
 
 type LandStore = LandStoreState & LandStoreActions;
@@ -301,6 +332,7 @@ const initialState: LandStoreState = {
   lastPlacedIndex: null,
   landJustCompleted: null,
   milestoneReached: null,
+  decorationInventory: {},
 };
 
 export const useLandStore = create<LandStore>()(
@@ -517,15 +549,22 @@ export const useLandStore = create<LandStore>()(
           };
         }
 
+        // Check completion: all available cells must have pet cells (decorations don't count)
+        let allPetsFilled = false;
+        if (currentLand.gridSize >= MAX_GRID_TIER) {
+          const avail = getAvailableCellIndices(currentLand.gridSize);
+          allPetsFilled = [...avail].every(i => newCells[i] !== null && 'petId' in (newCells[i] as object));
+        }
+
         const updatedLand: Land = {
           ...currentLand,
           cells: newCells,
           totalFocusMinutes: currentLand.totalFocusMinutes + pendingPet.sessionMinutes,
-          completedAt: currentLand.gridSize >= MAX_GRID_TIER && newCells.every(c => c !== null) ? Date.now() : null,
+          completedAt: allPetsFilled ? Date.now() : null,
         };
 
-        // Check for tier completion or milestones
-        const count = newCells.filter(Boolean).length;
+        // Check for tier completion or milestones (count only pet cells)
+        const count = newCells.filter(c => c !== null && 'petId' in c).length;
         const tierCapacity = getAvailableCellCount(updatedLand.gridSize);
         const tierFull = count >= tierCapacity && getNextTier(updatedLand.gridSize) !== null;
         const milestones = [25, 50, 75, 100, 150, 200, 300];
@@ -557,7 +596,9 @@ export const useLandStore = create<LandStore>()(
         if (currentLand.gridSize < MAX_GRID_TIER) return false;
         const available = getAvailableCellIndices(currentLand.gridSize);
         for (const idx of available) {
-          if (currentLand.cells[idx] === null) return false;
+          const cell = currentLand.cells[idx];
+          // Only pet cells count toward completion — empty or decoration = not complete
+          if (!cell || 'decorationId' in cell) return false;
         }
         return true;
       },
@@ -566,13 +607,16 @@ export const useLandStore = create<LandStore>()(
         const { currentLand } = get();
         const available = getAvailableCellIndices(currentLand.gridSize);
         for (const idx of available) {
-          if (currentLand.cells[idx] === null) return false;
+          const cell = currentLand.cells[idx];
+          // Only pet cells count — empty or decoration = not full
+          if (!cell || 'decorationId' in cell) return false;
         }
         return true;
       },
 
       getFilledCount: () => {
-        return get().currentLand.cells.filter(c => c !== null).length;
+        // Count only pet cells (not decorations) for progress tracking
+        return get().currentLand.cells.filter(c => c !== null && 'petId' in c).length;
       },
 
       getAvailableCells: () => {
@@ -605,7 +649,7 @@ export const useLandStore = create<LandStore>()(
       growPet: (cellIndex: number, targetSize: 'adolescent' | 'adult') => {
         const { currentLand, speciesAffinity } = get();
         const cell = currentLand.cells[cellIndex];
-        if (!cell) return false;
+        if (!cell || !('petId' in cell)) return false;
 
         const count = speciesAffinity[cell.petId] || 0;
         // Bonded (5+) = can grow to adolescent, Devoted (10+) = can grow to adult
@@ -635,7 +679,7 @@ export const useLandStore = create<LandStore>()(
         }
         let totalIncome = 0;
         for (const cell of currentLand.cells) {
-          if (!cell) continue;
+          if (!cell || !('petId' in cell)) continue;
           const dailyRate = getPetPassiveRate(cell.rarity, cell.size);
           totalIncome += dailyRate * (hoursPassed / 24);
         }
@@ -648,7 +692,7 @@ export const useLandStore = create<LandStore>()(
         const { currentLand } = get();
         let rate = 0;
         for (const cell of currentLand.cells) {
-          if (!cell) continue;
+          if (!cell || !('petId' in cell)) continue;
           rate += getPetPassiveRate(cell.rarity, cell.size);
         }
         return rate;
@@ -676,6 +720,72 @@ export const useLandStore = create<LandStore>()(
         set({ milestoneReached: null });
       },
 
+      // ── Decoration Actions ──────────────────────────────────────────
+
+      addDecorationToInventory: (decorationId: string, qty = 1) => {
+        const inv = { ...get().decorationInventory };
+        inv[decorationId] = (inv[decorationId] || 0) + qty;
+        set({ decorationInventory: inv });
+      },
+
+      placeDecoration: (decorationId: string, cellIndex: number) => {
+        const { currentLand, decorationInventory } = get();
+        // Validate: cell must be empty and within available range
+        if (currentLand.cells[cellIndex] !== null) return false;
+        const available = getAvailableCellIndices(currentLand.gridSize);
+        if (!available.has(cellIndex)) return false;
+        // Must have at least one in inventory
+        const qty = decorationInventory[decorationId] || 0;
+        if (qty <= 0) return false;
+
+        const newCells = [...currentLand.cells];
+        newCells[cellIndex] = { decorationId, timestamp: Date.now() } as DecorationCell;
+        const newInv = { ...decorationInventory, [decorationId]: qty - 1 };
+        if (newInv[decorationId] <= 0) delete newInv[decorationId];
+
+        set({
+          currentLand: { ...currentLand, cells: newCells },
+          decorationInventory: newInv,
+        });
+        return true;
+      },
+
+      removeDecoration: (cellIndex: number) => {
+        const { currentLand, decorationInventory } = get();
+        const cell = currentLand.cells[cellIndex];
+        if (!cell || !('decorationId' in cell)) return false;
+
+        const newCells = [...currentLand.cells];
+        newCells[cellIndex] = null;
+        const newInv = { ...decorationInventory };
+        newInv[cell.decorationId] = (newInv[cell.decorationId] || 0) + 1;
+
+        set({
+          currentLand: { ...currentLand, cells: newCells },
+          decorationInventory: newInv,
+        });
+        return true;
+      },
+
+      moveDecoration: (fromIndex: number, toIndex: number) => {
+        const { currentLand } = get();
+        const cell = currentLand.cells[fromIndex];
+        if (!cell || !('decorationId' in cell)) return false;
+        if (currentLand.cells[toIndex] !== null) return false;
+        const available = getAvailableCellIndices(currentLand.gridSize);
+        if (!available.has(toIndex)) return false;
+
+        const newCells = [...currentLand.cells];
+        newCells[toIndex] = cell;
+        newCells[fromIndex] = null;
+        set({ currentLand: { ...currentLand, cells: newCells } });
+        return true;
+      },
+
+      getDecorationCount: () => {
+        return get().currentLand.cells.filter(c => c !== null && 'decorationId' in c).length;
+      },
+
       resetLand: () => {
         set(initialState);
       },
@@ -700,6 +810,7 @@ export const useLandStore = create<LandStore>()(
         lastOfflineCheck: state.lastOfflineCheck,
         pityCounter: state.pityCounter,
         lastSessionTimestamp: state.lastSessionTimestamp,
+        decorationInventory: state.decorationInventory,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
@@ -715,7 +826,7 @@ export const useLandStore = create<LandStore>()(
           const allCells = [
             ...(state.currentLand?.cells ?? []),
             ...(state.completedLands ?? []).flatMap(l => l.cells),
-          ].filter(Boolean) as LandCell[];
+          ].filter((c): c is LandCell => c !== null && 'petId' in c);
 
           const sizeMap: Record<string, Set<GrowthSize>> = {};
           for (const cell of allCells) {
@@ -753,6 +864,10 @@ export const useLandStore = create<LandStore>()(
           };
           state.pendingEgg = null;
         }
+        // Ensure decorationInventory exists for older persisted data
+        if (!state.decorationInventory) {
+          state.decorationInventory = {};
+        }
       },
     }
   )
@@ -781,3 +896,5 @@ export const useSpeciesCompletion = () => useLandStore((s) => {
   }
   return { totalVariants, completedSpecies };
 });
+
+export const useDecorationInventory = () => useLandStore((s) => s.decorationInventory);

@@ -19,10 +19,12 @@ import { BackgroundsTab } from "@/components/shop/tabs/BackgroundsTab";
 import { PowerUpsTab } from "@/components/shop/tabs/PowerUpsTab";
 import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { EggsTab } from "@/components/shop/tabs/EggsTab";
+import { DecorTab } from "@/components/shop/tabs/DecorTab";
 import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
 
 const CATEGORY_ICONS: Record<string, string> = {
   eggs: 'egg',
+  decor: 'tree',
   featured: 'crown',
   customize: 'island',
   powerups: 'lightning',
@@ -100,6 +102,13 @@ export const Shop = () => {
       case 'eggs':
         return (
           <EggsTab
+            coinBalance={coinBalance}
+            canAfford={(price: number) => canAfford(price)}
+          />
+        );
+      case 'decor':
+        return (
+          <DecorTab
             coinBalance={coinBalance}
             canAfford={(price: number) => canAfford(price)}
           />
