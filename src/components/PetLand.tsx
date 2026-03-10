@@ -16,8 +16,9 @@ import { DecorationPicker } from '@/components/DecorationPicker';
 import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
-import { getIslandScale, getAvailableCellCount, getIslandPosition } from '@/data/islandPositions';
+import { getIslandScale, getAvailableCellCount, getIslandPosition, findNearestEmptyCell, getGridDensityScale, getDepthScale } from '@/data/islandPositions';
 import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
+import { DECORATIONS } from '@/data/DecorationData';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
 import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
@@ -28,7 +29,8 @@ import { useStreakStore } from '@/stores/streakStore';
 import { toPng } from 'html-to-image';
 import { toast } from 'sonner';
 import { type LandCell, type DecorationCell, isPetCell, isDecorationCell } from '@/stores/landStore';
-import { getAvailableCellIndices } from '@/data/islandPositions';
+import { IslandSwitcher } from '@/components/IslandSwitcher';
+import { IslandUnlockModal } from '@/components/IslandUnlockModal';
 
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
@@ -583,16 +585,15 @@ export const PetLand = () => {
   const clearMilestone = useLandStore((s) => s.clearMilestone);
   const { haptic } = useHaptics();
   const themeId = useThemeStore((s) => s.homeBackground);
-  const setTheme = useThemeStore((s) => s.setHomeBackground);
   const ownedBackgrounds = useShopStore((s) => s.ownedBackgrounds);
   const isPremium = usePremiumStore((s) => s.isPremium());
 
   // Fall back to default theme if user has a premium theme but lost premium
   const effectiveThemeId = (!isPremium && ISLAND_THEMES[themeId]?.premiumOnly) ? 'day' : themeId;
   const theme = getIslandTheme(effectiveThemeId);
-  const [showThemePicker, setShowThemePicker] = useState(false);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [unlockIslandIndex, setUnlockIslandIndex] = useState<number | null>(null);
   const [celebrationBurst, setCelebrationBurst] = useState(false);
   const [shareFlash, setShareFlash] = useState(false);
   const islandCaptureRef = useRef<HTMLDivElement>(null);
@@ -773,27 +774,12 @@ export const PetLand = () => {
     }
   }, [isDecorMode, removeDecoration, haptic]);
 
-  // Handle empty tile tap in decor mode (place selected decoration)
-  const handleEmptyTileTap = useCallback((index: number) => {
-    if (!isDecorMode || !selectedDecorationId) return;
-    const success = placeDecoration(selectedDecorationId, index);
-    if (success) {
-      haptic('light');
-      // If no more of this decoration, deselect
-      const remaining = (decorationInventory[selectedDecorationId] || 1) - 1;
-      if (remaining <= 0) setSelectedDecorationId(null);
-    }
-  }, [isDecorMode, selectedDecorationId, placeDecoration, haptic, decorationInventory]);
-
   const handleCloseDetail = useCallback(() => {
     setSelectedPet(null);
   }, []);
 
   // Determine how many pets for performance class
   const petCount = filledCount;
-
-  // Available cells for current tier (used for empty tile placement)
-  const availableCells = useMemo(() => getAvailableCellIndices(gridSize), [gridSize]);
 
   // Build pet + decoration elements
   const slotElements = useMemo(() => {
@@ -828,30 +814,72 @@ export const PetLand = () => {
     });
   }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationTap]);
 
-  // Empty tile tap targets (only shown in decor mode when a decoration is selected)
-  const emptyTileElements = useMemo(() => {
-    if (!isDecorMode || !selectedDecorationId) return null;
-    return currentLand.cells.map((cell, index) => {
-      if (cell !== null || !availableCells.has(index)) return null;
-      const pos = getIslandPosition(index, gridSize);
-      if (!pos) return null;
-      return (
-        <div
-          key={`empty-${index}`}
-          className="island-empty-tile"
-          style={{
-            left: `${pos.x}%`,
-            top: `${pos.y}%`,
-            zIndex: 5,
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEmptyTileTap(index);
-          }}
+  // Ghost preview for decoration placement — shows a semi-transparent decoration
+  // that snaps to the nearest empty cell as the user moves their finger
+  const [ghostCellIndex, setGhostCellIndex] = useState<number | null>(null);
+  const petsLayerRef = useRef<HTMLDivElement>(null);
+
+  const handleDecorPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDecorMode || !selectedDecorationId) return;
+    const layer = petsLayerRef.current;
+    if (!layer) return;
+    const rect = layer.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    const nearest = findNearestEmptyCell(xPct, yPct, currentLand.cells, gridSize);
+    setGhostCellIndex(nearest);
+  }, [isDecorMode, selectedDecorationId, currentLand.cells, gridSize]);
+
+  const handleDecorTap = useCallback((e: React.PointerEvent) => {
+    if (!isDecorMode || !selectedDecorationId || ghostCellIndex === null) return;
+    // Only respond to primary pointer (finger or mouse click)
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    e.stopPropagation();
+    const success = placeDecoration(selectedDecorationId, ghostCellIndex);
+    if (success) {
+      haptic('light');
+      const remaining = (decorationInventory[selectedDecorationId] || 1) - 1;
+      if (remaining <= 0) {
+        setSelectedDecorationId(null);
+        setGhostCellIndex(null);
+      }
+    }
+  }, [isDecorMode, selectedDecorationId, ghostCellIndex, placeDecoration, haptic, decorationInventory]);
+
+  // Clear ghost when exiting decor mode or deselecting
+  useEffect(() => {
+    if (!isDecorMode || !selectedDecorationId) setGhostCellIndex(null);
+  }, [isDecorMode, selectedDecorationId]);
+
+  // Ghost preview element
+  const ghostPreviewElement = useMemo(() => {
+    if (!isDecorMode || !selectedDecorationId || ghostCellIndex === null) return null;
+    const pos = getIslandPosition(ghostCellIndex, gridSize);
+    if (!pos) return null;
+    const decoData = DECORATIONS.find(d => d.id === selectedDecorationId);
+    if (!decoData) return null;
+    const densityScale = getGridDensityScale(gridSize);
+    const depthScale = getDepthScale(ghostCellIndex);
+    const scale = densityScale * depthScale;
+    return (
+      <div
+        className="island-ghost-preview"
+        style={{
+          left: `${pos.x}%`,
+          top: `${pos.y}%`,
+          zIndex: 49,
+          transform: `translate(-50%, -60%) scale(${scale})`,
+        }}
+      >
+        <img
+          src={decoData.sprite}
+          alt=""
+          className="island-ghost-preview__sprite"
+          draggable={false}
         />
-      );
-    });
-  }, [isDecorMode, selectedDecorationId, currentLand.cells, availableCells, gridSize, handleEmptyTileTap]);
+      </div>
+    );
+  }, [isDecorMode, selectedDecorationId, ghostCellIndex, gridSize]);
 
   const growthClass = getGrowthStage(filledCount);
 
@@ -1062,9 +1090,20 @@ export const PetLand = () => {
             <div className="pet-land__island-shadow" />
 
             {/* Pets layer — parallax layer (fastest) */}
-            <div className="pet-land__pets-layer" ref={petsRef} role="group" aria-label="Your pet island">
+            <div
+              className={`pet-land__pets-layer ${isDecorMode && selectedDecorationId ? 'pet-land--decor-active' : ''}`}
+              ref={(el) => {
+                // Merge refs: petsRef (parallax) and petsLayerRef (ghost preview)
+                if (petsRef) (petsRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+                petsLayerRef.current = el;
+              }}
+              role="group"
+              aria-label="Your pet island"
+              onPointerMove={handleDecorPointerMove}
+              onPointerUp={handleDecorTap}
+            >
               {slotElements}
-              {emptyTileElements}
+              {ghostPreviewElement}
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">
@@ -1214,63 +1253,6 @@ export const PetLand = () => {
         />
       )}
 
-      {/* Theme switcher */}
-      <button
-        className="pet-land__theme-btn"
-        onClick={() => {
-          const opening = !showThemePicker;
-          setShowThemePicker(opening);
-          if (opening) resetView();
-        }}
-        aria-label="Change island theme"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="13.5" cy="6.5" r="2.5" />
-          <circle cx="17.5" cy="10.5" r="2.5" />
-          <circle cx="8.5" cy="7.5" r="2.5" />
-          <circle cx="6.5" cy="12.5" r="2.5" />
-          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.1 2.5-.3C13.1 20.4 12 18.8 12 17c0-2.8 2.2-5 5-5 1.8 0 3.4 1 4.2 2.5.2-.8.3-1.6.3-2.5 0-5.5-4.5-10-10-10z" />
-        </svg>
-      </button>
-
-      {showThemePicker && (
-        <div className="pet-land__theme-picker" onClick={() => setShowThemePicker(false)}>
-          <div className="pet-land__theme-strip" onClick={(e) => e.stopPropagation()}>
-            {Object.values(ISLAND_THEMES).map((t) => {
-              const isActive = t.id === effectiveThemeId;
-              const isLocked = t.premiumOnly && !isPremium;
-              return (
-                <button
-                  key={t.id}
-                  className={`pet-land__theme-chip ${isActive ? 'pet-land__theme-chip--active' : ''} ${isLocked ? 'pet-land__theme-chip--locked' : ''}`}
-                  onClick={() => {
-                    if (isLocked) {
-                      setShowThemePicker(false);
-                      setShowPremiumDialog(true);
-                      return;
-                    }
-                    setTheme(t.id);
-                    haptic('light');
-                  }}
-                >
-                  <div
-                    className="pet-land__theme-swatch"
-                    style={{ background: `linear-gradient(180deg, ${t.sky[0]} 0%, ${t.sky[2]} 40%, ${t.grassLight[0]} 65%, ${t.grassDark[0]} 100%)` }}
-                  />
-                  {isLocked && (
-                    <div className="pet-land__theme-lock">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C9.24 2 7 4.24 7 7v3H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-2V7c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v3H9V7c0-1.66 1.34-3 3-3z"/>
-                      </svg>
-                    </div>
-                  )}
-                  <span className="pet-land__theme-name">{t.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {showHowItWorks && (
         <div className="pet-land__help-overlay pet-land__help-overlay--center" onClick={() => setShowHowItWorks(false)}>
@@ -1353,6 +1335,17 @@ export const PetLand = () => {
       {/* Premium subscription dialog (triggered by locked theme tap) */}
       {showPremiumDialog && (
         <PremiumSubscription isOpen={showPremiumDialog} onClose={() => setShowPremiumDialog(false)} />
+      )}
+
+      {/* Archipelago island switcher */}
+      <IslandSwitcher onLockedTap={(index) => setUnlockIslandIndex(index)} />
+
+      {/* Island unlock modal */}
+      {unlockIslandIndex !== null && (
+        <IslandUnlockModal
+          islandIndex={unlockIslandIndex}
+          onClose={() => setUnlockIslandIndex(null)}
+        />
       )}
     </div>
   );

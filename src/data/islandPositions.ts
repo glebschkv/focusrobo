@@ -99,15 +99,15 @@ export function getDepthZIndex(index: number): number {
 
 /** Min grid size (starting tier) */
 export const MIN_GRID_TIER = 5;
-/** Max grid size (fully expanded) */
-export const MAX_GRID_TIER = 20;
+/** Max grid size (fully expanded) — capped at 12 for readability */
+export const MAX_GRID_TIER = 12;
 
 /**
  * Expansion tiers — the island grows through these sizes.
  * Each tier fills up before the next one unlocks.
- * Jumps get bigger at higher tiers for dramatic expansion feel.
+ * Smooth single-step progression up to 12×12 (144 cells).
  */
-export const EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20] as const;
+export const EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 /** Get the next expansion tier after the given grid size, or null if maxed */
 export function getNextTier(gridSize: number): number | null {
@@ -232,10 +232,10 @@ export function getIslandPosition(index: number, gridSize: number): IslandPositi
 
 /**
  * Compute the visual scale of the island based on grid tier.
- * gridSize=5 → 0.5 (small island), gridSize=20 → 0.92 (leaves breathing room).
+ * gridSize=5 → 0.5 (small island), gridSize=12 → 0.92 (leaves breathing room).
  */
 export function getIslandScale(gridSize: number): number {
-  const g = gridSize || MIN_GRID_TIER;
+  const g = Math.min(gridSize || MIN_GRID_TIER, MAX_GRID_TIER);
   return 0.5 + 0.42 * (g - MIN_GRID_TIER) / (MAX_GRID_TIER - MIN_GRID_TIER);
 }
 
@@ -250,7 +250,37 @@ const REFERENCE_GRID = 5;
  */
 export function getGridDensityScale(gridSize: number): number {
   const g = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
-  return (REFERENCE_GRID / g) * 1.3;
+  return Math.max(0.5, (REFERENCE_GRID / g) * 1.3);
+}
+
+/**
+ * Find the nearest empty cell to a pointer position (in container %).
+ * Returns the cell index, or null if no empty cells exist.
+ */
+export function findNearestEmptyCell(
+  pointerXPct: number,
+  pointerYPct: number,
+  cells: (unknown | null)[],
+  gridSize: number,
+): number | null {
+  const available = getAvailableCellIndices(gridSize);
+  let bestIndex: number | null = null;
+  let bestDist = Infinity;
+
+  for (const idx of available) {
+    if (cells[idx] !== null) continue;
+    const pos = getIslandPosition(idx, gridSize);
+    if (!pos) continue;
+    const dx = pos.x - pointerXPct;
+    const dy = pos.y - pointerYPct;
+    const dist = dx * dx + dy * dy;
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestIndex = idx;
+    }
+  }
+
+  return bestIndex;
 }
 
 /** Rotation step type (kept for backward compat) */
