@@ -13,6 +13,11 @@ Focus session completes → random pet generated (weighted by rarity + player le
 Alternatively:
 Shop → buy egg (common/rare/epic/legendary) with coins
 → egg hatched with custom rarity weights → pet placed on island
+
+Also:
+Shop (Decor tab) → buy decoration with coins → goes to inventory
+→ tap decorate button on island → select from inventory → tap empty tile → placed
+→ decorations are cosmetic, don't count toward island completion
 ```
 
 ## Art & Theme Direction
@@ -27,6 +32,7 @@ Shop → buy egg (common/rare/epic/legendary) with coins
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
 - **Land themes**: Meadow (default), Beach, Snow, Desert, Night Garden, Sakura (purchasable)
 - **Assets**: `public/assets/pets/*.png` (41 species × 4 size variants = 184 PNGs)
+- **Decorations**: 20 placeable items across 6 categories (trees, flowers, rocks, water, structures, fun) — `public/assets/decorations/*.png` (48×48 pixel art PNGs)
 
 ## Quick Facts
 
@@ -93,6 +99,8 @@ src/
 │   ├── PetLand.tsx            # Home screen — floating isometric island with pets
 │   ├── IslandSVG.tsx          # Inline SVG island — grass diamond, cliff walls, tile grid, textures
 │   ├── IslandPet.tsx          # Single pet on island — positioned, scaled, animated
+│   ├── IslandDecoration.tsx   # Single decoration on island — positioned, scaled, sway animation
+│   ├── DecorationPicker.tsx   # Bottom sheet for placing decorations from inventory
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
@@ -211,7 +219,8 @@ src/
 │   │       ├── BackgroundsTab.tsx # Background themes shop
 │   │       ├── FeaturedTab.tsx    # Featured items
 │   │       ├── InventoryTab.tsx   # User inventory
-│   │       └── PowerUpsTab.tsx    # Power-up items
+│   │       ├── PowerUpsTab.tsx    # Power-up items
+│   │       └── DecorTab.tsx      # Island decoration shop with category filters
 │   └── ui/                    # shadcn/ui component library
 │       ├── button.tsx, card.tsx, dialog.tsx, drawer.tsx, input.tsx ...
 │       ├── skeleton-loaders.tsx # Context-aware loading skeletons
@@ -291,6 +300,7 @@ src/
 │   ├── EggData.ts             # Egg types (common/rare/epic/legendary), prices, custom rarity weights
 │   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling
 │   ├── ShopData.ts            # Shop items, backgrounds, bundles, egg category
+│   ├── DecorationData.ts      # 20 decoration definitions (6 categories), rarity, prices, sprites
 │   ├── GamificationData.ts    # Milestone/achievement definitions
 │   ├── AmbientSoundsData.ts   # Sound library catalog
 │   ├── SpecialAnimations.ts   # Special celebration animations
@@ -423,6 +433,7 @@ public/assets/                 # Static assets
 ├── icons/                     # 141 PNG icon files
 ├── robots/                    # 27 SVG robot files across 6 zone subdirectories
 ├── worlds/                    # 10 PNG world background files
+├── decorations/               # 20 PNG decoration sprites (48×48, pixel art)
 └── sprites/                   # (reserved for spritesheets)
 ```
 
@@ -448,7 +459,7 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 
 | Store | Key | Purpose |
 |-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Island grid (400 cells max), grid expansion tier, completed lands, species catalog, pending pet, wished species, species affinity, egg hatching** |
+| `landStore` | `nomo_land_data` | **Island grid (400 cells max — pets OR decorations), grid expansion tier, completed lands, species catalog, pending pet, wished species, species affinity, egg hatching, decoration inventory** |
 | `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
 | `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
 | `premiumStore` | `nomo_premium` | Subscription tier (free/premium) |
@@ -577,7 +588,16 @@ interface LandCell {
   timestamp: number;
 }
 
+interface DecorationCell {
+  decorationId: string;    // e.g., "oak-tree", "fountain"
+  timestamp: number;
+}
+
+// Cells discriminated via: 'petId' in cell → pet, 'decorationId' in cell → decoration
+// Type guards: isPetCell(cell), isDecorationCell(cell)
+
 // Key constants
+decorationInventory: Record<string, number>  // { "oak-tree": 2, "fountain": 1 }
 LAND_SIZE = 400              // Max 20×20 grid
 GRID_SIZE = 20               // Underlying grid dimension
 LAND_COMPLETE_BONUS_COINS = 500
@@ -604,6 +624,12 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 - `getAvailableCells()` — returns Set of unlocked cell indices for current grid size
 - `isTierFull()` — check if all available cells in current tier are filled
 - `getFilledCount()` / `isLandComplete()` — query methods
+- `addDecorationToInventory(id: string)` — adds decoration to inventory (after shop purchase)
+- `placeDecoration(decorationId: string, cellIndex: number)` — place from inventory onto empty tile
+- `removeDecoration(cellIndex: number)` — pick up decoration back to inventory
+- `moveDecoration(fromIndex: number, toIndex: number)` — move between tiles
+- `getDecorationCount()` — count placed decorations on current island
+- **Decorations don't count toward completion** — `getFilledCount()`, `isTierFull()`, `isLandComplete()` count only pet cells. Decorations occupy tiles (blocking pet placement) but are purely cosmetic.
 
 ## Game Systems
 
@@ -732,7 +758,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
 
 ### CSS Architecture (`src/styles/`)
-- `pet-land.css` — Island sky, clouds, god rays, mountains, parallax tilt, pets, tooltips, progress bar, zoom
+- `pet-land.css` — Island sky, clouds, god rays, mountains, parallax tilt, pets, decorations, tooltips, progress bar, zoom, decoration picker, decor shop tab
 - `animations.css` — Shared keyframe animations
 - `base.css` — Base/reset styles
 - `navigation.css` — Tab bar styles
@@ -745,6 +771,9 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - BEM-style: `.pet-land__sky`, `.island-pet__sprite`, `.island-pet--legendary`
 - Modifier classes for rarity: `.island-pet--uncommon`, `--rare`, `--epic`, `--legendary`
 - State classes: `.island-pet--new` (pop animation)
+- Decoration classes: `.island-decoration__sprite`, `.island-decoration--sways`, `.island-decoration--edit`
+- Decoration picker: `.decoration-picker__grid`, `.decoration-picker__item--selected`
+- Decor shop tab: `.decor-tab__card`, `.decor-tab__filter-pill`
 
 ## Build & Deploy
 
@@ -767,6 +796,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 - **SVG-aligned pet positions**: `islandPositions.ts` and `IslandSVG.tsx` share identical diamond vertices and bilinear interpolation math so pets sit exactly on their tile centers.
 - **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
 - **Egg-based pet generation**: `rollRandomPet()` accepts optional custom rarity weights, used by the egg system to override default drop rates.
+- **Decoration system**: Cells hold either a pet (`petId`) or decoration (`decorationId`), discriminated via structural typing. Decorations are cosmetic — they block pet placement but don't count toward island completion. Edit mode toggle on PetLand enables place/pick-up UX via `DecorationPicker` bottom sheet.
 
 ## Path Aliases
 
@@ -803,7 +833,9 @@ Full IAP setup details (pricing, localizations, review notes): `docs/APP_STORE_C
 ## What's Next (TODO)
 
 - [x] LandCompleteModal — celebration when island fully expanded and filled
+- [x] Island decorations system — shop tab, placement UX, 20 items across 6 categories
 - [ ] Generate final pet pixel art assets (current ones are placeholders)
+- [ ] Generate higher-fidelity decoration sprites (current ones are Pillow-generated placeholders)
 - [ ] Update onboarding flow for pet/island theme
 - [ ] Remove debug "Award Pet" button from PetLand before production
 - [ ] Upload screenshots and app icon to App Store Connect
