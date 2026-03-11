@@ -17,7 +17,7 @@ import { DecorationPicker } from '@/components/DecorationPicker';
 import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
-import { getIslandScale, getAvailableCellCount, getIslandPosition, findNearestEmptyCell } from '@/data/islandPositions';
+import { getIslandScale, getAvailableCellCount, getIslandPosition, getAvailableCellIndices, findNearestEmptyCell } from '@/data/islandPositions';
 import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
@@ -700,6 +700,17 @@ export const PetLand = () => {
     return () => window.removeEventListener('openHelp', handleOpenHelp);
   }, []);
 
+  // Notify user when a decoration is auto-displaced for a new pet
+  useEffect(() => {
+    const handler = () => {
+      toast('A decoration was moved to your inventory to make room for your new pet!', {
+        duration: 4000,
+      });
+    };
+    window.addEventListener('decorationDisplaced', handler);
+    return () => window.removeEventListener('decorationDisplaced', handler);
+  }, []);
+
   const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
   const tierScale = getIslandScale(gridSize);
@@ -774,11 +785,11 @@ export const PetLand = () => {
     }
   }, [currentLand.cells]);
 
-  // Handle decoration tap in edit mode (pick up)
-  const handleDecorationTap = useCallback((index: number) => {
+  // Handle decoration long-press in edit mode (pick up)
+  const handleDecorationLongPress = useCallback((index: number) => {
     if (isDecorMode) {
       removeDecoration(index);
-      haptic('light');
+      haptic('medium');
     }
   }, [isDecorMode, removeDecoration, haptic]);
 
@@ -814,27 +825,20 @@ export const PetLand = () => {
             index={index}
             gridSize={gridSize}
             isEditMode={isDecorMode}
-            onTap={isDecorMode ? handleDecorationTap : undefined}
+            onLongPress={isDecorMode ? handleDecorationLongPress : undefined}
           />
         );
       }
       return null;
     });
-  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationTap]);
+  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationLongPress]);
 
-  // Tap-to-place: user taps island to place selected decoration on nearest empty cell
+  // Ghost tile placement: user taps a specific ghost tile to place decoration
   const petsLayerRef = useRef<HTMLDivElement>(null);
 
-  const handleDecorClick = useCallback((e: React.MouseEvent) => {
-    if (!isDecorMode || !selectedDecorationId) return;
-    const layer = petsLayerRef.current;
-    if (!layer) return;
-    const rect = layer.getBoundingClientRect();
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
-    const nearest = findNearestEmptyCell(xPct, yPct, currentLand.cells, gridSize);
-    if (nearest === null) return;
-    const success = placeDecoration(selectedDecorationId, nearest);
+  const handlePlaceAtCell = useCallback((cellIndex: number) => {
+    if (!selectedDecorationId) return;
+    const success = placeDecoration(selectedDecorationId, cellIndex);
     if (success) {
       haptic('light');
       const remaining = (decorationInventory[selectedDecorationId] || 1) - 1;
@@ -842,7 +846,20 @@ export const PetLand = () => {
         setSelectedDecorationId(null);
       }
     }
-  }, [isDecorMode, selectedDecorationId, currentLand.cells, gridSize, placeDecoration, haptic, decorationInventory]);
+  }, [selectedDecorationId, placeDecoration, haptic, decorationInventory]);
+
+  // Compute empty cells for ghost tile rendering
+  const ghostCells = useMemo(() => {
+    if (!isDecorMode || !selectedDecorationId) return [];
+    const available = getAvailableCellIndices(gridSize);
+    const result: { index: number; pos: { x: number; y: number } }[] = [];
+    for (const idx of available) {
+      if (currentLand.cells[idx] !== null) continue;
+      const pos = getIslandPosition(idx, gridSize);
+      if (pos) result.push({ index: idx, pos });
+    }
+    return result;
+  }, [isDecorMode, selectedDecorationId, gridSize, currentLand.cells]);
 
   const growthClass = getGrowthStage(filledCount);
 
@@ -1107,9 +1124,22 @@ export const PetLand = () => {
               }}
               role="group"
               aria-label="Your pet island"
-              onClick={handleDecorClick}
             >
               {slotElements}
+
+              {/* Ghost tiles — show available placement spots in decor mode */}
+              {ghostCells.map(({ index: idx, pos }) => (
+                <button
+                  key={`ghost-${idx}`}
+                  className="decoration-ghost"
+                  style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlaceAtCell(idx);
+                  }}
+                  aria-label={`Place decoration at tile ${idx}`}
+                />
+              ))}
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">

@@ -1614,7 +1614,7 @@
 
 .pet-land__actions {
   position: absolute;
-  top: calc(var(--status-bar-height, 56px) + 8px);
+  top: calc(var(--actual-status-bar-bottom, 72px) + 8px);
   right: 12px;
   z-index: var(--z-buttons);
   display: flex;
@@ -2153,6 +2153,18 @@
   animation: deco-edit-pulse 1.5s ease-in-out infinite;
 }
 
+/* Long-press feedback — scale up while holding to pick up */
+.island-decoration--pressing {
+  transform: translate(-50%, -55%) scale(calc(var(--deco-scale, 1) * 1.15)) !important;
+  transition: transform 0.15s ease;
+  filter: brightness(1.1);
+}
+
+.island-decoration--pressing::after {
+  border-color: rgba(239, 68, 68, 0.7) !important;
+  animation: none !important;
+}
+
 @keyframes deco-edit-pulse {
   0%, 100% { border-color: rgba(255, 255, 255, 0.6); }
   50% { border-color: rgba(255, 255, 255, 0.2); }
@@ -2162,6 +2174,33 @@
 .pet-land--decor-active .island-pet {
   opacity: 0.45;
   transition: opacity 0.3s ease;
+}
+
+/* Ghost tile markers — show available placement spots */
+.decoration-ghost {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: rgba(74, 222, 128, 0.25);
+  border: 2px solid rgba(74, 222, 128, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: ghost-pulse 2s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 9;
+}
+
+.decoration-ghost:active {
+  background: rgba(74, 222, 128, 0.5);
+  transform: translate(-50%, -50%) rotate(45deg) scale(0.9);
+}
+
+@keyframes ghost-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 
@@ -2438,7 +2477,7 @@
 
 .island-switcher {
   position: absolute;
-  top: calc(var(--status-bar-height, 56px) + 8px);
+  top: calc(var(--actual-status-bar-bottom, 72px) + 8px);
   left: 12px;
   z-index: var(--z-buttons);
 }
@@ -2721,7 +2760,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .island-decoration--sways .island-decoration__sprite,
-  .island-decoration--edit::after {
+  .island-decoration--edit::after,
+  .decoration-ghost {
     animation: none;
   }
 }

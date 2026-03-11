@@ -510,6 +510,35 @@ export const useLandStore = create<LandStore>()(
           }
         }
 
+        // If no empty cell, try displacing a decoration to make room for the pet
+        if (cellIndex === -1) {
+          const available = getAvailableCellIndices(currentLand.gridSize);
+          let decorToDisplace: { index: number; timestamp: number } | null = null;
+          for (const idx of available) {
+            const cell = currentLand.cells[idx];
+            if (cell && isDecorationCell(cell)) {
+              // Pick the most recently placed decoration (easiest for player to re-place)
+              if (!decorToDisplace || cell.timestamp > decorToDisplace.timestamp) {
+                decorToDisplace = { index: idx, timestamp: cell.timestamp };
+              }
+            }
+          }
+          if (decorToDisplace) {
+            const decoCell = currentLand.cells[decorToDisplace.index] as DecorationCell;
+            const newCells = [...currentLand.cells];
+            newCells[decorToDisplace.index] = null;
+            const newInv = { ...get().decorationInventory };
+            newInv[decoCell.decorationId] = (newInv[decoCell.decorationId] || 0) + 1;
+            currentLand = { ...currentLand, cells: newCells };
+            set({ decorationInventory: newInv });
+            cellIndex = decorToDisplace.index;
+            // Notify the user
+            window.dispatchEvent(new CustomEvent('decorationDisplaced', {
+              detail: { decorationId: decoCell.decorationId },
+            }));
+          }
+        }
+
         // If the entire 20×20 land is full, auto-archive and start a new one
         if (cellIndex === -1) {
           const { completedLands, selectedNextTheme } = get();
