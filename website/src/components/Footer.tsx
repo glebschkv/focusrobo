@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const PARADE_PETS = ['bunny', 'chick', 'frog', 'capybara', 'cat', 'hedgehog', 'fox', 'corgi'];
 
 export function Footer() {
@@ -5,14 +7,15 @@ export function Footer() {
     <footer className="site-footer py-12 px-5">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
             <img src="/app-icon.png" alt="PhoNo" style={{ width: 24, height: 24, borderRadius: 4 }} />
             <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)', fontSize: 16 }}>PhoNo</span>
-          </div>
+          </Link>
 
           <div className="flex gap-6 text-sm">
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+            <Link to="/support">Support</Link>
             <a href="mailto:hello@phono.app">Contact</a>
           </div>
 

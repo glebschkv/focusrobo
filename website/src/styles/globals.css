@@ -711,6 +711,64 @@ img {
   animation: pet-parade 20s linear infinite;
 }
 
+/* ═══ Legal Pages ═══ */
+.legal-content {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg-deep);
+}
+.legal-content section {
+  margin-bottom: 32px;
+}
+.legal-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding-top: 8px;
+  color: var(--fg-deep);
+}
+.legal-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  color: var(--fg-deep);
+}
+.legal-content p {
+  margin-bottom: 12px;
+  color: hsl(150, 6%, 35%);
+}
+.legal-content ul {
+  margin-bottom: 12px;
+  padding-left: 24px;
+}
+.legal-content li {
+  margin-bottom: 8px;
+  color: hsl(150, 6%, 35%);
+}
+.legal-content a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.legal-content a:hover {
+  text-decoration: underline;
+}
+.legal-content strong {
+  color: var(--fg-deep);
+  font-weight: 600;
+}
+
+/* FAQ details */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] > summary span {
+  transform: rotate(45deg);
+}
+
 /* ═══ Reduced Motion ═══ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
