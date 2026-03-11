@@ -2366,9 +2366,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 12px;
   background: rgba(0, 0, 0, 0.02);
-  min-height: 80px;
+  min-height: 72px;
 }
 
 .decor-tab__card-sprite {
@@ -2414,6 +2414,9 @@
   font-weight: 700;
   color: #5C3D1A;
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .decor-tab__card-meta {
