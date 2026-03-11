@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px 6px;
+  padding: 10px 16px 8px;
   position: relative;
 }
 
@@ -98,7 +98,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   background: linear-gradient(180deg, #F3E8F7 0%, #E8D5F0 100%);
   border: 1px solid #D4B8E0;
   border-radius: 8px;
