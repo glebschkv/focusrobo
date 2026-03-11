@@ -2153,6 +2153,18 @@
   animation: deco-edit-pulse 1.5s ease-in-out infinite;
 }
 
+/* Long-press feedback — scale up while holding to pick up */
+.island-decoration--pressing {
+  transform: translate(-50%, -55%) scale(calc(var(--deco-scale, 1) * 1.15)) !important;
+  transition: transform 0.15s ease;
+  filter: brightness(1.1);
+}
+
+.island-decoration--pressing::after {
+  border-color: rgba(239, 68, 68, 0.7) !important;
+  animation: none !important;
+}
+
 @keyframes deco-edit-pulse {
   0%, 100% { border-color: rgba(255, 255, 255, 0.6); }
   50% { border-color: rgba(255, 255, 255, 0.2); }

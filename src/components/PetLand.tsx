@@ -785,11 +785,11 @@ export const PetLand = () => {
     }
   }, [currentLand.cells]);
 
-  // Handle decoration tap in edit mode (pick up)
-  const handleDecorationTap = useCallback((index: number) => {
+  // Handle decoration long-press in edit mode (pick up)
+  const handleDecorationLongPress = useCallback((index: number) => {
     if (isDecorMode) {
       removeDecoration(index);
-      haptic('light');
+      haptic('medium');
     }
   }, [isDecorMode, removeDecoration, haptic]);
 
@@ -825,13 +825,13 @@ export const PetLand = () => {
             index={index}
             gridSize={gridSize}
             isEditMode={isDecorMode}
-            onTap={isDecorMode ? handleDecorationTap : undefined}
+            onLongPress={isDecorMode ? handleDecorationLongPress : undefined}
           />
         );
       }
       return null;
     });
-  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationTap]);
+  }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationLongPress]);
 
   // Ghost tile placement: user taps a specific ghost tile to place decoration
   const petsLayerRef = useRef<HTMLDivElement>(null);

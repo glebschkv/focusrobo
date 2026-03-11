@@ -3,31 +3,67 @@
  *
  * Renders a single decoration absolutely positioned on the isometric diamond island.
  * Similar to IslandPet but simpler — no growth sizes, no rarity glow.
+ * In edit mode, long-press (500ms) to pick up — prevents accidental removal
+ * while placing new decorations via ghost tile taps.
  */
 
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useRef } from 'react';
 import { getDecorationById } from '@/data/DecorationData';
 import { getIslandPosition, getDepthScale, getDepthZIndex, getGridDensityScale } from '@/data/islandPositions';
 import type { DecorationCell } from '@/stores/landStore';
+
+const LONG_PRESS_MS = 500;
 
 interface IslandDecorationProps {
   cell: DecorationCell;
   index: number;
   gridSize: number;
   isEditMode?: boolean;
-  onTap?: (index: number, rect?: DOMRect) => void;
+  onLongPress?: (index: number) => void;
 }
 
-export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onTap }: IslandDecorationProps) => {
+export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onLongPress }: IslandDecorationProps) => {
   const [imageError, setImageError] = useState(false);
+  const [pressing, setPressing] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const firedRef = useRef(false);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onTap) {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      onTap(index, rect);
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
-  }, [onTap, index]);
+    setPressing(false);
+    firedRef.current = false;
+  }, []);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (!isEditMode || !onLongPress) return;
+    e.stopPropagation();
+    firedRef.current = false;
+    setPressing(true);
+    timerRef.current = setTimeout(() => {
+      firedRef.current = true;
+      setPressing(false);
+      onLongPress(index);
+    }, LONG_PRESS_MS);
+  }, [isEditMode, onLongPress, index]);
+
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    e.stopPropagation();
+    clearTimer();
+  }, [clearTimer]);
+
+  const handlePointerCancel = useCallback(() => {
+    clearTimer();
+  }, [clearTimer]);
+
+  // Prevent click from propagating to ghost tiles underneath
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (isEditMode) {
+      e.stopPropagation();
+    }
+  }, [isEditMode]);
 
   const decoration = getDecorationById(cell.decorationId);
   if (!decoration) return null;
@@ -56,9 +92,13 @@ export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onTap
     );
   }
 
+  const editClasses = isEditMode
+    ? `island-decoration--edit${pressing ? ' island-decoration--pressing' : ''}`
+    : '';
+
   return (
     <div
-      className={`island-decoration ${decoration.sways ? 'island-decoration--sways' : ''} ${isEditMode ? 'island-decoration--edit' : ''}`}
+      className={`island-decoration ${decoration.sways ? 'island-decoration--sways' : ''} ${editClasses}`}
       style={{
         left: `${pos.x}%`,
         top: `${pos.y}%`,
@@ -67,8 +107,12 @@ export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onTap
         contain: 'layout style paint',
       } as React.CSSProperties}
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onPointerLeave={handlePointerCancel}
       role={isEditMode ? 'button' : undefined}
-      aria-label={isEditMode ? `${decoration.name} (tap to pick up)` : decoration.name}
+      aria-label={isEditMode ? `${decoration.name} (hold to pick up)` : decoration.name}
     >
       <img
         src={decoration.sprite}
