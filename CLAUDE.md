@@ -893,10 +893,10 @@ cd website && npm run build                 # Production build
 
 | Asset | Location | Count | Format | Status |
 |-------|----------|-------|--------|--------|
-| Pet sprites | `public/assets/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
-| Decoration sprites | `public/assets/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
-| Website pet copies | `website/public/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
-| Website decoration copies | `website/public/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
+| Pet sprites | `public/assets/pets/` | 164 | 48×48 RGBA PNG | Done |
+| Decoration sprites | `public/assets/decorations/` | 20 | 48×48 RGBA PNG | Done |
+| Website pet copies | `website/public/pets/` | 164 | 48×48 RGBA PNG | Done (copies of above) |
+| Website decoration copies | `website/public/decorations/` | 20 | 48×48 RGBA PNG | Done (copies of above) |
 | Icons | `public/assets/icons/` | 141 | PNG | Done |
 | Robots (legacy) | `public/assets/robots/` | 27 | SVG | Legacy (unused) |
 | Worlds | `public/assets/worlds/` | 10 | PNG | Done |
@@ -907,11 +907,10 @@ cd website && npm run build                 # Production build
 - [x] Island decorations system — shop tab, placement UX, 20 items across 6 categories
 - [x] Marketing website — waitlist landing page with referral system
 - [x] Legal pages — Privacy Policy, Terms of Service, Support (website)
-- [ ] **Generate final pet pixel art assets** — replace 164 Pillow placeholders with proper pixel art (see `NEXT_AI_PROMPT.md` Task 1)
-- [ ] **Generate higher-fidelity decoration sprites** — replace 20 Pillow placeholders (see `NEXT_AI_PROMPT.md` Task 2)
-- [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (see `NEXT_AI_PROMPT.md` Task 3)
-- [ ] **Verify debug buttons removed** — confirm no debug "Award Pet" button or dev-only UI remains (see `NEXT_AI_PROMPT.md` Task 4)
-- [ ] **Sync website assets** — copy regenerated pet/decoration PNGs to `website/public/` (see `NEXT_AI_PROMPT.md` Task 5)
+- [x] Pet pixel art assets — 164 PNGs (41 species × 4 size variants)
+- [x] Decoration pixel art sprites — 20 PNGs across 6 categories
+- [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (see `NEXT_AI_PROMPT.md` Task 1)
+- [ ] **Verify debug buttons removed** — confirm no debug "Award Pet" button or dev-only UI remains (see `NEXT_AI_PROMPT.md` Task 2)
 - [ ] Upload screenshots and app icon to App Store Connect
 - [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)
 - [ ] Connect waitlist form to real backend (currently simulated with localStorage)
