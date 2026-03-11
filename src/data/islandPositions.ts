@@ -250,7 +250,7 @@ const REFERENCE_GRID = 5;
  */
 export function getGridDensityScale(gridSize: number): number {
   const g = Math.max(MIN_GRID_TIER, Math.min(MAX_GRID_TIER, gridSize || MIN_GRID_TIER));
-  return Math.max(0.5, (REFERENCE_GRID / g) * 1.3);
+  return Math.max(0.65, (REFERENCE_GRID / g) * 1.2);
 }
 
 /**

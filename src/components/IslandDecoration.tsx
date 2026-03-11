@@ -37,7 +37,7 @@ export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onTap
 
   const depthScale = getDepthScale(index);
   const gridScale = getGridDensityScale(gridSize);
-  const finalScale = depthScale * gridScale;
+  const finalScale = Math.max(0.55, depthScale * gridScale);
   const zIndex = getDepthZIndex(index);
 
   if (imageError) {
