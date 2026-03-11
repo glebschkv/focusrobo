@@ -55,12 +55,12 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
     return {
       'Access-Control-Allow-Origin': origin!,
       'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     };
   }
   return {
     'Access-Control-Allow-Origin': 'null',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   };
 }
