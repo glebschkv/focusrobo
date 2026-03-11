@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface WaitlistFormProps {
   variant?: 'hero' | 'cta';
@@ -12,53 +13,116 @@ const REFERRAL_TIERS = [
   { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
 ];
 
+function getReferredByFromUrl(): string | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('ref') || null;
+  } catch {
+    return null;
+  }
+}
+
 export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [waitlistCount, setWaitlistCount] = useState(847);
+  const [waitlistCount, setWaitlistCount] = useState(0);
+  const [referredBy] = useState<string | null>(() => getReferredByFromUrl());
 
-  // Check for existing signup
+  // Check for existing signup in localStorage cache
   useEffect(() => {
-    const saved = localStorage.getItem('phono_referral_code');
-    if (saved) {
-      setReferralCode(saved);
+    const savedCode = localStorage.getItem('phono_referral_code');
+    if (savedCode) {
+      setReferralCode(savedCode);
       setStatus('success');
-      // Simulate referral count for demo
-      const savedCount = localStorage.getItem('phono_referral_count');
-      if (savedCount) setReferralCount(parseInt(savedCount, 10));
+      // Fetch real referral count from server
+      fetchReferralCount();
     }
   }, []);
 
-  // Animate counter on mount
+  // Fetch waitlist count on mount
   useEffect(() => {
-    const target = 847 + Math.floor(Math.random() * 200);
-    const interval = setInterval(() => {
-      setWaitlistCount(prev => {
-        if (prev >= target) { clearInterval(interval); return prev; }
-        return prev + Math.ceil((target - prev) / 10);
-      });
-    }, 50);
-    return () => clearInterval(interval);
+    fetchWaitlistCount();
   }, []);
+
+  async function fetchWaitlistCount() {
+    try {
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        method: 'GET',
+      });
+      if (!error && data?.count != null) {
+        setWaitlistCount(data.count);
+        localStorage.setItem('phono_waitlist_count', String(data.count));
+      } else {
+        // Fall back to cached count
+        const cached = localStorage.getItem('phono_waitlist_count');
+        if (cached) setWaitlistCount(parseInt(cached, 10));
+      }
+    } catch {
+      const cached = localStorage.getItem('phono_waitlist_count');
+      if (cached) setWaitlistCount(parseInt(cached, 10));
+    }
+  }
+
+  async function fetchReferralCount() {
+    try {
+      const savedEmail = localStorage.getItem('phono_email');
+      if (!savedEmail) return;
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        body: { email: savedEmail, referredBy: null },
+      });
+      if (!error && data?.referralCount != null) {
+        setReferralCount(data.referralCount);
+        localStorage.setItem('phono_referral_count', String(data.referralCount));
+      } else {
+        const cached = localStorage.getItem('phono_referral_count');
+        if (cached) setReferralCount(parseInt(cached, 10));
+      }
+    } catch {
+      const cached = localStorage.getItem('phono_referral_count');
+      if (cached) setReferralCount(parseInt(cached, 10));
+    }
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || status === 'loading') return;
 
     setStatus('loading');
+    setErrorMessage('');
 
-    // Simulate API call (replace with Supabase edge function later)
-    await new Promise(r => setTimeout(r, 1200));
+    try {
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        body: {
+          email,
+          referredBy: referredBy || undefined,
+        },
+      });
 
-    const code = Math.random().toString(36).substring(2, 10).toUpperCase();
-    localStorage.setItem('phono_referral_code', code);
-    localStorage.setItem('phono_email', email);
-    setReferralCode(code);
-    setStatus('success');
-    setWaitlistCount(prev => prev + 1);
+      if (error) {
+        throw new Error(error.message || 'Failed to sign up');
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to sign up');
+      }
+
+      // Cache locally for instant return visits
+      localStorage.setItem('phono_referral_code', data.referralCode);
+      localStorage.setItem('phono_email', email);
+      localStorage.setItem('phono_referral_count', String(data.referralCount ?? 0));
+
+      setReferralCode(data.referralCode);
+      setReferralCount(data.referralCount ?? 0);
+      setStatus('success');
+      setWaitlistCount(data.waitlistPosition ?? waitlistCount + 1);
+    } catch (err) {
+      setStatus('error');
+      setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    }
   };
 
   const copyLink = () => {
@@ -141,12 +205,14 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
           title="Hatch My Spot"
         />
       </form>
-      <div className="waitlist-counter">
-        <strong>{waitlistCount.toLocaleString()}</strong> adventurers waiting
-      </div>
+      {waitlistCount > 0 && (
+        <div className="waitlist-counter">
+          <strong>{waitlistCount.toLocaleString()}</strong> adventurers waiting
+        </div>
+      )}
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
-          Something went wrong. Please try again.
+          {errorMessage}
         </p>
       )}
     </div>

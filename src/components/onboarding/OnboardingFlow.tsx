@@ -14,11 +14,12 @@ interface OnboardingFlowProps {
 // ─── Preload critical images so sprites don't flash blank ────────────────────
 
 const PRELOAD_SRCS = [
-  '/assets/sprites/humanoid/star-wizard-walk.png',
+  '/assets/pets/bunny.png',
+  '/assets/pets/fox.png',
+  '/assets/pets/capybara.png',
   '/assets/icons/clock.png',
   '/assets/icons/star.png',
   '/assets/icons/paw.png',
-  '/assets/icons/wizard.png',
 ];
 
 function usePreloadImages(srcs: string[]) {
@@ -96,7 +97,7 @@ const FloatingParticles = memo(() => {
 });
 FloatingParticles.displayName = 'FloatingParticles';
 
-// ─── Sparkle burst around wizard — CSS-driven ───────────────────────────────
+// ─── Sparkle burst around pet — CSS-driven ──────────────────────────────────
 
 interface SparkleConfig {
   id: number;
@@ -187,7 +188,7 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
   </div>
 );
 
-// ─── Walking bot sprite ─────────────────────────────────────────────────────
+// ─── Pixel art image rendering helper ────────────────────────────────────────
 
 const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Standard
@@ -195,44 +196,6 @@ const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Safari fallback — typed as `any` because React CSSProperties
   // doesn't include the -webkit- vendor prefix
   ...(({ '-webkit-image-rendering': 'pixelated' } as unknown) as React.CSSProperties),
-};
-
-const WalkingPetSprite = ({
-  spritePath,
-  frameCount,
-  frameWidth,
-  frameHeight,
-  scale = 2,
-}: {
-  spritePath: string;
-  frameCount: number;
-  frameWidth: number;
-  frameHeight: number;
-  scale?: number;
-}) => {
-  const [frame, setFrame] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrame((f) => (f + 1) % frameCount);
-    }, 150);
-    return () => clearInterval(interval);
-  }, [frameCount]);
-
-  return (
-    <div className="flex items-center justify-center">
-      <div
-        style={{
-          width: frameWidth * scale,
-          height: frameHeight * scale,
-          backgroundImage: `url(${spritePath})`,
-          backgroundPosition: `-${frame * frameWidth * scale}px 0px`,
-          backgroundSize: `${frameCount * frameWidth * scale}px ${frameHeight * scale}px`,
-          ...SPRITE_IMAGE_RENDERING,
-        }}
-      />
-    </div>
-  );
 };
 
 // ─── Pixel icon with fallback ───────────────────────────────────────────────
@@ -506,6 +469,10 @@ const OnboardingKeyframes = memo(() => (
       40%  { transform: translate3d(var(--sparkle-tx), var(--sparkle-ty), 0) scale(1.2); opacity: 1; }
       100% { transform: translate3d(0, 0, 0) scale(0); opacity: 0; }
     }
+    @keyframes onboarding-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
   `}</style>
 ));
 OnboardingKeyframes.displayName = 'OnboardingKeyframes';
@@ -558,13 +525,18 @@ const StepWelcome = () => (
       />
       <div className="relative">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={2.5}
-        />
+        <div className="flex items-center justify-center">
+          <img
+            src="/assets/pets/bunny.png"
+            alt="Bunny pet"
+            style={{
+              width: 120,
+              height: 120,
+              ...SPRITE_IMAGE_RENDERING,
+              animation: 'onboarding-bob 3s ease-in-out infinite',
+            }}
+          />
+        </div>
       </div>
       {/* Ground shadow — simple gradient, no filter:blur */}
       <div
@@ -761,20 +733,32 @@ const StepMeetCompanion = () => (
 
       <div className="relative">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={3}
-        />
+        <div className="flex items-center justify-center gap-4">
+          {[
+            { src: '/assets/pets/bunny.png', alt: 'Bunny', delay: '0s' },
+            { src: '/assets/pets/fox.png', alt: 'Fox', delay: '0.4s' },
+            { src: '/assets/pets/capybara.png', alt: 'Capybara', delay: '0.8s' },
+          ].map((pet) => (
+            <img
+              key={pet.alt}
+              src={pet.src}
+              alt={pet.alt}
+              style={{
+                width: 80,
+                height: 80,
+                ...SPRITE_IMAGE_RENDERING,
+                animation: `onboarding-bob 3s ease-in-out ${pet.delay} infinite`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Ground shadow */}
       <div
         className="mx-auto mt-1 rounded-full"
         style={{
-          width: 100,
+          width: 140,
           height: 12,
           background:
             'radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)',
@@ -782,9 +766,9 @@ const StepMeetCompanion = () => (
       />
     </motion.div>
 
-    {/* Character card */}
+    {/* Info card */}
     <motion.div
-      className="mx-auto max-w-[260px] rounded-2xl px-5 py-4"
+      className="mx-auto max-w-[280px] rounded-2xl px-5 py-4"
       style={{
         background: 'rgba(255,255,255,0.88)',
         border: '1px solid rgba(64,133,106,0.15)',
@@ -795,45 +779,37 @@ const StepMeetCompanion = () => (
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
     >
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <PixelIcon src="/assets/icons/wizard.png" fallback="" size={20} />
-        <p
-          className="text-lg font-bold"
-          style={{ color: '#1C211E' }}
-        >
-          Star Wizard
-        </p>
-        <span
-          className="text-[12px] font-semibold px-2 py-0.5 rounded-full"
-          style={{
-            background: 'rgba(59,130,246,0.12)',
-            color: 'rgba(59,130,246,0.9)',
-            border: '1px solid rgba(59,130,246,0.2)',
-          }}
-        >
-          RARE
-        </span>
-      </div>
+      <p
+        className="text-lg font-bold mb-2"
+        style={{ color: '#1C211E' }}
+      >
+        Collect Them All
+      </p>
       <p
         className="text-sm leading-relaxed"
         style={{ color: '#535D57' }}
       >
-        A young wizard in training who casts spells of concentration.
+        Complete focus sessions to discover 41 unique species — from common bunnies to legendary unicorns.
       </p>
 
-      {/* Abilities */}
+      {/* Rarity preview */}
       <div className="flex gap-1.5 justify-center mt-3 flex-wrap">
-        {['Magic Focus', 'Star Spell', 'Wizard Wisdom'].map((ability) => (
+        {[
+          { label: 'Common', bg: 'rgba(64,133,106,0.08)', color: '#535D57', border: 'rgba(64,133,106,0.15)' },
+          { label: 'Rare', bg: 'rgba(59,130,246,0.08)', color: 'rgba(59,130,246,0.9)', border: 'rgba(59,130,246,0.2)' },
+          { label: 'Epic', bg: 'rgba(168,85,247,0.08)', color: 'rgba(168,85,247,0.9)', border: 'rgba(168,85,247,0.2)' },
+          { label: 'Legendary', bg: 'rgba(234,179,8,0.08)', color: 'rgba(180,130,0,0.9)', border: 'rgba(234,179,8,0.25)' },
+        ].map((rarity) => (
           <span
-            key={ability}
-            className="text-[12px] px-2 py-0.5 rounded-full"
+            key={rarity.label}
+            className="text-[12px] font-semibold px-2 py-0.5 rounded-full"
             style={{
-              background: 'rgba(64,133,106,0.06)',
-              color: '#535D57',
-              border: '1px solid rgba(64,133,106,0.1)',
+              background: rarity.bg,
+              color: rarity.color,
+              border: `1px solid ${rarity.border}`,
             }}
           >
-            {ability}
+            {rarity.label}
           </span>
         ))}
       </div>
