@@ -88,6 +88,21 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     return () => window.removeEventListener('reward-earned', handler);
   }, []);
 
+  // Measure actual status bar height and broadcast via CSS variable
+  const statusBarRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = statusBarRef.current;
+    if (!el) return;
+    const update = () => {
+      const rect = el.getBoundingClientRect();
+      document.documentElement.style.setProperty('--actual-status-bar-bottom', `${rect.bottom}px`);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   if (currentTab !== "home") return null;
 
   const progress = getLevelProgress();
@@ -106,21 +121,6 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     if (hour >= 18) return 'streak-at-risk'; // After 6 PM
     return '';
   })();
-
-  // Measure actual status bar height and broadcast via CSS variable
-  const statusBarRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const el = statusBarRef.current;
-    if (!el) return;
-    const update = () => {
-      const rect = el.getBoundingClientRect();
-      document.documentElement.style.setProperty('--actual-status-bar-bottom', `${rect.bottom}px`);
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
 
   return (
     <div className="status-bar-container" ref={statusBarRef}>
