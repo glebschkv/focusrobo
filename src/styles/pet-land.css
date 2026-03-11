@@ -22,7 +22,7 @@
 
   /* Spacing tokens */
   --dock-offset: calc(env(safe-area-inset-bottom, 0px) + var(--dock-height, 82px));
-  --status-bar-height: 56px;
+  --status-bar-height: 80px;
 
   /* Border radius scale */
   --radius-sm: 8px;
@@ -1614,7 +1614,7 @@
 
 .pet-land__actions {
   position: absolute;
-  top: calc(var(--actual-status-bar-bottom, 72px) + 8px);
+  top: calc(env(safe-area-inset-top, 0px) + 8px + var(--status-bar-height) + 8px);
   right: 12px;
   z-index: var(--z-buttons);
   display: flex;
@@ -2477,7 +2477,7 @@
 
 .island-switcher {
   position: absolute;
-  top: calc(var(--actual-status-bar-bottom, 72px) + 8px);
+  top: calc(env(safe-area-inset-top, 0px) + 8px + var(--status-bar-height) + 8px);
   left: 12px;
   z-index: var(--z-buttons);
 }

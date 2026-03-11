@@ -1,6 +1,6 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
-import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Popover,
   PopoverContent,
@@ -88,21 +88,6 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     return () => window.removeEventListener('reward-earned', handler);
   }, []);
 
-  // Measure actual status bar height and broadcast via CSS variable
-  const statusBarRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const el = statusBarRef.current;
-    if (!el) return;
-    const update = () => {
-      const rect = el.getBoundingClientRect();
-      document.documentElement.style.setProperty('--actual-status-bar-bottom', `${rect.bottom}px`);
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
   if (currentTab !== "home") return null;
 
   const progress = getLevelProgress();
@@ -123,7 +108,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   })();
 
   return (
-    <div className="status-bar-container" ref={statusBarRef}>
+    <div className="status-bar-container">
       {/* Game-style unified top bar */}
       <div className="game-top-bar" style={{ position: 'relative' }}>
         {/* Floating reward numbers */}
