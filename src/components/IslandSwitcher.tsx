@@ -2,7 +2,7 @@
  * IslandSwitcher
  *
  * Horizontal pill bar showing unlocked archipelago islands.
- * Displayed at the top of PetLand below the status bar.
+ * Displayed at the bottom of PetLand above the tab bar.
  * Tapping an island switches the active island view.
  * Locked islands show as dimmed with a lock icon.
  */
