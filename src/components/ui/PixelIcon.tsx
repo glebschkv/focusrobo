@@ -81,6 +81,8 @@ const ICON_NAMES = new Set([
   'lock', 'play', 'pause', 'stop',
   // Extra UI icons
   'skip-forward', 'volume-on', 'volume-off', 'checkmark',
+  // Decoration category icons
+  'tree', 'flower', 'gem', 'castle',
 ]);
 
 interface PixelIconProps {

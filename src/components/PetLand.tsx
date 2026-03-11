@@ -942,11 +942,16 @@ export const PetLand = () => {
         {/* Back layer — distant, blurred, slow */}
         <div className="pet-land__cloud pet-land__cloud--3">
           <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
         </div>
         <div className="pet-land__cloud pet-land__cloud--4">
           <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
         </div>
         <div className="pet-land__cloud pet-land__cloud--7">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
         </div>
@@ -955,12 +960,18 @@ export const PetLand = () => {
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
         </div>
         <div className="pet-land__cloud pet-land__cloud--5">
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
         </div>
         <div className="pet-land__cloud pet-land__cloud--8">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
         </div>
         {/* Front layer — close, sharp, faster */}
@@ -968,8 +979,13 @@ export const PetLand = () => {
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
         </div>
         <div className="pet-land__cloud pet-land__cloud--6">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
           <div className="pet-land__cloud-lobe" />
         </div>
 

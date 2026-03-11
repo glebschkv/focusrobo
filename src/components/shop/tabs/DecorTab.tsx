@@ -19,7 +19,7 @@ const CATEGORY_LABELS: Record<DecorationCategory, { label: string; icon: string 
   trees: { label: 'Trees', icon: 'tree' },
   flowers: { label: 'Flowers', icon: 'flower' },
   rocks: { label: 'Rocks', icon: 'gem' },
-  water: { label: 'Water', icon: 'droplet' },
+  water: { label: 'Water', icon: 'water-drop' },
   structures: { label: 'Builds', icon: 'castle' },
   fun: { label: 'Fun', icon: 'star' },
 };
