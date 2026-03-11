@@ -909,9 +909,9 @@ cd website && npm run build                 # Production build
 - [x] Legal pages — Privacy Policy, Terms of Service, Support (website)
 - [x] Pet pixel art assets — 164 PNGs (41 species × 4 size variants)
 - [x] Decoration pixel art sprites — 20 PNGs across 6 categories
-- [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (see `NEXT_AI_PROMPT.md` Task 1)
-- [ ] **Verify debug buttons removed** — confirm no debug "Award Pet" button or dev-only UI remains (see `NEXT_AI_PROMPT.md` Task 2)
+- [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (`NEXT_AI_PROMPT.md` Task 1)
+- [ ] **Verify debug buttons removed** — confirm no debug UI remains (`NEXT_AI_PROMPT.md` Task 2)
+- [ ] **Connect waitlist form to Supabase** — replace fake localStorage signup with real edge function + waitlist table (`NEXT_AI_PROMPT.md` Task 3)
+- [ ] **Deploy website to Vercel** — env vars, build verification, deployment (`NEXT_AI_PROMPT.md` Task 4)
 - [ ] Upload screenshots and app icon to App Store Connect
 - [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)
-- [ ] Connect waitlist form to real backend (currently simulated with localStorage)
-- [ ] Set up Vercel deployment for website
