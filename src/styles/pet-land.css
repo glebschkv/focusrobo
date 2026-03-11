@@ -2341,7 +2341,7 @@
 .decor-tab__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .decor-tab__card {
@@ -2372,8 +2372,8 @@
 }
 
 .decor-tab__card-sprite {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
 }
 
@@ -2406,6 +2406,7 @@
 
 .decor-tab__card-info {
   padding: 8px 10px 6px;
+  flex: 1;
 }
 
 .decor-tab__card-name {
@@ -2434,7 +2435,7 @@
   justify-content: center;
   gap: 4px;
   padding: 10px 8px;
-  margin: 8px 8px 8px;
+  margin: 0 8px 8px;
   border-radius: 8px;
   border: none;
   background: #F5E6C8;
