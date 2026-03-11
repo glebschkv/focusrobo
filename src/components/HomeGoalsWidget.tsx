@@ -6,7 +6,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuestStore, useDailyChallenge, useRefreshDailyChallenge, useWeeklyChallenge, useRefreshWeeklyChallenge } from '@/stores/questStore';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
-import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, DIFFICULTY_COLORS } from '@/data/GamificationData';
+import { DAILY_CHALLENGES, WEEKLY_CHALLENGES } from '@/data/GamificationData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 
@@ -186,27 +186,13 @@ export const HomeGoalsWidget = () => {
                   <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
                     <PixelIcon name="lightning" size={12} className="inline mr-0.5 align-middle" /> {challengeTemplate.title}
                   </span>
-                  <span className="home-goals-card__row-progress" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span
-                      className="home-goals-card__difficulty-badge"
-                      style={{
-                        background: DIFFICULTY_COLORS[challengeTemplate.difficulty].bg,
-                        color: DIFFICULTY_COLORS[challengeTemplate.difficulty].text,
-                        border: `1px solid ${DIFFICULTY_COLORS[challengeTemplate.difficulty].border}`,
-                        fontSize: '8px',
-                        fontWeight: 800,
-                        textTransform: 'uppercase',
-                        padding: '1px 5px',
-                        borderRadius: '6px',
-                      }}
-                    >
-                      {challengeTemplate.difficulty}
-                    </span>
+                  <span className={`home-goals-card__difficulty-badge home-goals-card__difficulty-badge--${challengeTemplate.difficulty}`}>
+                    {challengeTemplate.difficulty}
                   </span>
                 </div>
                 <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
-                  <span style={{ fontSize: '10px', opacity: 0.7 }}>{challengeTemplate.description}</span>
-                  <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                  <span className="home-goals-card__description">{challengeTemplate.description}</span>
+                  <span className="home-goals-card__description">
                     {dailyChallenge.progress}/{dailyChallenge.target}
                   </span>
                 </div>
@@ -222,7 +208,10 @@ export const HomeGoalsWidget = () => {
                   />
                 </div>
                 {dailyChallenge.completed ? (
-                  <span className="home-goals-card__completed">Completed!</span>
+                  <div className="home-goals-card__completed-badge">
+                    <PixelIcon name="check" size={10} />
+                    <span>Completed!</span>
+                  </div>
                 ) : (
                   <div className="home-goals-card__reward">
                     <span>+{challengeTemplate.rewards.coins} coins</span>
@@ -275,8 +264,8 @@ export const HomeGoalsWidget = () => {
                   </span>
                 </div>
                 <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
-                  <span style={{ fontSize: '10px', opacity: 0.7 }}>{weeklyChallengeTemplate.description}</span>
-                  <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                  <span className="home-goals-card__description">{weeklyChallengeTemplate.description}</span>
+                  <span className="home-goals-card__description">
                     {weeklyChallenge.progress}/{weeklyChallenge.target}
                   </span>
                 </div>
@@ -292,7 +281,10 @@ export const HomeGoalsWidget = () => {
                   />
                 </div>
                 {weeklyChallenge.completed ? (
-                  <span className="home-goals-card__completed">Completed!</span>
+                  <div className="home-goals-card__completed-badge">
+                    <PixelIcon name="check" size={10} />
+                    <span>Completed!</span>
+                  </div>
                 ) : (
                   <div className="home-goals-card__reward">
                     <span>+{weeklyChallengeTemplate.rewards.coins} coins</span>
@@ -319,6 +311,9 @@ export const HomeGoalsWidget = () => {
                   <span className="home-goals-card__row-progress">
                     {Math.round(nearest.pct * 100)}%
                   </span>
+                  <svg className="home-goals-card__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <polyline points="9 6 15 12 9 18" />
+                  </svg>
                 </div>
                 <div className="home-goals-card__bar">
                   <div
