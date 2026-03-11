@@ -1,10 +1,9 @@
 /**
- * HomeGoalsWidget — Collapsible pill/card on the home screen that surfaces
- * daily quest progress and nearest achievement.
- * Replaces the old `.pet-land__nudge` chip.
+ * HomeGoalsWidget — Expandable card on the home screen that surfaces
+ * daily/weekly challenge progress and nearest achievement.
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuestStore, useDailyChallenge, useRefreshDailyChallenge, useWeeklyChallenge, useRefreshWeeklyChallenge } from '@/stores/questStore';
 import { useAchievementSystem } from '@/hooks/useAchievementSystem';
 import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, DIFFICULTY_COLORS } from '@/data/GamificationData';
@@ -27,8 +26,7 @@ function getNearestAchievement(achievements: { id: string; title: string; progre
 }
 
 export const HomeGoalsWidget = () => {
-  const [expanded, setExpanded] = useState(false);
-  const collapseTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [expanded, setExpanded] = useState(true);
 
   const quests = useQuestStore((s) => s.quests);
   const { achievements } = useAchievementSystem();
@@ -63,7 +61,7 @@ export const HomeGoalsWidget = () => {
     const diffMs = midnight.getTime() - now.getTime();
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
     const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    return `${hours}h ${mins}m left`;
+    return `${hours}h ${mins}m`;
   }, [expanded]); // recalc on expand
 
   // Time remaining until Sunday midnight (weekly)
@@ -77,40 +75,22 @@ export const HomeGoalsWidget = () => {
     const diffMs = endOfWeek.getTime() - now.getTime();
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    if (days > 0) return `${days}d ${hours}h left`;
-    return `${hours}h left`;
+    if (days > 0) return `${days}d ${hours}h`;
+    return `${hours}h`;
   }, [expanded]);
 
   // Active daily quests (not completed, not expired)
   const activeDaily = useMemo(() => {
     const now = Date.now();
     return quests
-      .filter(q => q.type === 'daily' && !q.isClaimed && (!q.expiresAt || q.expiresAt > now))
+      .filter(q => q.type === 'daily' && !q.isCompleted && (!q.expiresAt || q.expiresAt > now))
       .slice(0, 3);
   }, [quests]);
 
   // Nearest achievement
   const nearest = useMemo(() => getNearestAchievement(achievements), [achievements]);
 
-  // Count completed daily quests
-  const completedDaily = useMemo(
-    () => activeDaily.filter(q => q.isCompleted).length,
-    [activeDaily]
-  );
-
-  // Auto-collapse after 5s when expanded
-  useEffect(() => {
-    if (expanded) {
-      collapseTimer.current = setTimeout(() => setExpanded(false), 5000);
-      return () => clearTimeout(collapseTimer.current);
-    }
-  }, [expanded]);
-
   // Close on tap outside
-  const handleClickOutside = useCallback(() => {
-    if (expanded) setExpanded(false);
-  }, [expanded]);
-
   useEffect(() => {
     if (expanded) {
       const handler = (e: PointerEvent) => {
@@ -131,18 +111,17 @@ export const HomeGoalsWidget = () => {
   }, [expanded]);
 
   // Nothing to show
-  if (activeDaily.length === 0 && !nearest) return null;
+  const hasContent = dailyChallenge || weeklyChallenge || activeDaily.length > 0 || nearest;
+  if (!hasContent) return null;
 
   // Collapsed pill text
   const pillText = (() => {
-    const parts: string[] = [];
-    if (activeDaily.length > 0) {
-      parts.push(`${completedDaily}/${activeDaily.length} Daily`);
+    if (dailyChallenge && challengeTemplate) {
+      if (dailyChallenge.completed) return 'Daily Challenge Complete!';
+      return challengeTemplate.title;
     }
-    if (nearest) {
-      parts.push(`Near: ${nearest.name}`);
-    }
-    return parts.join(' · ') || 'View Goals';
+    if (nearest) return nearest.name;
+    return 'Daily Challenges';
   })();
 
   return (
@@ -158,6 +137,7 @@ export const HomeGoalsWidget = () => {
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.2 }}
           >
+            <PixelIcon name="fire" size={10} className="inline mr-0.5 align-middle" />
             <span className="home-goals-pill__text">{pillText}</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
               <polyline points="6 9 12 15 18 9" />
@@ -174,7 +154,13 @@ export const HomeGoalsWidget = () => {
           >
             {/* Header */}
             <div className="home-goals-card__header">
-              <span className="home-goals-card__title">Today</span>
+              <div className="home-goals-card__header-left">
+                <PixelIcon name="fire" size={14} className="inline align-middle" />
+                <span className="home-goals-card__title">Daily Challenges</span>
+                {dailyChallenge && !dailyChallenge.completed && (
+                  <span className="home-goals-card__countdown">{timeRemaining}</span>
+                )}
+              </div>
               <button
                 className="home-goals-card__close"
                 onClick={() => setExpanded(false)}
@@ -184,6 +170,14 @@ export const HomeGoalsWidget = () => {
                 </svg>
               </button>
             </div>
+
+            {/* Challenge streak badge */}
+            {dailyChallenge && dailyChallenge.challengeStreak > 0 && (
+              <div className="home-goals-card__streak-badge">
+                <PixelIcon name="fire" size={10} className="inline align-middle" />
+                <span>{dailyChallenge.challengeStreak} day streak</span>
+              </div>
+            )}
 
             {/* Daily Challenge (featured) */}
             {dailyChallenge && challengeTemplate && (
@@ -208,7 +202,6 @@ export const HomeGoalsWidget = () => {
                     >
                       {challengeTemplate.difficulty}
                     </span>
-                    <span style={{ fontSize: '9px', opacity: 0.6 }}>{timeRemaining}</span>
                   </span>
                 </div>
                 <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
@@ -222,34 +215,33 @@ export const HomeGoalsWidget = () => {
                     className="home-goals-card__bar-fill"
                     style={{
                       width: `${Math.min(100, (dailyChallenge.progress / dailyChallenge.target) * 100)}%`,
-                      background: dailyChallenge.completed ? 'hsl(42 75% 52%)' : undefined,
+                      background: dailyChallenge.completed
+                        ? 'linear-gradient(90deg, hsl(142 60% 45%), hsl(142 50% 55%))'
+                        : undefined,
                     }}
                   />
                 </div>
-                {dailyChallenge.completed && (
+                {dailyChallenge.completed ? (
                   <span className="home-goals-card__completed">Completed!</span>
-                )}
-                {dailyChallenge.challengeStreak > 0 && !dailyChallenge.completed && (
-                  <span style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px' }}>
-                    <PixelIcon name="fire" size={10} className="inline mr-0.5 align-middle" /> {dailyChallenge.challengeStreak} day challenge streak
-                  </span>
+                ) : (
+                  <div className="home-goals-card__reward">
+                    <span>+{challengeTemplate.rewards.coins} coins</span>
+                    <span className="home-goals-card__reward-dot" />
+                    <span>+{challengeTemplate.rewards.xp} XP</span>
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Quest rows */}
+            {/* Quest rows (informational only, no navigation) */}
             {activeDaily.map((quest) => {
               const firstObj = quest.objectives[0];
               if (!firstObj) return null;
               const pct = Math.min(100, (firstObj.current / firstObj.target) * 100);
               return (
-                <button
+                <div
                   key={quest.id}
                   className="home-goals-card__row"
-                  onClick={() => {
-                    window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'gamification' }));
-                    setExpanded(false);
-                  }}
                 >
                   <div className="home-goals-card__row-info">
                     <span className="home-goals-card__row-label">{quest.title}</span>
@@ -266,18 +258,21 @@ export const HomeGoalsWidget = () => {
                   {quest.isCompleted && (
                     <span className="home-goals-card__completed">Done!</span>
                   )}
-                </button>
+                </div>
               );
             })}
 
             {/* Weekly Challenge */}
             {weeklyChallenge && weeklyChallengeTemplate && (
               <div className="home-goals-card__weekly">
-                <div className="home-goals-card__row-info">
+                <div className="home-goals-card__section-label">
+                  <span>Weekly Challenge</span>
+                  <span className="home-goals-card__countdown">{weeklyTimeRemaining}</span>
+                </div>
+                <div className="home-goals-card__row-info" style={{ marginTop: '6px' }}>
                   <span className="home-goals-card__row-label" style={{ fontWeight: 700 }}>
                     <PixelIcon name="star" size={12} className="inline mr-0.5 align-middle" /> {weeklyChallengeTemplate.title}
                   </span>
-                  <span style={{ fontSize: '9px', opacity: 0.6 }}>{weeklyTimeRemaining}</span>
                 </div>
                 <div className="home-goals-card__row-info" style={{ marginTop: '2px' }}>
                   <span style={{ fontSize: '10px', opacity: 0.7 }}>{weeklyChallengeTemplate.description}</span>
@@ -291,13 +286,19 @@ export const HomeGoalsWidget = () => {
                     style={{
                       width: `${Math.min(100, (weeklyChallenge.progress / weeklyChallenge.target) * 100)}%`,
                       background: weeklyChallenge.completed
-                        ? 'linear-gradient(90deg, hsl(var(--primary)), hsl(42 75% 52%))'
+                        ? 'linear-gradient(90deg, hsl(142 60% 45%), hsl(142 50% 55%))'
                         : 'linear-gradient(90deg, hsl(var(--primary)), hsl(200 60% 50%))',
                     }}
                   />
                 </div>
-                {weeklyChallenge.completed && (
+                {weeklyChallenge.completed ? (
                   <span className="home-goals-card__completed">Completed!</span>
+                ) : (
+                  <div className="home-goals-card__reward">
+                    <span>+{weeklyChallengeTemplate.rewards.coins} coins</span>
+                    <span className="home-goals-card__reward-dot" />
+                    <span>+{weeklyChallengeTemplate.rewards.xp} XP</span>
+                  </div>
                 )}
               </div>
             )}
@@ -307,7 +308,7 @@ export const HomeGoalsWidget = () => {
               <button
                 className="home-goals-card__row home-goals-card__row--achievement"
                 onClick={() => {
-                  window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'gamification' }));
+                  window.dispatchEvent(new CustomEvent('switchToTab', { detail: 'collection' }));
                   setExpanded(false);
                 }}
               >
