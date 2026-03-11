@@ -13,7 +13,7 @@ import type { PetRarity } from '@/data/PetDatabase';
 import { useLandStore } from '@/stores/landStore';
 import type { PendingPet } from '@/stores/landStore';
 import { useCoinSystem } from '@/hooks/useCoinSystem';
-import { useCurrentLevel } from '@/stores/xpStore';
+import { useCurrentLevel, useCurrentXP, calculateLevelFromXP } from '@/stores/xpStore';
 import { usePremiumStatus } from '@/hooks/usePremiumStatus';
 import { getEggDiscountedPrice } from '@/hooks/useShop';
 import { toast } from 'sonner';
@@ -46,7 +46,13 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
   const placePendingPet = useLandStore((s) => s.placePendingPet);
   const speciesCatalog = useLandStore((s) => s.speciesCatalog);
   const coinSystem = useCoinSystem();
-  const currentLevel = useCurrentLevel();
+  const storedLevel = useCurrentLevel();
+  const currentXP = useCurrentXP();
+  // Defensive: if stored level is 0 but XP suggests otherwise (rehydration timing),
+  // recalculate to ensure wishing well and egg hatching use the correct level.
+  const currentLevel = storedLevel === 0 && currentXP > 0
+    ? calculateLevelFromXP(currentXP)
+    : storedLevel;
   const { getEggDiscountPercent, isPremium } = usePremiumStatus();
   const discountPercent = getEggDiscountPercent();
 

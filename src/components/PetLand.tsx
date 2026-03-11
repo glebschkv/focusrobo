@@ -12,6 +12,7 @@ import { useThemeStore } from '@/stores/themeStore';
 import { useShopStore } from '@/stores/shopStore';
 import { IslandPet } from '@/components/IslandPet';
 import { IslandDecoration } from '@/components/IslandDecoration';
+import { PixelIcon } from '@/components/ui/PixelIcon';
 import { DecorationPicker } from '@/components/DecorationPicker';
 import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
@@ -975,11 +976,40 @@ export const PetLand = () => {
           <div className="pet-land__ray pet-land__ray--5" />
         </div>
 
-        <div className="pet-land__cloud pet-land__cloud--1" />
-        <div className="pet-land__cloud pet-land__cloud--2" />
-        <div className="pet-land__cloud pet-land__cloud--3" />
-        <div className="pet-land__cloud pet-land__cloud--4" />
-        <div className="pet-land__cloud pet-land__cloud--5" />
+        {/* Clouds — 8 volumetric clouds in 3 depth layers */}
+        {/* Back layer — distant, blurred, slow */}
+        <div className="pet-land__cloud pet-land__cloud--3">
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        <div className="pet-land__cloud pet-land__cloud--4">
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        <div className="pet-land__cloud pet-land__cloud--7">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        {/* Mid layer — standard depth */}
+        <div className="pet-land__cloud pet-land__cloud--1">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        <div className="pet-land__cloud pet-land__cloud--5">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        <div className="pet-land__cloud pet-land__cloud--8">
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        {/* Front layer — close, sharp, faster */}
+        <div className="pet-land__cloud pet-land__cloud--2">
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+          <div className="pet-land__cloud-lobe" />
+        </div>
+        <div className="pet-land__cloud pet-land__cloud--6">
+          <div className="pet-land__cloud-lobe" />
+        </div>
 
         <div className="pet-land__mountains-far" />
         <div className="pet-land__mountains-near" />
@@ -1107,15 +1137,16 @@ export const PetLand = () => {
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">
+                  {/* Pixel art egg sitting on the island */}
                   <div className="pet-land__empty-egg">
-                    <svg width="48" height="56" viewBox="0 0 48 56" fill="none">
-                      <ellipse cx="24" cy="32" rx="18" ry="22" fill="hsl(var(--card))" fillOpacity="0.9" stroke="hsl(var(--primary))" strokeWidth="2"/>
-                      <ellipse cx="24" cy="28" rx="12" ry="14" fill="hsl(var(--primary) / 0.15)" fillOpacity="0.6"/>
-                      <path d="M18 20c2-4 10-4 12 0" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                      <circle cx="20" cy="36" r="2" fill="hsl(var(--primary) / 0.3)" fillOpacity="0.5"/>
-                      <circle cx="28" cy="38" r="1.5" fill="hsl(var(--primary) / 0.3)" fillOpacity="0.4"/>
-                    </svg>
-                    <div className="pet-land__empty-sparkle-ring" />
+                    <div className="pet-land__empty-egg-wobble">
+                      <PixelIcon name="egg" size={52} />
+                    </div>
+                    {/* Golden sparkle particles */}
+                    <span className="pet-land__empty-sparkle" />
+                    <span className="pet-land__empty-sparkle" />
+                    <span className="pet-land__empty-sparkle" />
+                    <span className="pet-land__empty-sparkle" />
                   </div>
                   <span className="pet-land__empty-title">
                     Your island awaits!
@@ -1220,8 +1251,8 @@ export const PetLand = () => {
         </button>
       )}
 
-      {/* Decoration edit mode button */}
-      {filledCount > 0 && (
+      {/* Decoration edit mode button — show when there are pets OR decorations in inventory */}
+      {(filledCount > 0 || hasDecorations) && (
         <button
           className={`pet-land__decor-btn ${isDecorMode ? 'pet-land__decor-btn--active' : ''}`}
           onClick={() => {
