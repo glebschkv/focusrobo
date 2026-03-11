@@ -1,0 +1,154 @@
+import { useState, useEffect, type FormEvent } from 'react';
+
+interface WaitlistFormProps {
+  variant?: 'hero' | 'cta';
+}
+
+const REFERRAL_TIERS = [
+  { count: 0, label: 'Legendary Egg', emoji: '🥚' },
+  { count: 3, label: 'Rare Egg', emoji: '🔵' },
+  { count: 5, label: 'Epic Egg', emoji: '🟣' },
+  { count: 10, label: 'Founder Fox', emoji: '🦊' },
+  { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
+];
+
+export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralCount, setReferralCount] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [waitlistCount, setWaitlistCount] = useState(847);
+
+  // Check for existing signup
+  useEffect(() => {
+    const saved = localStorage.getItem('phono_referral_code');
+    if (saved) {
+      setReferralCode(saved);
+      setStatus('success');
+      // Simulate referral count for demo
+      const savedCount = localStorage.getItem('phono_referral_count');
+      if (savedCount) setReferralCount(parseInt(savedCount, 10));
+    }
+  }, []);
+
+  // Animate counter on mount
+  useEffect(() => {
+    const target = 847 + Math.floor(Math.random() * 200);
+    const interval = setInterval(() => {
+      setWaitlistCount(prev => {
+        if (prev >= target) { clearInterval(interval); return prev; }
+        return prev + Math.ceil((target - prev) / 10);
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email || status === 'loading') return;
+
+    setStatus('loading');
+
+    // Simulate API call (replace with Supabase edge function later)
+    await new Promise(r => setTimeout(r, 1200));
+
+    const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+    localStorage.setItem('phono_referral_code', code);
+    localStorage.setItem('phono_email', email);
+    setReferralCode(code);
+    setStatus('success');
+    setWaitlistCount(prev => prev + 1);
+  };
+
+  const copyLink = () => {
+    const link = `phono.app/?ref=${referralCode}`;
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const nextTier = REFERRAL_TIERS.find(t => t.count > referralCount);
+  const progressPercent = nextTier
+    ? (referralCount / nextTier.count) * 100
+    : 100;
+
+  if (status === 'success' && referralCode) {
+    return (
+      <div className="waitlist-success">
+        <div className="legendary-egg-display" />
+        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
+          Your Legendary Egg is reserved
+        </h3>
+        <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginBottom: 20 }}>
+          You'll hatch it on launch day. Want more? Refer friends for bonus rewards.
+        </p>
+
+        <div className="referral-dashboard">
+          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--fg-muted)' }}>
+            Your referral link
+          </div>
+          <div className="referral-link-box">
+            <input readOnly value={`phono.app/?ref=${referralCode}`} />
+            <button onClick={copyLink}>{copied ? 'Copied!' : 'Copy'}</button>
+          </div>
+
+          <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 12 }}>
+            {referralCount} referral{referralCount !== 1 ? 's' : ''}
+            {nextTier && ` — ${nextTier.count - referralCount} more for ${nextTier.label}`}
+          </div>
+          <div className="referral-progress">
+            <div className="referral-progress__fill" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
+          </div>
+
+          <div className="referral-tiers">
+            {REFERRAL_TIERS.map((tier) => {
+              const unlocked = referralCount >= tier.count;
+              const active = nextTier?.count === tier.count;
+              return (
+                <div
+                  key={tier.count}
+                  className={`referral-tier ${!unlocked && !active ? 'referral-tier--locked' : ''} ${active ? 'referral-tier--active' : ''}`}
+                >
+                  <div className="referral-tier__icon">{tier.emoji}</div>
+                  <div className="referral-tier__count">{tier.count}</div>
+                  <div className="referral-tier__label">{tier.label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <form className="waitlist-form" onSubmit={handleSubmit} id={variant === 'hero' ? 'waitlist' : undefined}>
+        <input
+          type="email"
+          className="waitlist-input"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          disabled={status === 'loading'}
+        />
+        <button
+          type="submit"
+          className={`egg-button ${status === 'loading' ? '' : ''}`}
+          disabled={status === 'loading'}
+          title="Hatch My Spot"
+        />
+      </form>
+      <div className="waitlist-counter">
+        <strong>{waitlistCount.toLocaleString()}</strong> adventurers waiting
+      </div>
+      {status === 'error' && (
+        <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
+          Something went wrong. Please try again.
+        </p>
+      )}
+    </div>
+  );
+}
