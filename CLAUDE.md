@@ -830,13 +830,89 @@ Bundles (Non-Consumable):
 
 Full IAP setup details (pricing, localizations, review notes): `docs/APP_STORE_CONNECT_IAP_SETUP.txt`
 
+## Marketing Website (`website/`)
+
+A separate Vite + React project for the pre-launch waitlist landing page. Lives in `website/` with its own `package.json`.
+
+**Tech**: React 18, TypeScript, Vite, Framer Motion (no Tailwind — uses plain CSS in `globals.css`)
+
+**URL**: Deployed to Vercel (configured via `website/vercel.json`)
+
+### Website Structure
+
+```
+website/
+├── index.html                 # Entry point (OG tags, meta, app-icon)
+├── package.json               # Separate deps (react, framer-motion, react-router-dom)
+├── vercel.json                # Vercel SPA routing config
+├── vite.config.ts             # Vite config
+├── src/
+│   ├── main.tsx               # Entry point
+│   ├── App.tsx                # Layout: Nav → Sections → Footer
+│   ├── styles/globals.css     # All website styles (722 lines, design tokens, animations)
+│   └── components/
+│       ├── Nav.tsx             # Fixed nav bar with "Join Waitlist" CTA
+│       ├── HeroSection.tsx    # "Focus. Grow. Collect." hero with island + waitlist form
+│       ├── SkyBackground.tsx  # Gradient sky with sun/clouds (reused in hero + CTA)
+│       ├── IslandScene.tsx    # Interactive island preview with sample pets
+│       ├── IslandSVG.tsx      # Simplified island SVG for website (standalone)
+│       ├── WaitlistForm.tsx   # Email signup + referral system + tier rewards
+│       ├── LoopSection.tsx    # "How It Works" 3-step explainer
+│       ├── PetShowcase.tsx    # Flip-card pet showcase with rarity filters (17 curated pets)
+│       ├── IslandGrowth.tsx   # Island expansion stages visualization (5×5 → 12×12)
+│       ├── RewardsSection.tsx # Referral tier rewards (Legendary Egg, Founder Fox, Pioneer Island)
+│       ├── SocialProof.tsx    # Team quote / social proof
+│       ├── FinalCTA.tsx       # Bottom CTA with mini island + waitlist form
+│       ├── Footer.tsx         # Footer with pet parade animation
+│       ├── PrivacyPolicy.tsx  # Privacy policy page
+│       ├── TermsOfService.tsx # Terms of service page
+│       └── Support.tsx        # Support/contact page
+└── public/
+    ├── app-icon.png           # App icon for OG/favicon
+    ├── pets/                  # Copies of pet PNGs (164 files, same as main app)
+    └── decorations/           # Copies of decoration PNGs (20 files)
+```
+
+### Website Features
+- **Waitlist signup** with email capture (simulated API, localStorage persistence)
+- **Referral system**: 5 tiers — sign up (Legendary Egg), 3 friends (Rare Egg), 5 (Epic Egg), 10 (Founder Fox), 25 (Pioneer Island)
+- **Animated counter** showing waitlist size (starts at 847)
+- **Pet showcase** with 3D flip cards, rarity filter, growth size previews
+- **Island growth** visualization showing 4 expansion stages
+- **Legal pages**: Privacy Policy, Terms of Service, Support (React Router)
+- **Pet parade** footer animation with 8 baby pet sprites
+- **Scroll-aware nav** with blur/background transition
+
+### Running the Website
+```bash
+cd website && npm install && npm run dev    # Dev server
+cd website && npm run build                 # Production build
+```
+
+## Current Asset State
+
+| Asset | Location | Count | Format | Status |
+|-------|----------|-------|--------|--------|
+| Pet sprites | `public/assets/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
+| Decoration sprites | `public/assets/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
+| Website pet copies | `website/public/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
+| Website decoration copies | `website/public/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
+| Icons | `public/assets/icons/` | 141 | PNG | Done |
+| Robots (legacy) | `public/assets/robots/` | 27 | SVG | Legacy (unused) |
+| Worlds | `public/assets/worlds/` | 10 | PNG | Done |
+
 ## What's Next (TODO)
 
 - [x] LandCompleteModal — celebration when island fully expanded and filled
 - [x] Island decorations system — shop tab, placement UX, 20 items across 6 categories
-- [ ] Generate final pet pixel art assets (current ones are placeholders)
-- [ ] Generate higher-fidelity decoration sprites (current ones are Pillow-generated placeholders)
-- [ ] Update onboarding flow for pet/island theme
-- [ ] Remove debug "Award Pet" button from PetLand before production
+- [x] Marketing website — waitlist landing page with referral system
+- [x] Legal pages — Privacy Policy, Terms of Service, Support (website)
+- [ ] **Generate final pet pixel art assets** — replace 164 Pillow placeholders with proper pixel art (see `NEXT_AI_PROMPT.md` Task 1)
+- [ ] **Generate higher-fidelity decoration sprites** — replace 20 Pillow placeholders (see `NEXT_AI_PROMPT.md` Task 2)
+- [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (see `NEXT_AI_PROMPT.md` Task 3)
+- [ ] **Verify debug buttons removed** — confirm no debug "Award Pet" button or dev-only UI remains (see `NEXT_AI_PROMPT.md` Task 4)
+- [ ] **Sync website assets** — copy regenerated pet/decoration PNGs to `website/public/` (see `NEXT_AI_PROMPT.md` Task 5)
 - [ ] Upload screenshots and app icon to App Store Connect
 - [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)
+- [ ] Connect waitlist form to real backend (currently simulated with localStorage)
+- [ ] Set up Vercel deployment for website
