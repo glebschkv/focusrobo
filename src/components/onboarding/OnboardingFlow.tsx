@@ -14,11 +14,12 @@ interface OnboardingFlowProps {
 // ─── Preload critical images so sprites don't flash blank ────────────────────
 
 const PRELOAD_SRCS = [
-  '/assets/sprites/humanoid/star-wizard-walk.png',
+  '/assets/pets/bunny.png',
+  '/assets/pets/capybara.png',
+  '/assets/pets/fox.png',
   '/assets/icons/clock.png',
   '/assets/icons/star.png',
   '/assets/icons/paw.png',
-  '/assets/icons/wizard.png',
 ];
 
 function usePreloadImages(srcs: string[]) {
@@ -96,7 +97,7 @@ const FloatingParticles = memo(() => {
 });
 FloatingParticles.displayName = 'FloatingParticles';
 
-// ─── Sparkle burst around wizard — CSS-driven ───────────────────────────────
+// ─── Sparkle burst around pet — CSS-driven ──────────────────────────────────
 
 interface SparkleConfig {
   id: number;
@@ -187,7 +188,7 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
   </div>
 );
 
-// ─── Walking bot sprite ─────────────────────────────────────────────────────
+// ─── Pixel icon with fallback ───────────────────────────────────────────────
 
 const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Standard
@@ -196,46 +197,6 @@ const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // doesn't include the -webkit- vendor prefix
   ...(({ '-webkit-image-rendering': 'pixelated' } as unknown) as React.CSSProperties),
 };
-
-const WalkingPetSprite = ({
-  spritePath,
-  frameCount,
-  frameWidth,
-  frameHeight,
-  scale = 2,
-}: {
-  spritePath: string;
-  frameCount: number;
-  frameWidth: number;
-  frameHeight: number;
-  scale?: number;
-}) => {
-  const [frame, setFrame] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrame((f) => (f + 1) % frameCount);
-    }, 150);
-    return () => clearInterval(interval);
-  }, [frameCount]);
-
-  return (
-    <div className="flex items-center justify-center">
-      <div
-        style={{
-          width: frameWidth * scale,
-          height: frameHeight * scale,
-          backgroundImage: `url(${spritePath})`,
-          backgroundPosition: `-${frame * frameWidth * scale}px 0px`,
-          backgroundSize: `${frameCount * frameWidth * scale}px ${frameHeight * scale}px`,
-          ...SPRITE_IMAGE_RENDERING,
-        }}
-      />
-    </div>
-  );
-};
-
-// ─── Pixel icon with fallback ───────────────────────────────────────────────
 
 const PixelIcon = ({
   src,
@@ -545,35 +506,43 @@ const StepWelcome = () => (
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.3, duration: 0.6, type: 'spring' }}
     >
-      {/* Glow behind sprite — gradient only, no filter:blur */}
+      {/* Glow behind pets — gradient only, no filter:blur */}
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
-          width: 180,
-          height: 180,
+          width: 200,
+          height: 200,
           borderRadius: '50%',
           background:
             'radial-gradient(circle, rgba(64,133,106,0.15) 0%, transparent 65%)',
         }}
       />
-      <div className="relative">
+      <div className="relative flex items-center justify-center gap-3">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={2.5}
-        />
+        {['/assets/pets/bunny.png', '/assets/pets/capybara.png', '/assets/pets/fox.png'].map((src, i) => (
+          <motion.img
+            key={src}
+            src={src}
+            alt=""
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 + i * 0.15, duration: 0.5, type: 'spring' }}
+            style={{
+              width: i === 1 ? 80 : 64,
+              height: i === 1 ? 80 : 64,
+              imageRendering: 'pixelated',
+            }}
+          />
+        ))}
       </div>
       {/* Ground shadow — simple gradient, no filter:blur */}
       <div
-        className="mx-auto mt-1 rounded-full"
+        className="mx-auto mt-2 rounded-full"
         style={{
-          width: 80,
-          height: 10,
+          width: 120,
+          height: 12,
           background:
-            'radial-gradient(ellipse, rgba(0,0,0,0.2) 0%, transparent 70%)',
+            'radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, transparent 70%)',
         }}
       />
     </motion.div>
@@ -732,7 +701,7 @@ const StepMeetCompanion = () => (
       </p>
     </motion.div>
 
-    {/* Character reveal */}
+    {/* Pet reveal */}
     <motion.div
       className="py-4 relative"
       initial={{ opacity: 0, scale: 0.5 }}
@@ -744,7 +713,7 @@ const StepMeetCompanion = () => (
         stiffness: 150,
       }}
     >
-      {/* Glow burst behind sprite — no filter:blur, pure gradient */}
+      {/* Glow burst behind pet — no filter:blur, pure gradient */}
       <motion.div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         initial={{ scale: 0, opacity: 0 }}
@@ -759,14 +728,19 @@ const StepMeetCompanion = () => (
         }}
       />
 
-      <div className="relative">
+      <div className="relative flex items-center justify-center">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={3}
+        <motion.img
+          src="/assets/pets/bunny.png"
+          alt="Your first pet"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.6, type: 'spring', stiffness: 200 }}
+          style={{
+            width: 96,
+            height: 96,
+            imageRendering: 'pixelated',
+          }}
         />
       </div>
 
@@ -782,7 +756,7 @@ const StepMeetCompanion = () => (
       />
     </motion.div>
 
-    {/* Character card */}
+    {/* Pet card */}
     <motion.div
       className="mx-auto max-w-[260px] rounded-2xl px-5 py-4"
       style={{
@@ -796,36 +770,36 @@ const StepMeetCompanion = () => (
       transition={{ delay: 0.5, duration: 0.5 }}
     >
       <div className="flex items-center justify-center gap-2 mb-2">
-        <PixelIcon src="/assets/icons/wizard.png" fallback="" size={20} />
+        <PixelIcon src="/assets/icons/paw.png" fallback="&#x1F43E;" size={20} />
         <p
           className="text-lg font-bold"
           style={{ color: '#1C211E' }}
         >
-          Star Wizard
+          Bunny
         </p>
         <span
           className="text-[12px] font-semibold px-2 py-0.5 rounded-full"
           style={{
-            background: 'rgba(59,130,246,0.12)',
-            color: 'rgba(59,130,246,0.9)',
-            border: '1px solid rgba(59,130,246,0.2)',
+            background: 'rgba(64,133,106,0.12)',
+            color: 'rgba(64,133,106,0.9)',
+            border: '1px solid rgba(64,133,106,0.2)',
           }}
         >
-          RARE
+          COMMON
         </span>
       </div>
       <p
         className="text-sm leading-relaxed"
         style={{ color: '#535D57' }}
       >
-        A young wizard in training who casts spells of concentration.
+        Complete your first focus session to welcome this little friend to your island.
       </p>
 
-      {/* Abilities */}
+      {/* Pet traits */}
       <div className="flex gap-1.5 justify-center mt-3 flex-wrap">
-        {['Magic Focus', 'Star Spell', 'Wizard Wisdom'].map((ability) => (
+        {['Cute', 'Friendly', 'Starter Pet'].map((trait) => (
           <span
-            key={ability}
+            key={trait}
             className="text-[12px] px-2 py-0.5 rounded-full"
             style={{
               background: 'rgba(64,133,106,0.06)',
@@ -833,7 +807,7 @@ const StepMeetCompanion = () => (
               border: '1px solid rgba(64,133,106,0.1)',
             }}
           >
-            {ability}
+            {trait}
           </span>
         ))}
       </div>
