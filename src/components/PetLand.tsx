@@ -366,9 +366,11 @@ function useIslandParallax(options?: { disabledRef?: React.MutableRefObject<bool
       }
 
       if (e.touches.length === 1) {
-        // Skip double-tap zoom when tapping on a pet element
+        // Skip all touch processing when parallax is disabled (decoration mode)
+        if (disabledRef?.current) return;
+        // Skip double-tap zoom when tapping on a pet or decoration element
         const target = e.target as HTMLElement;
-        if (target.closest('.island-pet')) return;
+        if (target.closest('.island-pet') || target.closest('.island-decoration')) return;
 
         const now = Date.now();
         if (now - lastTapTime.current < 300) {
@@ -705,8 +707,8 @@ export const PetLand = () => {
 
   const parallaxDisabledRef = useRef(false);
   useEffect(() => {
-    parallaxDisabledRef.current = isDecorMode && !!selectedDecorationId;
-  }, [isDecorMode, selectedDecorationId]);
+    parallaxDisabledRef.current = isDecorMode;
+  }, [isDecorMode]);
   const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom, resetView } = useIslandParallax({ disabledRef: parallaxDisabledRef });
 
   // Auto-zoom for larger islands so pets remain visible
@@ -1081,7 +1083,7 @@ export const PetLand = () => {
 
             {/* Pets layer — parallax layer (fastest) */}
             <div
-              className={`pet-land__pets-layer ${isDecorMode && selectedDecorationId ? 'pet-land--decor-active' : ''}`}
+              className={`pet-land__pets-layer ${isDecorMode ? 'pet-land--decor-active' : ''}`}
               ref={(el) => {
                 // Merge refs: petsRef (parallax) and petsLayerRef (decoration placement)
                 if (petsRef) (petsRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
@@ -1194,41 +1196,41 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* Share island button */}
-      {filledCount > 0 && (
-        <button
-          className="pet-land__share-btn"
-          onClick={handleShareIsland}
-          aria-label="Share island screenshot"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-        </button>
-      )}
-
-      {/* Decoration edit mode button — show only when player has decorations in inventory */}
-      {hasDecorations && (
-        <button
-          className={`pet-land__decor-btn ${isDecorMode ? 'pet-land__decor-btn--active' : ''}`}
-          onClick={() => {
-            const entering = !isDecorMode;
-            setIsDecorMode(entering);
-            if (!entering) setSelectedDecorationId(null);
-            if (entering) resetView();
-            haptic('light');
-          }}
-          aria-label={isDecorMode ? 'Exit decoration mode' : 'Decorate island'}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-        </button>
-      )}
+      {/* Action buttons — top-right, below status bar */}
+      <div className="pet-land__actions">
+        {hasDecorations && (
+          <button
+            className={`pet-land__action-btn ${isDecorMode ? 'pet-land__action-btn--active' : ''}`}
+            onClick={() => {
+              const entering = !isDecorMode;
+              setIsDecorMode(entering);
+              if (!entering) setSelectedDecorationId(null);
+              if (entering) resetView();
+              haptic('light');
+            }}
+            aria-label={isDecorMode ? 'Exit decoration mode' : 'Decorate island'}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </button>
+        )}
+        {filledCount > 0 && (
+          <button
+            className="pet-land__action-btn"
+            onClick={handleShareIsland}
+            aria-label="Share island screenshot"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       {/* Decoration picker bottom sheet */}
       {isDecorMode && (
