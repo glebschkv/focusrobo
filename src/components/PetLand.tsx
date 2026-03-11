@@ -17,9 +17,8 @@ import { DecorationPicker } from '@/components/DecorationPicker';
 import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
-import { getIslandScale, getAvailableCellCount, getIslandPosition, findNearestEmptyCell, getGridDensityScale, getDepthScale } from '@/data/islandPositions';
+import { getIslandScale, getAvailableCellCount, getIslandPosition, findNearestEmptyCell } from '@/data/islandPositions';
 import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
-import { DECORATIONS } from '@/data/DecorationData';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
 import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
@@ -76,7 +75,8 @@ const PAN_SPRING_DAMPING = 0.75;
 const PAN_MIN_VELOCITY = 0.3;
 
 /** Ref-based parallax tilt + zoom + pan — zero React re-renders */
-function useIslandParallax() {
+function useIslandParallax(options?: { disabledRef?: React.MutableRefObject<boolean> }) {
+  const disabledRef = options?.disabledRef;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const skyRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -272,6 +272,7 @@ function useIslandParallax() {
   }, [updateCSS, getPanBounds, clampPan]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (disabledRef?.current) return;
     if (e.button !== 0) return;
     if (isPinching.current) return;
     isDragging.current = true;
@@ -702,7 +703,11 @@ export const PetLand = () => {
   const tierScale = getIslandScale(gridSize);
   const progressPct = (filledCount / tierCapacity) * 100;
 
-  const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom, resetView } = useIslandParallax();
+  const parallaxDisabledRef = useRef(false);
+  useEffect(() => {
+    parallaxDisabledRef.current = isDecorMode && !!selectedDecorationId;
+  }, [isDecorMode, selectedDecorationId]);
+  const { wrapperRef, skyRef, containerRef, petsRef, scalerRef, handlers: parallaxHandlers, setZoom, resetView } = useIslandParallax({ disabledRef: parallaxDisabledRef });
 
   // Auto-zoom for larger islands so pets remain visible
   useEffect(() => {
@@ -815,12 +820,10 @@ export const PetLand = () => {
     });
   }, [currentLand.cells, currentLand.id, gridSize, lastPlacedIndex, handlePetTap, petCount, isDecorMode, handleDecorationTap]);
 
-  // Ghost preview for decoration placement — shows a semi-transparent decoration
-  // that snaps to the nearest empty cell as the user moves their finger
-  const [ghostCellIndex, setGhostCellIndex] = useState<number | null>(null);
+  // Tap-to-place: user taps island to place selected decoration on nearest empty cell
   const petsLayerRef = useRef<HTMLDivElement>(null);
 
-  const handleDecorPointerMove = useCallback((e: React.PointerEvent) => {
+  const handleDecorClick = useCallback((e: React.MouseEvent) => {
     if (!isDecorMode || !selectedDecorationId) return;
     const layer = petsLayerRef.current;
     if (!layer) return;
@@ -828,59 +831,16 @@ export const PetLand = () => {
     const xPct = ((e.clientX - rect.left) / rect.width) * 100;
     const yPct = ((e.clientY - rect.top) / rect.height) * 100;
     const nearest = findNearestEmptyCell(xPct, yPct, currentLand.cells, gridSize);
-    setGhostCellIndex(nearest);
-  }, [isDecorMode, selectedDecorationId, currentLand.cells, gridSize]);
-
-  const handleDecorTap = useCallback((e: React.PointerEvent) => {
-    if (!isDecorMode || !selectedDecorationId || ghostCellIndex === null) return;
-    // Only respond to primary pointer (finger or mouse click)
-    if (e.button !== 0 && e.pointerType === 'mouse') return;
-    e.stopPropagation();
-    const success = placeDecoration(selectedDecorationId, ghostCellIndex);
+    if (nearest === null) return;
+    const success = placeDecoration(selectedDecorationId, nearest);
     if (success) {
       haptic('light');
       const remaining = (decorationInventory[selectedDecorationId] || 1) - 1;
       if (remaining <= 0) {
         setSelectedDecorationId(null);
-        setGhostCellIndex(null);
       }
     }
-  }, [isDecorMode, selectedDecorationId, ghostCellIndex, placeDecoration, haptic, decorationInventory]);
-
-  // Clear ghost when exiting decor mode or deselecting
-  useEffect(() => {
-    if (!isDecorMode || !selectedDecorationId) setGhostCellIndex(null);
-  }, [isDecorMode, selectedDecorationId]);
-
-  // Ghost preview element
-  const ghostPreviewElement = useMemo(() => {
-    if (!isDecorMode || !selectedDecorationId || ghostCellIndex === null) return null;
-    const pos = getIslandPosition(ghostCellIndex, gridSize);
-    if (!pos) return null;
-    const decoData = DECORATIONS.find(d => d.id === selectedDecorationId);
-    if (!decoData) return null;
-    const densityScale = getGridDensityScale(gridSize);
-    const depthScale = getDepthScale(ghostCellIndex);
-    const scale = densityScale * depthScale;
-    return (
-      <div
-        className="island-ghost-preview"
-        style={{
-          left: `${pos.x}%`,
-          top: `${pos.y}%`,
-          zIndex: 49,
-          transform: `translate(-50%, -60%) scale(${scale})`,
-        }}
-      >
-        <img
-          src={decoData.sprite}
-          alt=""
-          className="island-ghost-preview__sprite"
-          draggable={false}
-        />
-      </div>
-    );
-  }, [isDecorMode, selectedDecorationId, ghostCellIndex, gridSize]);
+  }, [isDecorMode, selectedDecorationId, currentLand.cells, gridSize, placeDecoration, haptic, decorationInventory]);
 
   const growthClass = getGrowthStage(filledCount);
 
@@ -1123,17 +1083,15 @@ export const PetLand = () => {
             <div
               className={`pet-land__pets-layer ${isDecorMode && selectedDecorationId ? 'pet-land--decor-active' : ''}`}
               ref={(el) => {
-                // Merge refs: petsRef (parallax) and petsLayerRef (ghost preview)
+                // Merge refs: petsRef (parallax) and petsLayerRef (decoration placement)
                 if (petsRef) (petsRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
                 petsLayerRef.current = el;
               }}
               role="group"
               aria-label="Your pet island"
-              onPointerMove={handleDecorPointerMove}
-              onPointerUp={handleDecorTap}
+              onClick={handleDecorClick}
             >
               {slotElements}
-              {ghostPreviewElement}
 
               {filledCount === 0 && (
                 <div className="pet-land__empty-hint">
@@ -1251,8 +1209,8 @@ export const PetLand = () => {
         </button>
       )}
 
-      {/* Decoration edit mode button — show when there are pets OR decorations in inventory */}
-      {(filledCount > 0 || hasDecorations) && (
+      {/* Decoration edit mode button — show only when player has decorations in inventory */}
+      {hasDecorations && (
         <button
           className={`pet-land__decor-btn ${isDecorMode ? 'pet-land__decor-btn--active' : ''}`}
           onClick={() => {
