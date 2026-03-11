@@ -1099,7 +1099,7 @@
 }
 
 .home-goals-card {
-  width: 300px;
+  width: min(300px, calc(100vw - 32px));
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px) saturate(180%);
@@ -1117,10 +1117,69 @@
   margin-bottom: 10px;
 }
 
+.home-goals-card__header-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .home-goals-card__title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: hsl(var(--foreground) / 0.8);
+  color: hsl(var(--foreground) / 0.85);
+}
+
+.home-goals-card__countdown {
+  font-size: 9px;
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.4);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-goals-card__streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  color: hsl(30 80% 45%);
+  background: hsl(40 90% 95%);
+  border: 1px solid hsl(40 70% 85%);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.home-goals-card__section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 700;
+  color: hsl(var(--foreground) / 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.home-goals-card__reward {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.4);
+}
+
+.home-goals-card__reward-dot {
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: hsl(var(--foreground) / 0.25);
 }
 
 .home-goals-card__close {
@@ -1149,10 +1208,19 @@
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   width: 100%;
   text-align: left;
-  cursor: pointer;
+  cursor: default;
   -webkit-tap-highlight-color: transparent;
   background: none;
   position: relative;
+}
+
+.home-goals-card__row--achievement {
+  cursor: pointer;
+}
+
+.home-goals-card__row--achievement:active {
+  opacity: 0.7;
+  transition: opacity 0.1s;
 }
 
 .home-goals-card__row:first-of-type {
@@ -1186,15 +1254,15 @@
 }
 
 .home-goals-card__bar {
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
 .home-goals-card__bar-fill {
   height: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
   background: hsl(var(--primary));
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1209,15 +1277,58 @@
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.home-goals-card__completed {
-  position: absolute;
-  right: 0;
-  top: 8px;
-  font-size: 9px;
+.home-goals-card__challenge {
+  position: relative;
+  padding: 8px 0;
+}
+
+.home-goals-card__description {
+  font-size: 10px;
+  color: hsl(var(--foreground) / 0.55);
+}
+
+.home-goals-card__difficulty-badge {
+  font-size: 8px;
   font-weight: 800;
-  color: hsl(142 60% 45%);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.home-goals-card__difficulty-badge--easy {
+  background: hsl(140 45% 90%);
+  color: hsl(140 45% 35%);
+  border: 1px solid hsl(140 45% 75%);
+}
+
+.home-goals-card__difficulty-badge--medium {
+  background: hsl(200 60% 90%);
+  color: hsl(200 60% 35%);
+  border: 1px solid hsl(200 60% 75%);
+}
+
+.home-goals-card__difficulty-badge--hard {
+  background: hsl(270 50% 92%);
+  color: hsl(270 50% 40%);
+  border: 1px solid hsl(270 50% 78%);
+}
+
+.home-goals-card__completed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  color: hsl(142 60% 40%);
+}
+
+.home-goals-card__chevron {
+  width: 12px;
+  height: 12px;
+  color: hsl(var(--foreground) / 0.3);
+  flex-shrink: 0;
 }
 
 /* ── Land completion overlay ──────────────────────────────────── */

@@ -64,7 +64,7 @@ export const GameUI = () => {
   useEffect(() => {
     const handleSwitchToTab = (event: CustomEvent<string>) => {
       const tab = event.detail;
-      if (tab) setCurrentTab(tab);
+      if (tab && VALID_TABS.includes(tab)) setCurrentTab(tab);
     };
     window.addEventListener('switchToTab', handleSwitchToTab as EventListener);
     return () => {
