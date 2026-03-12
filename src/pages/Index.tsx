@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageErrorBoundary } from "@/components/PageErrorBoundary";
 import { SplashScreen } from "@/components/SplashScreen";
@@ -89,12 +89,28 @@ const Index = () => {
     );
   }
 
+  const [isOnboardingExiting, setIsOnboardingExiting] = useState(false);
+
+  const handleOnboardingComplete = useCallback(() => {
+    setIsOnboardingExiting(true);
+    setTimeout(() => {
+      completeOnboarding();
+    }, 300);
+  }, [completeOnboarding]);
+
   if (!hasCompletedOnboarding) {
     return (
       <PageErrorBoundary pageName="home page">
-        <div className="h-screen w-full overflow-hidden relative max-w-screen" style={{ background: '#F8F8F4' }}>
+        <div
+          className="h-screen w-full overflow-hidden relative max-w-screen"
+          style={{
+            background: '#F8F8F4',
+            opacity: isOnboardingExiting ? 0 : 1,
+            transition: 'opacity 300ms ease',
+          }}
+        >
           <Suspense fallback={<LoadingFallback />}>
-            <OnboardingFlow onComplete={() => completeOnboarding()} />
+            <OnboardingFlow onComplete={handleOnboardingComplete} />
           </Suspense>
         </div>
       </PageErrorBoundary>
