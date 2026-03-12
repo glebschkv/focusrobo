@@ -45,6 +45,9 @@ interface RewardModalsProps {
 
   // Milestone Celebration
   onMilestoneClaim: (milestone: Milestone) => void;
+
+  // Suppress all modals while SessionCompleteView is showing
+  suppressPostSession?: boolean;
 }
 
 export const RewardModals = ({
@@ -61,16 +64,21 @@ export const RewardModals = ({
 
   // Milestone Celebration
   onMilestoneClaim,
+
+  // Post-session suppression
+  suppressPostSession = false,
 }: RewardModalsProps) => {
   // Only show ONE modal at a time to prevent stacking black overlays.
   // Priority: XP reward (most important) > Daily login > Milestone celebration.
   // Guard each with content presence — opening a Dialog without content
   // on iOS/Capacitor can leave an orphaned bg-black/60 overlay.
-  const showXP = showRewardModal && !!currentReward;
-  const showDaily = !showXP && dailyLoginRewards.showRewardModal && !!dailyLoginRewards.pendingReward;
+  // When SessionCompleteView is active, suppress all modals — rewards are shown inline.
+  const showXP = !suppressPostSession && showRewardModal && !!currentReward;
+  const showDaily = !suppressPostSession && !showXP && dailyLoginRewards.showRewardModal && !!dailyLoginRewards.pendingReward;
   // MilestoneCelebration manages its own open state internally, so we
-  // suppress it by not rendering when a higher-priority modal is open.
-  const suppressMilestone = showXP || dailyLoginRewards.showRewardModal;
+  // suppress it by not rendering when a higher-priority modal is open
+  // or when the session complete view is active.
+  const suppressMilestone = suppressPostSession || showXP || dailyLoginRewards.showRewardModal;
 
   return (
     <>

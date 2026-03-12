@@ -9,7 +9,7 @@
  * - RewardModals: Orchestrates all reward-related modals
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { useAppStateTracking } from "@/hooks/useAppStateTracking";
 import { AppStateProvider } from "@/contexts/AppStateContext";
@@ -25,6 +25,7 @@ import { LAND_COMPLETE_BONUS_COINS, useLandStore } from "@/stores/landStore";
 import { IslandExpansionModal } from "@/components/IslandExpansionModal";
 import { LandCompleteModal } from "@/components/LandCompleteModal";
 import { RewardModalErrorBoundary } from "@/components/FeatureErrorBoundary";
+import { useNavigationStore } from "@/stores/navigationStore";
 
 const TAB_STORAGE_KEY = 'nomo_current_tab';
 const VALID_TABS = ['home', 'timer', 'collection', 'shop', 'settings'];
@@ -85,6 +86,59 @@ export const GameUI = () => {
   }, [coinSystem]);
 
   // Passive income is now collected manually via TopStatusBar collect button
+
+  // Track whether SessionCompleteView is active (suppresses other modals)
+  const sessionRewardsActive = useNavigationStore((s) => s.sessionRewardsActive);
+
+  // Deferred island celebration modals — queue events and show on home tab
+  const [deferredExpansion, setDeferredExpansion] = useState<{ oldTier: number; newTier: number; newCells: number } | null>(null);
+  const [deferredLandComplete, setDeferredLandComplete] = useState<{ landNumber: number; cells: unknown[]; totalFocusMinutes: number } | null>(null);
+  const [showDeferredExpansion, setShowDeferredExpansion] = useState(false);
+  const [showDeferredLandComplete, setShowDeferredLandComplete] = useState(false);
+
+  // Intercept island events and defer them when session rewards are active
+  useEffect(() => {
+    const handleExpansion = (e: CustomEvent) => {
+      if (useNavigationStore.getState().sessionRewardsActive) {
+        setDeferredExpansion(e.detail);
+        e.stopImmediatePropagation();
+      }
+      // If not in session, let the original IslandExpansionModal handle it
+    };
+    const handleLandCompleted = (e: CustomEvent) => {
+      if (useNavigationStore.getState().sessionRewardsActive) {
+        setDeferredLandComplete(e.detail);
+        e.stopImmediatePropagation();
+      }
+      // If not in session, let the original LandCompleteModal handle it
+    };
+    // Add with capture to intercept before the modal components' own listeners
+    window.addEventListener('islandExpanded', handleExpansion as EventListener, true);
+    window.addEventListener('landCompleted', handleLandCompleted as EventListener, true);
+    return () => {
+      window.removeEventListener('islandExpanded', handleExpansion as EventListener, true);
+      window.removeEventListener('landCompleted', handleLandCompleted as EventListener, true);
+    };
+  }, []);
+
+  // Show deferred island modals when navigating to home tab
+  useEffect(() => {
+    if (currentTab === 'home' && !sessionRewardsActive) {
+      if (deferredExpansion) {
+        // Re-dispatch the event so IslandExpansionModal picks it up
+        window.dispatchEvent(new CustomEvent('islandExpanded', { detail: deferredExpansion }));
+        setDeferredExpansion(null);
+      }
+      if (deferredLandComplete) {
+        // Slight delay to let expansion modal show first
+        const timer = setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('landCompleted', { detail: deferredLandComplete }));
+          setDeferredLandComplete(null);
+        }, deferredExpansion ? 500 : 0);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentTab, sessionRewardsActive, deferredExpansion, deferredLandComplete]);
 
   // Single instance of useAppStateTracking — shared via context with all children
   const appState = useAppStateTracking();
@@ -154,6 +208,7 @@ export const GameUI = () => {
             dailyLoginRewards={dailyLoginRewards}
             onDailyRewardClaim={handleDailyRewardClaim}
             onMilestoneClaim={handleMilestoneClaim}
+            suppressPostSession={sessionRewardsActive}
           />
 
           {/* Island celebration modals */}

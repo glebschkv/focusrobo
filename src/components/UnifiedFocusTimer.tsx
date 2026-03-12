@@ -56,6 +56,9 @@ export const UnifiedFocusTimer = () => {
     lastSessionDuration,
     lastQuestDeltas,
     lastStreakDay,
+    lastLevelUpInfo,
+    lastMilestoneInfo,
+    lastFocusBonusType,
     autoBreakEnabled,
     setPreset,
     requestStartTimer,
@@ -172,6 +175,9 @@ export const UnifiedFocusTimer = () => {
               showBreakOption={autoBreakEnabled}
               questDeltas={lastQuestDeltas}
               streakDay={lastStreakDay}
+              levelUpInfo={lastLevelUpInfo}
+              milestoneInfo={lastMilestoneInfo}
+              focusBonusType={lastFocusBonusType}
             />
           </>
         )}
