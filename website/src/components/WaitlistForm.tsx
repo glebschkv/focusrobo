@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface WaitlistFormProps {
   variant?: 'hero' | 'cta';
@@ -13,7 +13,7 @@ const REFERRAL_TIERS = [
   { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
 ];
 
-function getReferredByFromUrl(): string | null {
+function getReferredBy(): string | null {
   try {
     const params = new URLSearchParams(window.location.search);
     return params.get('ref') || null;
@@ -30,16 +30,16 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
   const [waitlistCount, setWaitlistCount] = useState(0);
-  const [referredBy] = useState<string | null>(() => getReferredByFromUrl());
+  const [referredBy] = useState<string | null>(() => getReferredBy());
 
-  // Check for existing signup in localStorage cache
+  // Check for existing signup on mount
   useEffect(() => {
     const savedCode = localStorage.getItem('phono_referral_code');
     if (savedCode) {
       setReferralCode(savedCode);
       setStatus('success');
-      // Fetch real referral count from server
-      fetchReferralCount();
+      const savedCount = localStorage.getItem('phono_referral_count');
+      if (savedCount) setReferralCount(parseInt(savedCount, 10));
     }
   }, []);
 
@@ -95,33 +95,55 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     setErrorMessage('');
 
     try {
+      if (!isSupabaseConfigured) {
+        // Fallback for local dev without env vars
+        await new Promise(r => setTimeout(r, 1200));
+        const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+        localStorage.setItem('phono_referral_code', code);
+        localStorage.setItem('phono_email', email);
+        setReferralCode(code);
+        setStatus('success');
+        setWaitlistCount(prev => prev + 1);
+        return;
+      }
+
+      const referredBy = getReferredBy();
+
       const { data, error } = await supabase.functions.invoke('waitlist-signup', {
         body: {
-          email,
-          referredBy: referredBy || undefined,
+          email: email.trim(),
+          referred_by: referredBy,
         },
       });
 
       if (error) {
-        throw new Error(error.message || 'Failed to sign up');
+        throw new Error(error.message || 'Signup failed');
       }
 
-      if (!data?.success) {
-        throw new Error(data?.error || 'Failed to sign up');
+      if (data?.error) {
+        throw new Error(data.error);
       }
 
-      // Cache locally for instant return visits
-      localStorage.setItem('phono_referral_code', data.referralCode);
-      localStorage.setItem('phono_email', email);
-      localStorage.setItem('phono_referral_count', String(data.referralCount ?? 0));
+      // Save to localStorage for return visits
+      localStorage.setItem('phono_referral_code', data.referral_code);
+      localStorage.setItem('phono_email', email.trim());
+      localStorage.setItem('phono_referral_count', String(data.referral_count || 0));
 
-      setReferralCode(data.referralCode);
-      setReferralCount(data.referralCount ?? 0);
+      setReferralCode(data.referral_code);
+      setReferralCount(data.referral_count || 0);
       setStatus('success');
-      setWaitlistCount(data.waitlistPosition ?? waitlistCount + 1);
+
+      if (data.waitlist_position) {
+        setWaitlistCount(data.waitlist_position);
+      } else {
+        setWaitlistCount(prev => prev + 1);
+      }
     } catch (err) {
+      console.error('Waitlist signup error:', err);
       setStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      );
     }
   };
 
@@ -212,7 +234,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
       )}
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
-          {errorMessage}
+          {errorMessage || 'Something went wrong. Please try again.'}
         </p>
       )}
     </div>

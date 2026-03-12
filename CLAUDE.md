@@ -1,23 +1,43 @@
 # PhoNo — Architecture Reference
 
-> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a random pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (expands 5×5→20×20), archive it, start a new one. Players can also buy eggs in the shop to hatch pets with custom rarity weights. Built with React + Capacitor, deployed as a native iOS app.
+> Focus timer iOS app with pet collection gamification. Users run focus sessions to earn XP and coins. Each completed session places a pet on a floating isometric island. Longer sessions = bigger pets (baby/adolescent/adult). Fill an island (expands 5×5→12×12), archive it, start a new one. Players can also buy eggs in the shop, choose from pet options, or use a species selector. The archipelago system lets players unlock and switch between 6 themed islands. Built with React 18 + Capacitor 7, deployed as a native iOS app.
+
+## Keeping CLAUDE.md Updated
+
+**IMPORTANT**: Whenever you make changes to the codebase — adding features, modifying data values, adding/removing files, changing constants, updating dependencies, or altering system behavior — you MUST update this CLAUDE.md file to reflect those changes. This document is the single source of truth for AI assistants working on this project. An outdated CLAUDE.md leads to incorrect assumptions and wasted time. Specifically:
+
+- Adding a new component? Add it to the Project Structure section.
+- Changing a game constant (prices, XP values, thresholds)? Update it here.
+- Adding a new store, hook, or data file? Document it.
+- Modifying the tech stack or dependencies? Update the Tech Stack table.
+- Adding/removing asset files? Update the Asset State table.
+- Adding a new system or feature? Add a section describing it.
+- Completing a TODO item? Check it off in the What's Next section.
 
 ## Core Gameplay Loop
 
 ```
-Focus session completes → random pet generated (weighted by rarity + player level)
+Focus session completes → pet generated (random or player choice from 4 options)
 → pet size based on session length (baby/adolescent/adult)
 → pet placed on floating island using farthest-first spatial algorithm
-→ fill island (expands 5×5→20×20) = island complete → archive → new island
+→ fill island tier (expands 5×5→12×12) → island complete → archive → new island
 
 Alternatively:
 Shop → buy egg (common/rare/epic/legendary) with coins
 → egg hatched with custom rarity weights → pet placed on island
 
+Or:
+Shop → use Species Selector (5000/8000 coins) → pick exact species → pet placed
+
 Also:
 Shop (Decor tab) → buy decoration with coins → goes to inventory
 → tap decorate button on island → select from inventory → tap empty tile → placed
 → decorations are cosmetic, don't count toward island completion
+
+Archipelago:
+Unlock themed islands (Coral Reef, Snow Peak, etc.) with coins + level
+→ switch between islands → each has its own grid and completion state
+→ completing islands grants permanent bonuses (coin rate, XP rate, etc.)
 ```
 
 ## Art & Theme Direction
@@ -25,14 +45,14 @@ Shop (Decor tab) → buy decoration with coins → goes to inventory
 **Pixel art aesthetic** — cute collectible animals on a floating isometric island:
 
 - **Visual style**: Pixel art pets (PNG sprites, 56–84px responsive), front-facing, transparent background
-- **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes)
+- **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes, weather particles)
 - **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
+- **Island themes**: 11 themes with full color configs — Meadow (default), Beach, Winter, Sakura, Night Garden, Desert, Sky Islands, Calm Seas, Twilight Clouds, Aurora Horizon, Sunset Clouds
 - **Pets**: 41 species across 5 rarities (see Pet Species below)
 - **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
-- **Land themes**: Meadow (default), Beach, Snow, Desert, Night Garden, Sakura (purchasable)
-- **Assets**: `public/assets/pets/*.png` (41 species × 4 size variants = 184 PNGs)
-- **Decorations**: 20 placeable items across 6 categories (trees, flowers, rocks, water, structures, fun) — `public/assets/decorations/*.png` (48×48 pixel art PNGs)
+- **Assets**: `public/assets/pets/*.png` (41 species × 4 variants = 164 PNGs)
+- **Decorations**: 20 placeable items across 6 categories — `public/assets/decorations/*.png` (48×48 pixel art PNGs)
 
 ## Quick Facts
 
@@ -40,7 +60,7 @@ Shop (Decor tab) → buy decoration with coins → goes to inventory
 - **Bundle ID**: `co.phonoinc.app`
 - **App Group**: `group.co.phonoinc.app`
 - **Package name**: `phono` (in package.json)
-- **Storage prefix**: `nomo_` (all localStorage keys)
+- **Storage prefix**: `nomo_` (most localStorage keys; some legacy keys remain)
 
 ## Tech Stack
 
@@ -58,7 +78,8 @@ Shop (Decor tab) → buy decoration with coins → goes to inventory
 | Routing | React Router DOM v6 |
 | Forms | React Hook Form + Zod validation |
 | Icons | Lucide React |
-| 3D (limited) | Three.js + @react-three/fiber + @react-three/drei |
+| Date Utils | date-fns 3 |
+| Variant Styling | class-variance-authority (CVA) |
 
 ## Scripts
 
@@ -88,26 +109,31 @@ src/
 ├── App.tsx                    # Root: ErrorBoundary → QueryClient → NativePluginProvider → OfflineProvider → Router
 ├── main.tsx                   # Entry point
 ├── index.css                  # Global CSS, HSL design tokens, Tailwind imports
+├── App.css                    # App-level styles
 ├── vite-env.d.ts              # Vite type declarations
 ├── pages/
-│   ├── Index.tsx              # Main page: auth gate → splash → onboarding → GameUI
-│   ├── Auth.tsx               # Login/signup (Apple Sign-In + guest mode)
-│   ├── PrivacyPolicy.tsx
-│   ├── TermsOfService.tsx
-│   └── NotFound.tsx
+│   ├── Index.tsx              # Main page: auth gate → splash → onboarding → GameUI (lazy-loaded)
+│   ├── Auth.tsx               # Login/signup (Apple Sign-In + guest mode) (lazy-loaded)
+│   ├── PrivacyPolicy.tsx      # (lazy-loaded)
+│   ├── TermsOfService.tsx     # (lazy-loaded)
+│   └── NotFound.tsx           # (lazy-loaded)
 ├── components/
 │   ├── PetLand.tsx            # Home screen — floating isometric island with pets
 │   ├── IslandSVG.tsx          # Inline SVG island — grass diamond, cliff walls, tile grid, textures
 │   ├── IslandPet.tsx          # Single pet on island — positioned, scaled, animated
 │   ├── IslandDecoration.tsx   # Single decoration on island — positioned, scaled, sway animation
+│   ├── IslandSwitcher.tsx     # Archipelago island switcher UI
+│   ├── IslandUnlockModal.tsx  # Modal for unlocking new archipelago islands
 │   ├── DecorationPicker.tsx   # Bottom sheet for placing decorations from inventory
+│   ├── WeatherParticles.tsx   # Ambient weather particles (dust, snow, leaves, sparkles, fireflies)
+│   ├── HomeGoalsWidget.tsx    # Goals widget on home screen
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
 │   ├── TopStatusBar.tsx       # XP bar, coins, level, streak at top
 │   ├── UnifiedFocusTimer.tsx  # Focus timer tab (orchestrates timer sub-components)
 │   ├── PetCollectionBook.tsx  # Pet collection catalog with wish-list support
-│   ├── Shop.tsx               # Shop tab (eggs, backgrounds, power-ups, bundles)
+│   ├── Shop.tsx               # Shop tab (eggs, backgrounds, power-ups, bundles, decor)
 │   ├── Settings.tsx           # Settings tab
 │   ├── RewardModals.tsx       # Reward modal coordinator
 │   ├── RewardModal.tsx        # Generic reward popup
@@ -129,17 +155,16 @@ src/
 │   ├── LandCompleteModal.tsx  # Celebration when island is fully filled
 │   ├── PetDetailCard.tsx      # Detailed pet info card
 │   ├── PetTooltip.tsx         # Pet tap tooltip on island (name, rarity, size)
-│   ├── collection/            # Pet collection sub-components (modular tabs)
-│   │   ├── index.ts           # Barrel exports
-│   │   ├── constants.ts       # Rarity labels/colors, size labels, shared mappings
+│   ├── collection/            # Pet collection sub-components
+│   │   ├── index.ts, constants.ts
 │   │   ├── SpeciesTab.tsx     # Pet species discovery grid grouped by rarity with wish-list
 │   │   ├── LandsTab.tsx       # Current and archived floating islands, completion progress
 │   │   ├── SpeciesCard.tsx    # Individual species card with rarity badge, discovery count
 │   │   ├── SpeciesDetailDrawer.tsx # Drawer modal showing full pet details, affinity, wish mechanics
+│   │   ├── LandPreviewModal.tsx # Preview modal for archived islands
 │   │   └── ProgressRing.tsx   # SVG circular progress ring for island fill percentage
 │   ├── focus-timer/           # Timer sub-components
-│   │   ├── index.ts           # Barrel exports
-│   │   ├── constants.ts       # Timer constants
+│   │   ├── index.ts, constants.ts
 │   │   ├── TimerView.tsx      # Timer circle display
 │   │   ├── TimerDisplay.tsx   # Time remaining display
 │   │   ├── TimerControls.tsx  # Start/pause/stop buttons
@@ -156,84 +181,60 @@ src/
 │   │   ├── PetRevealModal.tsx # Post-session pet reveal animation
 │   │   ├── BreakTransitionModal.tsx # Break between sessions modal
 │   │   ├── SessionNotesModal.tsx # Post-session notes
+│   │   ├── SessionCompleteView.tsx # Session completion summary view
 │   │   ├── TaskIntentionModal.tsx # Pre-session task intention
-│   │   ├── backgrounds/       # Timer background themes
-│   │   │   ├── index.tsx      # Background component exports
-│   │   │   └── ThemeContext.tsx # Background theme context
+│   │   ├── backgrounds/       # Timer background themes (6)
+│   │   │   ├── index.tsx, ThemeContext.tsx
+│   │   │   ├── SkyBackground.tsx, ForestBackground.tsx, SnowBackground.tsx
+│   │   │   ├── NightBackground.tsx, SunsetBackground.tsx, CityBackground.tsx
 │   │   └── hooks/             # Timer-specific hooks
-│   │       ├── useTimerCore.ts       # Core timer state machine
-│   │       ├── useTimerCountdown.ts  # Countdown logic
-│   │       ├── useTimerControls.ts   # Play/pause/stop actions
-│   │       ├── useTimerLogic.ts      # Timer business logic orchestrator
-│   │       ├── useTimerRewards.ts    # Post-session reward calculation
-│   │       ├── useTimerPersistence.ts # Timer state persistence
-│   │       ├── useTimerAudio.ts      # Timer sound effects
-│   │       ├── useBackgroundTheme.ts # Background theme management
-│   │       ├── useBreakTransition.ts # Break flow management
-│   │       └── useSessionNotes.ts    # Session notes management
+│   │       ├── useTimerCore.ts, useTimerCountdown.ts, useTimerControls.ts
+│   │       ├── useTimerLogic.ts, useTimerRewards.ts, useTimerPersistence.ts
+│   │       ├── useTimerAudio.ts, useBackgroundTheme.ts
+│   │       ├── useBreakTransition.ts, useSessionNotes.ts
 │   ├── gamification/          # Challenges/achievements tab
-│   │   ├── index.ts           # Barrel exports
-│   │   ├── GamificationHub.tsx # Main gamification tab layout
-│   │   ├── AchievementUnlockModal.tsx # Achievement unlock celebration
-│   │   └── MilestoneCelebration.tsx # Milestone celebration overlay
-│   ├── analytics/             # Analytics dashboard (tab)
-│   │   ├── index.ts           # Barrel exports
-│   │   ├── Analytics.tsx      # Main analytics dashboard
-│   │   ├── AnalyticsStatCards.tsx      # Summary stat cards
-│   │   ├── AnalyticsHeatmap.tsx       # Focus session heatmap
-│   │   ├── AnalyticsWeeklyChart.tsx   # Weekly focus chart
-│   │   ├── AnalyticsFocusScore.tsx    # Focus score display
-│   │   ├── AnalyticsFocusScoreTrend.tsx # Focus score history trend
-│   │   ├── AnalyticsGoalRing.tsx      # Daily goal ring
-│   │   ├── AnalyticsMilestones.tsx    # Milestone achievements
-│   │   ├── AnalyticsBestHours.tsx     # Best focus hours breakdown
-│   │   ├── AnalyticsCategoryBreakdown.tsx # Focus category distribution
-│   │   ├── AnalyticsComparison.tsx    # Week-over-week comparison
-│   │   ├── AnalyticsCompletionTrend.tsx # Session completion rate trends
-│   │   ├── AnalyticsFocusQuality.tsx  # Perfect/good/distracted session ratios
-│   │   ├── AnalyticsInsights.tsx      # AI-driven insights
-│   │   ├── AnalyticsMonthlySummary.tsx # Month-to-date stats
-│   │   ├── AnalyticsRecords.tsx       # Personal records
-│   │   ├── AnalyticsSessionHistory.tsx # Detailed session history list
-│   │   ├── AnalyticsStreakAlert.tsx    # Streak warning badge
-│   │   ├── AnalyticsWeeklyReport.tsx  # Weekly report card
-│   │   ├── CollapsibleAnalyticsSection.tsx # Collapsible section wrapper
-│   │   └── SimpleBarChart.tsx         # Bar chart utility
-│   ├── settings/              # Settings sub-components
+│   │   ├── index.ts
+│   │   ├── GamificationHub.tsx, AchievementUnlockModal.tsx, MilestoneCelebration.tsx
+│   ├── analytics/             # Analytics dashboard (30 files)
+│   │   ├── index.ts, Analytics.tsx
+│   │   ├── AnalyticsStatCards.tsx, AnalyticsGoalRing.tsx, AnalyticsWeeklyChart.tsx
+│   │   ├── AnalyticsHeatmap.tsx, AnalyticsBestHours.tsx, AnalyticsCategoryBreakdown.tsx
+│   │   ├── AnalyticsComparison.tsx, AnalyticsCompletionTrend.tsx
+│   │   ├── AnalyticsFocusQuality.tsx, AnalyticsFocusScore.tsx, AnalyticsFocusScoreTrend.tsx
+│   │   ├── AnalyticsInsights.tsx, AnalyticsMilestones.tsx, AnalyticsMonthlySummary.tsx
+│   │   ├── AnalyticsRecords.tsx, AnalyticsSessionHistory.tsx, AnalyticsWeeklyReport.tsx
+│   │   ├── AnalyticsFlowStates.tsx, AnalyticsFocusPersonality.tsx
+│   │   ├── AnalyticsGamificationPanel.tsx, AnalyticsPredictions.tsx
+│   │   ├── AnalyticsRadarChart.tsx, AnalyticsSessionTimeline.tsx
+│   │   ├── AnalyticsSmartSchedule.tsx, AnalyticsStreakFlame.tsx, AnalyticsStreakAlert.tsx
+│   │   ├── CollapsibleAnalyticsSection.tsx, SimpleBarChart.tsx
+│   ├── shop/                  # Shop sub-components
+│   │   ├── styles.ts
+│   │   ├── BundleConfirmDialog.tsx, PurchaseConfirmDialog.tsx
+│   │   ├── ShopPreviewComponents.tsx
+│   │   ├── EggHatchAnimation.tsx    # Egg hatching animation
+│   │   ├── SpeciesSelectorModal.tsx # Species selector purchase modal
+│   │   └── tabs/
+│   │       ├── EggsTab.tsx, BackgroundsTab.tsx, FeaturedTab.tsx
+│   │       ├── InventoryTab.tsx, PowerUpsTab.tsx, DecorTab.tsx
+│   ├── settings/              # Settings sub-components (10 files)
 │   │   ├── SettingsProfile.tsx, SettingsAccount.tsx, SettingsTimer.tsx
 │   │   ├── SettingsFocusMode.tsx, SettingsGame.tsx, SettingsSound.tsx
 │   │   ├── SettingsAnalytics.tsx, SettingsAppearance.tsx
-│   │   ├── SettingsData.tsx   # Data export/delete (GDPR)
-│   │   └── SettingsAbout.tsx  # About screen
+│   │   ├── SettingsData.tsx, SettingsAbout.tsx
 │   ├── onboarding/
-│   │   └── OnboardingFlow.tsx # New user onboarding wizard
+│   │   └── OnboardingFlow.tsx
 │   ├── dev/
-│   │   └── PerformanceMonitor.tsx # Development performance monitor
-│   ├── shop/                  # Shop sub-components
-│   │   ├── styles.ts          # Shop styling utilities
-│   │   ├── BundleConfirmDialog.tsx # Bundle purchase confirmation
-│   │   ├── PurchaseConfirmDialog.tsx # Purchase confirmation
-│   │   ├── ShopPreviewComponents.tsx # Item preview cards
-│   │   └── tabs/              # Shop tab views
-│   │       ├── EggsTab.tsx        # Egg purchasing and hatching UI (default tab)
-│   │       ├── BackgroundsTab.tsx # Background themes shop
-│   │       ├── FeaturedTab.tsx    # Featured items
-│   │       ├── InventoryTab.tsx   # User inventory
-│   │       ├── PowerUpsTab.tsx    # Power-up items
-│   │       └── DecorTab.tsx      # Island decoration shop with category filters
-│   └── ui/                    # shadcn/ui component library
+│   │   └── PerformanceMonitor.tsx
+│   └── ui/                    # shadcn/ui component library (41 files)
 │       ├── button.tsx, card.tsx, dialog.tsx, drawer.tsx, input.tsx ...
-│       ├── skeleton-loaders.tsx # Context-aware loading skeletons
-│       ├── PixelIcon.tsx      # Pixel art icon component
-│       ├── badge.variants.ts  # Badge style variants (CVA)
-│       ├── button.variants.ts # Button style variants (CVA)
-│       ├── toggle.variants.ts # Toggle style variants (CVA)
-│       ├── use-form-field.ts  # React Hook Form context utilities
-│       ├── use-sidebar.ts     # Sidebar state management hook
+│       ├── skeleton-loaders.tsx, PixelIcon.tsx
+│       ├── badge.variants.ts, button.variants.ts, toggle.variants.ts
+│       ├── use-form-field.ts, use-sidebar.ts
 │       └── (40+ Radix-based primitives)
-├── stores/                    # Zustand state management
+├── stores/                    # Zustand state management (16 files)
 │   ├── index.ts               # Store exports
-│   ├── landStore.ts           # Pet island grid, egg hatching, wished species, species affinity
+│   ├── landStore.ts           # Pet island grid, archipelago, egg hatching, wish list, passive income, decorations
 │   ├── xpStore.ts             # XP, level (max 50), unlocked entities
 │   ├── coinStore.ts           # Coin balance, earnings, spending, server sync
 │   ├── premiumStore.ts        # Subscription tier management
@@ -243,152 +244,75 @@ src/
 │   ├── shopStore.ts           # Owned items, equipped background
 │   ├── collectionStore.ts     # Legacy collection state
 │   ├── soundStore.ts          # Sound mixer layers, ambient sounds, volume
-│   ├── questStore.ts          # Daily/weekly quests
+│   ├── questStore.ts          # Daily/weekly quests, challenges
 │   ├── onboardingStore.ts     # Onboarding completion state
 │   ├── authStore.ts           # Guest ID, guest mode flag
 │   ├── themeStore.ts          # Home background theme
 │   └── offlineSyncStore.ts    # Offline action queue for sync
-├── hooks/                     # Custom React hooks
-│   ├── useAuth.ts             # Supabase auth, guest mode
-│   ├── useXPSystem.ts         # XP calculations, level-ups (re-exports from xp/)
-│   ├── xp/                    # XP system module
-│   │   ├── index.ts           # Barrel exports
-│   │   ├── useXPSystem.ts     # Core XP hook
-│   │   ├── xpConstants.ts     # XP curve constants
-│   │   ├── xpTypes.ts         # XP type definitions
-│   │   └── xpUtils.ts         # XP calculation utilities
-│   ├── useCoinSystem.ts       # Coin earning, spending, server validation
-│   ├── useStreakSystem.ts     # Streak tracking, freeze management
-│   ├── useFocusMode.ts        # Focus mode activation, app blocking
-│   ├── useStoreKit.ts         # StoreKit 2 IAP (subscriptions, coin packs, bundles)
-│   ├── useDeviceActivity.ts   # iOS Screen Time / DeviceActivity integration
-│   ├── useQuestSystem.ts      # Daily/weekly quest generation and tracking
-│   ├── useAchievementSystem.ts # Achievement unlock logic
-│   ├── useAchievementTracking.ts # Event-based achievement progress tracking
-│   ├── useMilestoneCelebrations.ts # Milestone detection and celebration UI
-│   ├── useDailyLoginRewards.ts # Daily login reward logic
-│   ├── useCoinBooster.ts      # Temporary coin boost items
-│   ├── useRewardHandlers.ts   # Session completion reward orchestration
-│   ├── useSoundMixer.ts       # Ambient sound layering
-│   ├── useAmbientSound.ts     # Individual ambient sound playback
-│   ├── useSoundEffects.ts     # UI sound effects
-│   ├── useClickSound.ts       # Button click sound
-│   ├── useHaptics.ts          # iOS haptic feedback
-│   ├── useWidgetSync.ts       # iOS widget data synchronization
-│   ├── useTimerExpiryGuard.ts # Ensures timer fires even if app backgrounded
-│   ├── useBackendAppState.ts  # Fetches user state from Supabase on load
-│   ├── useBackendStreaks.ts   # Server-side streak sync
-│   ├── useBackendQuests.ts    # Server-side quest sync
-│   ├── useSupabaseData.ts     # Generic Supabase data fetching
-│   ├── useShop.ts             # Shop purchase logic
-│   ├── useSettings.ts         # App settings management
-│   ├── useOnboarding.ts       # Onboarding flow logic
-│   ├── usePremiumStatus.ts    # Premium tier queries
-│   ├── useAnalytics.ts        # Analytics event tracking
-│   ├── useAnimatedCounter.ts  # Animated number transitions
-│   ├── useAppStateTracking.ts # App foreground/background tracking
-│   ├── useNotifications.ts    # Push notification management
-│   ├── useNativePluginStatus.ts # Native plugin availability
-│   ├── useOfflineSyncManager.ts # Offline sync queue management
-│   ├── usePerformanceMonitor.ts # Performance metrics logging
-│   ├── useReducedMotion.ts    # Reduced motion preference detection
-│   ├── useServiceWorker.ts    # Service worker registration
-│   ├── usePassiveIncome.ts    # Passive coin income system
-│   └── use-mobile.tsx         # Mobile device detection
+├── hooks/                     # Custom React hooks (40 files)
+│   ├── useAuth.ts, useXPSystem.ts, useCoinSystem.ts, useStreakSystem.ts
+│   ├── useFocusMode.ts, useStoreKit.ts, useDeviceActivity.ts
+│   ├── useQuestSystem.ts, useAchievementSystem.ts, useAchievementTracking.ts
+│   ├── useMilestoneCelebrations.ts, useDailyLoginRewards.ts, useCoinBooster.ts
+│   ├── useRewardHandlers.ts, useSoundMixer.ts, useAmbientSound.ts
+│   ├── useSoundEffects.ts, useClickSound.ts, useHaptics.ts
+│   ├── useWidgetSync.ts, useTimerExpiryGuard.ts
+│   ├── useBackendAppState.ts, useBackendStreaks.ts, useBackendQuests.ts
+│   ├── useSupabaseData.ts, useShop.ts, useSettings.ts, useOnboarding.ts
+│   ├── usePremiumStatus.ts, useAnalytics.ts, useAnimatedCounter.ts
+│   ├── useAppStateTracking.ts, useNotifications.ts, useNativePluginStatus.ts
+│   ├── useOfflineSyncManager.ts, usePerformanceMonitor.ts, useReducedMotion.ts
+│   ├── useServiceWorker.ts, usePassiveIncome.ts, use-mobile.tsx
+│   └── xp/                    # XP system module
+│       ├── index.ts, useXPSystem.ts, xpConstants.ts, xpTypes.ts, xpUtils.ts
 ├── data/
-│   ├── PetDatabase.ts         # 41 pet species definitions, rarity weights, growth sizes, random roll
-│   ├── EggData.ts             # Egg types (common/rare/epic/legendary), prices, custom rarity weights
-│   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling
-│   ├── ShopData.ts            # Shop items, backgrounds, bundles, egg category
+│   ├── PetDatabase.ts         # 41 pet species, rarity weights, growth sizes, roll functions
+│   ├── EggData.ts             # 4 egg types, prices, custom rarity weights, species selector prices
+│   ├── ArchipelagoData.ts     # 6 archipelago island definitions with unlock/cost/bonuses
+│   ├── IslandThemes.ts        # 11 island themes with full color configs (sky, grass, cliff, particles)
+│   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling, expansion tiers
 │   ├── DecorationData.ts      # 20 decoration definitions (6 categories), rarity, prices, sprites
-│   ├── GamificationData.ts    # Milestone/achievement definitions
-│   ├── AmbientSoundsData.ts   # Sound library catalog
+│   ├── ShopData.ts            # Shop items, backgrounds, bundles, coin packs, utility items
+│   ├── GamificationData.ts    # 24 milestones, 13 daily + 10 weekly challenge templates
+│   ├── AmbientSoundsData.ts   # 31 ambient sounds (8 free + 23 premium), 5 categories
 │   ├── SpecialAnimations.ts   # Special celebration animations
 │   └── LazySpecialAnimations.ts # Lazy-loaded animation variants
-├── types/                     # TypeScript type definitions
-│   ├── index.ts               # Core app types
-│   ├── achievements.ts        # Achievement types
-│   ├── analytics.ts           # Analytics event types
-│   ├── app.ts                 # App-level types
-│   ├── browser-utils.ts       # Browser utility types
-│   ├── gamification.ts        # Gamification types
-│   ├── plugins.ts             # Native plugin types
-│   ├── quest-system.ts        # Quest types
-│   ├── rewards.ts             # Reward types
-│   ├── shop.ts                # Shop types
-│   ├── streak-system.ts       # Streak types
-│   ├── supabase-models.ts     # Supabase DB model types
-│   ├── theme.ts               # Theme types
-│   └── xp-system.ts           # XP system types
-├── lib/                       # Utilities
-│   ├── constants.ts           # ALL game constants (XP, coins, streaks, etc.)
+├── types/                     # TypeScript type definitions (14 files)
+│   ├── index.ts, achievements.ts, analytics.ts, app.ts, browser-utils.ts
+│   ├── gamification.ts, plugins.ts, quest-system.ts, rewards.ts
+│   ├── shop.ts, streak-system.ts, supabase-models.ts, theme.ts, xp-system.ts
+├── lib/                       # Utilities (17 files)
+│   ├── constants.ts           # ALL game constants (XP, coins, streaks, pity, passive income, etc.)
 │   ├── validation.ts          # Input validation helpers
 │   ├── storage-validation.ts  # Zod schemas for persisted state
 │   ├── storage-keys.ts        # localStorage key constants
 │   ├── validated-zustand-storage.ts # Safe Zustand storage adapter with Zod
 │   ├── logger.ts              # Structured logging
 │   ├── utils.ts               # cn() helper (clsx + tailwind-merge)
-│   ├── security.ts            # Security utilities
-│   ├── accessibility.ts       # Accessibility helpers
-│   ├── apiUtils.ts            # API request utilities
-│   ├── debounce.ts            # Debounce utility
-│   ├── errorHandling.ts       # Error handling utilities
-│   ├── errorReporting.ts      # Error reporting service
-│   ├── iosOptimizations.ts    # iOS-specific performance optimizations
-│   ├── memoization.ts         # Memoization utilities
-│   ├── minimalSentry.ts       # Lightweight error tracking
-│   └── spriteAnimationManager.ts # Sprite animation frame management
-├── styles/                    # Modular CSS
-│   ├── pet-land.css           # Island sky, clouds, god rays, mountains, parallax, pets, tooltips, progress bar, zoom
-│   ├── animations.css         # Shared keyframe animations
-│   ├── base.css               # Base/reset styles
-│   ├── navigation.css         # Tab bar, navigation styles
-│   ├── timer-controls.css     # Timer button styles
-│   ├── timer-backgrounds.css  # Timer background themes
-│   ├── collection.css         # Collection grid styles
-│   ├── gamification.css       # Achievement/quest styles
-│   ├── shop.css               # Shop layout styles
-│   ├── retro-theme.css        # Retro/pixel art theme tokens
-│   ├── retro-elements.css     # Retro UI element styles
-│   └── utilities.css          # CSS utility classes
-├── contexts/                  # React contexts
-│   ├── AppContext.tsx          # Global app state context
-│   ├── AppStateContext.tsx     # App lifecycle state (foreground/background)
-│   ├── NativePluginContext.tsx # Native plugin availability context
-│   └── OfflineContext.tsx      # Offline/online status context
+│   ├── security.ts, accessibility.ts, apiUtils.ts, debounce.ts
+│   ├── errorHandling.ts, errorReporting.ts, iosOptimizations.ts
+│   ├── memoization.ts, minimalSentry.ts, spriteAnimationManager.ts
+├── styles/                    # Modular CSS (13 files)
+│   ├── pet-land.css, animations.css, base.css, navigation.css
+│   ├── timer-controls.css, timer-backgrounds.css
+│   ├── collection.css, gamification.css, shop.css, settings.css
+│   ├── retro-theme.css, retro-elements.css, utilities.css
+├── contexts/                  # React contexts (4 files)
+│   ├── AppContext.tsx, AppStateContext.tsx
+│   ├── NativePluginContext.tsx, OfflineContext.tsx
 ├── plugins/                   # Capacitor native plugins
 │   ├── device-activity/       # iOS Screen Time / DeviceActivity framework
-│   │   ├── index.ts           # Plugin registration
-│   │   ├── definitions.ts     # TypeScript interface definitions
-│   │   └── web.ts             # Web fallback (no-op)
 │   ├── store-kit/             # StoreKit 2 IAP
-│   │   ├── index.ts
-│   │   └── web.ts
 │   ├── app-review/            # App Store review prompt
-│   │   ├── index.ts
-│   │   └── web.ts
 │   └── widget-data/           # iOS widget data bridge
-│       └── index.ts
 ├── services/                  # Business logic services
 │   ├── achievementService.ts  # Achievement processing service
-│   └── achievement/           # Achievement sub-modules
-│       ├── index.ts, achievementTypes.ts, achievementConstants.ts
-│       ├── achievementDefinitions.ts  # Achievement definitions
-│       ├── achievementProgress.ts     # Progress tracking
-│       ├── achievementStorage.ts      # Persistence
-│       └── achievementUtils.ts        # Utilities
+│   └── achievement/           # Achievement sub-modules (7 files)
 ├── test/                      # Test files (mirrors src/ structure)
-│   ├── setup.ts               # Test setup (Vitest)
-│   ├── components/            # Component tests
-│   ├── hooks/                 # Hook tests (~20 files)
-│   ├── stores/                # Store tests (6 files)
-│   ├── lib/                   # Utility tests (13 files)
-│   ├── services/              # Service tests
-│   ├── contexts/              # Context tests
-│   ├── database/              # Database tests (3 files)
-│   ├── integration/           # Integration tests (4 files)
-│   ├── e2e/                   # End-to-end tests
-│   └── utils/                 # Test utilities (mocks, test-utils)
+│   ├── setup.ts
+│   ├── components/ (1 test), contexts/ (1 test), database/ (3 tests)
+│   ├── hooks/ (24 tests), stores/ (6 tests), lib/ (13 tests)
+│   ├── services/, integration/ (4 tests), e2e/ (1 test), utils/
 └── integrations/
     └── supabase/              # Supabase client + generated types
 ```
@@ -397,83 +321,107 @@ src/
 
 ```
 scripts/                       # Build & generation scripts
-├── assemble-spritesheet.mjs   # Spritesheet assembly
-├── generate-island-decorations.ts # Island decoration generation
-├── generate-pet-sprites.ts    # Pet sprite generation
-├── generate-placeholders.cjs  # Placeholder asset generation
-├── generate-splash.py         # Splash screen generation
-├── generate-sprite-directions.ts # Sprite direction variants
-└── patch-ios-config.cjs       # iOS config patching for Capacitor
+├── assemble-spritesheet.mjs, generate-island-decorations.ts
+├── generate-pet-sprites.ts, generate-placeholders.cjs
+├── generate-splash.py, generate-sprite-directions.ts
+└── patch-ios-config.cjs
 
-docs/                          # Documentation
-├── API.md                     # API documentation
-├── APP_STORE_CONNECT_IAP_SETUP.txt # Copy-paste guide for ASC IAP config, pricing, metadata
-├── IAP_STRATEGY.md            # In-app purchase strategy and product definitions
-├── IOS_SETUP.md               # iOS setup instructions (Apple Developer Portal, Xcode, certs)
-├── PRIVACY_POLICY.md          # Privacy policy
-├── TERMS_OF_SERVICE.md        # Terms of service
-├── TESTING.md                 # Testing guide
-├── WIDGETS.md                 # iOS widgets documentation
-└── privacy.html               # Privacy policy (HTML)
+docs/                          # Documentation (9 files)
+├── API.md, APP_STORE_CONNECT_IAP_SETUP.txt, IAP_STRATEGY.md
+├── IOS_SETUP.md, PRIVACY_POLICY.md, TERMS_OF_SERVICE.md
+├── TESTING.md, WIDGETS.md, privacy.html
 
 e2e/                           # Playwright E2E tests
-├── auth.spec.ts               # Authentication flow tests
-├── collection.spec.ts         # Collection page tests
-├── focus-timer.spec.ts        # Timer flow tests
-├── navigation.spec.ts         # Navigation tests
-├── shop.spec.ts               # Shop tests
-├── streaks.spec.ts            # Streak tests
-└── integration/               # Integration E2E tests
-    ├── error-handling.spec.ts
-    ├── rewards-achievements.spec.ts
-    └── user-journey.spec.ts
+├── auth.spec.ts, collection.spec.ts, focus-timer.spec.ts
+├── navigation.spec.ts, shop.spec.ts, streaks.spec.ts
+└── integration/ (3 specs: error-handling, rewards-achievements, user-journey)
 
 public/assets/                 # Static assets
-├── pets/                      # 184 PNG files (41 species × 4 size variants)
-├── icons/                     # 141 PNG icon files
-├── robots/                    # 27 SVG robot files across 6 zone subdirectories
-├── worlds/                    # 10 PNG world background files
-├── decorations/               # 20 PNG decoration sprites (48×48, pixel art)
-└── sprites/                   # (reserved for spritesheets)
+├── pets/                      # 164 PNG files (41 species × 4 variants)
+├── decorations/               # 20 PNG decoration sprites (48×48)
+├── icons/                     # 177 PNG icon files
+├── robots/                    # 25 SVG robot files across 6 subdirectories (legacy)
+├── worlds/                    # 11 PNG world background files
+└── sprites/                   # (empty, reserved for spritesheets)
 ```
 
 ## App Flow
 
-1. `App.tsx` — wraps everything in ErrorBoundary → QueryClientProvider → NativePluginProvider → OfflineProvider → TooltipProvider → BrowserRouter
+1. `App.tsx` — wraps everything in ErrorBoundary → QueryClientProvider → NativePluginProvider → OfflineProvider → TooltipProvider → BrowserRouter. All pages lazy-loaded via `React.lazy()`.
 2. Routes: `/` (Index), `/auth`, `/privacy`, `/terms`, `*` (NotFound)
 3. `Index.tsx`:
    - Checks auth → redirects to `/auth` if not authenticated
    - Hides native + HTML splash screens once auth resolves
    - Shows `OnboardingFlow` if `!hasCompletedOnboarding`
-   - Renders **GameUI** (full-screen overlay)
+   - Renders **GameUI** (full-screen overlay, lazy-loaded)
 4. **GameUI** manages tab state and renders:
    - `TopStatusBar` — XP bar, level, coins, streak (home tab only)
    - `TabContent` — renders active tab (PetLand for home, lazy-loads others)
    - `IOSTabBar` — bottom navigation
    - `RewardModals` — XP/coin/milestone/daily-login reward popups
+   - `AchievementTracker` — cross-component achievement tracking
+   - `IslandExpansionModal` / `LandCompleteModal` — island celebrations
 5. **Tabs**: home (PetLand), timer, collection (PetCollectionBook), shop, settings
 
 ## Stores (Zustand)
 
-All stores use `zustand/persist` with validated localStorage via `createValidatedStorage()` and Zod schemas. Storage keys are prefixed with `nomo_`.
+All stores use `zustand/persist` (except navigationStore) with validated localStorage via `createValidatedStorage()` and Zod schemas where indicated. Storage keys are prefixed with `nomo_` unless noted.
 
-| Store | Key | Purpose |
-|-------|-----|---------|
-| `landStore` | `nomo_land_data` | **Island grid (400 cells max — pets OR decorations), grid expansion tier, completed lands, species catalog, pending pet, wished species, species affinity, egg hatching, decoration inventory** |
-| `xpStore` | `nomo_xp_system` | XP, level (max 50), unlocked entities |
-| `coinStore` | `nomo_coin_system` | Coin balance, totalEarned, totalSpent, server sync state |
-| `premiumStore` | `nomo_premium` | Subscription tier (free/premium) |
-| `streakStore` | `nomo_streak_data` | Current streak, longest streak, streak freezes (max 3), total sessions |
-| `focusStore` | `nomo_focus_mode` | Focus mode settings, blocked apps, strict mode |
-| `navigationStore` | (not persisted) | Active tab, modal state, navigation history |
-| `shopStore` | (persisted) | Owned items, equipped background |
-| `collectionStore` | (persisted) | Legacy collection state |
-| `soundStore` | (persisted) | Sound mixer layers, ambient sounds, volume |
-| `questStore` | (persisted) | Daily/weekly quests |
-| `onboardingStore` | (persisted) | Onboarding completion state |
-| `authStore` | (persisted) | Guest ID, guest mode flag |
-| `themeStore` | (persisted) | Home background theme |
-| `offlineSyncStore` | (persisted) | Offline action queue for background sync |
+| Store | Key | Validated | Purpose |
+|-------|-----|-----------|---------|
+| `landStore` | `nomo_land_data` | Yes | **Island grid, archipelago (6 islands), expansion tiers, species catalog, pending pet/egg, wished species, species affinity, pity counter, decoration inventory, passive income** |
+| `xpStore` | `nomo_xp_system` | Yes | XP, level (max 50), prestige |
+| `coinStore` | `nomo_coin_system` | Yes | Coin balance, totalEarned, totalSpent, server sync |
+| `premiumStore` | `nomo_premium` | Yes | Subscription tier (free/premium), benefits |
+| `streakStore` | `nomo_streak_data` | No | Current streak, longest streak, streak freezes (max 3), total sessions |
+| `focusStore` | `nomo_focus_mode` | No | Focus mode settings, blocked apps, strict mode |
+| `navigationStore` | *(not persisted)* | — | Active tab, modal state, navigation history |
+| `shopStore` | `nomo_shop_inventory` | No | Owned characters/backgrounds, equipped background, purchased bundles |
+| `collectionStore` | `botblock-collection` | No | Legacy collection state (activeHomeBots, favorites) |
+| `soundStore` | `nomo_sound` | No | Sound mixer layers, ambient sounds, island ambient, volume |
+| `questStore` | `nomo_quest_system` | No | Daily/weekly quests, daily/weekly challenges |
+| `onboardingStore` | `nomo_onboarding` | No | Onboarding completion, chosen starter pet, island name |
+| `authStore` | `nomo_auth` | No | Guest ID, guest mode flag |
+| `themeStore` | `petIsland_homeBackground` | No | Home background theme (legacy key) |
+| `offlineSyncStore` | `nomo_offline_sync` | No | Offline action queue, sync status |
+
+### landStore Key State
+
+```typescript
+interface LandStoreState {
+  currentLand: Land;              // Active island (cells, gridSize, theme, etc.)
+  completedLands: Land[];         // Archived islands
+  speciesCatalog: Record<string, SpeciesCatalogEntry>; // Discovery tracking
+  pendingPet: PendingPet | null;  // Pet waiting to be placed
+  pendingEgg: PendingEgg | null;  // Egg waiting to be hatched
+  ownedThemes: string[];
+  selectedNextTheme: string;
+  wishedSpecies: string | null;
+  speciesAffinity: Record<string, number>;
+  lastOfflineCheck: number;       // For passive income calculation
+  pityCounter: number;            // Bad luck protection
+  lastSessionTimestamp: number;
+  decorationInventory: Record<string, number>;
+  archipelago: ArchipelagoIsland[]; // Multi-island system
+  activeIslandIndex: number;      // Currently active island
+}
+```
+
+### landStore Key Actions
+
+- `generateRandomPet(sessionMinutes, playerLevel, premiumBoost?)` — rolls random pet
+- `generatePetChoices(sessionMinutes, playerLevel, count=4)` — gives player 4 options to choose from
+- `choosePet(speciesId, sessionMinutes)` — player picks a specific pet from choices
+- `hatchEgg(egg, playerLevel)` — hatches shop egg with custom rarity weights
+- `generateSessionEgg(sessionMinutes, playerLevel)` — generates egg from focus session
+- `hatchSessionEgg()` — hatches a session-generated egg
+- `selectSpecies(speciesId)` — species selector purchase
+- `placePendingPet()` — places pet on island using farthest-first algorithm
+- `startNewLand()`, `isLandComplete()`, `isTierFull()`, `getFilledCount()`, `getAvailableCells()`
+- `setWishedSpecies(speciesId)`, `getAffinityLevel(speciesId)`
+- `collectOfflineIncome()`, `getDailyIncomeRate()`, `getIslandMood()`
+- `addDecorationToInventory()`, `placeDecoration()`, `removeDecoration()`, `moveDecoration()`
+- `switchIsland()`, `unlockIsland()`, `getActiveIsland()`, `getCompletedIslandBonuses()`
 
 ## Pet Collection System
 
@@ -487,8 +435,6 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | Epic | 4 | Dragon, Tiger, Axolotl, Phoenix | 20–35 |
 | Legendary | 2 | Unicorn, Koi Fish | 40, 45 |
 
-**Unlock level details**: Bunny/Chick (0), Frog (2), Hamster (3), Fox (4), Duckling (5), Capybara (6), Hedgehog (7), Cat/Turtle (8), Bee/Deer (9), Corgi/Mouse (10), Butterfly (11), Elephant/Penguin (12), Monkey (13), Shiba Inu/Sparrow (14), Jellyfish (15), Koala/Owl/Sloth (16), Raccoon (18), Dragon/Panda/Parrot (20), Otter (22), Red Panda (23), Seal (24), Wolf (25), Arctic Fox (27), Polar Bear (28), Flamingo/Tiger (30), Crane (32), Axolotl (33), Phoenix (35), Unicorn (40), Koi Fish (45).
-
 ### Growth Sizes (3 tiers)
 | Size | Session Duration | Scale Factor |
 |------|-----------------|-------------|
@@ -497,209 +443,203 @@ All stores use `zustand/persist` with validated localStorage via `createValidate
 | Adult | 120+ min | 1.0 |
 
 ### Rarity & Drop Weights
-| Rarity | Drop Weight | Glow Effect | Glow Color |
-|--------|------------|-------------|------------|
-| Common | 45% | None | — |
-| Uncommon | 28% | White drop-shadow (3px) | `rgba(255, 255, 255, 0.6)` |
-| Rare | 17% | Blue drop-shadow (4px) | `rgba(59, 130, 246, 0.7)` |
-| Epic | 8% | Purple drop-shadow (5px) | `rgba(168, 85, 247, 0.7)` |
-| Legendary | 2% | Gold drop-shadow (6px) + shimmer animation | `rgba(234, 179, 8, 0.8)` |
+| Rarity | Drop Weight | Glow Color |
+|--------|------------|------------|
+| Common | 45% | None |
+| Uncommon | 28% | `rgba(255, 255, 255, 0.6)` |
+| Rare | 17% | `rgba(59, 130, 246, 0.7)` |
+| Epic | 8% | `rgba(168, 85, 247, 0.7)` |
+| Legendary | 2% | `rgba(234, 179, 8, 0.8)` + shimmer |
+
+### Pity System (Bad Luck Protection)
+| Threshold | Guarantee |
+|-----------|-----------|
+| 15 rolls without rare+ | Guaranteed rare |
+| 40 rolls without epic+ | Guaranteed epic |
+| 80 rolls without legendary | Guaranteed legendary |
+
+Premium rarity boost shifts weights: common -8, uncommon +2, rare +3, epic +2, legendary +1.
 
 ### Egg System
 
-Players can buy eggs in the shop to hatch pets with custom rarity weights (overriding default drop rates). Defined in `src/data/EggData.ts`.
-
 | Egg | Price | Common | Uncommon | Rare | Epic | Legendary |
 |-----|-------|--------|----------|------|------|-----------|
-| Common Egg | 100 coins | 80% | 15% | 5% | 0% | 0% |
-| Rare Egg | 400 coins | 40% | 35% | 20% | 5% | 0% |
-| Epic Egg | 1,200 coins | 0% | 15% | 40% | 35% | 10% |
-| Legendary Egg | 3,000 coins | 0% | 0% | 20% | 40% | 40% |
+| Common Egg | 150 coins | 80% | 15% | 5% | 0% | 0% |
+| Rare Egg | 600 coins | 40% | 35% | 20% | 5% | 0% |
+| Epic Egg | 1,800 coins | 0% | 15% | 40% | 35% | 10% |
+| Legendary Egg | 4,500 coins | 0% | 0% | 20% | 40% | 40% |
 
-Species Selector: 2,000 coins (lets player choose specific species).
+**Species Selector**: 5,000 coins (discovered species) / 8,000 coins (undiscovered species).
 
-Egg hatching is handled via `landStore.hatchEgg(egg, playerLevel)` which calls `rollRandomPet()` with the egg's custom rarity weights.
+**Session Egg Tier Drop Rates**: common 55%, rare 30%, epic 12%, legendary 3%.
 
 ### Wish List & Affinity
 
 - `wishedSpecies` — players can wish for a specific species (stored in landStore)
-- `speciesAffinity` — tracks affinity with species over time
+- `speciesAffinity` — tracks affinity with species over time (levels: none/familiar/bonded/devoted)
 - `SpeciesDetailDrawer` shows full pet details with affinity stats and wish mechanics
-- `useWishedSpecies()` selector hook for components
 
-### Collection UI
+### Passive Income System
 
-The collection page (`PetCollectionBook.tsx`) uses modular sub-components in `components/collection/`:
-- **SpeciesTab** — Grid of all species grouped by rarity, with discovery tracking and wish-list toggle
-- **LandsTab** — Current island progress + archived completed islands
-- **SpeciesCard** — Individual species card showing rarity badge, discovery count, size tracking
-- **SpeciesDetailDrawer** — Full-screen drawer with detailed pet info, affinity, and wish mechanics
-- **ProgressRing** — SVG circular progress indicator for island completion
+Pets generate coins per day based on rarity and growth size:
+
+| Rarity | Baby | Adolescent | Adult |
+|--------|------|------------|-------|
+| Common | 2 | 3 | 4 |
+| Uncommon | 3 | 5 | 7 |
+| Rare | 5 | 7 | 11 |
+| Epic | 7 | 11 | 16 |
+| Legendary | 12 | 16 | 24 |
+
+- Max accumulation: 3 days
+- Min hours before claim: 1
+- Premium multiplier: 2x
 
 ### Floating Island System
 
-The home screen renders a **floating isometric island** (not a flat grid). Key concepts:
-
 **Island Visual Structure** (`IslandSVG.tsx` + `pet-land.css`):
-- **Sky**: Smooth 4-stop gradient (`#7EC8E3` → `#A5D8EF` → `#D0EAF5` → `#EEF4F0`) with animated sun, god rays, 5 volumetric clouds, distant mountain/hill/treeline silhouettes, warm horizon haze, dust motes, and sparkles
+- **Sky**: Themed gradient (defined in `IslandThemes.ts`) with animated sun, god rays, clouds, mountains, weather particles
 - **Island wrapper**: Floating bob animation (4s, ±6px vertical)
-- **Island container**: Multi-layer parallax tilt (ref-based, no React re-renders) — sky, island, and pets layers shift at different speeds on drag
-- **Island SVG** (`IslandSVG.tsx`): Inline SVG (viewBox 420×258) with:
-  - **Grass diamond**: Isometric diamond shape (vertices: TOP 210,0 / RIGHT 414,105 / BOTTOM 210,210 / LEFT 6,105) with checkerboard tile grid (10×10), grass texture patches, sun dapples, dirt spots
-  - **Cliff walls**: Two parallelogram cliff faces (left + right) extending 42px below grass edge, with dirt band, horizontal strata, stone blocks with mortar lines, individual stone shading
-  - **Grass overhang**: Organic bumpy edge along cliff tops simulating grass blades hanging over
-  - **Sharp cliff corners**: No rounding — clean parallelogram geometry
-- **Shadow**: Soft radial shadow below the floating island
-- **Pinch-to-zoom**: Range 0.8×–2.0×, supports two-finger pinch, mouse wheel, and double-tap toggle (1.0↔1.5)
+- **Island container**: Multi-layer parallax tilt (ref-based, no React re-renders)
+- **Island SVG** (`IslandSVG.tsx`): Inline SVG (viewBox 420×258) with isometric diamond, checkerboard tiles, cliff walls, grass overhang
+- **Pinch-to-zoom**: 0.8×–2.0×, supports pinch, wheel, and double-tap
 
-**Pet Positioning** (`islandPositions.ts`):
-- Positions computed from grid via **bilinear interpolation on diamond vertices**
-- Uses the exact same diamond vertices (TOP, RIGHT, BOTTOM, LEFT) and `diamondPt()` function as `IslandSVG.tsx` — pets align precisely with tile centers
-- Cell centers: `(row+0.5)/gridSize, (col+0.5)/gridSize` normalized, then mapped to SVG coords and converted to container percentages
-- No jitter — exact centering on each tile
-- Pet CSS transform: `translate(-50%, -60%)` positions sprite so feet rest on tile
+**Grid Constants** (`islandPositions.ts`):
+```
+GRID_SIZE = 20              // Underlying grid dimension (20×20 = 400 cells)
+MIN_GRID_TIER = 5           // Island starts as centered 5×5 (25 cells)
+MAX_GRID_TIER = 12          // Maximum expansion to centered 12×12 (144 cells)
+EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 11, 12]
+```
 
-**Depth System**:
-- **Depth scale**: Back of island = 0.85, front = 1.0 (based on isometric row+col)
-- **Z-index**: Range 10–28 based on `row + col` for proper layering
-- **Final pet scale** = growth scale × depth scale (e.g., baby at back = 0.65 × 0.85 = 0.553)
+**Depth System**: Back of island = 0.85 scale, front = 1.0. Z-index range 10–28.
 
 **Smart Placement Algorithm** (`landStore.ts`):
 - First 2 pets placed randomly
-- After that: **farthest-first insertion** — picks empty cell with maximum minimum distance to any placed pet
-- Random jitter (±0.5–1.0 distance) breaks ties and prevents predictable patterns
-- Creates organic, even distribution instead of clustering
+- After that: farthest-first insertion with random jitter (±2 distance)
 
-**Pet Rendering** (`IslandPet.tsx`):
-- Sprite size: 56px base (responsive: 62px@375, 68px@390, 74px@420, 84px@768)
-- Image rendering: `pixelated` / `crisp-edges`
-- Bob animation: 3s, ±2px, staggered delay per pet `(index % 11) * 0.27s`, per-pet offset variation ±0.5px
-- Pop-in animation for new pets: 0.5s bounce (scale 0→1.15→1.0)
-- Tap to show tooltip card (name, rarity badge, size, session duration) — tooltip flips below for pets near top, shifts horizontally for edge pets
-- Haptic feedback on new pet placement and tap
+### Archipelago System
 
-**Land State** (`landStore.ts`):
-```typescript
-interface LandCell {
-  petId: string;           // Species ID (e.g., "bunny")
-  size: 'baby' | 'adolescent' | 'adult';
-  sessionMinutes: number;
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
-  timestamp: number;
-}
+6 themed islands that players unlock with coins and level:
 
-interface DecorationCell {
-  decorationId: string;    // e.g., "oak-tree", "fountain"
-  timestamp: number;
-}
+| Island | Biome | Level | Cost | Completion Bonus |
+|--------|-------|-------|------|-----------------|
+| Home Island | Meadow | 0 | Free | — |
+| Coral Reef | Beach | 10 | 2,000 | +10% coin rate |
+| Snow Peak | Winter | 18 | 5,000 | +1 streak freeze/month |
+| Desert Oasis | Desert | 25 | 8,000 | +15% XP rate |
+| Moonlit Garden | Night | 32 | 12,000 | +5 daily passive coins |
+| Sakura Valley | Sakura | 40 | 15,000 | 25% egg discount |
 
-// Cells discriminated via: 'petId' in cell → pet, 'decorationId' in cell → decoration
-// Type guards: isPetCell(cell), isDecorationCell(cell)
+Players can switch between unlocked islands. Each island has its own grid and completion state.
 
-// Key constants
-decorationInventory: Record<string, number>  // { "oak-tree": 2, "fountain": 1 }
-LAND_SIZE = 400              // Max 20×20 grid
-GRID_SIZE = 20               // Underlying grid dimension
-LAND_COMPLETE_BONUS_COINS = 500
-MIN_GRID_TIER = 5            // Island starts as centered 5×5
-MAX_GRID_TIER = 20           // Fully expanded 20×20
-EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
-```
+### Island Themes (11)
 
-**Island Expansion** (Forest-style progressive growth):
-- Island starts as a centered **5×5** region (25 cells) within the 20×20 grid
-- When all available cells are filled, auto-expands to next tier: **5→6→7→8→9→10→12→14→17→20**
-- **Locked tiles** render as earthy/brown; **unlocked tiles** are the bright green checkerboard
-- Grid size stored per-land as `gridSize` (5–20); migrates old 10×10 data to 20×20 on rehydration
-- Expansion tiers: 5×5(25) → 6×6(36) → ... → 10×10(100) → 12×12(144) → 14×14(196) → 17×17(289) → 20×20(400)
-- Each tier uses centered rows/cols: `offset = floor((20 - size) / 2)`
-- Old 100-cell arrays auto-migrate to 400-cell via `migrateCells()` (centered at offset 5)
+Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), grass tile colors, cliff colors, cloud/sun tint, particle type and colors.
 
-**Actions**:
-- `generateRandomPet(sessionMinutes, playerLevel)` — rolls random pet from unlocked pool
-- `hatchEgg(egg, playerLevel)` — hatches egg with custom rarity weights, places pet
-- `placePendingPet()` — places pet using farthest-first algorithm, auto-expands tier if full, auto-archives full land
-- `startNewLand()` — manually start new island
-- `setWishedSpecies(speciesId)` — set wish-list species
-- `getAvailableCells()` — returns Set of unlocked cell indices for current grid size
-- `isTierFull()` — check if all available cells in current tier are filled
-- `getFilledCount()` / `isLandComplete()` — query methods
-- `addDecorationToInventory(id: string)` — adds decoration to inventory (after shop purchase)
-- `placeDecoration(decorationId: string, cellIndex: number)` — place from inventory onto empty tile
-- `removeDecoration(cellIndex: number)` — pick up decoration back to inventory
-- `moveDecoration(fromIndex: number, toIndex: number)` — move between tiles
-- `getDecorationCount()` — count placed decorations on current island
-- **Decorations don't count toward completion** — `getFilledCount()`, `isTierFull()`, `isLandComplete()` count only pet cells. Decorations occupy tiles (blocking pet placement) but are purely cosmetic.
+| Theme | Name | Free | Particles |
+|-------|------|------|-----------|
+| day | Meadow | Yes | Dust |
+| beach | Beach | Yes | Sparkles |
+| winter | Winter | No | Snow |
+| sakura | Sakura | No | Leaves |
+| night | Night Garden | No | Fireflies |
+| desert | Desert | No | Dust |
+| sky-islands | Sky Islands | Yes | Dust |
+| calm-seas | Calm Seas | Yes | Sparkles |
+| twilight-clouds | Twilight Clouds | Yes | Dust |
+| aurora-horizon | Aurora Horizon | Yes | Sparkles |
+| sunset-clouds | Sunset Clouds | Yes | Dust |
+
+### Decoration System
+
+20 decorations across 6 categories (trees, flowers, rocks, water, structures, fun). Prices range 80–500 coins. Decorations occupy tiles but don't count toward island completion. Edit mode toggle on PetLand enables place/pick-up UX via `DecorationPicker` bottom sheet.
 
 ## Game Systems
 
 ### XP & Leveling
 - **Max level**: 50
 - **XP per minute of focus**: 1.2 base
-- **Level formula**: Thresholds table for levels 1-20, then 700 XP/level after 20
+- **Level formula**: Thresholds table for levels 1-20 `[0, 30, 70, 120, 180, 260, 350, 460, 590, 740, 920, 1120, 1350, 1610, 1900, 2230, 2600, 3010, 3470, 3980]`, then 700 XP/level after 20
 - **Streak bonus**: +3% per day, capped at 60% (max multiplier 1.6x at 20 days)
-- **Premium multipliers**: free=1x, premium=2x
+- **Premium multiplier**: 2x
 - **Focus bonuses**: Perfect focus (0 blocked attempts) = +25% XP + 50 coins; Good focus (1-2 attempts) = +10% XP + 25 coins
 - **Level-ups unlock new pet species** in the random drop pool
+- **Prestige system** exists in xpStore
 
 ### Coins
 - **Base rate**: 2 coins/minute of focus
-- **Session completion bonuses**: 25min→+15, 30→+20, 45→+35, 60→+50, 90→+80, 120→+120, 180→+180, 240→+240, 300→+300
+- **Session completion bonuses**: 25→+15, 30→+20, 45→+35, 60→+50, 90→+80, 120→+120, 180→+180, 240→+240, 300→+300
 - **Random bonus**: 5% chance mega (2.5x), 10% super lucky (1.75x), 20% lucky (1.5x)
 - **Daily login**: 20 coins + 5/streak day (cap 100)
 - **Land completion**: 500 coin bonus
-- **Egg purchases**: Common=100, Rare=400, Epic=1200, Legendary=3000 coins
 - **Server-validated**: via `validate-coins` edge function. Local store is cache.
 
+### Coin Boosters
+| Booster | Multiplier | Duration | Cost |
+|---------|-----------|----------|------|
+| Focus Boost | 2x | 1 day | 400 coins |
+| Super Boost | 3x | 3 days | 1,000 coins |
+| Weekly Pass | 1.5x | 7 days | 1,500 coins |
+
 ### Streaks
-- Streak rewards at milestones: 3, 7, 14, 30, 100 days
-- Streak freezes: max 3, cost 100 coins each
-- XP bonuses: 50 → 100 → 200 → 500 → 1500 at milestones
+- **Milestones**: 3, 7, 14, 30, 60, 100, 365 days
+- **XP bonuses**: 75, 200, 400, 1000, 2500, 5000, 15000
+- **Coin bonuses**: 100, 300, 600, 1500, 3500, 7500, 20000
+- **Streak freezes**: max 3, cost 100 coins each
+- **Reset window**: 24 hours
 
 ### Premium Tiers
-| Tier | Coin Multi | XP Multi | Streak Freezes/mo | Sound Slots | Egg Discount |
-|------|-----------|----------|-------------------|-------------|-------------|
-| Free | 1x | 1x | 0 | 1 | 0% |
-| Premium | 2x | 2x | 3 | 3 | 15% |
+| Benefit | Free | Premium |
+|---------|------|---------|
+| Coin Multiplier | 1x | 2x |
+| XP Multiplier | 1x | 2x |
+| Streak Freezes/month | 0 | 3 |
+| Sound Mixing Slots | 1 | 3 |
+| Focus Preset Slots | 1 | 5 |
+| Rarity Boost | No | Yes |
+| Passive Income Multi | 1x | 2x |
 
 ### Focus Mode
-- Blocks configurable apps (Instagram, TikTok, Twitter, etc.) via iOS DeviceActivity/Screen Time
+- Blocks configurable apps via iOS DeviceActivity/Screen Time
 - Strict mode, notification blocking, emergency bypass with cooldown
-- Ambient sound mixer during focus sessions
-- Break transitions between Pomodoro sessions
+- Ambient sound mixer during focus sessions (31 sounds, 5 categories, 8 free + 23 premium)
+- Break transitions between Pomodoro sessions (short 5min, long 15min after 4 sessions)
 - Task intention + session notes modals
+
+### Challenges & Gamification
+- **24 milestones** across level, streak, sessions, hours, and collection categories
+- **13 daily challenge templates** (easy/medium/hard), 3 active per day
+- **10 weekly challenge templates**
+- **60+ achievements** with rarity-based point values
 
 ## Key Hooks
 
 | Hook | Purpose |
 |------|---------|
 | `useXPSystem` | XP calculations, level-ups. Re-exports from `./xp/` module |
-| `useCoinSystem` | Coin earning, spending, server validation wrapper around coinStore |
-| `useStreakSystem` | Streak tracking, freeze management |
-| `useAuth` | Supabase auth, guest mode |
-| `useFocusMode` | Focus mode activation, app blocking coordination |
-| `useStoreKit` | StoreKit 2 IAP (subscriptions, coin packs, bundles) |
-| `useDeviceActivity` | iOS Screen Time / DeviceActivity integration |
+| `useCoinSystem` | Coin earning/spending with server validation, rate limiting, sync |
+| `useStreakSystem` | Streak tracking, freeze management, milestone rewards |
+| `useAuth` | Supabase auth, Apple Sign-In, guest mode |
+| `useFocusMode` | Focus mode settings, blocked apps list |
+| `useStoreKit` | StoreKit 2 IAP (subscriptions, coin packs, bundles), receipt validation |
+| `useDeviceActivity` | iOS Screen Time / DeviceActivity integration, app blocking |
 | `useQuestSystem` | Daily/weekly quest generation and tracking |
-| `useAchievementSystem` | Achievement unlock logic |
-| `useAchievementTracking` | Event-based achievement progress tracking |
+| `useAchievementSystem` | Achievement unlock logic (60+ achievements) |
+| `useAchievementTracking` | Event-based cross-component achievement progress |
 | `useMilestoneCelebrations` | Milestone detection and celebration UI |
-| `useDailyLoginRewards` | Daily login reward logic |
-| `useCoinBooster` | Temporary coin boost items |
+| `useDailyLoginRewards` | 7-day rotating daily login rewards |
+| `useCoinBooster` | Temporary coin multiplier items |
 | `useRewardHandlers` | Session completion reward orchestration |
-| `useSoundMixer` | Ambient sound layering |
+| `useSoundMixer` | Ambient sound layering (Web Audio API synthesis) |
+| `useSoundEffects` | UI sound effects (synthesized, no audio files) |
 | `useHaptics` | iOS haptic feedback |
 | `useWidgetSync` | iOS widget data synchronization |
 | `useTimerExpiryGuard` | Ensures timer fires even if app backgrounded |
-| `useBackendAppState` | Fetches user state from Supabase on load |
-| `useBackendStreaks` | Server-side streak sync |
-| `useBackendQuests` | Server-side quest sync |
-| `useShop` | Shop purchase logic |
-| `useSettings` | App settings management |
+| `useBackendAppState` | Unified app state with Supabase sync |
+| `usePassiveIncome` | Passive coin income from pets |
 | `useReducedMotion` | Respects `prefers-reduced-motion` |
-| `usePerformanceMonitor` | Performance metrics logging |
 | `useOfflineSyncManager` | Offline action queue processing |
-| `usePassiveIncome` | Passive coin income system |
 
 ### Timer Hooks (`focus-timer/hooks/`)
 
@@ -725,7 +665,7 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 12, 14, 17, 20]
 | `AppReview` | `src/plugins/app-review/` | SKStoreReviewController prompts |
 | `WidgetData` | `src/plugins/widget-data/` | Bridge data to iOS home screen widgets |
 
-All plugins have web fallbacks (no-op) so the app runs in browsers during development.
+All plugins have web fallbacks (no-op/simulated) so the app runs in browsers during development.
 
 ## Supabase Backend
 
@@ -737,6 +677,7 @@ All plugins have web fallbacks (no-op) so the app runs in browsers during develo
 | `validate-receipt` | StoreKit receipt validation for IAP |
 | `process-achievements` | Achievement unlock processing |
 | `delete-account` | Account deletion (GDPR compliance) |
+| `waitlist-signup` | Public waitlist signup (email, referral code, referral tracking) |
 | `_shared/cors.ts` | Shared CORS configuration |
 
 ### Auth
@@ -745,58 +686,48 @@ All plugins have web fallbacks (no-op) so the app runs in browsers during develo
 
 ## Design System
 
-The current design uses the **Atelier white theme** with **pixel art**:
-
 - **Background**: `#FAFAF9` (warm white/stone) for non-home tabs
-- **Home screen**: Floating island on gradient sky (`#6BB8E0` → `#F0F7E4`)
-- **Theme color**: `#FAFAF9` for iOS status bar
+- **Home screen**: Floating island on themed gradient sky
 - **CSS Variables**: HSL-based design tokens in `src/index.css`, consumed via Tailwind
-- **Component library**: shadcn/ui with Radix UI primitives + CVA (class-variance-authority) for variant systems
+- **Component library**: shadcn/ui with Radix UI primitives + CVA for variant systems
 - **Animations**: Framer Motion for page transitions + CSS keyframes for island/pet animations
 - **Fonts**: SF Pro Display (Apple) with Inter fallback (via `@fontsource/inter`)
 - **Responsive**: Pet sprites scale 56px → 62px → 68px → 74px → 84px at breakpoints (375px, 390px, 420px, 768px)
 - **Reduced motion**: All animations disabled if `prefers-reduced-motion: reduce`
 
 ### CSS Architecture (`src/styles/`)
-- `pet-land.css` — Island sky, clouds, god rays, mountains, parallax tilt, pets, decorations, tooltips, progress bar, zoom, decoration picker, decor shop tab
-- `animations.css` — Shared keyframe animations
-- `base.css` — Base/reset styles
-- `navigation.css` — Tab bar styles
-- `timer-controls.css` / `timer-backgrounds.css` — Timer UI styles
-- `collection.css` / `gamification.css` / `shop.css` — Feature-specific styles
-- `retro-theme.css` / `retro-elements.css` — Pixel art theme tokens and elements
-- `utilities.css` — CSS utility classes
+13 modular CSS files: `pet-land.css`, `animations.css`, `base.css`, `navigation.css`, `timer-controls.css`, `timer-backgrounds.css`, `collection.css`, `gamification.css`, `shop.css`, `settings.css`, `retro-theme.css`, `retro-elements.css`, `utilities.css`
 
 ### CSS Class Naming
 - BEM-style: `.pet-land__sky`, `.island-pet__sprite`, `.island-pet--legendary`
 - Modifier classes for rarity: `.island-pet--uncommon`, `--rare`, `--epic`, `--legendary`
 - State classes: `.island-pet--new` (pop animation)
-- Decoration classes: `.island-decoration__sprite`, `.island-decoration--sways`, `.island-decoration--edit`
-- Decoration picker: `.decoration-picker__grid`, `.decoration-picker__item--selected`
-- Decor shop tab: `.decor-tab__card`, `.decor-tab__filter-pill`
+- Decoration classes: `.island-decoration__sprite`, `.island-decoration--sways`
 
 ## Build & Deploy
 
-1. `npm run build` — Vite builds to `dist/` (code-split into vendor chunks: react, radix, three, motion, data, utils)
+1. `npm run build` — Vite builds to `dist/` (code-split: vendor-react, vendor-radix, vendor-motion, vendor-data, vendor-utils)
 2. `npm run cap:copy:ios` — copies `dist/` into iOS project + runs `scripts/patch-ios-config.cjs`
 3. Open `ios/App/App.xcworkspace` in Xcode
 4. Build/archive from Xcode for TestFlight/App Store
 
 ## Important Patterns
 
-- **Validated persistence**: All Zustand stores use `createValidatedStorage()` with Zod schemas — invalid persisted data falls back to defaults instead of crashing.
-- **Lazy loading**: All tab content and heavy components are lazy-loaded with `React.lazy()` and context-aware skeleton fallbacks.
-- **Error boundaries**: Three levels — `ErrorBoundary` (app), `PageErrorBoundary` (page), `FeatureErrorBoundary` (feature). Errors are isolated, not app-crashing.
-- **Server-authoritative coins**: Coin balance changes are cached locally but validated via the `validate-coins` edge function.
-- **Event-based achievements**: `useAchievementTracking` uses a custom event dispatch system for cross-component achievement progress.
-- **Offline support**: `offlineSyncStore` queues actions when offline, `useOfflineSyncManager` processes them when connectivity returns. `OfflineContext` tracks online/offline state.
-- **Native plugin fallbacks**: All Capacitor plugins have web fallbacks so the app runs in browsers. `NativePluginContext` tracks availability.
-- **Isometric depth**: Pets at the back of the island render smaller (0.85×) and with lower z-index, creating depth perspective.
-- **Parallax tilt**: Touch-drag shifts sky/island/pets layers at different speeds (0.15/0.5/0.85) using ref-based DOM updates — zero React re-renders during interaction. Spring physics for momentum and snap-back.
-- **SVG-aligned pet positions**: `islandPositions.ts` and `IslandSVG.tsx` share identical diamond vertices and bilinear interpolation math so pets sit exactly on their tile centers.
-- **Legacy storage migration**: Stores check for old localStorage keys (e.g., `petIsland_*`, `botblock_*`) and migrate to new `nomo_*` keys on rehydration.
-- **Egg-based pet generation**: `rollRandomPet()` accepts optional custom rarity weights, used by the egg system to override default drop rates.
-- **Decoration system**: Cells hold either a pet (`petId`) or decoration (`decorationId`), discriminated via structural typing. Decorations are cosmetic — they block pet placement but don't count toward island completion. Edit mode toggle on PetLand enables place/pick-up UX via `DecorationPicker` bottom sheet.
+- **Validated persistence**: Stores with Zod schemas use `createValidatedStorage()` — invalid data falls back to defaults.
+- **Lazy loading**: All pages and tab content lazy-loaded with `React.lazy()` and skeleton fallbacks.
+- **Error boundaries**: Three levels — `ErrorBoundary` (app), `PageErrorBoundary` (page), `FeatureErrorBoundary` (feature).
+- **Server-authoritative coins**: Coin balance validated via `validate-coins` edge function with offline-first caching.
+- **Event-based achievements**: `useAchievementTracking` uses custom events for cross-component progress.
+- **Offline support**: `offlineSyncStore` queues actions when offline, `useOfflineSyncManager` processes on reconnect.
+- **Native plugin fallbacks**: All Capacitor plugins have web fallbacks. `NativePluginContext` tracks availability.
+- **Isometric depth**: Pets at back render smaller (0.85×) with lower z-index.
+- **Parallax tilt**: Touch-drag shifts sky/island/pets layers at different speeds using ref-based DOM updates.
+- **SVG-aligned positions**: `islandPositions.ts` and `IslandSVG.tsx` share diamond vertices for precise alignment.
+- **Pity system**: `pityCounter` in landStore guarantees rare/epic/legendary after N unsuccessful rolls.
+- **Archipelago**: Multiple themed islands with unlock requirements, completion bonuses, and independent grids.
+- **Passive income**: Pets generate daily coins based on rarity/size, with premium multiplier.
+- **Sound synthesis**: All UI sounds and ambient audio synthesized via Web Audio API (no audio files).
+- **Fail-closed IAP**: StoreKit purchases validated server-side via `validate-receipt` edge function.
 
 ## Path Aliases
 
@@ -805,7 +736,7 @@ The current design uses the **Atelier white theme** with **pixel art**:
 ## Timer Durations
 
 Available focus session presets: **25, 30, 45, 60, 90, 120, 180 minutes**.
-Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (15 min).
+Minimum 25 minutes for XP rewards. Pomodoro-style: 4 sessions then long break (15 min), short breaks 5 min.
 
 ## StoreKit Product IDs
 
@@ -816,11 +747,11 @@ Subscriptions (Auto-Renewable):
   co.phonoinc.app.premium.yearly    — $29.99/year
 
 Coin Packs (Consumable):
-  co.phonoinc.app.coins.handful     — $0.99  (100 coins)
-  co.phonoinc.app.coins.pouch       — $2.99  (350 coins)
-  co.phonoinc.app.coins.chest       — $4.99  (650 coins)
-  co.phonoinc.app.coins.trove       — $9.99  (1,500 coins)
-  co.phonoinc.app.coins.hoard       — $19.99 (3,500 coins)
+  co.phonoinc.app.coins.handful     — $0.99
+  co.phonoinc.app.coins.pouch       — $2.99
+  co.phonoinc.app.coins.chest       — $4.99
+  co.phonoinc.app.coins.trove       — $9.99
+  co.phonoinc.app.coins.hoard       — $19.99
 
 Bundles (Non-Consumable):
   co.phonoinc.app.bundle.welcome       — $1.99
@@ -828,13 +759,11 @@ Bundles (Non-Consumable):
   co.phonoinc.app.bundle.islandmaster  — $9.99
 ```
 
-Full IAP setup details (pricing, localizations, review notes): `docs/APP_STORE_CONNECT_IAP_SETUP.txt`
-
 ## Marketing Website (`website/`)
 
-A separate Vite + React project for the pre-launch waitlist landing page. Lives in `website/` with its own `package.json`.
+A separate Vite + React project for the pre-launch waitlist landing page.
 
-**Tech**: React 18, TypeScript, Vite, Framer Motion (no Tailwind — uses plain CSS in `globals.css`)
+**Tech**: React 19, TypeScript, Vite 7, Tailwind CSS 4, Framer Motion, react-router-dom v7, @supabase/supabase-js
 
 **URL**: Deployed to Vercel (configured via `website/vercel.json`)
 
@@ -842,46 +771,26 @@ A separate Vite + React project for the pre-launch waitlist landing page. Lives 
 
 ```
 website/
-├── index.html                 # Entry point (OG tags, meta, app-icon)
-├── package.json               # Separate deps (react, framer-motion, react-router-dom)
-├── vercel.json                # Vercel SPA routing config
-├── vite.config.ts             # Vite config
+├── index.html, package.json, vercel.json, vite.config.ts
 ├── src/
-│   ├── main.tsx               # Entry point
-│   ├── App.tsx                # Layout: Nav → Sections → Footer
-│   ├── styles/globals.css     # All website styles (722 lines, design tokens, animations)
+│   ├── main.tsx, App.tsx
+│   ├── styles/globals.css
+│   ├── lib/
+│   │   └── supabase.ts        # Supabase client for waitlist API
+│   ├── data/
+│   │   ├── PetDatabase.ts     # Pet data for showcase
+│   │   └── islandPositions.ts  # Island positions for preview
 │   └── components/
-│       ├── Nav.tsx             # Fixed nav bar with "Join Waitlist" CTA
-│       ├── HeroSection.tsx    # "Focus. Grow. Collect." hero with island + waitlist form
-│       ├── SkyBackground.tsx  # Gradient sky with sun/clouds (reused in hero + CTA)
-│       ├── IslandScene.tsx    # Interactive island preview with sample pets
-│       ├── IslandSVG.tsx      # Simplified island SVG for website (standalone)
-│       ├── WaitlistForm.tsx   # Email signup + referral system + tier rewards
-│       ├── LoopSection.tsx    # "How It Works" 3-step explainer
-│       ├── PetShowcase.tsx    # Flip-card pet showcase with rarity filters (17 curated pets)
-│       ├── IslandGrowth.tsx   # Island expansion stages visualization (5×5 → 12×12)
-│       ├── RewardsSection.tsx # Referral tier rewards (Legendary Egg, Founder Fox, Pioneer Island)
-│       ├── SocialProof.tsx    # Team quote / social proof
-│       ├── FinalCTA.tsx       # Bottom CTA with mini island + waitlist form
-│       ├── Footer.tsx         # Footer with pet parade animation
-│       ├── PrivacyPolicy.tsx  # Privacy policy page
-│       ├── TermsOfService.tsx # Terms of service page
-│       └── Support.tsx        # Support/contact page
+│       ├── Nav.tsx, HeroSection.tsx, SkyBackground.tsx
+│       ├── IslandScene.tsx, IslandSVG.tsx, WaitlistForm.tsx
+│       ├── LoopSection.tsx, PetShowcase.tsx, IslandGrowth.tsx
+│       ├── RewardsSection.tsx, SocialProof.tsx, FinalCTA.tsx
+│       ├── Footer.tsx, PrivacyPolicy.tsx, TermsOfService.tsx, Support.tsx
 └── public/
-    ├── app-icon.png           # App icon for OG/favicon
-    ├── pets/                  # Copies of pet PNGs (164 files, same as main app)
-    └── decorations/           # Copies of decoration PNGs (20 files)
+    ├── app-icon.png
+    ├── pets/          # 164 PNG files (copies of main app)
+    └── decorations/   # 20 PNG files (copies of main app)
 ```
-
-### Website Features
-- **Waitlist signup** with email capture (simulated API, localStorage persistence)
-- **Referral system**: 5 tiers — sign up (Legendary Egg), 3 friends (Rare Egg), 5 (Epic Egg), 10 (Founder Fox), 25 (Pioneer Island)
-- **Animated counter** showing waitlist size (starts at 847)
-- **Pet showcase** with 3D flip cards, rarity filter, growth size previews
-- **Island growth** visualization showing 4 expansion stages
-- **Legal pages**: Privacy Policy, Terms of Service, Support (React Router)
-- **Pet parade** footer animation with 8 baby pet sprites
-- **Scroll-aware nav** with blur/background transition
 
 ### Running the Website
 ```bash
@@ -897,9 +806,9 @@ cd website && npm run build                 # Production build
 | Decoration sprites | `public/assets/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
 | Website pet copies | `website/public/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
 | Website decoration copies | `website/public/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
-| Icons | `public/assets/icons/` | 141 | PNG | Done |
-| Robots (legacy) | `public/assets/robots/` | 27 | SVG | Legacy (unused) |
-| Worlds | `public/assets/worlds/` | 10 | PNG | Done |
+| Icons | `public/assets/icons/` | 177 | PNG | Done |
+| Robots (legacy) | `public/assets/robots/` | 25 | SVG | Legacy (unused) |
+| Worlds | `public/assets/worlds/` | 11 | PNG | Done |
 
 ## What's Next (TODO)
 
@@ -907,6 +816,13 @@ cd website && npm run build                 # Production build
 - [x] Island decorations system — shop tab, placement UX, 20 items across 6 categories
 - [x] Marketing website — waitlist landing page with referral system
 - [x] Legal pages — Privacy Policy, Terms of Service, Support (website)
+- [x] Archipelago system — 6 themed islands with unlock requirements and bonuses
+- [x] Island themes — 11 visual themes with full color configs
+- [x] Passive income system — pets generate coins based on rarity/size
+- [x] Pity system — bad luck protection for pet rolls
+- [x] Daily/weekly challenges — 13 daily + 10 weekly challenge templates
+- [x] Coin booster system — temporary multipliers
+- [x] Analytics expansion — 8 new analytics components (flow states, personality, predictions, etc.)
 - [ ] **Generate final pet pixel art assets** — replace 164 Pillow placeholders with proper pixel art (see `NEXT_AI_PROMPT.md` Task 1)
 - [ ] **Generate higher-fidelity decoration sprites** — replace 20 Pillow placeholders (see `NEXT_AI_PROMPT.md` Task 2)
 - [ ] **Update onboarding flow** — remove old Star Wizard references, replace with pet/island theme (see `NEXT_AI_PROMPT.md` Task 3)
@@ -914,5 +830,5 @@ cd website && npm run build                 # Production build
 - [ ] **Sync website assets** — copy regenerated pet/decoration PNGs to `website/public/` (see `NEXT_AI_PROMPT.md` Task 5)
 - [ ] Upload screenshots and app icon to App Store Connect
 - [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)
-- [ ] Connect waitlist form to real backend (currently simulated with localStorage)
-- [ ] Set up Vercel deployment for website
+- [x] Connect waitlist form to real backend (Supabase edge function `waitlist-signup` + `website/src/lib/supabase.ts`)
+- [ ] Set up Vercel deployment for website (vercel.json configured, needs `vercel --prod`)

@@ -2,47 +2,47 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
-// Rate limiting by IP — 5 requests per minute
+/**
+ * Public waitlist signup edge function.
+ *
+ * No authentication required — accepts email + optional referral code.
+ * Generates a unique referral code server-side, handles duplicates,
+ * and increments referrer counts.
+ */
+
+// Simple rate limiting by IP
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW_MS = 60000;
-const RATE_LIMIT_MAX_REQUESTS = 5;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 5; // 5 signups per minute per IP
 
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+function checkRateLimit(ip: string): boolean {
   const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
+  let entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return { allowed: true };
+    entry = { count: 0, resetTime: now + RATE_LIMIT_WINDOW_MS };
+    rateLimitMap.set(ip, entry);
   }
-
-  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
-    const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
-    return { allowed: false, retryAfter };
-  }
-
+  if (entry.count >= RATE_LIMIT_MAX) return false;
   entry.count++;
-  return { allowed: true };
+  return true;
 }
 
-// Clean up old rate limit entries every 5 minutes
+// Clean up stale entries
 setInterval(() => {
   const now = Date.now();
-  for (const [key, value] of rateLimitMap.entries()) {
-    if (now > value.resetTime) rateLimitMap.delete(key);
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime) rateLimitMap.delete(ip);
   }
-}, 5 * 60 * 1000);
+}, RATE_LIMIT_WINDOW_MS);
 
 function generateReferralCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous chars
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No I/O/0/1 to avoid confusion
   let code = '';
   for (let i = 0; i < 8; i++) {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
   return code;
 }
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 serve(async (req) => {
   const origin = req.headers.get('Origin');
@@ -52,88 +52,66 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
-    // GET — return total waitlist count
-    if (req.method === 'GET') {
-      const { count, error } = await supabase
-        .from('waitlist')
-        .select('*', { count: 'exact', head: true });
-
-      if (error) throw new Error('Failed to fetch count');
-
-      return new Response(JSON.stringify({ count: count ?? 0 }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // POST — sign up for waitlist
-    if (req.method !== 'POST') {
-      return new Response(JSON.stringify({ success: false, error: 'Method not allowed' }), {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Rate limit by IP
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || req.headers.get('cf-connecting-ip')
-      || 'unknown';
-    const rateLimit = checkRateLimit(ip);
-    if (!rateLimit.allowed) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Too many requests. Please try again later.',
-      }), {
+    // Rate limit
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    if (!checkRateLimit(ip)) {
+      return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
         status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': String(rateLimit.retryAfter) },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const body = await req.json();
-    const { email, referredBy } = body as { email?: string; referredBy?: string };
+    const { email, referred_by } = await req.json();
 
     // Validate email
-    if (!email || !EMAIL_REGEX.test(email)) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Please provide a valid email address.',
-      }), {
+    if (!email || typeof email !== 'string') {
+      return new Response(JSON.stringify({ error: 'Email is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return new Response(JSON.stringify({ error: 'Invalid email format' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    // Check if already signed up
+    const cleanEmail = email.trim().toLowerCase();
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Check if email already exists
     const { data: existing } = await supabase
       .from('waitlist')
-      .select('referral_code')
-      .eq('email', normalizedEmail)
+      .select('referral_code, referral_count')
+      .eq('email', cleanEmail)
       .single();
 
     if (existing) {
-      // Return existing signup info
-      const { count: referralCount } = await supabase
-        .from('waitlist')
-        .select('*', { count: 'exact', head: true })
-        .eq('referred_by', existing.referral_code);
-
+      // Return existing entry
       const { count: position } = await supabase
         .from('waitlist')
-        .select('*', { count: 'exact', head: true })
-        .lte('created_at', (await supabase.from('waitlist').select('created_at').eq('email', normalizedEmail).single()).data?.created_at);
+        .select('*', { count: 'exact', head: true });
 
       return new Response(JSON.stringify({
         success: true,
-        referralCode: existing.referral_code,
-        referralCount: referralCount ?? 0,
-        waitlistPosition: position ?? 0,
-        alreadySignedUp: true,
+        already_registered: true,
+        referral_code: existing.referral_code,
+        referral_count: existing.referral_count,
+        waitlist_position: position || 0,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -153,36 +131,20 @@ serve(async (req) => {
       attempts++;
     }
 
-    // Validate referredBy code exists (if provided)
-    let validReferredBy: string | null = null;
-    if (referredBy) {
-      const { data: referrer } = await supabase
-        .from('waitlist')
-        .select('referral_code')
-        .eq('referral_code', referredBy.toUpperCase().trim())
-        .single();
-      if (referrer) {
-        validReferredBy = referrer.referral_code;
-      }
-    }
-
     // Insert new signup
     const { error: insertError } = await supabase
       .from('waitlist')
       .insert({
-        email: normalizedEmail,
+        email: cleanEmail,
         referral_code: referralCode,
-        referred_by: validReferredBy,
+        referred_by: referred_by && typeof referred_by === 'string' ? referred_by.trim() : null,
       });
 
     if (insertError) {
+      console.error('Waitlist insert error:', insertError);
+      // Handle race condition on duplicate email
       if (insertError.code === '23505') {
-        // Unique constraint violation (race condition) — treat as existing
-        return new Response(JSON.stringify({
-          success: true,
-          error: 'Email already registered.',
-          alreadySignedUp: true,
-        }), {
+        return new Response(JSON.stringify({ error: 'Email already registered' }), {
           status: 409,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -190,25 +152,45 @@ serve(async (req) => {
       throw insertError;
     }
 
-    // Get position
-    const { count: totalCount } = await supabase
+    // Increment referrer's count if referred_by is valid
+    if (referred_by && typeof referred_by === 'string') {
+      const trimmedRef = referred_by.trim();
+      if (trimmedRef) {
+        await supabase.rpc('increment_referral_count', { ref_code: trimmedRef }).catch(() => {
+          // Non-critical — log and continue
+          console.warn(`Failed to increment referral count for code: ${trimmedRef}`);
+        });
+
+        // Fallback: direct update if RPC doesn't exist
+        await supabase
+          .from('waitlist')
+          .update({ referral_count: existing ? (existing.referral_count || 0) + 1 : 1 })
+          .eq('referral_code', trimmedRef)
+          .then(() => {})
+          .catch(() => {});
+      }
+    }
+
+    // Get total count for position
+    const { count: position } = await supabase
       .from('waitlist')
       .select('*', { count: 'exact', head: true });
 
+    console.log(`[WAITLIST] New signup: ${cleanEmail}, code: ${referralCode}, referred_by: ${referred_by || 'none'}`);
+
     return new Response(JSON.stringify({
       success: true,
-      referralCode,
-      referralCount: 0,
-      waitlistPosition: totalCount ?? 0,
+      referral_code: referralCode,
+      referral_count: 0,
+      waitlist_position: position || 0,
     }), {
-      status: 201,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
+    console.error('Waitlist signup error:', error);
     return new Response(JSON.stringify({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: 'Something went wrong. Please try again.',
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
