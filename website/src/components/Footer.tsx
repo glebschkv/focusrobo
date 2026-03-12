@@ -4,29 +4,52 @@ const PARADE_PETS = ['bunny', 'chick', 'frog', 'capybara', 'cat', 'hedgehog', 'f
 
 export function Footer() {
   return (
-    <footer className="site-footer py-12 px-5">
-      <div className="max-w-4xl mx-auto">
+    <footer
+      style={{
+        background: 'var(--bg-cream)',
+        borderTop: '1px solid rgba(234, 179, 8, 0.1)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div className="max-w-4xl mx-auto px-5 py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-            <img src="/app-icon.png" alt="PhoNo" style={{ width: 24, height: 24, borderRadius: 4 }} />
-            <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.8)', fontSize: 16 }}>PhoNo</span>
+            <img src="/app-icon.png" alt="PhoNo" style={{ width: 24, height: 24, borderRadius: 6 }} />
+            <span className="display-font" style={{ fontWeight: 700, color: 'var(--fg-deep)', fontSize: 16 }}>
+              PhoNo
+            </span>
           </Link>
 
-          <div className="flex gap-6 text-sm">
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
-            <Link to="/support">Support</Link>
-            <a href="mailto:hello@phono.app">Contact</a>
+          <div className="flex gap-6" style={{ fontSize: 14 }}>
+            <Link to="/privacy" style={{ color: 'var(--fg-muted)', textDecoration: 'none' }}>
+              Privacy
+            </Link>
+            <Link to="/terms" style={{ color: 'var(--fg-muted)', textDecoration: 'none' }}>
+              Terms
+            </Link>
+            <Link to="/support" style={{ color: 'var(--fg-muted)', textDecoration: 'none' }}>
+              Support
+            </Link>
+            <a href="mailto:hello@phono.app" style={{ color: 'var(--fg-muted)', textDecoration: 'none' }}>
+              Contact
+            </a>
           </div>
 
-          <div style={{ fontSize: 12 }}>
+          <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>
             &copy; {new Date().getFullYear()} PhoNo Inc.
           </div>
         </div>
+
+        <div className="text-center mt-8">
+          <p style={{ fontSize: 13, color: 'var(--fg-muted)', opacity: 0.7 }}>
+            Made with care by the PhoNo team
+          </p>
+        </div>
       </div>
 
-      {/* Pet parade */}
-      <div className="pet-parade">
+      {/* Pet parade — light theme, lower opacity */}
+      <div className="pet-parade" style={{ opacity: 0.35 }}>
         {PARADE_PETS.map((pet, i) => (
           <img
             key={pet}

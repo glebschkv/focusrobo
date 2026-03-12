@@ -1,199 +1,186 @@
-import { motion } from 'framer-motion';
+import { AnimatedSection, AnimatedItem } from './AnimatedSection';
 
 const TIERS = [
   {
     count: 0,
     reward: 'Legendary Egg',
-    desc: 'Guaranteed. Worth 3,000 coins.',
-    color: 'var(--rarity-legendary)',
-    glow: 'rgba(234, 179, 8, 0.3)',
-    eggStyle: { background: 'linear-gradient(135deg, #FFF3C4 0%, #FFE082 40%, #FFD54F 100%)', borderColor: 'var(--rarity-legendary)' },
+    desc: 'Guaranteed on launch day.',
+    badge: 'FREE',
+    rarity: 'legendary' as const,
+    emoji: '🥚',
   },
   {
     count: 3,
     reward: 'Rare Egg',
     desc: 'Worth 400 coins.',
-    color: 'var(--rarity-rare)',
-    glow: 'rgba(59, 130, 246, 0.2)',
-    eggStyle: { background: 'linear-gradient(135deg, #DBEAFE 0%, #93C5FD 50%, #60A5FA 100%)', borderColor: 'var(--rarity-rare)' },
+    rarity: 'rare' as const,
+    emoji: '🥚',
   },
   {
     count: 5,
     reward: 'Epic Egg',
     desc: 'Worth 1,200 coins.',
-    color: 'var(--rarity-epic)',
-    glow: 'rgba(168, 85, 247, 0.2)',
-    eggStyle: { background: 'linear-gradient(135deg, #EDE9FE 0%, #C4B5FD 50%, #A78BFA 100%)', borderColor: 'var(--rarity-epic)' },
+    rarity: 'epic' as const,
+    emoji: '🥚',
   },
   {
     count: 10,
     reward: 'Founder Fox',
-    desc: 'Exclusive pet. Never available again.',
-    color: 'var(--rarity-legendary)',
-    glow: 'rgba(234, 179, 8, 0.3)',
-    isSpecial: true,
+    desc: 'Exclusive pet. Never again.',
+    badge: 'Exclusive',
+    rarity: 'legendary' as const,
+    emoji: '🦊',
   },
   {
     count: 25,
     reward: 'Pioneer Island',
     desc: 'Exclusive island theme.',
-    color: 'var(--primary)',
-    glow: 'rgba(64, 133, 106, 0.2)',
-    isSpecial: true,
+    badge: 'Exclusive',
+    rarity: 'uncommon' as const,
+    emoji: '🏝️',
   },
 ];
 
 export function RewardsSection() {
   return (
-    <section className="section-cream py-20 px-5">
-      <div className="max-w-3xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
-            Join Early. Hatch Something Legendary.
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--fg-muted)', maxWidth: 480, margin: '0 auto' }}>
-            Every waitlist member gets a free Legendary Egg on launch day. Refer friends to unlock even more.
-          </p>
-        </motion.div>
-
-        {/* Big golden egg */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
-          className="flex justify-center mb-12"
-        >
-          <div
-            style={{
-              width: 100,
-              height: 120,
-              borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-              background: 'linear-gradient(135deg, #FFF3C4 0%, #FFE082 40%, #FFD54F 100%)',
-              border: '3px solid var(--rarity-legendary)',
-              animation: 'egg-rock 2.5s ease-in-out infinite, golden-pulse 3s ease-in-out infinite',
-              position: 'relative',
-            }}
-          >
-            <div
+    <section className="section-textured py-20 px-5">
+      <div className="max-w-4xl mx-auto">
+        <AnimatedSection className="text-center mb-12">
+          <AnimatedItem>
+            <h2
+              className="display-font"
               style={{
-                position: 'absolute',
-                inset: -6,
-                borderRadius: 'inherit',
-                background: 'linear-gradient(105deg, transparent 0%, rgba(234,179,8,0.25) 45%, rgba(234,179,8,0.1) 55%, transparent 70%)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer-slide 2s ease-in-out infinite',
+                fontSize: 'clamp(26px, 6vw, 40px)',
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+                marginBottom: 10,
+                color: 'var(--fg-deep)',
               }}
-            />
-          </div>
-        </motion.div>
+            >
+              Bring a friend, get a head start
+            </h2>
+          </AnimatedItem>
+          <AnimatedItem>
+            <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+              Share your invite link. When friends join, you both unlock exclusive rewards.
+            </p>
+          </AnimatedItem>
+        </AnimatedSection>
 
-        {/* Tier path */}
-        <div className="relative">
-          {/* Vertical connector */}
+        {/* Desktop: horizontal tier path */}
+        <AnimatedSection className="hidden md:flex items-start justify-center gap-3 relative" stagger={0.1}>
+          {/* Dotted connector line */}
           <div
-            className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5"
-            style={{ background: 'var(--border)', transform: 'translateX(-50%)' }}
+            className="absolute top-[52px] left-[12%] right-[12%] h-0"
+            style={{
+              borderTop: '2px dashed rgba(234, 179, 8, 0.2)',
+              zIndex: 0,
+            }}
           />
 
-          <div className="space-y-4 md:space-y-6">
-            {TIERS.map((tier, i) => (
-              <motion.div
-                key={tier.count}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-                className={`game-card flex items-center gap-4 md:w-4/5 ${i % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'}`}
-                style={{ borderColor: tier.count === 0 ? 'var(--rarity-legendary)' : undefined }}
+          {TIERS.map((tier) => (
+            <AnimatedItem key={tier.count}>
+              <div
+                className={`rarity-card rarity-${tier.rarity}`}
+                style={{ width: 150, position: 'relative', zIndex: 1 }}
               >
-                {/* Egg/icon */}
-                <div className="flex-shrink-0">
-                  {tier.eggStyle ? (
-                    <div
+                <div className="rarity-card-inner" style={{ padding: '20px 12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
+                  <div
+                    className="display-font"
+                    style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-deep)', marginBottom: 4 }}
+                  >
+                    {tier.reward}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--fg-muted)', lineHeight: 1.4, marginBottom: 8 }}>
+                    {tier.desc}
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <span
                       style={{
-                        width: 44,
-                        height: 52,
-                        borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                        border: `2px solid ${tier.eggStyle.borderColor}`,
-                        ...tier.eggStyle,
-                        boxShadow: `0 0 12px ${tier.glow}`,
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="flex items-center justify-center"
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: '50%',
-                        background: `${tier.glow}`,
-                        border: `2px solid ${tier.color}`,
-                        fontSize: 20,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        color: `var(--rarity-${tier.rarity})`,
+                        background: `color-mix(in srgb, var(--rarity-${tier.rarity}) 10%, transparent)`,
+                        padding: '2px 8px',
+                        borderRadius: 'var(--radius-pill)',
                       }}
                     >
-                      {tier.count === 10 ? '🦊' : '🏝️'}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span style={{ fontSize: 15, fontWeight: 700 }}>{tier.reward}</span>
-                    {tier.count === 0 && (
+                      {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
+                    </span>
+                    {tier.badge && (
                       <span
                         style={{
                           fontSize: 10,
                           fontWeight: 700,
-                          background: 'hsl(42, 60%, 88%)',
-                          color: 'hsl(42, 75%, 35%)',
-                          padding: '2px 6px',
-                          borderRadius: 8,
-                          letterSpacing: '0.05em',
+                          color: 'var(--accent-warm)',
+                          background: 'rgba(234, 179, 8, 0.1)',
+                          padding: '2px 8px',
+                          borderRadius: 'var(--radius-pill)',
                         }}
                       >
-                        FREE
+                        {tier.badge}
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--fg-muted)' }}>{tier.desc}</div>
                 </div>
+              </div>
+            </AnimatedItem>
+          ))}
+        </AnimatedSection>
 
-                <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: tier.color,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
+        {/* Mobile: vertical list */}
+        <div className="md:hidden space-y-3">
+          {TIERS.map((tier) => (
+            <div key={tier.count} className="glass-warm flex items-center gap-4 p-4">
+              <div style={{ fontSize: 28, flexShrink: 0 }}>{tier.emoji}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="display-font" style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-deep)' }}>
+                    {tier.reward}
+                  </span>
+                  {tier.badge && (
+                    <span
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 700,
+                        color: 'var(--accent-warm)',
+                        background: 'rgba(234, 179, 8, 0.1)',
+                        padding: '2px 6px',
+                        borderRadius: 'var(--radius-pill)',
+                      }}
+                    >
+                      {tier.badge}
+                    </span>
+                  )}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+                <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{tier.desc}</div>
+              </div>
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: `var(--rarity-${tier.rarity})`,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
+              </div>
+            </div>
+          ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mt-10"
-        >
-          <a
-            href="#waitlist"
-            className="nav-cta inline-block"
-            style={{ padding: '12px 32px', fontSize: 16 }}
-          >
-            Claim Your Egg
-          </a>
-        </motion.div>
+        <AnimatedSection className="text-center mt-10">
+          <AnimatedItem>
+            <a
+              href="#waitlist"
+              className="warm-form-button inline-block"
+              style={{ padding: '12px 32px', fontSize: 15, textDecoration: 'none' }}
+            >
+              Claim Your Free Egg
+            </a>
+          </AnimatedItem>
+        </AnimatedSection>
       </div>
     </section>
   );
