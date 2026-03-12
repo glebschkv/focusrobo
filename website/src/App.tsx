@@ -41,9 +41,21 @@ function HomePage() {
       <FinalCTA ref={footerCtaRef} />
       <Footer />
       <StickyMobileCTA heroRef={heroRef} footerCtaRef={footerCtaRef}>
-        <a href="#waitlist" className="warm-form-button" style={{ padding: '10px 24px', fontSize: 14, textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+        <button
+          className="warm-form-button"
+          style={{ padding: '10px 24px', fontSize: 14, display: 'block', textAlign: 'center', width: '100%' }}
+          onClick={() => {
+            // Scroll to whichever waitlist form is closer
+            const hero = document.getElementById('waitlist');
+            const bottom = document.getElementById('waitlist-bottom');
+            const heroY = hero?.getBoundingClientRect().top ?? Infinity;
+            const bottomY = bottom?.getBoundingClientRect().top ?? Infinity;
+            const target = Math.abs(heroY) < Math.abs(bottomY) ? hero : bottom;
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
+        >
           Join the Waitlist
-        </a>
+        </button>
       </StickyMobileCTA>
     </div>
   );

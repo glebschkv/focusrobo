@@ -1,5 +1,13 @@
 import { AnimatedSection, AnimatedItem } from './AnimatedSection';
 
+const RARITY_BG: Record<string, string> = {
+  common: 'rgba(180, 170, 155, 0.12)',
+  uncommon: 'rgba(134, 197, 134, 0.12)',
+  rare: 'rgba(59, 130, 246, 0.12)',
+  epic: 'rgba(168, 85, 247, 0.12)',
+  legendary: 'rgba(234, 179, 8, 0.12)',
+};
+
 const TIERS = [
   {
     count: 0,
@@ -101,7 +109,7 @@ export function RewardsSection() {
                         fontSize: 10,
                         fontWeight: 700,
                         color: `var(--rarity-${tier.rarity})`,
-                        background: `color-mix(in srgb, var(--rarity-${tier.rarity}) 10%, transparent)`,
+                        background: RARITY_BG[tier.rarity],
                         padding: '2px 8px',
                         borderRadius: 'var(--radius-pill)',
                       }}

@@ -23,6 +23,30 @@ function getReferredBy(): string | null {
   }
 }
 
+// Shared fetch — only runs once across all form instances
+let waitlistFetchPromise: Promise<number | null> | null = null;
+
+function fetchWaitlistCountOnce(): Promise<number | null> {
+  if (waitlistFetchPromise) return waitlistFetchPromise;
+
+  waitlistFetchPromise = (async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        method: 'GET',
+      });
+      if (!error && data?.count != null) {
+        localStorage.setItem('phono_waitlist_count', String(data.count));
+        return data.count as number;
+      }
+    } catch { /* fall through */ }
+
+    const cached = localStorage.getItem('phono_waitlist_count');
+    return cached ? parseInt(cached, 10) : null;
+  })();
+
+  return waitlistFetchPromise;
+}
+
 export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -43,26 +67,10 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   }, []);
 
   useEffect(() => {
-    fetchWaitlistCount();
+    fetchWaitlistCountOnce().then((count) => {
+      if (count != null) setWaitlistCount(count);
+    });
   }, []);
-
-  async function fetchWaitlistCount() {
-    try {
-      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
-        method: 'GET',
-      });
-      if (!error && data?.count != null) {
-        setWaitlistCount(data.count);
-        localStorage.setItem('phono_waitlist_count', String(data.count));
-      } else {
-        const cached = localStorage.getItem('phono_waitlist_count');
-        if (cached) setWaitlistCount(parseInt(cached, 10));
-      }
-    } catch {
-      const cached = localStorage.getItem('phono_waitlist_count');
-      if (cached) setWaitlistCount(parseInt(cached, 10));
-    }
-  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -137,10 +145,12 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     ? (referralCount / nextTier.count) * 100
     : 100;
 
+  const formAnchorId = variant === 'hero' ? 'waitlist' : 'waitlist-bottom';
+
   // Success state
   if (status === 'success' && referralCode) {
     return (
-      <div className="waitlist-success">
+      <div className="waitlist-success" id={formAnchorId}>
         <div className="success-card">
           {/* Badge */}
           <div className="success-badge">
@@ -212,8 +222,8 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
 
   // Idle / loading / error state
   return (
-    <div id={variant === 'hero' ? 'waitlist' : undefined}>
-      <form onSubmit={handleSubmit} style={{ scrollMarginTop: 100 }}>
+    <div id={formAnchorId} style={{ scrollMarginTop: 100 }}>
+      <form onSubmit={handleSubmit}>
         <div className="warm-form-container">
           <input
             type="email"
@@ -244,6 +254,31 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
         </div>
       </form>
 
+      {/* Anti-spam reassurance + trust signals */}
+      <div className="form-reassurance">
+        <span>No spam, ever. Just a launch-day heads-up + your free Legendary Egg.</span>
+      </div>
+
+      {/* Trust signals */}
+      {variant === 'hero' && (
+        <div className="trust-signals">
+          <span className="trust-signal">
+            <span className="trust-signal__icon">✦</span>
+            Free to play
+          </span>
+          <span className="trust-signal__dot">·</span>
+          <span className="trust-signal">
+            <span className="trust-signal__icon">♡</span>
+            No credit card
+          </span>
+          <span className="trust-signal__dot">·</span>
+          <span className="trust-signal">
+            <span className="trust-signal__icon">◆</span>
+            Coming to iOS
+          </span>
+        </div>
+      )}
+
       {/* Social proof */}
       {waitlistCount > 0 && (
         <div className="waitlist-social-proof">
@@ -256,7 +291,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
 
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
-          {errorMessage || 'Something went wrong. Please try again.'}
+          {errorMessage || 'Hmm, that didn\'t work. Try again?'}
         </p>
       )}
     </div>

@@ -43,6 +43,22 @@ export const HeroSection = forwardRef<HTMLElement>(function HeroSection(_, ref) 
           Every minute off your phone earns adorable pixel art pets for your floating island. The coziest reason to actually focus.
         </motion.p>
 
+        {/* Urgency hook */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="text-center"
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: 'var(--accent-warm)',
+            marginTop: 10,
+          }}
+        >
+          First 1,000 members get a free Legendary Egg on launch day
+        </motion.p>
+
         {/* Waitlist Form — ABOVE the island */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}

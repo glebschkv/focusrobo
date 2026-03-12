@@ -10,10 +10,12 @@ export function SocialProofBar() {
     if (cached) setWaitlistCount(parseInt(cached, 10));
   }, []);
 
+  // Only show real waitlist count if we have data; otherwise omit that stat
   const stats = [
-    { emoji: '🥚', value: waitlistCount || 847, label: 'eggs reserved' },
+    ...(waitlistCount > 0 ? [{ emoji: '🥚', value: waitlistCount, label: 'eggs reserved' }] : []),
     { emoji: '🐾', value: 41, label: 'species to discover' },
     { emoji: '🏝️', value: 6, label: 'island themes' },
+    { emoji: '⏱️', value: 5, label: 'rarity tiers' },
   ];
 
   return (
