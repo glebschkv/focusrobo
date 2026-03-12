@@ -13,8 +13,8 @@ const SMALL_ISLAND_PETS = [
 export const FinalCTA = forwardRef<HTMLElement>(function FinalCTA(_, ref) {
   return (
     <SkyBackground>
-      <section ref={ref} className="py-20 px-5">
-        <div className="max-w-lg mx-auto text-center">
+      <section ref={ref} className="py-24 px-5">
+        <div className="max-w-2xl mx-auto text-center">
           <AnimatedSection>
             <AnimatedItem>
               <h2
@@ -31,7 +31,7 @@ export const FinalCTA = forwardRef<HTMLElement>(function FinalCTA(_, ref) {
               </h2>
             </AnimatedItem>
             <AnimatedItem>
-              <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 400, margin: '0 auto 8px', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 520, margin: '0 auto 8px', lineHeight: 1.6 }}>
                 Block distracting apps, earn pixel art pets, and build your own floating island. Launching soon on iOS.
               </p>
             </AnimatedItem>
@@ -49,9 +49,9 @@ export const FinalCTA = forwardRef<HTMLElement>(function FinalCTA(_, ref) {
             </AnimatedItem>
           </AnimatedSection>
 
-          <div style={{ maxWidth: 260, margin: '0 auto 32px' }}>
+          <div style={{ maxWidth: 380, margin: '0 auto 32px' }}>
             <div style={{ animation: 'island-bob 5s ease-in-out infinite' }}>
-              <IslandScene gridSize={6} pets={SMALL_ISLAND_PETS} />
+              <IslandScene gridSize={8} pets={SMALL_ISLAND_PETS} />
             </div>
           </div>
 

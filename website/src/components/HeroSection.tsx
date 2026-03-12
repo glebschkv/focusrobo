@@ -6,7 +6,7 @@ import { WaitlistForm } from './WaitlistForm';
 
 export const HeroSection = forwardRef<HTMLElement>(function HeroSection(_, ref) {
   return (
-    <SkyBackground className="min-h-screen flex flex-col items-center justify-center px-5 pt-20 pb-8 relative">
+    <SkyBackground className="min-h-screen flex flex-col items-center justify-start px-5 pt-28 pb-8 relative">
       <section ref={ref} className="w-full max-w-2xl mx-auto flex flex-col items-center relative z-10">
         {/* Headline */}
         <motion.h1
