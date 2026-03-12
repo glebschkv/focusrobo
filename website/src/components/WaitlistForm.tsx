@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface WaitlistFormProps {
@@ -6,11 +7,11 @@ interface WaitlistFormProps {
 }
 
 const REFERRAL_TIERS = [
-  { count: 0, label: 'Legendary Egg', emoji: '🥚' },
-  { count: 3, label: 'Rare Egg', emoji: '🔵' },
-  { count: 5, label: 'Epic Egg', emoji: '🟣' },
-  { count: 10, label: 'Founder Fox', emoji: '🦊' },
-  { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
+  { count: 0, label: 'Legendary Egg', emoji: '🥚', desc: 'Free with signup' },
+  { count: 3, label: 'Rare Egg', emoji: '🔵', desc: '3 referrals' },
+  { count: 5, label: 'Epic Egg', emoji: '🟣', desc: '5 referrals' },
+  { count: 10, label: 'Founder Fox', emoji: '🦊', desc: '10 referrals' },
+  { count: 25, label: 'Pioneer Island', emoji: '🏝️', desc: '25 referrals' },
 ];
 
 function getReferredBy(): string | null {
@@ -22,6 +23,30 @@ function getReferredBy(): string | null {
   }
 }
 
+// Shared fetch — only runs once across all form instances
+let waitlistFetchPromise: Promise<number | null> | null = null;
+
+function fetchWaitlistCountOnce(): Promise<number | null> {
+  if (waitlistFetchPromise) return waitlistFetchPromise;
+
+  waitlistFetchPromise = (async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        method: 'GET',
+      });
+      if (!error && data?.count != null) {
+        localStorage.setItem('phono_waitlist_count', String(data.count));
+        return data.count as number;
+      }
+    } catch { /* fall through */ }
+
+    const cached = localStorage.getItem('phono_waitlist_count');
+    return cached ? parseInt(cached, 10) : null;
+  })();
+
+  return waitlistFetchPromise;
+}
+
 export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -30,9 +55,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
   const [waitlistCount, setWaitlistCount] = useState(0);
-  const [referredBy] = useState<string | null>(() => getReferredBy());
 
-  // Check for existing signup on mount
   useEffect(() => {
     const savedCode = localStorage.getItem('phono_referral_code');
     if (savedCode) {
@@ -43,49 +66,11 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     }
   }, []);
 
-  // Fetch waitlist count on mount
   useEffect(() => {
-    fetchWaitlistCount();
+    fetchWaitlistCountOnce().then((count) => {
+      if (count != null) setWaitlistCount(count);
+    });
   }, []);
-
-  async function fetchWaitlistCount() {
-    try {
-      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
-        method: 'GET',
-      });
-      if (!error && data?.count != null) {
-        setWaitlistCount(data.count);
-        localStorage.setItem('phono_waitlist_count', String(data.count));
-      } else {
-        // Fall back to cached count
-        const cached = localStorage.getItem('phono_waitlist_count');
-        if (cached) setWaitlistCount(parseInt(cached, 10));
-      }
-    } catch {
-      const cached = localStorage.getItem('phono_waitlist_count');
-      if (cached) setWaitlistCount(parseInt(cached, 10));
-    }
-  }
-
-  async function fetchReferralCount() {
-    try {
-      const savedEmail = localStorage.getItem('phono_email');
-      if (!savedEmail) return;
-      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
-        body: { email: savedEmail, referredBy: null },
-      });
-      if (!error && data?.referralCount != null) {
-        setReferralCount(data.referralCount);
-        localStorage.setItem('phono_referral_count', String(data.referralCount));
-      } else {
-        const cached = localStorage.getItem('phono_referral_count');
-        if (cached) setReferralCount(parseInt(cached, 10));
-      }
-    } catch {
-      const cached = localStorage.getItem('phono_referral_count');
-      if (cached) setReferralCount(parseInt(cached, 10));
-    }
-  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -96,7 +81,6 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
 
     try {
       if (!isSupabaseConfigured) {
-        // Fallback for local dev without env vars
         await new Promise(r => setTimeout(r, 1200));
         const code = Math.random().toString(36).substring(2, 10).toUpperCase();
         localStorage.setItem('phono_referral_code', code);
@@ -116,15 +100,9 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
         },
       });
 
-      if (error) {
-        throw new Error(error.message || 'Signup failed');
-      }
+      if (error) throw new Error(error.message || 'Signup failed');
+      if (data?.error) throw new Error(data.error);
 
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      // Save to localStorage for return visits
       localStorage.setItem('phono_referral_code', data.referral_code);
       localStorage.setItem('phono_email', email.trim());
       localStorage.setItem('phono_referral_count', String(data.referral_count || 0));
@@ -154,39 +132,63 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const shareOnX = () => {
+    const text = encodeURIComponent(
+      "I just joined the PhoNo waitlist — a focus timer that lets you collect pixel art pets and build floating islands. Join me and we both get rewards!"
+    );
+    const url = encodeURIComponent(`https://phono.app/?ref=${referralCode}`);
+    window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+  };
+
   const nextTier = REFERRAL_TIERS.find(t => t.count > referralCount);
   const progressPercent = nextTier
     ? (referralCount / nextTier.count) * 100
     : 100;
 
+  const formAnchorId = variant === 'hero' ? 'waitlist' : 'waitlist-bottom';
+
+  // Success state
   if (status === 'success' && referralCode) {
     return (
-      <div className="waitlist-success">
-        <div className="legendary-egg-display" />
-        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-          Your Legendary Egg is reserved
-        </h3>
-        <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginBottom: 20 }}>
-          You'll hatch it on launch day. Want more? Refer friends for bonus rewards.
-        </p>
-
-        <div className="referral-dashboard">
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--fg-muted)' }}>
-            Your referral link
+      <div className="waitlist-success" id={formAnchorId}>
+        <div className="success-card">
+          {/* Badge */}
+          <div className="success-badge">
+            <span style={{ color: 'var(--primary)', fontSize: 14 }}>&#10003;</span>
+            You're in{waitlistCount > 0 ? ` — #${waitlistCount.toLocaleString()}` : ''}
           </div>
+
+          {/* Headline */}
+          <h3
+            className="display-font"
+            style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: 'var(--fg-deep)' }}
+          >
+            Welcome to the island.
+          </h3>
+          <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginBottom: 20, lineHeight: 1.5 }}>
+            We'll email you when PhoNo is ready. Share your link to unlock exclusive rewards.
+          </p>
+
+          {/* Referral link */}
           <div className="referral-link-box">
             <input readOnly value={`phono.app/?ref=${referralCode}`} />
-            <button onClick={copyLink}>{copied ? 'Copied!' : 'Copy'}</button>
+            <button onClick={copyLink}>
+              {copied ? '✓ Copied' : 'Copy'}
+            </button>
           </div>
 
-          <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 12 }}>
-            {referralCount} referral{referralCount !== 1 ? 's' : ''}
-            {nextTier && ` — ${nextTier.count - referralCount} more for ${nextTier.label}`}
+          {/* Progress */}
+          <div style={{ fontSize: 13, color: 'var(--fg-muted)', textAlign: 'left' }}>
+            <strong style={{ color: 'var(--fg-body)' }}>{referralCount}</strong> referral{referralCount !== 1 ? 's' : ''}
+            {nextTier && (
+              <span> — {nextTier.count - referralCount} more for <strong style={{ color: 'var(--accent-warm)' }}>{nextTier.label}</strong></span>
+            )}
           </div>
           <div className="referral-progress">
             <div className="referral-progress__fill" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
           </div>
 
+          {/* Tier badges */}
           <div className="referral-tiers">
             {REFERRAL_TIERS.map((tier) => {
               const unlocked = referralCount >= tier.count;
@@ -194,47 +196,102 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
               return (
                 <div
                   key={tier.count}
-                  className={`referral-tier ${!unlocked && !active ? 'referral-tier--locked' : ''} ${active ? 'referral-tier--active' : ''}`}
+                  className={`referral-tier ${unlocked ? 'referral-tier--unlocked' : ''} ${active ? 'referral-tier--active' : ''} ${!unlocked && !active ? 'referral-tier--locked' : ''}`}
                 >
                   <div className="referral-tier__icon">{tier.emoji}</div>
-                  <div className="referral-tier__count">{tier.count}</div>
+                  <div className="referral-tier__count">{tier.count === 0 ? 'Free' : tier.count}</div>
                   <div className="referral-tier__label">{tier.label}</div>
                 </div>
               );
             })}
+          </div>
+
+          {/* Share buttons */}
+          <div className="share-buttons">
+            <button className="share-btn share-btn--primary" onClick={copyLink}>
+              {copied ? '✓ Copied!' : 'Share Your Link'}
+            </button>
+            <button className="share-btn share-btn--secondary" onClick={shareOnX}>
+              Share on 𝕏
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
+  // Idle / loading / error state
   return (
-    <div>
-      <form className="waitlist-form" onSubmit={handleSubmit} id={variant === 'hero' ? 'waitlist' : undefined}>
-        <input
-          type="email"
-          className="waitlist-input"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={status === 'loading'}
-        />
-        <button
-          type="submit"
-          className={`egg-button ${status === 'loading' ? '' : ''}`}
-          disabled={status === 'loading'}
-          title="Hatch My Spot"
-        />
+    <div id={formAnchorId} style={{ scrollMarginTop: 100 }}>
+      <form onSubmit={handleSubmit}>
+        <div className="warm-form-container">
+          <input
+            type="email"
+            className="warm-form-input"
+            placeholder="your@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={status === 'loading'}
+            aria-label="Email address"
+          />
+          <AnimatePresence mode="wait">
+            <motion.button
+              key="submit"
+              type="submit"
+              disabled={status === 'loading'}
+              className="warm-form-button"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {status === 'loading' ? (
+                <span className="warm-form-spinner" />
+              ) : (
+                'Join the Waitlist'
+              )}
+            </motion.button>
+          </AnimatePresence>
+        </div>
       </form>
-      {waitlistCount > 0 && (
-        <div className="waitlist-counter">
-          <strong>{waitlistCount.toLocaleString()}</strong> adventurers waiting
+
+      {/* Anti-spam reassurance + trust signals */}
+      <div className="form-reassurance">
+        <span>No spam, ever. Just a launch-day heads-up + your free Legendary Egg.</span>
+      </div>
+
+      {/* Trust signals */}
+      {variant === 'hero' && (
+        <div className="trust-signals">
+          <span className="trust-signal">
+            <span className="trust-signal__icon">🛡️</span>
+            Free app blocking
+          </span>
+          <span className="trust-signal__dot">·</span>
+          <span className="trust-signal">
+            <span className="trust-signal__icon">♡</span>
+            No credit card
+          </span>
+          <span className="trust-signal__dot">·</span>
+          <span className="trust-signal">
+            <span className="trust-signal__icon">◆</span>
+            Coming to iOS
+          </span>
         </div>
       )}
+
+      {/* Social proof */}
+      {waitlistCount > 0 && (
+        <div className="waitlist-social-proof">
+          <span className="pulse-dot" />
+          <span>
+            <strong>{waitlistCount.toLocaleString()}</strong> people are already building their islands
+          </span>
+        </div>
+      )}
+
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
-          {errorMessage || 'Something went wrong. Please try again.'}
+          {errorMessage || 'Hmm, that didn\'t work. Try again?'}
         </p>
       )}
     </div>

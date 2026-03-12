@@ -1,152 +1,135 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { PET_DATABASE, RARITY_STYLES, type PetSpecies, type PetRarity } from '../data/PetDatabase';
+import { PET_DATABASE, RARITY_STYLES, type PetSpecies } from '../data/PetDatabase';
+import { AnimatedSection, AnimatedItem } from './AnimatedSection';
 
-// Curated showcase: 6 common, 4 uncommon, 3 rare, 2 epic, 2 legendary (mystery)
+// Curated: 3 common, 2 uncommon, 2 rare, 1 epic, 1 legendary (mystery)
 const SHOWCASE_IDS = [
-  'bunny', 'chick', 'capybara', 'frog', 'hedgehog', 'turtle',
-  'fox', 'cat', 'corgi', 'penguin',
-  'owl', 'panda', 'deer',
-  'dragon', 'phoenix',
-  'unicorn', 'koi-fish',
+  'bunny', 'capybara', 'hedgehog',
+  'fox', 'corgi',
+  'owl', 'panda',
+  'dragon',
+  'unicorn',
 ];
 
 function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
-  const [flipped, setFlipped] = useState(false);
   const style = RARITY_STYLES[pet.rarity];
+  const isEpicOrAbove = pet.rarity === 'epic' || pet.rarity === 'legendary';
 
   return (
     <div
-      className={`pet-card pet-card--${pet.rarity} ${flipped ? 'pet-card--flipped' : ''} ${isMystery ? 'pet-card--mystery' : ''}`}
-      onClick={() => !isMystery && setFlipped(!flipped)}
-      style={{ perspective: 800 }}
+      className={`rarity-card rarity-${pet.rarity} ${isMystery ? 'rarity-card--mystery' : ''}`}
+      style={{
+        width: isEpicOrAbove ? 160 : 140,
+      }}
     >
-      <div className="pet-card__inner">
-        <div className="pet-card__front">
-          {isMystery ? (
-            <>
-              <img src={pet.imagePath} alt="???" className="pet-card__sprite" />
-              <div className="pet-card__mystery-label">???</div>
-            </>
-          ) : (
-            <>
-              <img
-                src={pet.imagePath}
-                alt={pet.name}
-                className={`pet-card__sprite sprite--${pet.rarity}`}
-                loading="lazy"
-              />
-              <div className="pet-card__name">{pet.name}</div>
-              <div className={`rarity-badge rarity-badge--${pet.rarity}`}>
-                {style.label}
-              </div>
-            </>
-          )}
-        </div>
-        <div className="pet-card__back">
-          <div className="pet-card__desc">{pet.description}</div>
-          <div className="mt-2 flex gap-1">
-            {['baby', 'adolescent', 'adult'].map(size => (
-              <img
-                key={size}
-                src={`/pets/${pet.id}-${size}.png`}
-                alt={`${pet.name} ${size}`}
-                style={{ width: 32, height: 32, opacity: size === 'baby' ? 1 : 0.6 }}
-                loading="lazy"
-              />
-            ))}
-          </div>
-          <div style={{ fontSize: 10, color: 'var(--fg-muted)', marginTop: 4 }}>
-            baby · adolescent · adult
-          </div>
-        </div>
+      <div className="rarity-card-inner" style={{ padding: isEpicOrAbove ? '20px 16px' : '16px' }}>
+        {isMystery ? (
+          <>
+            <img
+              src={pet.imagePath}
+              alt="???"
+              className="pixel-art"
+              style={{ width: 64, height: 64, objectFit: 'contain' }}
+            />
+            <div
+              className="display-font"
+              style={{
+                fontSize: 24,
+                fontWeight: 700,
+                color: 'var(--rarity-legendary)',
+                textShadow: '0 0 12px rgba(234,179,8,0.5)',
+                marginTop: 8,
+              }}
+            >
+              ???
+            </div>
+            <div className={`rarity-badge rarity-badge--legendary`}>Legendary</div>
+          </>
+        ) : (
+          <>
+            <img
+              src={pet.imagePath}
+              alt={pet.name}
+              className={`pixel-art sprite--${pet.rarity}`}
+              style={{
+                width: isEpicOrAbove ? 72 : 64,
+                height: isEpicOrAbove ? 72 : 64,
+                objectFit: 'contain',
+              }}
+              loading="lazy"
+            />
+            <div
+              className="display-font"
+              style={{ fontSize: 14, fontWeight: 700, marginTop: 8, color: 'var(--fg-deep)' }}
+            >
+              {pet.name}
+            </div>
+            <div className={`rarity-badge rarity-badge--${pet.rarity}`}>
+              {style.label}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function RarityFilter({ active, onChange }: { active: PetRarity | 'all'; onChange: (r: PetRarity | 'all') => void }) {
-  const rarities: (PetRarity | 'all')[] = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'];
-  return (
-    <div className="flex gap-2 justify-center flex-wrap mb-6">
-      {rarities.map(r => (
-        <button
-          key={r}
-          onClick={() => onChange(r)}
-          className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
-          style={{
-            background: active === r ? 'var(--primary)' : 'var(--muted)',
-            color: active === r ? 'white' : 'var(--fg-muted)',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          {r === 'all' ? 'All' : RARITY_STYLES[r].label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function PetShowcase() {
-  const [filter, setFilter] = useState<PetRarity | 'all'>('all');
   const legendaryIds = new Set(['unicorn', 'koi-fish']);
 
   const showcasePets = SHOWCASE_IDS
     .map(id => PET_DATABASE.find(p => p.id === id))
-    .filter((p): p is PetSpecies => !!p)
-    .filter(p => filter === 'all' || p.rarity === filter);
+    .filter((p): p is PetSpecies => !!p);
 
   return (
-    <section className="section-cream py-20 px-5">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
-            41 Species to Discover
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--fg-muted)', maxWidth: 420, margin: '0 auto' }}>
-            From common critters to legendary creatures. Tap a card to flip it.
-          </p>
-        </motion.div>
-
-        <RarityFilter active={filter} onChange={setFilter} />
-
-        {/* Desktop: grid. Mobile: horizontal scroll */}
-        <div className="hidden md:flex flex-wrap gap-4 justify-center">
-          {showcasePets.map((pet, i) => (
-            <motion.div
-              key={pet.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
+    <section className="section-textured py-20 px-5">
+      <div className="max-w-4xl mx-auto">
+        <AnimatedSection className="text-center mb-12">
+          <AnimatedItem>
+            <h2
+              className="display-font"
+              style={{
+                fontSize: 'clamp(26px, 6vw, 40px)',
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+                marginBottom: 10,
+                color: 'var(--fg-deep)',
+              }}
             >
+              41 species. 5 rarities.<br />Infinite heart-eyes.
+            </h2>
+          </AnimatedItem>
+          <AnimatedItem>
+            <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+              From common bunnies to legendary unicorns, every focus session is a chance to discover someone new.
+            </p>
+          </AnimatedItem>
+        </AnimatedSection>
+
+        {/* Desktop: centered grid */}
+        <AnimatedSection className="hidden md:flex flex-wrap gap-5 justify-center" stagger={0.08}>
+          {showcasePets.map((pet) => (
+            <AnimatedItem key={pet.id}>
               <PetCard pet={pet} isMystery={legendaryIds.has(pet.id)} />
-            </motion.div>
+            </AnimatedItem>
           ))}
-        </div>
-        <div className="md:hidden scroll-track">
-          {showcasePets.map(pet => (
-            <PetCard key={pet.id} pet={pet} isMystery={legendaryIds.has(pet.id)} />
-          ))}
+        </AnimatedSection>
+
+        {/* Mobile: horizontal scroll */}
+        <div className="md:hidden scroll-container">
+          <div className="scroll-track">
+            {showcasePets.map(pet => (
+              <PetCard key={pet.id} pet={pet} isMystery={legendaryIds.has(pet.id)} />
+            ))}
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center mt-8"
-        >
-          <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>
-            + {PET_DATABASE.length - SHOWCASE_IDS.length} more species to discover in the app
-          </p>
-        </motion.div>
+        <AnimatedSection className="text-center mt-10">
+          <AnimatedItem>
+            <p style={{ fontSize: 15, color: 'var(--fg-muted)', fontStyle: 'italic' }}>
+              And yes, there's a capybara.
+            </p>
+          </AnimatedItem>
+        </AnimatedSection>
       </div>
     </section>
   );

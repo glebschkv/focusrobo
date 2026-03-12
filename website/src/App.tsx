@@ -1,14 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Nav } from './components/Nav';
 import { HeroSection } from './components/HeroSection';
+import { SocialProofBar } from './components/SocialProof';
 import { LoopSection } from './components/LoopSection';
 import { PetShowcase } from './components/PetShowcase';
 import { IslandGrowth } from './components/IslandGrowth';
 import { RewardsSection } from './components/RewardsSection';
-import { SocialProof } from './components/SocialProof';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
+import { StickyMobileCTA } from './components/StickyMobileCTA';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { Support } from './components/Support';
@@ -21,40 +22,41 @@ function ScrollToTop() {
   return null;
 }
 
-function GrassDivider() {
-  return (
-    <svg viewBox="0 0 1200 60" className="divider-grass" preserveAspectRatio="none">
-      <path
-        d="M0,60 C300,0 900,0 1200,60 L1200,60 L0,60 Z"
-        fill="var(--bg-cream)"
-      />
-    </svg>
-  );
-}
-
-function DiamondDivider() {
-  return (
-    <div className="divider-line">
-      <div className="divider-diamond" />
-    </div>
-  );
-}
-
 function HomePage() {
+  const heroRef = useRef<HTMLElement>(null);
+  const footerCtaRef = useRef<HTMLElement>(null);
+
   return (
     <div>
       <Nav />
-      <HeroSection />
-      <GrassDivider />
+      <HeroSection ref={heroRef} />
+      <div className="section-transition-sky-to-cream" />
+      <SocialProofBar />
       <LoopSection />
-      <DiamondDivider />
+      <div className="divider-warm" />
       <PetShowcase />
       <IslandGrowth />
-      <DiamondDivider />
+      <div className="divider-warm" />
       <RewardsSection />
-      <SocialProof />
-      <FinalCTA />
+      <FinalCTA ref={footerCtaRef} />
       <Footer />
+      <StickyMobileCTA heroRef={heroRef} footerCtaRef={footerCtaRef}>
+        <button
+          className="warm-form-button"
+          style={{ padding: '10px 24px', fontSize: 14, display: 'block', textAlign: 'center', width: '100%' }}
+          onClick={() => {
+            // Scroll to whichever waitlist form is closer
+            const hero = document.getElementById('waitlist');
+            const bottom = document.getElementById('waitlist-bottom');
+            const heroY = hero?.getBoundingClientRect().top ?? Infinity;
+            const bottomY = bottom?.getBoundingClientRect().top ?? Infinity;
+            const target = Math.abs(heroY) < Math.abs(bottomY) ? hero : bottom;
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
+        >
+          Join the Waitlist
+        </button>
+      </StickyMobileCTA>
     </div>
   );
 }
@@ -76,9 +78,10 @@ function NotFound() {
       <img
         src="/pets/frog-baby.png"
         alt="Lost frog"
-        style={{ width: 80, height: 80, marginBottom: 16, animation: 'pet-bob 3s ease-in-out infinite' }}
+        className="pixel-art"
+        style={{ width: 80, height: 80, marginBottom: 16, animation: 'pet-bounce 3.5s ease-in-out infinite' }}
       />
-      <h1 style={{ fontSize: 48, fontWeight: 700, marginBottom: 8, color: 'var(--fg-deep)' }}>
+      <h1 className="display-font" style={{ fontSize: 48, fontWeight: 700, marginBottom: 8, color: 'var(--fg-deep)' }}>
         404
       </h1>
       <p style={{ fontSize: 16, color: 'var(--fg-muted)', marginBottom: 24 }}>
@@ -86,8 +89,8 @@ function NotFound() {
       </p>
       <Link
         to="/"
-        className="nav-cta"
-        style={{ display: 'inline-block', padding: '12px 28px', fontSize: 15 }}
+        className="warm-form-button"
+        style={{ display: 'inline-block', padding: '12px 28px', fontSize: 15, textDecoration: 'none' }}
       >
         Return Home
       </Link>

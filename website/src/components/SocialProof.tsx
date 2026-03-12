@@ -1,32 +1,44 @@
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatedSection, AnimatedItem } from './AnimatedSection';
+import { CountUp } from './CountUp';
 
-export function SocialProof() {
+export function SocialProofBar() {
+  const [waitlistCount, setWaitlistCount] = useState(0);
+
+  useEffect(() => {
+    const cached = localStorage.getItem('phono_waitlist_count');
+    if (cached) setWaitlistCount(parseInt(cached, 10));
+  }, []);
+
+  // Only show real waitlist count if we have data; otherwise omit that stat
+  const stats = [
+    ...(waitlistCount > 0 ? [{ emoji: '🥚', value: waitlistCount, label: 'eggs reserved' }] : []),
+    { emoji: '🐾', value: 41, label: 'species to discover' },
+    { emoji: '🏝️', value: 6, label: 'island themes' },
+    { emoji: '⏱️', value: 5, label: 'rarity tiers' },
+  ];
+
   return (
-    <section className="section-cream py-20 px-5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl mx-auto text-center"
-      >
-        <div
-          style={{
-            fontSize: 'clamp(20px, 4vw, 28px)',
-            fontWeight: 600,
-            lineHeight: 1.4,
-            color: 'var(--fg-deep)',
-            fontStyle: 'italic',
-            marginBottom: 16,
-          }}
-        >
-          "We built PhoNo because every focus app felt like a chore. We wanted something
-          that made you excited to put your phone down."
-        </div>
-        <div style={{ fontSize: 14, color: 'var(--fg-muted)', fontWeight: 500 }}>
-          — The PhoNo Team
-        </div>
-      </motion.div>
+    <section className="section-textured py-8">
+      <AnimatedSection className="max-w-3xl mx-auto px-5">
+        <AnimatedItem>
+          <div className="glass-warm-solid py-4 px-6">
+            <div className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
+              {stats.map((stat) => (
+                <div key={stat.label} className="flex items-center gap-2 text-center">
+                  <span style={{ fontSize: 20 }}>{stat.emoji}</span>
+                  <span style={{ fontSize: 15, color: 'var(--fg-body)' }}>
+                    <strong style={{ fontWeight: 700, color: 'var(--fg-deep)', fontVariantNumeric: 'tabular-nums' }}>
+                      <CountUp target={stat.value} duration={1.5} />
+                    </strong>
+                    {' '}{stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AnimatedItem>
+      </AnimatedSection>
     </section>
   );
 }
