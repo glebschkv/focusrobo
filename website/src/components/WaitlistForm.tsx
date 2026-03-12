@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface WaitlistFormProps {
   variant?: 'hero' | 'cta';
@@ -12,21 +13,30 @@ const REFERRAL_TIERS = [
   { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
 ];
 
+function getReferredBy(): string | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('ref') || null;
+  } catch {
+    return null;
+  }
+}
+
 export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const [referralCode, setReferralCode] = useState<string | null>(null);
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
   const [waitlistCount, setWaitlistCount] = useState(847);
 
-  // Check for existing signup
+  // Check for existing signup on mount
   useEffect(() => {
     const saved = localStorage.getItem('phono_referral_code');
     if (saved) {
       setReferralCode(saved);
       setStatus('success');
-      // Simulate referral count for demo
       const savedCount = localStorage.getItem('phono_referral_count');
       if (savedCount) setReferralCount(parseInt(savedCount, 10));
     }
@@ -49,16 +59,59 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     if (!email || status === 'loading') return;
 
     setStatus('loading');
+    setErrorMessage('');
 
-    // Simulate API call (replace with Supabase edge function later)
-    await new Promise(r => setTimeout(r, 1200));
+    try {
+      if (!isSupabaseConfigured) {
+        // Fallback for local dev without env vars
+        await new Promise(r => setTimeout(r, 1200));
+        const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+        localStorage.setItem('phono_referral_code', code);
+        localStorage.setItem('phono_email', email);
+        setReferralCode(code);
+        setStatus('success');
+        setWaitlistCount(prev => prev + 1);
+        return;
+      }
 
-    const code = Math.random().toString(36).substring(2, 10).toUpperCase();
-    localStorage.setItem('phono_referral_code', code);
-    localStorage.setItem('phono_email', email);
-    setReferralCode(code);
-    setStatus('success');
-    setWaitlistCount(prev => prev + 1);
+      const referredBy = getReferredBy();
+
+      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+        body: {
+          email: email.trim(),
+          referred_by: referredBy,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Signup failed');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      // Save to localStorage for return visits
+      localStorage.setItem('phono_referral_code', data.referral_code);
+      localStorage.setItem('phono_email', email.trim());
+      localStorage.setItem('phono_referral_count', String(data.referral_count || 0));
+
+      setReferralCode(data.referral_code);
+      setReferralCount(data.referral_count || 0);
+      setStatus('success');
+
+      if (data.waitlist_position) {
+        setWaitlistCount(data.waitlist_position);
+      } else {
+        setWaitlistCount(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error('Waitlist signup error:', err);
+      setStatus('error');
+      setErrorMessage(
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      );
+    }
   };
 
   const copyLink = () => {
@@ -146,7 +199,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
       </div>
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
-          Something went wrong. Please try again.
+          {errorMessage || 'Something went wrong. Please try again.'}
         </p>
       )}
     </div>
