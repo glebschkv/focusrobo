@@ -10,10 +10,10 @@ const STEPS = [
   },
   {
     number: '02',
-    title: 'Actually Focus',
-    description: 'Put your phone down. Breathe. Do your thing.',
-    icon: '🧘',
-    detail: 'Deep focus mode',
+    title: 'Block Distractions',
+    description: 'PhoNo blocks distracting apps so you can actually focus. Free, built-in, no setup needed.',
+    icon: '🛡️',
+    detail: 'Free app blocking',
   },
   {
     number: '03',

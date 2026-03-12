@@ -40,7 +40,7 @@ export const HeroSection = forwardRef<HTMLElement>(function HeroSection(_, ref) 
             lineHeight: 1.6,
           }}
         >
-          Every minute off your phone earns adorable pixel art pets for your floating island. The coziest reason to actually focus.
+          Block distracting apps, stay focused, and earn adorable pixel art pets for your floating island. The coziest reason to actually put your phone down.
         </motion.p>
 
         {/* Urgency hook */}

@@ -32,7 +32,7 @@ export const FinalCTA = forwardRef<HTMLElement>(function FinalCTA(_, ref) {
             </AnimatedItem>
             <AnimatedItem>
               <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 400, margin: '0 auto 8px', lineHeight: 1.6 }}>
-                PhoNo is launching soon on iOS. Join the waitlist and start building your world.
+                Block distracting apps, earn pixel art pets, and build your own floating island. Launching soon on iOS.
               </p>
             </AnimatedItem>
             <AnimatedItem>

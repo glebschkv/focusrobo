@@ -263,8 +263,8 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
       {variant === 'hero' && (
         <div className="trust-signals">
           <span className="trust-signal">
-            <span className="trust-signal__icon">✦</span>
-            Free to play
+            <span className="trust-signal__icon">🛡️</span>
+            Free app blocking
           </span>
           <span className="trust-signal__dot">·</span>
           <span className="trust-signal">
