@@ -16,6 +16,8 @@ interface OnboardingState {
   skippedOnboarding: boolean;
   chosenStarterPet: string | null;
   islandName: string | null;
+  hasSeenArchipelagoTeaser: boolean;
+  hasSeenPassiveIncomeTeaser: boolean;
 }
 
 interface OnboardingStore extends OnboardingState {
@@ -27,11 +29,13 @@ interface OnboardingStore extends OnboardingState {
   isStepCompleted: (stepId: string) => boolean;
   setChosenStarterPet: (petId: string) => void;
   setIslandName: (name: string) => void;
+  dismissArchipelagoTeaser: () => void;
+  dismissPassiveIncomeTeaser: () => void;
 }
 
 const initialState: OnboardingState = {
   hasCompletedOnboarding: false, completedAt: null, steps: [], currentStepIndex: 0, skippedOnboarding: false,
-  chosenStarterPet: null, islandName: null,
+  chosenStarterPet: null, islandName: null, hasSeenArchipelagoTeaser: false, hasSeenPassiveIncomeTeaser: false,
 };
 
 export const useOnboardingStore = create<OnboardingStore>()(
@@ -54,6 +58,8 @@ export const useOnboardingStore = create<OnboardingStore>()(
       isStepCompleted: (stepId) => get().steps.some(s => s.id === stepId && s.completed),
       setChosenStarterPet: (petId) => set({ chosenStarterPet: petId }),
       setIslandName: (name) => set({ islandName: name }),
+      dismissArchipelagoTeaser: () => set({ hasSeenArchipelagoTeaser: true }),
+      dismissPassiveIncomeTeaser: () => set({ hasSeenPassiveIncomeTeaser: true }),
     }),
     {
       name: 'nomo_onboarding',
@@ -80,3 +86,5 @@ export const useOnboardingStore = create<OnboardingStore>()(
 export const useHasCompletedOnboarding = () => useOnboardingStore((s) => s.hasCompletedOnboarding);
 export const useOnboardingSteps = () => useOnboardingStore((s) => s.steps);
 export const useCurrentStepIndex = () => useOnboardingStore((s) => s.currentStepIndex);
+export const useHasSeenArchipelagoTeaser = () => useOnboardingStore((s) => s.hasSeenArchipelagoTeaser);
+export const useHasSeenPassiveIncomeTeaser = () => useOnboardingStore((s) => s.hasSeenPassiveIncomeTeaser);

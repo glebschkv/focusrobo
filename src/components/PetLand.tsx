@@ -31,6 +31,9 @@ import { toast } from 'sonner';
 import { type LandCell, type DecorationCell, isPetCell, isDecorationCell } from '@/stores/landStore';
 import { IslandSwitcher } from '@/components/IslandSwitcher';
 import { IslandUnlockModal } from '@/components/IslandUnlockModal';
+import { useOnboardingStore } from '@/stores/onboardingStore';
+import { useCurrentLevel } from '@/stores/xpStore';
+import { useArchipelago, useActiveIslandIndex } from '@/stores/landStore';
 
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
@@ -599,6 +602,18 @@ export const PetLand = () => {
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [unlockIslandIndex, setUnlockIslandIndex] = useState<number | null>(null);
   const [celebrationBurst, setCelebrationBurst] = useState(false);
+
+  // Teaser tooltips state
+  const currentLevel = useCurrentLevel();
+  const archipelago = useArchipelago();
+  const activeIslandIndex = useActiveIslandIndex();
+  const switchIsland = useLandStore((s) => s.switchIsland);
+  const hasSeenArchipelagoTeaser = useOnboardingStore((s) => s.hasSeenArchipelagoTeaser);
+  const hasSeenPassiveIncomeTeaser = useOnboardingStore((s) => s.hasSeenPassiveIncomeTeaser);
+  const dismissArchipelagoTeaser = useOnboardingStore((s) => s.dismissArchipelagoTeaser);
+  const dismissPassiveIncomeTeaser = useOnboardingStore((s) => s.dismissPassiveIncomeTeaser);
+  const [activeTooltip, setActiveTooltip] = useState<'archipelago' | 'passive' | null>(null);
+  const unlockedIslands = archipelago.filter((i) => i.isUnlocked && i.isPurchased);
   const [shareFlash, setShareFlash] = useState(false);
   const islandCaptureRef = useRef<HTMLDivElement>(null);
 
@@ -919,6 +934,33 @@ export const PetLand = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Teaser tooltip trigger logic (one-time, auto-dismiss after 5s)
+  useEffect(() => {
+    const noExtraIslands = unlockedIslands.length <= 1;
+    if (currentLevel >= 8 && !hasSeenArchipelagoTeaser && noExtraIslands) {
+      setActiveTooltip('archipelago');
+      const timer = setTimeout(() => {
+        setActiveTooltip((t) => t === 'archipelago' ? null : t);
+        dismissArchipelagoTeaser();
+      }, 5000);
+      return () => clearTimeout(timer);
+    } else if (filledCount >= 3 && !hasSeenPassiveIncomeTeaser) {
+      setActiveTooltip('passive');
+      const timer = setTimeout(() => {
+        setActiveTooltip((t) => t === 'passive' ? null : t);
+        dismissPassiveIncomeTeaser();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLevel, filledCount, hasSeenArchipelagoTeaser, hasSeenPassiveIncomeTeaser]);
+
+  const handleDismissTooltip = useCallback(() => {
+    if (activeTooltip === 'archipelago') dismissArchipelagoTeaser();
+    if (activeTooltip === 'passive') dismissPassiveIncomeTeaser();
+    setActiveTooltip(null);
+  }, [activeTooltip, dismissArchipelagoTeaser, dismissPassiveIncomeTeaser]);
+
   // Override sky colors for time of day
   const timeSkyCols = getSkyColors(timePeriod);
 
@@ -1206,6 +1248,35 @@ export const PetLand = () => {
             />
           </svg>
           <span className="pet-land__progress-ring-text">{Math.round(progressPct)}%</span>
+        </div>
+      )}
+
+      {/* Island switcher dots — only when 2+ islands unlocked */}
+      {unlockedIslands.length >= 2 && (
+        <div className="pet-land__island-dots" aria-label="Switch island">
+          {archipelago.map((island, i) => {
+            if (!island.isUnlocked || !island.isPurchased) return null;
+            return (
+              <button
+                key={island.islandId}
+                className={`pet-land__island-dot ${i === activeIslandIndex ? 'pet-land__island-dot--active' : ''}`}
+                onClick={() => switchIsland(i)}
+                aria-label={`Switch to island ${i + 1}`}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Teaser tooltip bubble */}
+      {activeTooltip && (
+        <div className="pet-land__tooltip-bubble" onClick={handleDismissTooltip}>
+          <span className="pet-land__tooltip-bubble-text">
+            {activeTooltip === 'archipelago'
+              ? 'New islands unlock soon! Keep focusing.'
+              : 'Your pets earn coins while you\'re away!'}
+          </span>
+          <div className="pet-land__tooltip-bubble-tail" />
         </div>
       )}
 
