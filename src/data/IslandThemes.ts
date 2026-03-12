@@ -43,9 +43,9 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   day: {
     id: 'day',
     name: 'Meadow',
-    sky: ['#6BB8E0', '#A5D8EF', '#D0EAF5', '#EEF4F0'],
-    grassLight: ['#CCF080', '#B8E468'],
-    grassDark: ['#96C444', '#84B438'],
+    sky: ['#58B8E8', '#8CD4F4', '#C0E8F8', '#E8F6F2'],
+    grassLight: ['#D4F488', '#C0E870'],
+    grassDark: ['#9CCE4C', '#8CC040'],
     grassBase: ['#C4E87A', '#B0D85A', '#9CC84E', '#88B842'],
     grassEdge: ['#88B842', '#6B9430'],
     lipLeft: ['#72A834', '#5E9228', '#9A8448'],
@@ -55,7 +55,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
     stoneBaseLeft: '#5C5444',
     stoneBaseRight: '#504840',
     cloudColor: 'rgba(255, 255, 255, 0.85)',
-    sunColor: 'rgba(255, 240, 200, 0.9)',
+    sunColor: 'rgba(255, 240, 200, 1)',
     particles: 'dust',
     particleColors: [
       'rgba(255, 255, 240, 0.5)',
