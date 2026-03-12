@@ -51,3 +51,6 @@ verify_jwt = true
 
 [functions.validate-coins]
 verify_jwt = false
+
+[functions.waitlist-signup]
+verify_jwt = false
