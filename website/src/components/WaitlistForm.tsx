@@ -76,7 +76,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
 
       const referredBy = getReferredBy();
 
-      const { data, error } = await supabase.functions.invoke('waitlist-signup', {
+      const { data, error } = await supabase!.functions.invoke('waitlist-signup', {
         body: {
           email: email.trim(),
           referred_by: referredBy,
