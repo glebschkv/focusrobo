@@ -677,6 +677,7 @@ All plugins have web fallbacks (no-op/simulated) so the app runs in browsers dur
 | `validate-receipt` | StoreKit receipt validation for IAP |
 | `process-achievements` | Achievement unlock processing |
 | `delete-account` | Account deletion (GDPR compliance) |
+| `waitlist-signup` | Public waitlist signup (email, referral code, referral tracking) |
 | `_shared/cors.ts` | Shared CORS configuration |
 
 ### Auth
@@ -774,6 +775,8 @@ website/
 ├── src/
 │   ├── main.tsx, App.tsx
 │   ├── styles/globals.css
+│   ├── lib/
+│   │   └── supabase.ts        # Supabase client for waitlist API
 │   ├── data/
 │   │   ├── PetDatabase.ts     # Pet data for showcase
 │   │   └── islandPositions.ts  # Island positions for preview
@@ -827,5 +830,5 @@ cd website && npm run build                 # Production build
 - [ ] **Sync website assets** — copy regenerated pet/decoration PNGs to `website/public/` (see `NEXT_AI_PROMPT.md` Task 5)
 - [ ] Upload screenshots and app icon to App Store Connect
 - [ ] Complete App Store Connect IAP setup (see `docs/APP_STORE_CONNECT_IAP_SETUP.txt`)
-- [ ] Connect waitlist form to real backend (Supabase integration added to website)
-- [ ] Set up Vercel deployment for website
+- [x] Connect waitlist form to real backend (Supabase edge function `waitlist-signup` + `website/src/lib/supabase.ts`)
+- [ ] Set up Vercel deployment for website (vercel.json configured, needs `vercel --prod`)

@@ -2,7 +2,7 @@
  * Shared CORS configuration for all edge functions.
  *
  * Unifies origin handling across validate-coins, calculate-xp,
- * process-achievements, delete-account, and validate-receipt.
+ * process-achievements, delete-account, validate-receipt, and waitlist-signup.
  */
 
 const getProductionOrigins = (): string[] => {
@@ -43,6 +43,8 @@ export function isAllowedOrigin(origin: string | null): boolean {
     const url = new URL(origin);
     const host = url.hostname;
     if (host.endsWith('.lovableproject.com') || host.endsWith('.lovable.app')) return true;
+    // Allow Vercel preview deployments
+    if (host.endsWith('.vercel.app')) return true;
   } catch {
     // Invalid URL — reject
   }
