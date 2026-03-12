@@ -109,17 +109,17 @@ export const XP_CONFIG = {
 export const FOCUS_BONUS = {
   /** Perfect focus: 0 blocked app attempts */
   PERFECT_FOCUS: {
-    multiplier: 1.25,
+    multiplier: 1.35,
     label: 'PERFECT FOCUS',
-    coinBonus: 50,
-    description: 'You stayed fully focused! +25% XP bonus & +50 coins!',
+    coinBonus: 100,
+    description: 'You stayed fully focused! +35% XP bonus & +100 coins!',
   },
   /** Good focus: 1-2 blocked app attempts */
   GOOD_FOCUS: {
-    multiplier: 1.10,
+    multiplier: 1.20,
     label: 'GOOD FOCUS',
-    coinBonus: 25,
-    description: 'Good focus! +10% XP bonus & +25 coins!',
+    coinBonus: 50,
+    description: 'Good focus! +20% XP bonus & +50 coins!',
   },
   /** Distracted: 3+ blocked app attempts */
   DISTRACTED: {

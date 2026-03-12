@@ -889,11 +889,11 @@ export const useLandStore = create<LandStore>()(
           .map(island => {
             // Match island ID to known bonuses
             const bonusMap: Record<string, { type: string; value: number }> = {
-              'coral-reef': { type: 'coinRate', value: 10 },
-              'snow-peak': { type: 'streakFreeze', value: 1 },
-              'desert-oasis': { type: 'xpBoost', value: 15 },
-              'moonlit-garden': { type: 'passiveCoins', value: 5 },
-              'sakura-valley': { type: 'eggDiscount', value: 25 },
+              'coral-reef': { type: 'coinRate', value: 20 },
+              'snow-peak': { type: 'streakFreeze', value: 2 },
+              'desert-oasis': { type: 'xpBoost', value: 25 },
+              'moonlit-garden': { type: 'passiveCoins', value: 15 },
+              'sakura-valley': { type: 'eggDiscount', value: 35 },
             };
             return bonusMap[island.islandId];
           })
