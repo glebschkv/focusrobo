@@ -273,7 +273,7 @@ src/
 │   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling, expansion tiers
 │   ├── DecorationData.ts      # 20 decoration definitions (6 categories), rarity, prices, sprites
 │   ├── ShopData.ts            # Shop items, backgrounds, bundles, coin packs, utility items
-│   ├── GamificationData.ts    # 24 milestones, 13 daily + 10 weekly challenge templates
+│   ├── GamificationData.ts    # 41 milestones, 20 daily + 10 weekly challenge templates
 │   ├── AmbientSoundsData.ts   # 31 ambient sounds (8 free + 23 premium), 5 categories
 │   ├── SpecialAnimations.ts   # Special celebration animations
 │   └── LazySpecialAnimations.ts # Lazy-loaded animation variants
@@ -464,9 +464,10 @@ Premium rarity boost shifts weights: common -8, uncommon +2, rare +3, epic +2, l
 
 | Egg | Price | Common | Uncommon | Rare | Epic | Legendary |
 |-----|-------|--------|----------|------|------|-----------|
+| Starter Egg | 50 coins | 95% | 5% | 0% | 0% | 0% |
 | Common Egg | 150 coins | 80% | 15% | 5% | 0% | 0% |
 | Rare Egg | 600 coins | 40% | 35% | 20% | 5% | 0% |
-| Epic Egg | 1,800 coins | 0% | 15% | 40% | 35% | 10% |
+| Epic Egg | 1,200 coins | 0% | 15% | 40% | 35% | 10% |
 | Legendary Egg | 4,500 coins | 0% | 0% | 20% | 40% | 40% |
 
 **Species Selector**: 5,000 coins (discovered species) / 8,000 coins (undiscovered species).
@@ -525,11 +526,11 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 11, 12]
 | Island | Biome | Level | Cost | Completion Bonus |
 |--------|-------|-------|------|-----------------|
 | Home Island | Meadow | 0 | Free | — |
-| Coral Reef | Beach | 10 | 2,000 | +10% coin rate |
-| Snow Peak | Winter | 18 | 5,000 | +1 streak freeze/month |
-| Desert Oasis | Desert | 25 | 8,000 | +15% XP rate |
-| Moonlit Garden | Night | 32 | 12,000 | +5 daily passive coins |
-| Sakura Valley | Sakura | 40 | 15,000 | 25% egg discount |
+| Coral Reef | Beach | 10 | 2,000 | +20% coin rate |
+| Snow Peak | Winter | 18 | 5,000 | +2 streak freezes/month |
+| Desert Oasis | Desert | 25 | 8,000 | +25% XP rate |
+| Moonlit Garden | Night | 32 | 12,000 | +15 daily passive coins |
+| Sakura Valley | Sakura | 40 | 15,000 | 35% egg discount |
 
 Players can switch between unlocked islands. Each island has its own grid and completion state.
 
@@ -563,7 +564,7 @@ Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), gras
 - **Level formula**: Thresholds table for levels 1-20 `[0, 30, 70, 120, 180, 260, 350, 460, 590, 740, 920, 1120, 1350, 1610, 1900, 2230, 2600, 3010, 3470, 3980]`, then 700 XP/level after 20
 - **Streak bonus**: +3% per day, capped at 60% (max multiplier 1.6x at 20 days)
 - **Premium multiplier**: 2x
-- **Focus bonuses**: Perfect focus (0 blocked attempts) = +25% XP + 50 coins; Good focus (1-2 attempts) = +10% XP + 25 coins
+- **Focus bonuses**: Perfect focus (0 blocked attempts) = +35% XP + 100 coins; Good focus (1-2 attempts) = +20% XP + 50 coins
 - **Level-ups unlock new pet species** in the random drop pool
 - **Prestige system** exists in xpStore
 
@@ -608,7 +609,7 @@ Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), gras
 - Task intention + session notes modals
 
 ### Challenges & Gamification
-- **24 milestones** across level, streak, sessions, hours, and collection categories
+- **41 milestones** across level, streak, sessions, hours, and collection categories
 - **13 daily challenge templates** (easy/medium/hard), 3 active per day
 - **10 weekly challenge templates**
 - **60+ achievements** with rarity-based point values
