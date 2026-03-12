@@ -51,56 +51,44 @@ const TIERS = [
 
 export function RewardsSection() {
   return (
-    <section className="section-textured py-20 px-5">
+    <section className="section-textured section-standard">
       <div className="max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-12">
+        <AnimatedSection className="text-center mb-14">
           <AnimatedItem>
-            <h2
-              className="display-font"
-              style={{
-                fontSize: 'clamp(26px, 6vw, 40px)',
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                marginBottom: 10,
-                color: 'var(--fg-deep)',
-              }}
-            >
+            <h2 className="section-heading display-font">
               Bring a friend, get a head start
             </h2>
           </AnimatedItem>
           <AnimatedItem>
-            <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+            <p className="section-desc">
               Share your invite link. When friends join, you both unlock exclusive rewards.
             </p>
           </AnimatedItem>
         </AnimatedSection>
 
         {/* Desktop: horizontal tier path */}
-        <AnimatedSection className="hidden md:flex items-start justify-center gap-3 relative" stagger={0.1}>
+        <AnimatedSection className="hidden md:flex items-start justify-center gap-4 relative" stagger={0.1}>
           {/* Dotted connector line */}
           <div
             className="absolute top-[52px] left-[12%] right-[12%] h-0"
-            style={{
-              borderTop: '2px dashed rgba(234, 179, 8, 0.2)',
-              zIndex: 0,
-            }}
+            style={{ borderTop: '2px dashed rgba(234, 179, 8, 0.2)', zIndex: 0 }}
           />
 
           {TIERS.map((tier) => (
             <AnimatedItem key={tier.count}>
               <div
                 className={`rarity-card rarity-${tier.rarity}`}
-                style={{ width: 150, position: 'relative', zIndex: 1 }}
+                style={{ width: 156, position: 'relative', zIndex: 1 }}
               >
-                <div className="rarity-card-inner" style={{ padding: '20px 12px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
+                <div className="rarity-card-inner" style={{ padding: '24px 12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 32, marginBottom: 10 }}>{tier.emoji}</div>
                   <div
                     className="display-font"
-                    style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-deep)', marginBottom: 4 }}
+                    style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-deep)', marginBottom: 6 }}
                   >
                     {tier.reward}
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--fg-muted)', lineHeight: 1.4, marginBottom: 8 }}>
+                  <div className="card-desc" style={{ fontSize: 11, marginBottom: 10 }}>
                     {tier.desc}
                   </div>
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -110,7 +98,7 @@ export function RewardsSection() {
                         fontWeight: 700,
                         color: `var(--rarity-${tier.rarity})`,
                         background: RARITY_BG[tier.rarity],
-                        padding: '2px 8px',
+                        padding: '3px 8px',
                         borderRadius: 'var(--radius-pill)',
                       }}
                     >
@@ -123,7 +111,7 @@ export function RewardsSection() {
                           fontWeight: 700,
                           color: 'var(--accent-warm)',
                           background: 'rgba(234, 179, 8, 0.1)',
-                          padding: '2px 8px',
+                          padding: '3px 8px',
                           borderRadius: 'var(--radius-pill)',
                         }}
                       >
@@ -162,7 +150,7 @@ export function RewardsSection() {
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{tier.desc}</div>
+                <div className="card-desc" style={{ fontSize: 12 }}>{tier.desc}</div>
               </div>
               <div
                 style={{
@@ -178,12 +166,12 @@ export function RewardsSection() {
           ))}
         </div>
 
-        <AnimatedSection className="text-center mt-10">
+        <AnimatedSection className="text-center mt-12">
           <AnimatedItem>
             <a
               href="#waitlist"
-              className="warm-form-button inline-block"
-              style={{ padding: '12px 32px', fontSize: 15, textDecoration: 'none' }}
+              className="warm-form-button"
+              style={{ display: 'inline-flex', padding: '14px 36px', fontSize: 15, textDecoration: 'none' }}
             >
               Claim Your Free Egg
             </a>

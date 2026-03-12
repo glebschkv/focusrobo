@@ -13,49 +13,35 @@ const SMALL_ISLAND_PETS = [
 export const FinalCTA = forwardRef<HTMLElement>(function FinalCTA(_, ref) {
   return (
     <SkyBackground>
-      <section ref={ref} className="py-24 px-5">
+      <section ref={ref} style={{ padding: '100px 20px' }}>
         <div className="max-w-2xl mx-auto text-center">
           <AnimatedSection>
             <AnimatedItem>
-              <h2
-                className="display-font"
-                style={{
-                  fontSize: 'clamp(26px, 6vw, 40px)',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--fg-deep)',
-                  marginBottom: 10,
-                }}
-              >
+              <h2 className="section-heading display-font">
                 Your island is waiting
               </h2>
             </AnimatedItem>
             <AnimatedItem>
-              <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 520, margin: '0 auto 8px', lineHeight: 1.6 }}>
+              <p className="section-desc" style={{ marginBottom: 12 }}>
                 Block distracting apps, earn pixel art pets, and build your own floating island. Launching soon on iOS.
               </p>
             </AnimatedItem>
             <AnimatedItem>
-              <p
-                style={{
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: 'var(--accent-warm)',
-                  marginBottom: 24,
-                }}
-              >
+              <p className="accent-label" style={{ marginBottom: 32 }}>
                 Early members get a free Legendary Egg on launch day.
               </p>
             </AnimatedItem>
           </AnimatedSection>
 
-          <div style={{ maxWidth: 380, margin: '0 auto 32px' }}>
+          <div style={{ maxWidth: 400, margin: '0 auto 40px' }}>
             <div style={{ animation: 'island-bob 5s ease-in-out infinite' }}>
               <IslandScene gridSize={8} pets={SMALL_ISLAND_PETS} />
             </div>
           </div>
 
-          <WaitlistForm variant="cta" />
+          <div style={{ maxWidth: 480, margin: '0 auto' }}>
+            <WaitlistForm variant="cta" />
+          </div>
         </div>
       </section>
     </SkyBackground>

@@ -35,6 +35,7 @@ function HomePage() {
       <LoopSection />
       <div className="divider-warm" />
       <PetShowcase />
+      <div className="divider-warm" />
       <IslandGrowth />
       <div className="divider-warm" />
       <RewardsSection />

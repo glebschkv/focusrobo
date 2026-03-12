@@ -17,7 +17,7 @@ const GROWTH_STAGES: {
   {
     gridSize: 5,
     label: 'First Steps',
-    tagline: 'A cozy 5x5 patch and your very first pet.',
+    tagline: 'A cozy 5×5 patch and your very first pet.',
     pets: [
       { speciesId: 'bunny', rarity: 'common', cellIndex: 0 },
     ],
@@ -66,25 +66,16 @@ const GROWTH_STAGES: {
 
 export function IslandGrowth() {
   return (
-    <section className="section-textured py-20 px-5">
+    <section className="section-textured section-standard">
       <div className="max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-12">
+        <AnimatedSection className="text-center mb-14">
           <AnimatedItem>
-            <h2
-              className="display-font"
-              style={{
-                fontSize: 'clamp(26px, 6vw, 40px)',
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                marginBottom: 10,
-                color: 'var(--fg-deep)',
-              }}
-            >
+            <h2 className="section-heading display-font">
               Watch your island come alive
             </h2>
           </AnimatedItem>
           <AnimatedItem>
-            <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+            <p className="section-desc">
               Every pet you earn finds a home. Fill it up, archive your masterpiece, start fresh.
             </p>
           </AnimatedItem>
@@ -99,11 +90,11 @@ export function IslandGrowth() {
                   <IslandScene gridSize={stage.gridSize} pets={stage.pets} />
                 </div>
               </div>
-              <div className="text-center mt-2">
+              <div className="text-center" style={{ marginTop: 8 }}>
                 <div className="display-font" style={{ fontSize: 15, fontWeight: 700, color: 'var(--fg-deep)' }}>
                   {stage.label}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2, lineHeight: 1.4 }}>
+                <div className="card-desc" style={{ fontSize: 12, marginTop: 4 }}>
                   {stage.tagline}
                 </div>
               </div>
@@ -115,8 +106,8 @@ export function IslandGrowth() {
         <div className="md:hidden scroll-container">
           <div className="scroll-track">
             {GROWTH_STAGES.map((stage) => (
-              <div key={stage.gridSize} style={{ width: 220, flexShrink: 0 }}>
-                <div className="glass-warm p-3 mb-3">
+              <div key={stage.gridSize} style={{ width: 240, flexShrink: 0 }}>
+                <div className="glass-warm p-4 mb-3">
                   <div style={{ animation: 'island-bob 5s ease-in-out infinite' }}>
                     <IslandScene gridSize={stage.gridSize} pets={stage.pets} />
                   </div>
@@ -125,7 +116,7 @@ export function IslandGrowth() {
                   <div className="display-font" style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-deep)' }}>
                     {stage.label}
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
+                  <div className="card-desc" style={{ fontSize: 12, marginTop: 4 }}>
                     {stage.tagline}
                   </div>
                 </div>

@@ -12,7 +12,7 @@ export function Footer() {
         overflow: 'hidden',
       }}
     >
-      <div className="max-w-4xl mx-auto px-5 py-12">
+      <div className="max-w-4xl mx-auto" style={{ padding: '48px 20px 56px' }}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
             <img src="/app-icon.png" alt="PhoNo" style={{ width: 24, height: 24, borderRadius: 6 }} />
@@ -41,21 +41,21 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="text-center mt-8">
-          <p style={{ fontSize: 13, color: 'var(--fg-muted)', opacity: 0.7 }}>
+        <div className="text-center" style={{ marginTop: 32 }}>
+          <p style={{ fontSize: 13, color: 'var(--fg-muted)', opacity: 0.6 }}>
             Made with care by the PhoNo team
           </p>
         </div>
       </div>
 
-      {/* Pet parade — light theme, lower opacity */}
-      <div className="pet-parade" style={{ opacity: 0.35 }}>
+      {/* Pet parade */}
+      <div className="pet-parade" style={{ opacity: 0.25 }}>
         {PARADE_PETS.map((pet, i) => (
           <img
             key={pet}
             src={`/pets/${pet}-baby.png`}
             alt=""
-            className="pet-parade__pet"
+            className="pet-parade__pet pixel-art"
             style={{ animationDelay: `${i * 2.5}s`, left: `${i * -50}px` }}
             loading="lazy"
           />
