@@ -41,17 +41,13 @@ export function getWeatherType(timePeriod: TimePeriod): WeatherType {
   return 'clear';
 }
 
-export function getSkyColors(timePeriod: TimePeriod) {
-  switch (timePeriod) {
-    case 'dawn':
-      return ['#F4B183', '#F9D5A7', '#D0EAF5', '#EEF4F0'];
-    case 'dusk':
-      return ['#E8857A', '#F0B088', '#C5A0D0', '#E8E0F0'];
-    case 'night':
-      return ['#1a1a3e', '#2d2d5e', '#1e3a5f', '#0d1b2a'];
-    default:
-      return null; // Use theme default
-  }
+/** Returns null to always use the theme's own sky colors.
+ *  Time-of-day atmosphere is handled via very subtle CSS overlays instead. */
+export function getSkyColors(_timePeriod: TimePeriod) {
+  // Always return null — let the theme sky colors shine through.
+  // Time-of-day mood is conveyed through subtle CSS ::after overlays
+  // and weather particles (stars at night, etc.) rather than sky replacement.
+  return null;
 }
 
 interface WeatherParticlesProps {
