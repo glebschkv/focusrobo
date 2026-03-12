@@ -1545,6 +1545,102 @@
   letter-spacing: -0.02em;
 }
 
+/* ── Island Switcher Dots ──────────────────────────── */
+
+.pet-land__island-dots {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 100px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: var(--z-tooltip, 999);
+  pointer-events: auto;
+}
+
+.pet-land__island-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pet-land__island-dot:active {
+  transform: scale(1.3);
+}
+
+.pet-land__island-dot--active {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 0;
+  cursor: default;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+}
+
+/* ── Teaser Tooltip Bubble ──────────────────────────── */
+
+.pet-land__tooltip-bubble {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 110px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 240px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+  z-index: var(--z-tooltip, 999);
+  cursor: pointer;
+  animation: tooltip-bubble-enter 0.3s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pet-land__tooltip-bubble-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(220 10% 25%);
+  line-height: 1.35;
+  text-align: center;
+  display: block;
+}
+
+.pet-land__tooltip-bubble-tail {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes tooltip-bubble-enter {
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.95); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* ── Pet Tooltip Income Line ──────────────────────────── */
+
+.pet-tooltip__income {
+  font-size: 10px;
+  color: hsl(42 50% 40%);
+  opacity: 0.8;
+  margin-top: 2px;
+  display: block;
+}
+
 /* ── Time-of-day tinting overlays ──────────────────────────── */
 
 .pet-land--dawn::after,
@@ -1632,6 +1728,7 @@
   .pet-land__milestone { animation: none; }
   .pet-land__empty-sparkle-ring { animation: none; }
   .pet-tooltip { animation: none; }
+  .pet-land__tooltip-bubble { animation: none; }
   .pet-land--dawn::after,
   .pet-land--dusk::after,
   .pet-land--nighttime::after { display: none; }

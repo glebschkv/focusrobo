@@ -13,6 +13,7 @@ import {
   RARITY_LABEL,
   RARITY_STARS,
 } from '@/components/collection/constants';
+import { getPetPassiveRate } from '@/lib/constants';
 
 interface PetTooltipProps {
   cell: LandCell;
@@ -48,6 +49,7 @@ export function PetTooltip({ cell, index, gridSize, petRect, onClose }: PetToolt
 
   const rarityColor = RARITY_COLORS[cell.rarity];
   const stars = RARITY_STARS[cell.rarity];
+  const dailyIncome = getPetPassiveRate(cell.rarity, cell.size);
   const spritePath = getSpritePath(cell.petId, cell.size, species.imagePath);
 
   // Position tooltip using pixel-accurate pet rect (accounts for zoom/pan)
@@ -133,6 +135,9 @@ export function PetTooltip({ cell, index, gridSize, petRect, onClose }: PetToolt
             <span className="pet-tooltip__size">
               {SIZE_LABEL[cell.size]} · {cell.sessionMinutes > 0 ? `${cell.sessionMinutes}m` : 'Egg'}
             </span>
+            {dailyIncome > 0 && (
+              <span className="pet-tooltip__income">Earning {dailyIncome} coins/day</span>
+            )}
           </div>
         </div>
       </div>
