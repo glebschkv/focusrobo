@@ -4,15 +4,22 @@
  * Tests the account creation and authentication flows including:
  * - Guest mode creation and persistence
  * - Supabase session detection and user setup
- * - Auth state transitions (guest → signed in → signed out)
+ * - Auth state transitions (guest -> signed in -> signed out)
  * - Error handling during authentication
  * - Data isolation between guest and authenticated users
  */
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useAuth, _resetAuthForTesting } from '@/hooks/useAuth';
 
 // ─── Mock Dependencies ───────────────────────────────────────────────
+
+vi.mock('@capacitor/core', () => ({
+  Capacitor: { isNativePlatform: () => false },
+}));
+
+vi.mock('@capacitor/app', () => ({
+  App: { addListener: vi.fn() },
+}));
 
 vi.mock('@/integrations/supabase/client', () => {
   const mockSupabase = {
@@ -20,6 +27,7 @@ vi.mock('@/integrations/supabase/client', () => {
       getSession: vi.fn(),
       onAuthStateChange: vi.fn(),
       signOut: vi.fn(),
+      signInAnonymously: vi.fn(),
     },
   };
   return {
@@ -66,19 +74,42 @@ vi.mock('@/lib/logger', () => {
   };
 });
 
+vi.mock('@/services/achievement/achievementConstants', () => ({
+  ACHIEVEMENT_STORAGE_KEY: 'achievement-system-data',
+}));
+
+vi.mock('@/stores/shopStore', () => ({
+  useShopStore: { getState: () => ({ resetShop: vi.fn() }) },
+}));
+
+vi.mock('@/stores/streakStore', () => ({
+  useStreakStore: { setState: vi.fn() },
+}));
+
+vi.mock('@/stores/premiumStore', () => ({
+  usePremiumStore: { getState: () => ({ clearPremium: vi.fn() }) },
+}));
+
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: { getState: () => ({ setGuestMode: vi.fn() }) },
+}));
+
+import { useAuth, _resetAuthForTesting } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+
 const mockSupabase = supabase as unknown as {
   auth: {
     getSession: ReturnType<typeof vi.fn>;
     onAuthStateChange: ReturnType<typeof vi.fn>;
     signOut: ReturnType<typeof vi.fn>;
+    signInAnonymously: ReturnType<typeof vi.fn>;
   };
 };
 
 // ─── Constants ────────────────────────────────────────────────────────
 
-const GUEST_ID_KEY = 'pet_paradise_guest_id';
-const GUEST_CHOSEN_KEY = 'pet_paradise_guest_chosen';
+const GUEST_ID_KEY = 'nomo_guest_id';
+const GUEST_CHOSEN_KEY = 'nomo_guest_chosen';
 
 const mockSession = {
   user: {
@@ -94,7 +125,7 @@ const mockSession = {
 
 // ─── Tests ───────────────────────────────────────────────────────────
 
-describe('Account Database – Guest Mode', () => {
+describe('Account Database - Guest Mode', () => {
   const mockSubscription = { unsubscribe: vi.fn() };
 
   beforeEach(() => {
@@ -107,6 +138,11 @@ describe('Account Database – Guest Mode', () => {
     });
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
+    });
+    // Default: anonymous sign-in fails so we fall back to local guest
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
     });
   });
 
@@ -179,8 +215,8 @@ describe('Account Database – Guest Mode', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    act(() => {
-      result.current.continueAsGuest();
+    await act(async () => {
+      await result.current.continueAsGuest();
     });
 
     expect(result.current.isGuestMode).toBe(true);
@@ -202,7 +238,7 @@ describe('Account Database – Guest Mode', () => {
   });
 });
 
-describe('Account Database – Supabase Authentication', () => {
+describe('Account Database - Supabase Authentication', () => {
   const mockSubscription = { unsubscribe: vi.fn() };
 
   beforeEach(() => {
@@ -211,6 +247,10 @@ describe('Account Database – Supabase Authentication', () => {
     vi.clearAllMocks();
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
+    });
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
     });
   });
 
@@ -316,7 +356,7 @@ describe('Account Database – Supabase Authentication', () => {
   it('should manage auth subscription at module level (singleton)', async () => {
     // With the singleton auth pattern, the subscription is registered once
     // at module level and shared by all hook instances. Individual hook
-    // unmounts do NOT unsubscribe — the subscription persists for the
+    // unmounts do NOT unsubscribe -- the subscription persists for the
     // lifetime of the app. _resetAuthForTesting() handles test cleanup.
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: null },
@@ -330,7 +370,7 @@ describe('Account Database – Supabase Authentication', () => {
   });
 });
 
-describe('Account Database – Error Handling', () => {
+describe('Account Database - Error Handling', () => {
   const mockSubscription = { unsubscribe: vi.fn() };
 
   beforeEach(() => {
@@ -339,6 +379,10 @@ describe('Account Database – Error Handling', () => {
     vi.clearAllMocks();
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
+    });
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
     });
   });
 
@@ -397,7 +441,7 @@ describe('Account Database – Error Handling', () => {
   });
 });
 
-describe('Account Database – Sign Out', () => {
+describe('Account Database - Sign Out', () => {
   const mockSubscription = { unsubscribe: vi.fn() };
 
   beforeEach(() => {
@@ -407,12 +451,9 @@ describe('Account Database – Sign Out', () => {
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
     });
-
-    // Mock window.location.href
-    Object.defineProperty(window, 'location', {
-      value: { href: '' },
-      writable: true,
-      configurable: true,
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
     });
   });
 
@@ -538,7 +579,7 @@ describe('Account Database – Sign Out', () => {
   });
 });
 
-describe('Account Database – Session Transition Flows', () => {
+describe('Account Database - Session Transition Flows', () => {
   const mockSubscription = { unsubscribe: vi.fn() };
 
   beforeEach(() => {
@@ -548,13 +589,17 @@ describe('Account Database – Session Transition Flows', () => {
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
     });
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
+    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('guest → signed in: should transition from guest to authenticated user', async () => {
+  it('guest -> signed in: should transition from guest to authenticated user', async () => {
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: null },
       error: null,
@@ -567,8 +612,8 @@ describe('Account Database – Session Transition Flows', () => {
     });
 
     // Start as guest
-    act(() => {
-      result.current.continueAsGuest();
+    await act(async () => {
+      await result.current.continueAsGuest();
     });
 
     expect(result.current.isGuestMode).toBe(true);
@@ -584,7 +629,7 @@ describe('Account Database – Session Transition Flows', () => {
     expect(result.current.isAuthenticated).toBe(true);
   });
 
-  it('signed in → signed out → guest: full lifecycle', async () => {
+  it('signed in -> signed out -> guest: full lifecycle', async () => {
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: mockSession },
       error: null,
@@ -610,11 +655,51 @@ describe('Account Database – Session Transition Flows', () => {
     expect(result.current.isAuthenticated).toBe(false);
 
     // Continue as guest
-    act(() => {
-      result.current.continueAsGuest();
+    await act(async () => {
+      await result.current.continueAsGuest();
     });
 
     expect(result.current.isGuestMode).toBe(true);
     expect(result.current.isAuthenticated).toBe(true);
+  });
+});
+
+describe('Account Database - Key Migration', () => {
+  const mockSubscription = { unsubscribe: vi.fn() };
+
+  beforeEach(() => {
+    _resetAuthForTesting();
+    localStorage.clear();
+    vi.clearAllMocks();
+    mockSupabase.auth.getSession.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    });
+    mockSupabase.auth.onAuthStateChange.mockReturnValue({
+      data: { subscription: mockSubscription },
+    });
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth disabled' },
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should use nomo_ prefix storage keys', async () => {
+    localStorage.setItem(GUEST_CHOSEN_KEY, 'true');
+
+    const { result } = renderHook(() => useAuth());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Guest ID should be stored under the nomo_ prefix key
+    expect(localStorage.getItem('nomo_guest_id')).toBeTruthy();
+    // Old keys should not be set
+    expect(localStorage.getItem('pet_paradise_guest_id')).toBeNull();
   });
 });

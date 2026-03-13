@@ -39,13 +39,13 @@ vi.mock('@/lib/logger', () => {
 import { useCollectionStore, useActiveHomePets, useFavorites } from '@/stores/collectionStore';
 
 describe('collectionStore', () => {
-  // Storage key: 'petparadise-collection'
+  // Storage key: 'botblock-collection'
 
   beforeEach(() => {
     localStorage.clear();
     // Reset store to initial state
     useCollectionStore.setState({
-      activeHomePets: ['hare'],
+      activeHomeBots: ['bolt-bot'],
       favorites: [],
     });
   });
@@ -57,7 +57,7 @@ describe('collectionStore', () => {
   describe('Initial State', () => {
     it('should initialize with default active home bot "bolt-bot"', () => {
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['hare']);
+      expect(state.activeHomeBots).toEqual(['bolt-bot']);
     });
 
     it('should initialize with empty favorites', () => {
@@ -69,8 +69,15 @@ describe('collectionStore', () => {
       const state = useCollectionStore.getState();
       expect(typeof state.toggleHomeActive).toBe('function');
       expect(typeof state.toggleFavorite).toBe('function');
-      expect(typeof state.setActiveHomePets).toBe('function');
+      expect(typeof state.setActiveHomeBots).toBe('function');
       expect(typeof state.setFavorites).toBe('function');
+      expect(typeof state.isBotHomeActive).toBe('function');
+      expect(typeof state.isBotFavorite).toBe('function');
+    });
+
+    it('should have backward-compat aliases', () => {
+      const state = useCollectionStore.getState();
+      expect(typeof state.setActiveHomePets).toBe('function');
       expect(typeof state.isPetHomeActive).toBe('function');
       expect(typeof state.isPetFavorite).toBe('function');
     });
@@ -85,34 +92,34 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain('cat');
-      expect(state.activeHomePets).toContain('hare');
+      expect(state.activeHomeBots).toContain('cat');
+      expect(state.activeHomeBots).toContain('bolt-bot');
     });
 
     it('should remove a bot from active home bots when already present', () => {
-      const { toggleHomeActive, setActiveHomePets } = useCollectionStore.getState();
+      const { toggleHomeActive, setActiveHomeBots } = useCollectionStore.getState();
 
       act(() => {
-        setActiveHomePets(['hare', 'cat', 'dog']);
+        setActiveHomeBots(['bolt-bot', 'cat', 'dog']);
         toggleHomeActive('cat');
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).not.toContain('cat');
-      expect(state.activeHomePets).toContain('hare');
-      expect(state.activeHomePets).toContain('dog');
+      expect(state.activeHomeBots).not.toContain('cat');
+      expect(state.activeHomeBots).toContain('bolt-bot');
+      expect(state.activeHomeBots).toContain('dog');
     });
 
     it('should handle toggling the default bot off', () => {
       const { toggleHomeActive } = useCollectionStore.getState();
 
       act(() => {
-        toggleHomeActive('hare');
+        toggleHomeActive('bolt-bot');
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).not.toContain('hare');
-      expect(state.activeHomePets).toHaveLength(0);
+      expect(state.activeHomeBots).not.toContain('bolt-bot');
+      expect(state.activeHomeBots).toHaveLength(0);
     });
 
     it('should toggle multiple pets independently', () => {
@@ -125,10 +132,10 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain('cat');
-      expect(state.activeHomePets).toContain('dog');
-      expect(state.activeHomePets).toContain('bird');
-      expect(state.activeHomePets).toHaveLength(4); // hare + 3 new
+      expect(state.activeHomeBots).toContain('cat');
+      expect(state.activeHomeBots).toContain('dog');
+      expect(state.activeHomeBots).toContain('bird');
+      expect(state.activeHomeBots).toHaveLength(4); // bolt-bot + 3 new
     });
 
     it('should handle rapid toggle on same bot', () => {
@@ -141,8 +148,8 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain('cat');
-      expect(state.activeHomePets.filter(id => id === 'cat')).toHaveLength(1);
+      expect(state.activeHomeBots).toContain('cat');
+      expect(state.activeHomeBots.filter(id => id === 'cat')).toHaveLength(1);
     });
   });
 
@@ -199,8 +206,44 @@ describe('collectionStore', () => {
     });
   });
 
-  describe('setActiveHomePets', () => {
-    it('should set active home pets to provided array', () => {
+  describe('setActiveHomeBots', () => {
+    it('should set active home bots to provided array', () => {
+      const { setActiveHomeBots } = useCollectionStore.getState();
+
+      act(() => {
+        setActiveHomeBots(['cat', 'dog', 'bird']);
+      });
+
+      const state = useCollectionStore.getState();
+      expect(state.activeHomeBots).toEqual(['cat', 'dog', 'bird']);
+    });
+
+    it('should replace all existing active bots', () => {
+      const { setActiveHomeBots } = useCollectionStore.getState();
+
+      act(() => {
+        setActiveHomeBots(['cat', 'dog']);
+        setActiveHomeBots(['fish']);
+      });
+
+      const state = useCollectionStore.getState();
+      expect(state.activeHomeBots).toEqual(['fish']);
+    });
+
+    it('should handle empty array', () => {
+      const { setActiveHomeBots } = useCollectionStore.getState();
+
+      act(() => {
+        setActiveHomeBots([]);
+      });
+
+      const state = useCollectionStore.getState();
+      expect(state.activeHomeBots).toEqual([]);
+    });
+  });
+
+  describe('setActiveHomePets (backward-compat alias)', () => {
+    it('should set active home bots via the alias', () => {
       const { setActiveHomePets } = useCollectionStore.getState();
 
       act(() => {
@@ -208,30 +251,7 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['cat', 'dog', 'bird']);
-    });
-
-    it('should replace all existing active pets', () => {
-      const { setActiveHomePets } = useCollectionStore.getState();
-
-      act(() => {
-        setActiveHomePets(['cat', 'dog']);
-        setActiveHomePets(['fish']);
-      });
-
-      const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['fish']);
-    });
-
-    it('should handle empty array', () => {
-      const { setActiveHomePets } = useCollectionStore.getState();
-
-      act(() => {
-        setActiveHomePets([]);
-      });
-
-      const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual([]);
+      expect(state.activeHomeBots).toEqual(['cat', 'dog', 'bird']);
     });
   });
 
@@ -261,34 +281,42 @@ describe('collectionStore', () => {
   });
 
   describe('Selector Functions', () => {
-    describe('isPetHomeActive', () => {
-      it('should return true for active pets', () => {
-        const { setActiveHomePets } = useCollectionStore.getState();
+    describe('isBotHomeActive', () => {
+      it('should return true for active bots', () => {
+        const { setActiveHomeBots } = useCollectionStore.getState();
 
         act(() => {
-          setActiveHomePets(['cat', 'dog', 'bird']);
+          setActiveHomeBots(['cat', 'dog', 'bird']);
         });
 
         const state = useCollectionStore.getState();
-        expect(state.isPetHomeActive('cat')).toBe(true);
-        expect(state.isPetHomeActive('dog')).toBe(true);
-        expect(state.isPetHomeActive('bird')).toBe(true);
+        expect(state.isBotHomeActive('cat')).toBe(true);
+        expect(state.isBotHomeActive('dog')).toBe(true);
+        expect(state.isBotHomeActive('bird')).toBe(true);
       });
 
-      it('should return false for inactive pets', () => {
+      it('should return false for inactive bots', () => {
         const state = useCollectionStore.getState();
-        expect(state.isPetHomeActive('dragon')).toBe(false);
-        expect(state.isPetHomeActive('unicorn')).toBe(false);
+        expect(state.isBotHomeActive('dragon')).toBe(false);
+        expect(state.isBotHomeActive('unicorn')).toBe(false);
       });
 
       it('should return true for default bot', () => {
         const state = useCollectionStore.getState();
-        expect(state.isPetHomeActive('hare')).toBe(true);
+        expect(state.isBotHomeActive('bolt-bot')).toBe(true);
       });
     });
 
-    describe('isPetFavorite', () => {
-      it('should return true for favorite pets', () => {
+    describe('isPetHomeActive (backward-compat alias)', () => {
+      it('should return true for active bots via the alias', () => {
+        const state = useCollectionStore.getState();
+        expect(state.isPetHomeActive('bolt-bot')).toBe(true);
+        expect(state.isPetHomeActive('nonexistent')).toBe(false);
+      });
+    });
+
+    describe('isBotFavorite', () => {
+      it('should return true for favorite bots', () => {
         const { setFavorites } = useCollectionStore.getState();
 
         act(() => {
@@ -296,23 +324,37 @@ describe('collectionStore', () => {
         });
 
         const state = useCollectionStore.getState();
-        expect(state.isPetFavorite('golden-cat')).toBe(true);
-        expect(state.isPetFavorite('silver-dog')).toBe(true);
+        expect(state.isBotFavorite('golden-cat')).toBe(true);
+        expect(state.isBotFavorite('silver-dog')).toBe(true);
       });
 
-      it('should return false for non-favorite pets', () => {
+      it('should return false for non-favorite bots', () => {
         const state = useCollectionStore.getState();
+        expect(state.isBotFavorite('random-pet')).toBe(false);
+      });
+    });
+
+    describe('isPetFavorite (backward-compat alias)', () => {
+      it('should return true for favorite bots via the alias', () => {
+        const { setFavorites } = useCollectionStore.getState();
+
+        act(() => {
+          setFavorites(['golden-cat']);
+        });
+
+        const state = useCollectionStore.getState();
+        expect(state.isPetFavorite('golden-cat')).toBe(true);
         expect(state.isPetFavorite('random-pet')).toBe(false);
       });
     });
   });
 
   describe('Selector Hooks', () => {
-    it('useActiveHomePets should return active home pets', () => {
-      const { setActiveHomePets } = useCollectionStore.getState();
+    it('useActiveHomePets should return active home bots', () => {
+      const { setActiveHomeBots } = useCollectionStore.getState();
 
       act(() => {
-        setActiveHomePets(['cat', 'dog']);
+        setActiveHomeBots(['cat', 'dog']);
       });
 
       const { result } = renderHook(() => useActiveHomePets());
@@ -334,7 +376,7 @@ describe('collectionStore', () => {
       const { result: activePetsResult } = renderHook(() => useActiveHomePets());
       const { result: favoritesResult } = renderHook(() => useFavorites());
 
-      expect(activePetsResult.current).toEqual(['hare']);
+      expect(activePetsResult.current).toEqual(['bolt-bot']);
       expect(favoritesResult.current).toEqual([]);
 
       act(() => {
@@ -359,11 +401,11 @@ describe('collectionStore', () => {
       // Wait for persistence middleware to save
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      const saved = localStorage.getItem('petparadise-collection');
+      const saved = localStorage.getItem('botblock-collection');
       expect(saved).not.toBeNull();
 
       const parsed = JSON.parse(saved!);
-      expect(parsed.state.activeHomePets).toContain('cat');
+      expect(parsed.state.activeHomeBots).toContain('cat');
       expect(parsed.state.favorites).toContain('golden-cat');
     });
 
@@ -371,21 +413,21 @@ describe('collectionStore', () => {
       // Pre-populate localStorage with valid persisted state
       const persistedState = {
         state: {
-          activeHomePets: ['dragon', 'phoenix'],
+          activeHomeBots: ['dragon', 'phoenix'],
           favorites: ['legendary-pet'],
         },
         version: 0,
       };
-      localStorage.setItem('petparadise-collection', JSON.stringify(persistedState));
+      localStorage.setItem('botblock-collection', JSON.stringify(persistedState));
 
       // Reset and let Zustand rehydrate
       useCollectionStore.setState({
-        activeHomePets: persistedState.state.activeHomePets,
+        activeHomeBots: persistedState.state.activeHomeBots,
         favorites: persistedState.state.favorites,
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['dragon', 'phoenix']);
+      expect(state.activeHomeBots).toEqual(['dragon', 'phoenix']);
       expect(state.favorites).toEqual(['legendary-pet']);
     });
   });
@@ -401,7 +443,7 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain(specialId);
+      expect(state.activeHomeBots).toContain(specialId);
       expect(state.favorites).toContain(specialId);
     });
 
@@ -414,7 +456,7 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain(longId);
+      expect(state.activeHomeBots).toContain(longId);
     });
 
     it('should handle empty string bot ID', () => {
@@ -425,15 +467,15 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toContain('');
+      expect(state.activeHomeBots).toContain('');
     });
 
     it('should maintain state consistency with concurrent operations', () => {
-      const { toggleHomeActive, toggleFavorite, setActiveHomePets } = useCollectionStore.getState();
+      const { toggleHomeActive, toggleFavorite, setActiveHomeBots } = useCollectionStore.getState();
 
       act(() => {
         toggleHomeActive('bot-1');
-        setActiveHomePets(['bot-2', 'bot-3']);
+        setActiveHomeBots(['bot-2', 'bot-3']);
         toggleHomeActive('bot-4');
         toggleFavorite('fav-1');
         toggleFavorite('fav-2');
@@ -441,7 +483,7 @@ describe('collectionStore', () => {
       });
 
       const state = useCollectionStore.getState();
-      expect(state.activeHomePets).toEqual(['bot-2', 'bot-3', 'bot-4']);
+      expect(state.activeHomeBots).toEqual(['bot-2', 'bot-3', 'bot-4']);
       expect(state.favorites).toEqual(['fav-2']);
     });
   });

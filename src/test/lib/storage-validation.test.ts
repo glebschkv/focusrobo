@@ -92,9 +92,9 @@ describe('Storage Validation', () => {
       const result = xpSystemSchema.safeParse(partialData);
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.unlockedAnimals).toEqual([]);
-        expect(result.data.availableBiomes).toEqual(['Snow']);
-        expect(result.data.currentBiome).toBe('Snow');
+        expect(result.data.unlockedPets).toEqual([]);
+        expect(result.data.availableZones).toEqual(['Assembly Line']);
+        expect(result.data.currentZone).toBe('Assembly Line');
       }
     });
 
@@ -475,9 +475,9 @@ describe('Storage Validation', () => {
       const xssAttempt = {
         currentXP: 0,
         currentLevel: 0,
-        currentBiome: '<script>alert("xss")</script>',
-        unlockedAnimals: [],
-        availableBiomes: ['Meadow'],
+        currentZone: '<script>alert("xss")</script>',
+        unlockedPets: [],
+        availableZones: ['Meadow'],
       };
 
       // Schema validation passes (we don't sanitize, that's React's job)

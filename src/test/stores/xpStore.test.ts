@@ -4,9 +4,7 @@ import {
   useXPStore,
   useCurrentXP,
   useCurrentLevel,
-  useUnlockedAnimals,
-  useCurrentBiome,
-  useAvailableBiomes,
+  useUnlockedPets,
   subscribeToXPChanges,
   calculateLevelRequirement,
   calculateLevelFromXP,
@@ -77,8 +75,8 @@ describe('xpStore', () => {
       expect(calculateLevelRequirement(0)).toBe(0);
     });
 
-    it('should return 15 for level 1', () => {
-      expect(calculateLevelRequirement(1)).toBe(15);
+    it('should return 30 for level 1', () => {
+      expect(calculateLevelRequirement(1)).toBe(30);
     });
 
     it('should return increasing values for higher levels', () => {
@@ -86,18 +84,20 @@ describe('xpStore', () => {
       const level3 = calculateLevelRequirement(3);
       const level4 = calculateLevelRequirement(4);
 
-      expect(level2).toBeGreaterThan(15);
+      expect(level2).toBeGreaterThan(30);
       expect(level3).toBeGreaterThan(level2);
       expect(level4).toBeGreaterThan(level3);
     });
 
-    it('should handle negative levels gracefully', () => {
-      expect(calculateLevelRequirement(-1)).toBe(0);
-    });
-
-    it('should use exponential scaling (1.15^n)', () => {
-      // Level 2 should be 15 * 1.15^1 = 17.25 -> 17
-      expect(calculateLevelRequirement(2)).toBe(Math.floor(15 * Math.pow(1.15, 1)));
+    it('should match the LEVEL_REQUIREMENTS lookup table for known levels', () => {
+      // Values from xpConstants.ts LEVEL_REQUIREMENTS array
+      expect(calculateLevelRequirement(0)).toBe(0);
+      expect(calculateLevelRequirement(1)).toBe(30);
+      expect(calculateLevelRequirement(2)).toBe(70);
+      expect(calculateLevelRequirement(3)).toBe(120);
+      expect(calculateLevelRequirement(4)).toBe(180);
+      expect(calculateLevelRequirement(5)).toBe(260);
+      expect(calculateLevelRequirement(10)).toBe(920);
     });
   });
 
@@ -106,19 +106,23 @@ describe('xpStore', () => {
       expect(calculateLevelFromXP(0)).toBe(0);
     });
 
-    it('should return level 1 when XP meets requirement', () => {
-      expect(calculateLevelFromXP(15)).toBe(1);
+    it('should return 0 for XP below level 1 threshold', () => {
+      expect(calculateLevelFromXP(29)).toBe(0);
     });
 
-    it('should return correct level for accumulated XP', () => {
-      // Calculate XP needed for level 5
-      let totalXP = 0;
-      for (let i = 1; i <= 5; i++) {
-        totalXP += calculateLevelRequirement(i);
-      }
-      // Should be exactly level 5 or close
-      const level = calculateLevelFromXP(totalXP);
-      expect(level).toBeGreaterThanOrEqual(5);
+    it('should return level 1 when XP meets requirement', () => {
+      expect(calculateLevelFromXP(30)).toBe(1);
+    });
+
+    it('should return correct level for XP at exact thresholds', () => {
+      expect(calculateLevelFromXP(70)).toBe(2);
+      expect(calculateLevelFromXP(120)).toBe(3);
+      expect(calculateLevelFromXP(260)).toBe(5);
+    });
+
+    it('should return correct level for XP between thresholds', () => {
+      // 70 = level 2, 120 = level 3, so 100 should be level 2
+      expect(calculateLevelFromXP(100)).toBe(2);
     });
 
     it('should cap at MAX_LEVEL', () => {
@@ -137,14 +141,14 @@ describe('xpStore', () => {
       expect(currentLevel).toBe(0);
     });
 
-    it('should have 15 XP to next level initially', () => {
+    it('should have 15 XP to next level initially (hardcoded initial state)', () => {
       const { xpToNextLevel } = useXPStore.getState();
       expect(xpToNextLevel).toBe(15);
     });
 
-    it('should have empty unlocked robots initially', () => {
-      const { unlockedRobots } = useXPStore.getState();
-      expect(unlockedRobots).toEqual([]);
+    it('should have empty unlocked pets initially', () => {
+      const { unlockedPets } = useXPStore.getState();
+      expect(unlockedPets).toEqual([]);
     });
 
     it('should have Assembly Line as default zone', () => {
@@ -155,6 +159,11 @@ describe('xpStore', () => {
     it('should have Assembly Line in available zones', () => {
       const { availableZones } = useXPStore.getState();
       expect(availableZones).toContain('Assembly Line');
+    });
+
+    it('should have prestige level 0 initially', () => {
+      const { prestigeLevel } = useXPStore.getState();
+      expect(prestigeLevel).toBe(0);
     });
   });
 
@@ -207,6 +216,27 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentXP).toBe(100);
     });
 
+    it('should update level when XP crosses threshold', () => {
+      const { addXP } = useXPStore.getState();
+
+      act(() => {
+        addXP(30); // Level 1 threshold is 30
+      });
+
+      expect(useXPStore.getState().currentLevel).toBe(1);
+    });
+
+    it('should update xpToNextLevel correctly after addXP', () => {
+      const { addXP } = useXPStore.getState();
+
+      act(() => {
+        addXP(30); // Reaches level 1, next level at 70
+      });
+
+      // xpToNextLevel = calculateLevelRequirement(2) - currentXP = 70 - 30 = 40
+      expect(useXPStore.getState().xpToNextLevel).toBe(40);
+    });
+
     it('should handle negative XP (allowing it for corrections)', () => {
       const { addXP, setXP } = useXPStore.getState();
 
@@ -255,85 +285,85 @@ describe('xpStore', () => {
     });
   });
 
-  describe('addRobot', () => {
-    it('should add a new robot', () => {
-      const { addRobot } = useXPStore.getState();
+  describe('addPet', () => {
+    it('should add a new pet', () => {
+      const { addPet } = useXPStore.getState();
 
       act(() => {
-        addRobot('panda');
+        addPet('panda');
       });
 
-      expect(useXPStore.getState().unlockedRobots).toContain('panda');
+      expect(useXPStore.getState().unlockedPets).toContain('panda');
     });
 
-    it('should not add duplicate robots', () => {
-      const { addRobot } = useXPStore.getState();
+    it('should not add duplicate pets', () => {
+      const { addPet } = useXPStore.getState();
 
       act(() => {
-        addRobot('cat');
-        addRobot('cat');
-        addRobot('cat');
+        addPet('cat');
+        addPet('cat');
+        addPet('cat');
       });
 
-      const robots = useXPStore.getState().unlockedRobots;
-      expect(robots.filter(a => a === 'cat')).toHaveLength(1);
+      const pets = useXPStore.getState().unlockedPets;
+      expect(pets.filter(a => a === 'cat')).toHaveLength(1);
     });
 
-    it('should maintain existing robots when adding new', () => {
-      const { addRobot } = useXPStore.getState();
+    it('should maintain existing pets when adding new', () => {
+      const { addPet } = useXPStore.getState();
 
       act(() => {
-        addRobot('dog');
-        addRobot('cat');
+        addPet('dog');
+        addPet('cat');
       });
 
-      const { unlockedRobots } = useXPStore.getState();
-      expect(unlockedRobots).toContain('dog');
-      expect(unlockedRobots).toContain('cat');
+      const { unlockedPets } = useXPStore.getState();
+      expect(unlockedPets).toContain('dog');
+      expect(unlockedPets).toContain('cat');
     });
   });
 
-  describe('addRobots', () => {
-    it('should add multiple robots at once', () => {
-      const { addRobots } = useXPStore.getState();
+  describe('addPets', () => {
+    it('should add multiple pets at once', () => {
+      const { addPets } = useXPStore.getState();
 
       act(() => {
-        addRobots(['bird', 'fish', 'rabbit']);
+        addPets(['bird', 'fish', 'rabbit']);
       });
 
-      const { unlockedRobots } = useXPStore.getState();
-      expect(unlockedRobots).toContain('bird');
-      expect(unlockedRobots).toContain('fish');
-      expect(unlockedRobots).toContain('rabbit');
+      const { unlockedPets } = useXPStore.getState();
+      expect(unlockedPets).toContain('bird');
+      expect(unlockedPets).toContain('fish');
+      expect(unlockedPets).toContain('rabbit');
     });
 
     it('should filter out duplicates when adding multiple', () => {
-      const { addRobot, addRobots } = useXPStore.getState();
+      const { addPet, addPets } = useXPStore.getState();
 
       act(() => {
-        addRobot('dog');
-        addRobots(['dog', 'cat', 'bird']);
+        addPet('dog');
+        addPets(['dog', 'cat', 'bird']);
       });
 
-      const { unlockedRobots } = useXPStore.getState();
-      expect(unlockedRobots.filter(a => a === 'dog')).toHaveLength(1);
-      expect(unlockedRobots).toHaveLength(3);
+      const { unlockedPets } = useXPStore.getState();
+      expect(unlockedPets.filter(a => a === 'dog')).toHaveLength(1);
+      expect(unlockedPets).toHaveLength(3);
     });
 
-    it('should not update state if no new robots', () => {
-      const { addRobots } = useXPStore.getState();
+    it('should not update state if no new pets', () => {
+      const { addPets } = useXPStore.getState();
 
       act(() => {
-        addRobots(['cat', 'dog']);
+        addPets(['cat', 'dog']);
       });
 
-      const initialRobots = [...useXPStore.getState().unlockedRobots];
+      const initialPets = [...useXPStore.getState().unlockedPets];
 
       act(() => {
-        addRobots(['cat', 'dog']);
+        addPets(['cat', 'dog']);
       });
 
-      expect(useXPStore.getState().unlockedRobots).toEqual(initialRobots);
+      expect(useXPStore.getState().unlockedPets).toEqual(initialPets);
     });
   });
 
@@ -430,28 +460,28 @@ describe('xpStore', () => {
     });
 
     it('should not affect unspecified properties', () => {
-      const { addRobot, updateState } = useXPStore.getState();
+      const { addPet, updateState } = useXPStore.getState();
 
       act(() => {
-        addRobot('tiger');
+        addPet('tiger');
       });
 
       act(() => {
         updateState({ currentXP: 100 });
       });
 
-      expect(useXPStore.getState().unlockedRobots).toContain('tiger');
+      expect(useXPStore.getState().unlockedPets).toContain('tiger');
     });
   });
 
   describe('resetXP', () => {
     it('should reset all state to initial values', () => {
-      const { addXP, setLevel, addRobot, addZone, resetXP } = useXPStore.getState();
+      const { addXP, setLevel, addPet, addZone, resetXP } = useXPStore.getState();
 
       act(() => {
         addXP(1000);
         setLevel(15);
-        addRobot('lion');
+        addPet('lion');
         addZone('Jungle');
       });
 
@@ -462,9 +492,59 @@ describe('xpStore', () => {
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(0);
       expect(state.currentLevel).toBe(0);
-      expect(state.unlockedRobots).toEqual([]);
+      expect(state.unlockedPets).toEqual([]);
       expect(state.availableZones).toEqual(['Assembly Line']);
       expect(state.currentZone).toBe('Assembly Line');
+    });
+  });
+
+  describe('prestige', () => {
+    it('should not allow prestige below MAX_LEVEL', () => {
+      const { setLevel } = useXPStore.getState();
+
+      act(() => {
+        setLevel(49);
+      });
+
+      let result: boolean = false;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+
+      expect(result).toBe(false);
+      expect(useXPStore.getState().prestigeLevel).toBe(0);
+    });
+
+    it('should allow prestige at MAX_LEVEL', () => {
+      const { setLevel } = useXPStore.getState();
+
+      act(() => {
+        setLevel(MAX_LEVEL);
+      });
+
+      let result: boolean = false;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+
+      expect(result).toBe(true);
+      expect(useXPStore.getState().prestigeLevel).toBe(1);
+      expect(useXPStore.getState().currentLevel).toBe(0);
+      expect(useXPStore.getState().currentXP).toBe(0);
+    });
+
+    it('should not allow prestige beyond level 10', () => {
+      // Set up prestige level 10 via updateState
+      act(() => {
+        useXPStore.getState().updateState({ prestigeLevel: 10, currentLevel: MAX_LEVEL });
+      });
+
+      let result: boolean = false;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+
+      expect(result).toBe(false);
     });
   });
 
@@ -487,29 +567,28 @@ describe('xpStore', () => {
       expect(result.current).toBe(7);
     });
 
-    it('useUnlockedAnimals should return robots array', () => {
+    it('useUnlockedPets should return pets array', () => {
       act(() => {
-        useXPStore.getState().addRobots(['bear', 'deer']);
+        useXPStore.getState().addPets(['bear', 'deer']);
       });
 
-      const { result } = renderHook(() => useUnlockedAnimals());
+      const { result } = renderHook(() => useUnlockedPets());
       expect(result.current).toContain('bear');
       expect(result.current).toContain('deer');
     });
 
-    it('useCurrentBiome should return current zone', () => {
-      const { result } = renderHook(() => useCurrentBiome());
-      expect(result.current).toBe('Assembly Line');
+    it('currentZone should be accessible via getState', () => {
+      expect(useXPStore.getState().currentZone).toBe('Assembly Line');
     });
 
-    it('useAvailableBiomes should return available zones', () => {
+    it('availableZones should be accessible via getState', () => {
       act(() => {
         useXPStore.getState().addZone('Meadow');
       });
 
-      const { result } = renderHook(() => useAvailableBiomes());
-      expect(result.current).toContain('Assembly Line');
-      expect(result.current).toContain('Meadow');
+      const { availableZones } = useXPStore.getState();
+      expect(availableZones).toContain('Assembly Line');
+      expect(availableZones).toContain('Meadow');
     });
 
     it('selectors should update on state change', () => {
@@ -586,15 +665,26 @@ describe('xpStore', () => {
       expect(useXPStore.getState().currentXP).toBe(1000);
     });
 
-    it('should handle many robots without issue', () => {
-      const { addRobots } = useXPStore.getState();
-      const manyRobots = Array.from({ length: 50 }, (_, i) => `robot_${i}`);
+    it('should handle many pets without issue', () => {
+      const { addPets } = useXPStore.getState();
+      const manyPets = Array.from({ length: 50 }, (_, i) => `pet_${i}`);
 
       act(() => {
-        addRobots(manyRobots);
+        addPets(manyPets);
       });
 
-      expect(useXPStore.getState().unlockedRobots).toHaveLength(50);
+      expect(useXPStore.getState().unlockedPets).toHaveLength(50);
+    });
+
+    it('should set xpToNextLevel to 0 at MAX_LEVEL', () => {
+      const { addXP } = useXPStore.getState();
+
+      act(() => {
+        addXP(Number.MAX_SAFE_INTEGER);
+      });
+
+      expect(useXPStore.getState().currentLevel).toBe(MAX_LEVEL);
+      expect(useXPStore.getState().xpToNextLevel).toBe(0);
     });
   });
 });

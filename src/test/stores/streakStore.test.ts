@@ -58,8 +58,6 @@ describe('streakStore', () => {
     // Reset store to initial state before each test
     act(() => {
       useStreakStore.getState().resetAll();
-      // resetAll sets streakFreezeCount to 3, so reset to 0 for clean tests
-      useStreakStore.setState({ streakFreezeCount: 0 });
     });
     vi.clearAllMocks();
   });
@@ -114,7 +112,7 @@ describe('streakStore', () => {
       expect(totalSessions).toBe(0);
     });
 
-    it('should have zero streak freezes initially (after reset)', () => {
+    it('should have zero streak freezes initially (after resetAll)', () => {
       const { streakFreezeCount } = useStreakStore.getState();
       expect(streakFreezeCount).toBe(0);
     });
@@ -495,14 +493,14 @@ describe('streakStore', () => {
   });
 
   describe('resetAll', () => {
-    it('should reset to initial state with 3 streak freezes', () => {
+    it('should reset to initial state with 0 streak freezes', () => {
       const { setStreak, incrementSessions, addStreakFreeze, resetAll } = useStreakStore.getState();
 
       act(() => {
         setStreak(50);
         incrementSessions();
         incrementSessions();
-        addStreakFreeze(10);
+        addStreakFreeze(3);
       });
 
       act(() => {
@@ -514,7 +512,7 @@ describe('streakStore', () => {
       expect(state.longestStreak).toBe(0);
       expect(state.lastSessionDate).toBe('');
       expect(state.totalSessions).toBe(0);
-      expect(state.streakFreezeCount).toBe(3); // resetAll gives 3 freezes
+      expect(state.streakFreezeCount).toBe(0); // resetAll resets to initialState which has 0 freezes
     });
   });
 

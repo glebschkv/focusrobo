@@ -192,7 +192,7 @@ const createMockAudioContext = () => {
     createChannelMerger: vi.fn(() => mockChannelMerger),
     destination: {},
     sampleRate: 48000,
-    close: vi.fn(),
+    close: vi.fn(() => Promise.resolve()),
     state: 'running',
   };
 };
@@ -309,10 +309,8 @@ describe('useSoundMixer', () => {
     });
 
     it('should allow 3 layers for premium tier', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      // Set premium tier via mock store variable
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -337,8 +335,8 @@ describe('useSoundMixer', () => {
       expect(result.current.canAddLayer()).toBe(false);
     });
 
-    it('should handle invalid premium data', () => {
-      localStorage.setItem(PREMIUM_KEY, 'invalid-json');
+    it('should fall back to free tier for default', () => {
+      mockTier = 'free';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -379,10 +377,7 @@ describe('useSoundMixer', () => {
     });
 
     it('should return false when sound already in layers', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -400,10 +395,7 @@ describe('useSoundMixer', () => {
     });
 
     it('should start layer immediately if mixer is already playing', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -461,10 +453,7 @@ describe('useSoundMixer', () => {
     });
 
     it('should keep playing remaining layers after removal', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -499,10 +488,7 @@ describe('useSoundMixer', () => {
 
   describe('Playing All Layers', () => {
     it('should play all layers', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -530,10 +516,7 @@ describe('useSoundMixer', () => {
     });
 
     it('should create audio context for each layer', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -552,10 +535,7 @@ describe('useSoundMixer', () => {
     });
 
     it('should handle mixed noise and binaural sounds', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -722,10 +702,7 @@ describe('useSoundMixer', () => {
 
   describe('Layer Details', () => {
     it('should return layer details with sound info', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -910,10 +887,8 @@ describe('useSoundMixer', () => {
 
   describe('Multiple Operations', () => {
     it('should handle add/remove operations correctly', () => {
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      // Set premium tier via mock store variable
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
@@ -1004,10 +979,8 @@ describe('useSoundMixer', () => {
         })
       );
 
-      localStorage.setItem(
-        PREMIUM_KEY,
-        JSON.stringify({ tier: 'premium' })
-      );
+      // Set premium tier via mock store variable
+      mockTier = 'premium';
 
       const { result } = renderHook(() => useSoundMixer());
 
