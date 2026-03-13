@@ -49,7 +49,7 @@ export function FinalCTA() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          style={{ maxWidth: 260, margin: '0 auto 32px' }}
+          style={{ maxWidth: 220, margin: '0 auto 32px' }}
         >
           <IslandScene gridSize={7} pets={SMALL_ISLAND_PETS} />
         </motion.div>

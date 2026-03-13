@@ -91,7 +91,7 @@ export function PetShowcase() {
         </motion.div>
 
         {/* Auto-scrolling marquee */}
-        <div className="marquee-container" style={{ marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20 }}>
+        <div className="marquee-container">
           <div className="marquee-track" style={{ paddingTop: 8, paddingBottom: 8 }}>
             {marqueeItems.map((pet, i) => (
               <PetCard key={`${pet.id}-${i}`} pet={pet} />

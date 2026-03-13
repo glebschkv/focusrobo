@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function HeroSection() {
   return (
-    <SkyBackground className="min-h-screen flex flex-col items-center justify-center px-5 pt-20 pb-12 relative">
+    <SkyBackground className="min-h-[calc(100dvh-80px)] flex flex-col items-center justify-center px-5 pt-20 md:pt-24 pb-12 relative">
       {/* Hero text */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

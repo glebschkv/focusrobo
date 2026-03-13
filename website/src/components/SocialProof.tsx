@@ -68,7 +68,7 @@ export function SocialProof() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex flex-wrap justify-center gap-8 md:gap-16"
+          className="flex flex-wrap justify-center gap-6 md:gap-16"
         >
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center">

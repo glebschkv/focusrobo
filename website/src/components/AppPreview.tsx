@@ -39,14 +39,14 @@ export function AppPreview() {
           </p>
         </motion.div>
 
-        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
           {/* Phone Mockup */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
-            className="flex-shrink-0"
+            className="flex-shrink-0 order-2 md:order-none mx-auto"
           >
             <div className="phone-mockup">
               <div className="phone-mockup__notch" />
@@ -59,7 +59,7 @@ export function AppPreview() {
           </motion.div>
 
           {/* Feature bullets */}
-          <div className="flex flex-col gap-6 flex-1">
+          <div className="flex flex-col gap-6 flex-1 order-1 md:order-none">
             {FEATURES.map((feature, i) => (
               <motion.div
                 key={feature.title}
