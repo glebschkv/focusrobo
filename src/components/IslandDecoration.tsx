@@ -106,14 +106,17 @@ export const IslandDecoration = memo(({ cell, index, gridSize, isEditMode, onLon
         '--deco-scale': finalScale,
         contain: 'layout style paint',
       } as React.CSSProperties}
-      onClick={handleClick}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onPointerLeave={handlePointerCancel}
-      role={isEditMode ? 'button' : undefined}
-      aria-label={isEditMode ? `${decoration.name} (hold to pick up)` : decoration.name}
     >
+      <div
+        className="island-decoration__hotspot"
+        onClick={handleClick}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onPointerLeave={handlePointerCancel}
+        role={isEditMode ? 'button' : undefined}
+        aria-label={isEditMode ? `${decoration.name} (hold to pick up)` : decoration.name}
+      />
       <img
         src={decoration.sprite}
         alt={decoration.name}

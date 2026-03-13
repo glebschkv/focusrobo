@@ -525,17 +525,30 @@
 
 .island-pet {
   position: absolute;
-  pointer-events: auto;
+  pointer-events: none;
   transform:
     translate(-50%, -85%)
     scale(var(--pet-scale, 1));
   transform-origin: center 85%;
-  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
 }
 
-.island-pet:active {
+.island-pet__hotspot {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-pet:has(.island-pet__hotspot:active) {
   transform:
     translate(-50%, -85%)
     scale(calc(var(--pet-scale, 1) * 0.9));
@@ -3142,10 +3155,23 @@
 
 .island-decoration {
   position: absolute;
-  pointer-events: auto;
+  pointer-events: none;
   transform: translate(-50%, -55%) scale(var(--deco-scale, 1));
-  cursor: pointer;
   transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.island-decoration__hotspot {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1;
+  border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -3199,7 +3225,7 @@
 }
 
 /* Edit mode highlight */
-.island-decoration--edit {
+.island-decoration--edit .island-decoration__hotspot {
   cursor: grab;
 }
 
@@ -3234,6 +3260,9 @@
 .pet-land--decor-active .island-pet {
   opacity: 0.45;
   transition: opacity 0.3s ease;
+}
+.pet-land--decor-active .island-pet__hotspot {
+  pointer-events: none;
 }
 
 /* Ghost tile markers — show available placement spots */
