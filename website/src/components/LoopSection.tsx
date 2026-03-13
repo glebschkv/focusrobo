@@ -26,19 +26,11 @@ const STEPS = [
 
 export function LoopSection() {
   return (
-    <section className="section-textured py-20 px-5">
+    <section className="section-textured section-standard">
       <div className="max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-14">
+        <AnimatedSection className="text-center mb-16">
           <AnimatedItem>
-            <h2
-              className="display-font"
-              style={{
-                fontSize: 'clamp(26px, 6vw, 40px)',
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                color: 'var(--fg-deep)',
-              }}
-            >
+            <h2 className="section-heading display-font">
               Simple as putting your phone down
             </h2>
           </AnimatedItem>
@@ -48,10 +40,7 @@ export function LoopSection() {
           {/* Dotted connector line (desktop only) */}
           <div
             className="hidden md:block absolute top-1/2 left-[15%] right-[15%] h-0"
-            style={{
-              borderTop: '2px dashed rgba(234, 179, 8, 0.2)',
-              zIndex: 0,
-            }}
+            style={{ borderTop: '2px dashed rgba(234, 179, 8, 0.2)', zIndex: 0 }}
           />
 
           {STEPS.map((step) => (
@@ -65,49 +54,19 @@ export function LoopSection() {
                   }}
                 >
                   {step.petSprite ? (
-                    <img
-                      src={step.petSprite}
-                      alt="Pet"
-                      className="pixel-art"
-                      style={{ width: 36, height: 36 }}
-                    />
+                    <img src={step.petSprite} alt="Pet" className="pixel-art" style={{ width: 36, height: 36 }} />
                   ) : (
                     step.icon
                   )}
                 </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: 'var(--accent-warm)',
-                    marginBottom: 4,
-                  }}
-                >
+                <div className="step-label" style={{ marginBottom: 6 }}>
                   STEP {step.number}
                 </div>
-                <h3
-                  className="display-font"
-                  style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, color: 'var(--fg-deep)' }}
-                >
+                <h3 className="card-title display-font" style={{ marginBottom: 8 }}>
                   {step.title}
                 </h3>
-                <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.5 }}>
-                  {step.description}
-                </p>
-                <div
-                  className="mt-3 inline-block"
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: 'var(--accent-warm)',
-                    background: 'rgba(234, 179, 8, 0.08)',
-                    padding: '4px 12px',
-                    borderRadius: 'var(--radius-pill)',
-                  }}
-                >
-                  {step.detail}
-                </div>
+                <p className="card-desc">{step.description}</p>
+                <div className="detail-pill">{step.detail}</div>
               </div>
             </AnimatedItem>
           ))}

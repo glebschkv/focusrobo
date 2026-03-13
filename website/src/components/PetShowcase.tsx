@@ -17,18 +17,16 @@ function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
   return (
     <div
       className={`rarity-card rarity-${pet.rarity} ${isMystery ? 'rarity-card--mystery' : ''}`}
-      style={{
-        width: isEpicOrAbove ? 160 : 140,
-      }}
+      style={{ width: isEpicOrAbove ? 164 : 148 }}
     >
-      <div className="rarity-card-inner" style={{ padding: isEpicOrAbove ? '20px 16px' : '16px' }}>
+      <div className="rarity-card-inner" style={{ padding: isEpicOrAbove ? '24px 16px' : '20px 16px' }}>
         {isMystery ? (
           <>
             <img
               src={pet.imagePath}
               alt="???"
               className="pixel-art"
-              style={{ width: 64, height: 64, objectFit: 'contain' }}
+              style={{ width: 72, height: 72, objectFit: 'contain' }}
             />
             <div
               className="display-font"
@@ -37,12 +35,12 @@ function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
                 fontWeight: 700,
                 color: 'var(--rarity-legendary)',
                 textShadow: '0 0 12px rgba(234,179,8,0.5)',
-                marginTop: 8,
+                marginTop: 10,
               }}
             >
               ???
             </div>
-            <div className={`rarity-badge rarity-badge--legendary`}>Legendary</div>
+            <div className="rarity-badge rarity-badge--legendary">Legendary</div>
           </>
         ) : (
           <>
@@ -51,15 +49,15 @@ function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
               alt={pet.name}
               className={`pixel-art sprite--${pet.rarity}`}
               style={{
-                width: isEpicOrAbove ? 72 : 64,
-                height: isEpicOrAbove ? 72 : 64,
+                width: isEpicOrAbove ? 76 : 68,
+                height: isEpicOrAbove ? 76 : 68,
                 objectFit: 'contain',
               }}
               loading="lazy"
             />
             <div
               className="display-font"
-              style={{ fontSize: 14, fontWeight: 700, marginTop: 8, color: 'var(--fg-deep)' }}
+              style={{ fontSize: 14, fontWeight: 700, marginTop: 10, color: 'var(--fg-deep)' }}
             >
               {pet.name}
             </div>
@@ -81,32 +79,23 @@ export function PetShowcase() {
     .filter((p): p is PetSpecies => !!p);
 
   return (
-    <section className="section-textured py-20 px-5">
+    <section className="section-textured section-standard">
       <div className="max-w-4xl mx-auto">
-        <AnimatedSection className="text-center mb-12">
+        <AnimatedSection className="text-center mb-14">
           <AnimatedItem>
-            <h2
-              className="display-font"
-              style={{
-                fontSize: 'clamp(26px, 6vw, 40px)',
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                marginBottom: 10,
-                color: 'var(--fg-deep)',
-              }}
-            >
+            <h2 className="section-heading display-font">
               41 species. 5 rarities.<br />Infinite heart-eyes.
             </h2>
           </AnimatedItem>
           <AnimatedItem>
-            <p style={{ fontSize: 16, color: 'var(--fg-muted)', maxWidth: 460, margin: '0 auto', lineHeight: 1.6 }}>
+            <p className="section-desc">
               From common bunnies to legendary unicorns, every focus session is a chance to discover someone new.
             </p>
           </AnimatedItem>
         </AnimatedSection>
 
         {/* Desktop: centered grid */}
-        <AnimatedSection className="hidden md:flex flex-wrap gap-5 justify-center" stagger={0.08}>
+        <AnimatedSection className="hidden md:flex flex-wrap gap-6 justify-center" stagger={0.08}>
           {showcasePets.map((pet) => (
             <AnimatedItem key={pet.id}>
               <PetCard pet={pet} isMystery={legendaryIds.has(pet.id)} />
@@ -123,7 +112,7 @@ export function PetShowcase() {
           </div>
         </div>
 
-        <AnimatedSection className="text-center mt-10">
+        <AnimatedSection className="text-center mt-12">
           <AnimatedItem>
             <p style={{ fontSize: 15, color: 'var(--fg-muted)', fontStyle: 'italic' }}>
               And yes, there's a capybara.
