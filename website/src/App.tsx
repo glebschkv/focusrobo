@@ -8,6 +8,7 @@ import { AppPreview } from './components/AppPreview';
 import { PetShowcase } from './components/PetShowcase';
 import { RewardsSection } from './components/RewardsSection';
 import { SocialProof } from './components/SocialProof';
+import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { StickyMobileCTA } from './components/StickyMobileCTA';
@@ -34,6 +35,7 @@ function HomePage() {
       <PetShowcase />
       <RewardsSection />
       <SocialProof />
+      <FAQSection />
       <FinalCTA />
       <Footer />
       <StickyMobileCTA />
