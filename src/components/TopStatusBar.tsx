@@ -1,5 +1,6 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
+import { useCoinStore } from "@/stores/coinStore";
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import {
   Popover,
@@ -266,6 +267,24 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <PixelIcon name="coin" size={18} className="chip-icon coin-icon" />
           <span className="chip-value">{coinSystem.balance.toLocaleString()}</span>
           <span className="coin-plus-badge">+</span>
+        </button>
+
+        {/* DEV: Test coins button */}
+        <button
+          onClick={() => useCoinStore.getState().addCoins(100000)}
+          style={{
+            fontSize: 10,
+            padding: '2px 6px',
+            borderRadius: 6,
+            background: 'rgba(234,179,8,0.25)',
+            border: '1px solid rgba(234,179,8,0.5)',
+            color: '#eab308',
+            fontWeight: 700,
+            marginLeft: 4,
+            lineHeight: 1.2,
+          }}
+        >
+          +100k
         </button>
 
         {/* Passive income collect button */}
