@@ -22,6 +22,7 @@ import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
 import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
+import { NextGoalWidget } from '@/components/NextGoalWidget';
 import { WeatherParticles, getTimePeriod, getWeatherType, getSkyColors } from '@/components/WeatherParticles';
 import { useIslandAmbientEnabled, useIslandAmbientVolume } from '@/stores/soundStore';
 import { useXPStore } from '@/stores/xpStore';
@@ -1222,6 +1223,9 @@ export const PetLand = () => {
         </div>
         </div>
       </div>
+
+      {/* Next Goal Widget — compact card below status bar */}
+      <NextGoalWidget />
 
       {/* Home Goals Widget (replaces old nudge chip) */}
       {filledCount > 0 && <HomeGoalsWidget />}
