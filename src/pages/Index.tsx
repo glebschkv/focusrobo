@@ -40,6 +40,15 @@ const Index = () => {
   useWidgetSync();
   useTimerExpiryGuard();
 
+  const [isOnboardingExiting, setIsOnboardingExiting] = useState(false);
+
+  const handleOnboardingComplete = useCallback(() => {
+    setIsOnboardingExiting(true);
+    setTimeout(() => {
+      completeOnboarding();
+    }, 300);
+  }, [completeOnboarding]);
+
   // Hide splash screens once after auth check resolves.
   useEffect(() => {
     if (!isLoading && !_splashHidden) {
@@ -88,15 +97,6 @@ const Index = () => {
       </PageErrorBoundary>
     );
   }
-
-  const [isOnboardingExiting, setIsOnboardingExiting] = useState(false);
-
-  const handleOnboardingComplete = useCallback(() => {
-    setIsOnboardingExiting(true);
-    setTimeout(() => {
-      completeOnboarding();
-    }, 300);
-  }, [completeOnboarding]);
 
   if (!hasCompletedOnboarding) {
     return (
