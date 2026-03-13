@@ -993,7 +993,7 @@ export const PetLand = () => {
   }, [timePeriod]);
 
   const skyColors = timeSkyCols || theme.sky;
-  const skyGradient = `linear-gradient(180deg, ${skyColors[0]} 0%, ${skyColors[1]} 35%, ${skyColors[2]} 65%, ${skyColors[3]} 100%)`;
+  const skyGradient = `linear-gradient(180deg, ${skyColors.map((c: string, i: number) => `${c} ${Math.round((i / (skyColors.length - 1)) * 100)}%`).join(', ')})`;
 
   return (
     <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass} ${moodClass} ${theme.skyAnimations.cssClass}`} style={{ background: skyGradient }}>
@@ -1012,6 +1012,10 @@ export const PetLand = () => {
           '--mt-near-color': theme.skyScene.landscapeColors[1],
           '--mt-accent-color': theme.skyScene.landscapeColors[2],
           '--tree-color': theme.skyScene.treelineColor,
+          '--fog-color': theme.fog.color,
+          '--fog-opacity': theme.fog.opacity,
+          '--vignette-color': theme.vignette.color,
+          '--vignette-opacity': theme.vignette.opacity,
         } as React.CSSProperties}
       >
         {/* Sun or Moon — biome-driven celestial body */}
@@ -1032,56 +1036,54 @@ export const PetLand = () => {
           </div>
         )}
 
-        {/* Clouds — 8 volumetric clouds in 3 depth layers */}
-        {/* Back layer — distant, blurred, slow */}
-        <div className="pet-land__cloud pet-land__cloud--3">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        <div className="pet-land__cloud pet-land__cloud--4">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        <div className="pet-land__cloud pet-land__cloud--7">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        {/* Mid layer — standard depth */}
-        <div className="pet-land__cloud pet-land__cloud--1">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        <div className="pet-land__cloud pet-land__cloud--5">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        <div className="pet-land__cloud pet-land__cloud--8">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        {/* Front layer — close, sharp, faster */}
-        <div className="pet-land__cloud pet-land__cloud--2">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
-        <div className="pet-land__cloud pet-land__cloud--6">
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-          <div className="pet-land__cloud-lobe" />
-        </div>
+        {/* SVG Clouds — soft, fluffy with blur filters */}
+        <svg className="pet-land__clouds-svg" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <filter id="cloud-blur-far" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="6" />
+            </filter>
+            <filter id="cloud-blur-mid" x="-8%" y="-8%" width="116%" height="116%">
+              <feGaussianBlur stdDeviation="3.5" />
+            </filter>
+            <filter id="cloud-blur-near" x="-5%" y="-5%" width="110%" height="110%">
+              <feGaussianBlur stdDeviation="2" />
+            </filter>
+          </defs>
+          {/* Back layer — distant, blurred, slow */}
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--1" filter="url(#cloud-blur-far)" opacity="0.45">
+            <ellipse cx="180" cy="55" rx="70" ry="18" fill={theme.cloudColor} />
+            <ellipse cx="200" cy="48" rx="50" ry="14" fill={theme.cloudColor} />
+            <ellipse cx="160" cy="50" rx="45" ry="12" fill={theme.cloudColor} />
+          </g>
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--2" filter="url(#cloud-blur-far)" opacity="0.35">
+            <ellipse cx="700" cy="70" rx="60" ry="15" fill={theme.cloudColor} />
+            <ellipse cx="720" cy="64" rx="40" ry="11" fill={theme.cloudColor} />
+          </g>
+          {/* Mid layer */}
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--3" filter="url(#cloud-blur-mid)" opacity="0.55">
+            <ellipse cx="400" cy="40" rx="85" ry="20" fill={theme.cloudColor} />
+            <ellipse cx="430" cy="32" rx="55" ry="15" fill={theme.cloudColor} />
+            <ellipse cx="375" cy="35" rx="50" ry="13" fill={theme.cloudColor} />
+            <ellipse cx="415" cy="28" rx="35" ry="10" fill={theme.cloudColor} />
+          </g>
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--4" filter="url(#cloud-blur-mid)" opacity="0.5">
+            <ellipse cx="850" cy="48" rx="65" ry="16" fill={theme.cloudColor} />
+            <ellipse cx="870" cy="42" rx="45" ry="12" fill={theme.cloudColor} />
+            <ellipse cx="835" cy="44" rx="40" ry="10" fill={theme.cloudColor} />
+          </g>
+          {/* Front layer — close, sharper */}
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--5" filter="url(#cloud-blur-near)" opacity="0.65">
+            <ellipse cx="100" cy="85" rx="75" ry="18" fill={theme.cloudColor} />
+            <ellipse cx="125" cy="78" rx="50" ry="14" fill={theme.cloudColor} />
+            <ellipse cx="80" cy="80" rx="45" ry="12" fill={theme.cloudColor} />
+            <ellipse cx="110" cy="74" rx="30" ry="9" fill={theme.cloudColor} />
+          </g>
+          <g className="pet-land__svg-cloud pet-land__svg-cloud--6" filter="url(#cloud-blur-near)" opacity="0.6">
+            <ellipse cx="580" cy="75" rx="70" ry="17" fill={theme.cloudColor} />
+            <ellipse cx="600" cy="68" rx="48" ry="13" fill={theme.cloudColor} />
+            <ellipse cx="560" cy="70" rx="42" ry="11" fill={theme.cloudColor} />
+          </g>
+        </svg>
 
         {/* Rich SVG landscape — unique per biome */}
         <IslandSkyScene themeId={effectiveThemeId} theme={theme} />
@@ -1159,6 +1161,11 @@ export const PetLand = () => {
         {/* Weather particles (rain/petals/fireflies/stars) */}
         <WeatherParticles timePeriod={timePeriod} weather={weather} biomeId={effectiveThemeId} />
       </div>
+
+      {/* Atmospheric layers — fog, vignette, grain */}
+      <div className="pet-land__fog" aria-hidden="true" />
+      <div className="pet-land__vignette" aria-hidden="true" />
+      <div className="pet-land__grain" aria-hidden="true" />
 
       {/* Share flash overlay */}
       {shareFlash && (
