@@ -63,7 +63,6 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
 
     try {
       if (!isSupabaseConfigured) {
-        // Fallback for local dev without env vars
         await new Promise(r => setTimeout(r, 1200));
         const code = Math.random().toString(36).substring(2, 10).toUpperCase();
         localStorage.setItem('phono_referral_code', code);
@@ -91,7 +90,6 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
         throw new Error(data.error);
       }
 
-      // Save to localStorage for return visits
       localStorage.setItem('phono_referral_code', data.referral_code);
       localStorage.setItem('phono_email', email.trim());
       localStorage.setItem('phono_referral_count', String(data.referral_count || 0));
@@ -130,11 +128,11 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     return (
       <div className="waitlist-success">
         <div className="legendary-egg-display" />
-        <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>
-          Your Legendary Egg is reserved
+        <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>
+          You're in! Your Legendary Egg is reserved.
         </h3>
-        <p style={{ fontSize: 14, color: 'var(--fg-muted)', marginBottom: 20 }}>
-          You'll hatch it on launch day. Want more? Refer friends for bonus rewards.
+        <p style={{ fontSize: 15, color: 'var(--fg-muted)', marginBottom: 24, lineHeight: 1.5 }}>
+          You'll hatch it on launch day. Share with friends to unlock bonus rewards.
         </p>
 
         <div className="referral-dashboard">
@@ -146,7 +144,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
             <button onClick={copyLink}>{copied ? 'Copied!' : 'Copy'}</button>
           </div>
 
-          <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 12 }}>
+          <div style={{ fontSize: 13, color: 'var(--fg-muted)', marginTop: 14 }}>
             {referralCount} referral{referralCount !== 1 ? 's' : ''}
             {nextTier && ` — ${nextTier.count - referralCount} more for ${nextTier.label}`}
           </div>
@@ -175,6 +173,8 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     );
   }
 
+  const ctaText = variant === 'cta' ? 'Claim Your Spot' : 'Join the Waitlist';
+
   return (
     <div>
       <form className="waitlist-form" onSubmit={handleSubmit} id={variant === 'hero' ? 'waitlist' : undefined}>
@@ -189,13 +189,20 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
         />
         <button
           type="submit"
-          className={`egg-button ${status === 'loading' ? '' : ''}`}
+          className="cta-primary waitlist-submit"
           disabled={status === 'loading'}
-          title="Hatch My Spot"
-        />
+        >
+          {status === 'loading' ? 'Joining...' : ctaText}
+          {status !== 'loading' && (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M3 8h10M9 4l4 4-4 4" />
+            </svg>
+          )}
+        </button>
       </form>
       <div className="waitlist-counter">
-        <strong>{waitlistCount.toLocaleString()}</strong> adventurers waiting
+        <span style={{ fontSize: 16 }}>🔥</span>
+        <strong>{waitlistCount.toLocaleString()}</strong> adventurers already waiting
       </div>
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>

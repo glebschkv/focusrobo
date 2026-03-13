@@ -18,6 +18,15 @@ export function Nav() {
         <img src="/app-icon.png" alt="PhoNo" />
         PhoNo
       </Link>
+
+      {isHome && (
+        <div className="nav-links">
+          <a href="#how-it-works">How It Works</a>
+          <a href="#rewards">Rewards</a>
+          <a href="#pets">Pets</a>
+        </div>
+      )}
+
       {isHome ? (
         <a href="#waitlist" className="nav-cta">Join Waitlist</a>
       ) : (

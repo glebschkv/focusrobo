@@ -2,53 +2,72 @@ import { motion } from 'framer-motion';
 import { IslandSVG } from './IslandSVG';
 
 const GROWTH_STAGES = [
-  { gridSize: 5, label: 'Your first island', petCount: '25 cells', caption: 'A cozy start' },
-  { gridSize: 7, label: 'Growing strong', petCount: '49 cells', caption: 'More room to explore' },
-  { gridSize: 10, label: 'Thriving paradise', petCount: '100 cells', caption: 'A bustling community' },
-  { gridSize: 12, label: 'Paradise achieved', petCount: '144 cells', caption: 'Archive & start anew' },
+  { gridSize: 5, label: 'First Steps', petCount: '25 pets', scale: 0.7 },
+  { gridSize: 7, label: 'Growing Strong', petCount: '49 pets', scale: 0.8 },
+  { gridSize: 10, label: 'Thriving', petCount: '100 pets', scale: 0.9 },
+  { gridSize: 12, label: 'Paradise', petCount: '144 pets', scale: 1.0 },
 ];
 
 export function IslandGrowth() {
   return (
-    <section className="section-cream pixel-texture py-20 px-5">
+    <section className="section-green py-24 px-5">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-14"
         >
-          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
-            Watch Your Island Grow
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--fg-muted)', maxWidth: 420, margin: '0 auto' }}>
-            Every focus session fills your island. When it's complete, archive it and start fresh.
+          <div className="section-label">WATCH IT GROW</div>
+          <h2 className="section-title">From Tiny Plot to Massive Paradise</h2>
+          <p className="section-subtitle">
+            Your island expands as you collect more pets. Fill it up, archive it, and start a brand new one.
           </p>
         </motion.div>
 
-        {/* Desktop: grid. Mobile: scroll */}
-        <div className="hidden md:grid md:grid-cols-4 gap-6">
+        {/* Desktop: grid with arrows. Mobile: scroll */}
+        <div className="hidden md:grid md:grid-cols-4 gap-4 items-end">
           {GROWTH_STAGES.map((stage, i) => (
             <motion.div
               key={stage.gridSize}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.12, duration: 0.5, ease: [0.175, 0.885, 0.32, 1.1] }}
-              className="text-center"
+              className="text-center relative"
             >
+              {/* Arrow between stages */}
+              {i > 0 && (
+                <div
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-10"
+                  style={{ color: 'var(--primary)', opacity: 0.3 }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M3 8h10M9 4l4 4-4 4" />
+                  </svg>
+                </div>
+              )}
               <div
-                className="game-card p-4 mb-3"
-                style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                className="feature-card p-4 mb-4"
+                style={{
+                  aspectRatio: '1',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: `scale(${stage.scale})`,
+                  transformOrigin: 'bottom center',
+                }}
               >
                 <div style={{ width: '100%', animation: 'island-bob 4s ease-in-out infinite', animationDelay: `${i * 0.5}s` }}>
                   <IslandSVG gridSize={stage.gridSize} />
                 </div>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>{stage.label}</div>
-              <div style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600 }}>{stage.petCount}</div>
-              <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{stage.caption}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em' }}>{stage.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginTop: 2 }}>{stage.petCount}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
+                {stage.gridSize}×{stage.gridSize} grid
+              </div>
             </motion.div>
           ))}
         </div>
@@ -57,16 +76,16 @@ export function IslandGrowth() {
           {GROWTH_STAGES.map((stage) => (
             <div key={stage.gridSize} className="text-center" style={{ width: 200, flexShrink: 0 }}>
               <div
-                className="game-card p-3 mb-3"
+                className="feature-card p-3 mb-3"
                 style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <div style={{ width: '100%', animation: 'island-bob 4s ease-in-out infinite' }}>
                   <IslandSVG gridSize={stage.gridSize} />
                 </div>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>{stage.label}</div>
-              <div style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600 }}>{stage.petCount}</div>
-              <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{stage.caption}</div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>{stage.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600 }}>{stage.petCount}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{stage.gridSize}×{stage.gridSize} grid</div>
             </div>
           ))}
         </div>

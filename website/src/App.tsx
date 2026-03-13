@@ -2,13 +2,16 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Nav } from './components/Nav';
 import { HeroSection } from './components/HeroSection';
+import { StatsBar } from './components/StatsBar';
 import { LoopSection } from './components/LoopSection';
+import { AppPreview } from './components/AppPreview';
 import { PetShowcase } from './components/PetShowcase';
 import { IslandGrowth } from './components/IslandGrowth';
 import { RewardsSection } from './components/RewardsSection';
 import { SocialProof } from './components/SocialProof';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
+import { StickyMobileCTA } from './components/StickyMobileCTA';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { Support } from './components/Support';
@@ -21,40 +24,21 @@ function ScrollToTop() {
   return null;
 }
 
-function GrassDivider() {
-  return (
-    <svg viewBox="0 0 1200 60" className="divider-grass" preserveAspectRatio="none">
-      <path
-        d="M0,60 C300,0 900,0 1200,60 L1200,60 L0,60 Z"
-        fill="var(--bg-cream)"
-      />
-    </svg>
-  );
-}
-
-function DiamondDivider() {
-  return (
-    <div className="divider-line">
-      <div className="divider-diamond" />
-    </div>
-  );
-}
-
 function HomePage() {
   return (
     <div>
       <Nav />
       <HeroSection />
-      <GrassDivider />
+      <StatsBar />
       <LoopSection />
-      <DiamondDivider />
+      <AppPreview />
       <PetShowcase />
       <IslandGrowth />
-      <DiamondDivider />
       <RewardsSection />
       <SocialProof />
       <FinalCTA />
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }
@@ -86,8 +70,8 @@ function NotFound() {
       </p>
       <Link
         to="/"
-        className="nav-cta"
-        style={{ display: 'inline-block', padding: '12px 28px', fontSize: 15 }}
+        className="cta-primary"
+        style={{ display: 'inline-flex', padding: '12px 28px', fontSize: 15, textDecoration: 'none' }}
       >
         Return Home
       </Link>

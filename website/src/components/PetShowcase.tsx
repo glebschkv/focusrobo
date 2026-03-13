@@ -1,47 +1,45 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PET_DATABASE, RARITY_STYLES, type PetSpecies, type PetRarity } from '../data/PetDatabase';
+import { PET_DATABASE, RARITY_STYLES, type PetSpecies } from '../data/PetDatabase';
 
-// Curated showcase: 6 common, 4 uncommon, 3 rare, 2 epic, 2 legendary (mystery)
+// Curated showcase for the marquee
 const SHOWCASE_IDS = [
   'bunny', 'chick', 'capybara', 'frog', 'hedgehog', 'turtle',
   'fox', 'cat', 'corgi', 'penguin',
   'owl', 'panda', 'deer',
   'dragon', 'phoenix',
-  'unicorn', 'koi-fish',
 ];
 
-function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
+const RARITY_LEGEND = [
+  { rarity: 'common', label: 'Common', color: 'var(--rarity-common)' },
+  { rarity: 'uncommon', label: 'Uncommon', color: 'var(--rarity-uncommon)' },
+  { rarity: 'rare', label: 'Rare', color: 'var(--rarity-rare)' },
+  { rarity: 'epic', label: 'Epic', color: 'var(--rarity-epic)' },
+  { rarity: 'legendary', label: 'Legendary', color: 'var(--rarity-legendary)' },
+];
+
+function PetCard({ pet }: { pet: PetSpecies }) {
   const [flipped, setFlipped] = useState(false);
   const style = RARITY_STYLES[pet.rarity];
 
   return (
     <div
-      className={`pet-card pet-card--${pet.rarity} ${flipped ? 'pet-card--flipped' : ''} ${isMystery ? 'pet-card--mystery' : ''}`}
-      onClick={() => !isMystery && setFlipped(!flipped)}
+      className={`pet-card pet-card--${pet.rarity} ${flipped ? 'pet-card--flipped' : ''}`}
+      onClick={() => setFlipped(!flipped)}
       style={{ perspective: 800 }}
     >
       <div className="pet-card__inner">
         <div className="pet-card__front">
-          {isMystery ? (
-            <>
-              <img src={pet.imagePath} alt="???" className="pet-card__sprite" />
-              <div className="pet-card__mystery-label">???</div>
-            </>
-          ) : (
-            <>
-              <img
-                src={pet.imagePath}
-                alt={pet.name}
-                className={`pet-card__sprite sprite--${pet.rarity}`}
-                loading="lazy"
-              />
-              <div className="pet-card__name">{pet.name}</div>
-              <div className={`rarity-badge rarity-badge--${pet.rarity}`}>
-                {style.label}
-              </div>
-            </>
-          )}
+          <img
+            src={pet.imagePath}
+            alt={pet.name}
+            className={`pet-card__sprite sprite--${pet.rarity}`}
+            loading="lazy"
+          />
+          <div className="pet-card__name">{pet.name}</div>
+          <div className={`rarity-badge rarity-badge--${pet.rarity}`}>
+            {style.label}
+          </div>
         </div>
         <div className="pet-card__back">
           <div className="pet-card__desc">{pet.description}</div>
@@ -65,87 +63,65 @@ function PetCard({ pet, isMystery }: { pet: PetSpecies; isMystery: boolean }) {
   );
 }
 
-function RarityFilter({ active, onChange }: { active: PetRarity | 'all'; onChange: (r: PetRarity | 'all') => void }) {
-  const rarities: (PetRarity | 'all')[] = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'];
-  return (
-    <div className="flex gap-2 justify-center flex-wrap mb-6">
-      {rarities.map(r => (
-        <button
-          key={r}
-          onClick={() => onChange(r)}
-          className="px-3 py-1 rounded-full text-xs font-semibold transition-all"
-          style={{
-            background: active === r ? 'var(--primary)' : 'var(--muted)',
-            color: active === r ? 'white' : 'var(--fg-muted)',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          {r === 'all' ? 'All' : RARITY_STYLES[r].label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function PetShowcase() {
-  const [filter, setFilter] = useState<PetRarity | 'all'>('all');
-  const legendaryIds = new Set(['unicorn', 'koi-fish']);
-
   const showcasePets = SHOWCASE_IDS
     .map(id => PET_DATABASE.find(p => p.id === id))
-    .filter((p): p is PetSpecies => !!p)
-    .filter(p => filter === 'all' || p.rarity === filter);
+    .filter((p): p is PetSpecies => !!p);
+
+  // Double the pets for infinite marquee effect
+  const marqueeItems = [...showcasePets, ...showcasePets];
 
   return (
-    <section className="section-cream py-20 px-5">
+    <section id="pets" className="section-cream py-24 px-5">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-12"
         >
-          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
-            41 Species to Discover
+          <div className="section-label">MEET YOUR PETS</div>
+          <h2 className="section-title">
+            41 Species. 5 Rarities. Infinite Cuteness.
           </h2>
-          <p style={{ fontSize: 15, color: 'var(--fg-muted)', maxWidth: 420, margin: '0 auto' }}>
-            From common critters to legendary creatures. Tap a card to flip it.
+          <p className="section-subtitle">
+            From common critters to legendary creatures. Tap any card to see growth stages.
           </p>
         </motion.div>
 
-        <RarityFilter active={filter} onChange={setFilter} />
-
-        {/* Desktop: grid. Mobile: horizontal scroll */}
-        <div className="hidden md:flex flex-wrap gap-4 justify-center">
-          {showcasePets.map((pet, i) => (
-            <motion.div
-              key={pet.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
-            >
-              <PetCard pet={pet} isMystery={legendaryIds.has(pet.id)} />
-            </motion.div>
-          ))}
-        </div>
-        <div className="md:hidden scroll-track">
-          {showcasePets.map(pet => (
-            <PetCard key={pet.id} pet={pet} isMystery={legendaryIds.has(pet.id)} />
-          ))}
+        {/* Auto-scrolling marquee */}
+        <div className="marquee-container" style={{ marginLeft: -20, marginRight: -20, paddingLeft: 20, paddingRight: 20 }}>
+          <div className="marquee-track" style={{ paddingTop: 8, paddingBottom: 8 }}>
+            {marqueeItems.map((pet, i) => (
+              <PetCard key={`${pet.id}-${i}`} pet={pet} />
+            ))}
+          </div>
         </div>
 
+        {/* Rarity legend */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-8"
+          className="flex flex-wrap justify-center gap-4 md:gap-6 mt-10"
         >
-          <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>
-            + {PET_DATABASE.length - SHOWCASE_IDS.length} more species to discover in the app
-          </p>
+          {RARITY_LEGEND.map(r => (
+            <div key={r.rarity} className="flex items-center gap-2">
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  background: r.color,
+                  boxShadow: r.rarity === 'legendary' ? `0 0 8px ${r.color}` : undefined,
+                }}
+              />
+              <span style={{ fontSize: 13, color: 'var(--fg-muted)', fontWeight: 500 }}>
+                {r.label}
+              </span>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
