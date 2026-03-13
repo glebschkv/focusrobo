@@ -75,7 +75,8 @@ export interface IslandTheme {
 
   /** Sky scene composition */
   skyScene: {
-    landscape: 'hills' | 'ocean' | 'dunes' | 'peaks' | 'cliffs' | 'none';
+    landscape: 'none';
+    /** Atmospheric tint colors used for sky effects (glow, haze, shimmer) */
     landscapeColors: [string, string, string];
     treeline: boolean;
     treelineColor: string;
@@ -163,7 +164,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(220, 250, 130, 0.2)',
     },
     skyScene: {
-      landscape: 'hills',
+      landscape: 'none',
       landscapeColors: ['#8898AA', '#7A9A88', '#6B8866'],
       treeline: true,
       treelineColor: 'rgba(45, 80, 35, 0.04)',
@@ -233,7 +234,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(255, 250, 200, 0.18)',
     },
     skyScene: {
-      landscape: 'ocean',
+      landscape: 'none',
       landscapeColors: ['#1A7ACC', '#3EA8D8', '#87CEEB'],
       treeline: false,
       treelineColor: '',
@@ -303,7 +304,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(200, 230, 255, 0.2)',
     },
     skyScene: {
-      landscape: 'peaks',
+      landscape: 'none',
       landscapeColors: ['#4A6080', '#6880A0', '#E8F0F8'],
       treeline: false,
       treelineColor: '',
@@ -373,7 +374,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(255, 240, 180, 0.2)',
     },
     skyScene: {
-      landscape: 'dunes',
+      landscape: 'none',
       landscapeColors: ['#D4A850', '#C09040', '#E8C878'],
       treeline: false,
       treelineColor: '',
@@ -443,7 +444,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(140, 180, 255, 0.1)',      // moonlight highlight
     },
     skyScene: {
-      landscape: 'cliffs',
+      landscape: 'none',
       landscapeColors: ['#151A28', '#1A2030', '#202838'],
       treeline: false,
       treelineColor: '',
@@ -513,7 +514,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       highlight: 'rgba(255, 220, 230, 0.18)',
     },
     skyScene: {
-      landscape: 'hills',
+      landscape: 'none',
       landscapeColors: ['#C090A8', '#D4A0B8', '#E8B8CC'],
       treeline: true,
       treelineColor: 'rgba(180, 100, 130, 0.06)',  // cherry blossom tree silhouettes

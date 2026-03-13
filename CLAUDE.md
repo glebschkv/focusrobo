@@ -45,7 +45,7 @@ Unlock themed islands (Coral Reef, Snow Peak, etc.) with coins + level
 **Pixel art aesthetic** — cute collectible animals on a floating isometric island:
 
 - **Visual style**: Pixel art pets (PNG sprites, 56–84px responsive), front-facing, transparent background
-- **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, rich SVG landscapes, dust motes, weather particles). Each biome has a dedicated `IslandSkyScene` component rendering unique inline SVG landscapes with organic Bezier-path silhouettes, animated elements (windmill, sailboat, caravan, fireflies, wisteria), and atmospheric effects (heat shimmer SVG filter, aurora, bioluminescence).
+- **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, atmospheric sky effects, dust motes, weather particles). Each biome has a dedicated `IslandSkyScene` component rendering unique sky-only atmospheric phenomena — no landscape silhouettes. Effects include volumetric light shafts (meadow), sun pillars + iridescent wisps (beach), aurora curtains + diamond dust (winter), heat shimmer + sun dogs (desert), nebulae + zodiacal light + fireflies (night), bokeh + petal vortex + blossom lanterns (sakura).
 - **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
 - **Island themes**: 6 biome-specific themes (auto-derived from active archipelago island) — Meadow (day), Beach, Winter, Desert, Night Garden, Sakura. Each with unique sky, landscape, cliffs, animated elements
 - **Pets**: 41 species across 5 rarities (see Pet Species below)
@@ -120,7 +120,7 @@ src/
 ├── components/
 │   ├── PetLand.tsx            # Home screen — floating isometric island with pets
 │   ├── IslandSVG.tsx          # Inline SVG island — grass diamond, cliff walls, tile grid, textures
-│   ├── IslandSkyScene.tsx     # Rich SVG landscape backgrounds per biome (meadow hills, ocean waves, peaks, dunes, cliffs, cherry hills)
+│   ├── IslandSkyScene.tsx     # Sky-only atmospheric effects per biome (light shafts, auroras, bokeh, nebulae, shimmer bands)
 │   ├── IslandPet.tsx          # Single pet on island — positioned, scaled, animated
 │   ├── IslandDecoration.tsx   # Single decoration on island — positioned, scaled, sway animation
 │   ├── IslandSwitcher.tsx     # Archipelago island switcher UI

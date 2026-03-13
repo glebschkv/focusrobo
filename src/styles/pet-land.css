@@ -1651,7 +1651,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   SKY SCENE — Rich SVG landscape backgrounds per biome
+   SKY SCENE — Atmospheric sky effects per biome (no landscapes)
    (IslandSkyScene.tsx component styles)
    ══════════════════════════════════════════════════════════════════════ */
 
@@ -1666,294 +1666,256 @@
   overflow: hidden;
 }
 
-/* ── SVG landscape layers — shared positioning ───────────────────── */
-
-.sky-scene__layer {
-  position: absolute;
-  left: -3%;
-  right: -3%;
-  pointer-events: none;
-}
-
-.sky-scene__layer--far {
-  bottom: 20%;
-  height: 22%;
-  filter: blur(1.5px);
-  opacity: 0.9;
-}
-
-.sky-scene__layer--mid {
-  bottom: 16%;
-  height: 18%;
-  filter: blur(0.5px);
-  opacity: 0.92;
-}
-
-.sky-scene__layer--near {
-  bottom: 13%;
-  height: 15%;
-  opacity: 0.95;
-}
-
 /* ═══════════════════════════════════════════════════════════════════
-   MEADOW — Studio Ghibli Pastoral
+   MEADOW — Dreamy Light Cathedral
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Windmill blade rotation */
-.sky-scene__windmill-blades {
-  animation: sky-scene-windmill-spin 20s linear infinite;
-  transform-origin: 0px 0px;
-}
-
-@keyframes sky-scene-windmill-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Sun corona — conic light burst behind the existing sun */
-.sky-scene__corona {
+/* Volumetric light shafts */
+.sky-scene__light-shaft {
   position: absolute;
-  top: 2%;
-  right: 10%;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    rgba(255, 240, 180, 0.06) 0deg,
-    transparent 15deg,
-    rgba(255, 240, 180, 0.04) 30deg,
-    transparent 45deg,
-    rgba(255, 240, 180, 0.06) 60deg,
-    transparent 75deg,
-    rgba(255, 240, 180, 0.04) 90deg,
-    transparent 105deg,
-    rgba(255, 240, 180, 0.06) 120deg,
-    transparent 135deg,
-    rgba(255, 240, 180, 0.04) 150deg,
-    transparent 165deg,
-    rgba(255, 240, 180, 0.06) 180deg,
-    transparent 195deg,
-    rgba(255, 240, 180, 0.04) 210deg,
-    transparent 225deg,
-    rgba(255, 240, 180, 0.06) 240deg,
-    transparent 255deg,
-    rgba(255, 240, 180, 0.04) 270deg,
-    transparent 285deg,
-    rgba(255, 240, 180, 0.06) 300deg,
-    transparent 315deg,
-    rgba(255, 240, 180, 0.04) 330deg,
-    transparent 345deg,
-    rgba(255, 240, 180, 0.06) 360deg
-  );
-  animation: sky-scene-corona-rotate 60s linear infinite;
-  opacity: 0.6;
-}
-
-@keyframes sky-scene-corona-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Lens flare — small hexagonal accent */
-.sky-scene__lens-flare {
-  position: absolute;
-  top: 18%;
-  right: 24%;
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 240, 200, 0.3);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  animation: sky-scene-lens-drift 12s ease-in-out infinite;
-}
-
-@keyframes sky-scene-lens-drift {
-  0%, 100% { transform: translate(0, 0); opacity: 0.15; }
-  50% { transform: translate(4px, 3px); opacity: 0.25; }
-}
-
-/* Wildflower sway on near hill SVG circles */
-.sky-scene--meadow .sky-scene__layer--near circle {
-  animation: sky-scene-flower-sway 4s ease-in-out infinite;
-}
-.sky-scene--meadow .sky-scene__layer--near circle:nth-child(odd) {
-  animation-delay: -1.5s;
-}
-
-@keyframes sky-scene-flower-sway {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(1.5px); }
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   BEACH — Tropical Paradise
-   ═══════════════════════════════════════════════════════════════════ */
-
-.sky-scene--beach {
-  /* Beach scene needs different layer positions for the ocean */
-}
-
-/* Horizon glow — warm light at the waterline */
-.sky-scene__horizon-glow {
-  position: absolute;
-  bottom: 26%;
-  left: 0;
-  right: 0;
-  height: 8%;
-  background: radial-gradient(
-    ellipse 80% 100% at 70% 100%,
-    rgba(255, 220, 150, 0.2) 0%,
-    rgba(255, 200, 120, 0.08) 50%,
-    transparent 100%
-  );
-}
-
-/* Sun reflection on water — shimmering vertical stripe */
-.sky-scene__sun-reflection {
-  position: absolute;
-  bottom: 0;
-  right: 28%;
-  width: 30px;
-  height: 26%;
+  top: 0;
   background: linear-gradient(
     180deg,
-    rgba(255, 240, 180, 0.18) 0%,
-    rgba(255, 230, 160, 0.12) 30%,
-    rgba(255, 220, 140, 0.06) 60%,
+    rgba(255, 245, 200, 0.08) 0%,
+    rgba(255, 240, 180, 0.04) 50%,
     transparent 100%
   );
-  animation: sky-scene-sun-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  animation: sky-scene-shaft-pulse 8s ease-in-out infinite;
 }
 
-@keyframes sky-scene-sun-shimmer {
-  0%, 100% { transform: scaleX(1); opacity: 0.8; }
-  50% { transform: scaleX(1.4); opacity: 1; }
+.sky-scene__light-shaft--1 {
+  right: 10%;
+  width: 60px;
+  height: 70%;
+  transform: rotate(-12deg);
+  transform-origin: top right;
+  animation-delay: 0s;
+}
+.sky-scene__light-shaft--2 {
+  right: 20%;
+  width: 45px;
+  height: 65%;
+  transform: rotate(-20deg);
+  transform-origin: top right;
+  animation-delay: 2s;
+  opacity: 0.7;
+}
+.sky-scene__light-shaft--3 {
+  right: 5%;
+  width: 35px;
+  height: 60%;
+  transform: rotate(-5deg);
+  transform-origin: top right;
+  animation-delay: 4s;
+  opacity: 0.5;
+}
+.sky-scene__light-shaft--4 {
+  right: 30%;
+  width: 50px;
+  height: 55%;
+  transform: rotate(-28deg);
+  transform-origin: top right;
+  animation-delay: 6s;
+  opacity: 0.4;
 }
 
-/* Ocean SVG — positioned at the bottom */
-.sky-scene__ocean-svg {
+@keyframes sky-scene-shaft-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Lens flare bokeh dots */
+.sky-scene__lens-dot {
   position: absolute;
-  bottom: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sky-scene-lens-float 12s ease-in-out infinite;
+}
+
+@keyframes sky-scene-lens-float {
+  0%, 100% { transform: translate(0, 0); opacity: var(--dot-opacity, 0.06); }
+  33% { transform: translate(5px, -3px); opacity: calc(var(--dot-opacity, 0.06) * 1.5); }
+  66% { transform: translate(-3px, 4px); opacity: var(--dot-opacity, 0.06); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BEACH — Tropical Light Show
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Sun pillar — vertical light column below sun */
+.sky-scene__sun-pillar {
+  position: absolute;
+  top: 8%;
+  right: 14%;
+  width: 20px;
+  height: 60%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 240, 200, 0.15) 0%,
+    rgba(255, 230, 180, 0.08) 30%,
+    rgba(255, 220, 160, 0.04) 60%,
+    transparent 100%
+  );
+  filter: blur(4px);
+  pointer-events: none;
+  animation: sky-scene-pillar-breathe 6s ease-in-out infinite;
+}
+
+@keyframes sky-scene-pillar-breathe {
+  0%, 100% { opacity: 0.6; transform: scaleX(1); }
+  50% { opacity: 0.9; transform: scaleX(1.3); }
+}
+
+/* Iridescent cloud wisps — thin prismatic bands */
+.sky-scene__iridescent-wisp {
+  position: absolute;
   left: -5%;
   right: -5%;
-  height: 30%;
-}
-
-/* Wave animation — horizontal rolling */
-.sky-scene__wave--deep {
-  animation: sky-scene-wave-roll 12s ease-in-out infinite;
-}
-.sky-scene__wave--mid {
-  animation: sky-scene-wave-roll 8s ease-in-out infinite reverse;
-}
-.sky-scene__wave--shore {
-  animation: sky-scene-wave-roll 6s ease-in-out infinite;
-}
-
-@keyframes sky-scene-wave-roll {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(15px); }
-}
-
-/* Foam line shimmer */
-.sky-scene__foam-line--1 {
-  animation: sky-scene-foam-shimmer 4s ease-in-out infinite;
-}
-.sky-scene__foam-line--2 {
-  animation: sky-scene-foam-shimmer 5s ease-in-out infinite 1.5s;
-}
-
-@keyframes sky-scene-foam-shimmer {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.4; }
-}
-
-/* Palm tree SVG silhouettes */
-.sky-scene__palm-left {
-  position: absolute;
-  bottom: 24%;
-  left: 2%;
-  width: 50px;
-  height: 85px;
-  animation: sky-scene-palm-sway 6s ease-in-out infinite;
-  transform-origin: bottom center;
-}
-
-.sky-scene__palm-right {
-  position: absolute;
-  bottom: 22%;
-  right: 3%;
-  width: 40px;
-  height: 65px;
-  animation: sky-scene-palm-sway 7s ease-in-out infinite 2s;
-  transform-origin: bottom center;
-}
-
-@keyframes sky-scene-palm-sway {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2deg); }
-  75% { transform: rotate(-1.5deg); }
-}
-
-/* Sailboat — slow drift across horizon */
-.sky-scene__sailboat {
-  position: absolute;
-  bottom: 27%;
-  width: 16px;
-  height: 14px;
-  animation: sky-scene-sailboat-drift 45s linear infinite;
-}
-
-@keyframes sky-scene-sailboat-drift {
-  0% { left: -5%; }
-  100% { left: 105%; }
-}
-
-/* Horizon island dot */
-.sky-scene__horizon-island {
-  position: absolute;
-  bottom: 28.5%;
-  left: 72%;
-  width: 14px;
-  height: 5px;
-  background: radial-gradient(ellipse, rgba(30,60,30,0.15) 0%, transparent 70%);
-  border-radius: 40% 50% 0 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   WINTER — Crystalline Summit
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* Frozen lake reflection at base of mountains */
-.sky-scene__frozen-lake {
-  position: absolute;
-  bottom: 12%;
-  left: 5%;
-  right: 5%;
-  height: 4%;
-  background: linear-gradient(
-    180deg,
-    rgba(180, 220, 255, 0.1) 0%,
-    rgba(160, 200, 240, 0.15) 50%,
-    rgba(140, 180, 220, 0.08) 100%
-  );
+  height: 8px;
   border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.4;
   filter: blur(2px);
 }
 
-/* Mountain base mist */
+.sky-scene__iridescent-wisp--1 {
+  top: 35%;
+  background: linear-gradient(90deg, transparent 5%, rgba(255,180,180,0.12) 20%, rgba(255,220,150,0.1) 35%, rgba(180,255,200,0.08) 50%, rgba(150,200,255,0.1) 65%, rgba(200,170,255,0.08) 80%, transparent 95%);
+  animation: sky-scene-wisp-drift 25s ease-in-out infinite;
+}
+.sky-scene__iridescent-wisp--2 {
+  top: 50%;
+  height: 6px;
+  background: linear-gradient(90deg, transparent 10%, rgba(200,170,255,0.1) 25%, rgba(150,200,255,0.08) 40%, rgba(180,255,200,0.1) 55%, rgba(255,220,150,0.08) 70%, rgba(255,180,180,0.06) 85%, transparent 95%);
+  animation: sky-scene-wisp-drift 30s ease-in-out infinite 5s;
+}
+.sky-scene__iridescent-wisp--3 {
+  top: 65%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent 5%, rgba(180,255,220,0.08) 25%, rgba(255,200,180,0.1) 45%, rgba(180,190,255,0.08) 65%, rgba(255,240,180,0.06) 80%, transparent 95%);
+  animation: sky-scene-wisp-drift 35s ease-in-out infinite 10s;
+}
+
+@keyframes sky-scene-wisp-drift {
+  0%, 100% { transform: translateX(0) scaleY(1); }
+  50% { transform: translateX(30px) scaleY(1.3); }
+}
+
+/* Light sparkle dots */
+.sky-scene__sparkle-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,250,220,0.9) 0%, transparent 70%);
+  pointer-events: none;
+  animation: sky-scene-sparkle-pulse ease-in-out infinite;
+}
+
+@keyframes sky-scene-sparkle-pulse {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   WINTER — Aurora & Diamond Dust
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Aurora curtain SVG */
+.sky-scene__aurora-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sky-scene__aurora-path {
+  animation: sky-scene-aurora-shift ease-in-out infinite;
+}
+.sky-scene__aurora-path--1 {
+  animation-duration: 12s;
+}
+.sky-scene__aurora-path--2 {
+  animation-duration: 15s;
+  animation-delay: 3s;
+}
+.sky-scene__aurora-path--3 {
+  animation-duration: 18s;
+  animation-delay: 6s;
+}
+
+@keyframes sky-scene-aurora-shift {
+  0%, 100% { transform: translateX(0) scaleY(1); opacity: 0.6; }
+  33% { transform: translateX(15px) scaleY(1.1); opacity: 0.9; }
+  66% { transform: translateX(-10px) scaleY(0.9); opacity: 0.7; }
+}
+
+/* Diamond dust sparkles */
+.sky-scene__diamond-dust {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sky-scene-diamond-twinkle ease-in-out infinite;
+}
+
+@keyframes sky-scene-diamond-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 0.7; transform: scale(1.3); }
+}
+
+/* Parhelia (sun halo rings) */
+.sky-scene__parhelia {
+  position: absolute;
+  top: 2%;
+  right: 6%;
+  width: 120px;
+  height: 120px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Nacreous (polar stratospheric) clouds */
+.sky-scene__nacreous-cloud {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(6px);
+  animation: sky-scene-nacreous-drift 20s ease-in-out infinite;
+}
+
+.sky-scene__nacreous-cloud--1 {
+  top: 30%;
+  left: 10%;
+  width: 100px;
+  height: 30px;
+  background: linear-gradient(90deg, rgba(200,180,255,0.06) 0%, rgba(180,220,255,0.08) 30%, rgba(200,255,220,0.06) 60%, rgba(255,200,210,0.04) 100%);
+}
+.sky-scene__nacreous-cloud--2 {
+  top: 55%;
+  right: 15%;
+  width: 80px;
+  height: 25px;
+  background: linear-gradient(90deg, rgba(255,200,220,0.05) 0%, rgba(200,180,255,0.07) 40%, rgba(180,240,255,0.05) 70%, rgba(220,255,200,0.04) 100%);
+  animation-delay: 8s;
+}
+
+@keyframes sky-scene-nacreous-drift {
+  0%, 100% { transform: translateX(0) scaleX(1); opacity: 0.5; }
+  50% { transform: translateX(15px) scaleX(1.1); opacity: 0.8; }
+}
+
+/* Mist layer (repositioned to mid-sky) */
 .sky-scene__mist {
   position: absolute;
-  bottom: 14%;
+  bottom: 25%;
   left: -5%;
   right: -5%;
-  height: 8%;
+  height: 12%;
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(180, 210, 240, 0.12) 40%,
-    rgba(180, 210, 240, 0.2) 70%,
-    rgba(180, 210, 240, 0.1) 100%
+    rgba(180, 210, 240, 0.08) 40%,
+    rgba(180, 210, 240, 0.12) 70%,
+    rgba(180, 210, 240, 0.06) 100%
   );
   animation: sky-scene-mist-drift 10s ease-in-out infinite;
 }
@@ -1978,19 +1940,19 @@
 }
 
 .sky-scene__ice-crystal--1 {
-  top: 12%;
+  top: 22%;
   left: 25%;
   animation-delay: 0s;
 }
 .sky-scene__ice-crystal--2 {
-  top: 8%;
+  top: 45%;
   right: 30%;
   animation-delay: 1s;
   width: 3px;
   height: 3px;
 }
 .sky-scene__ice-crystal--3 {
-  top: 18%;
+  top: 60%;
   left: 60%;
   animation-delay: 2s;
   width: 3px;
@@ -2003,64 +1965,115 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   DESERT — Golden Mirage
+   DESERT — Mirages & Celestial Dust
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Apply heat shimmer filter to mid dunes */
-.sky-scene__shimmer-target {
-  filter: url(#desert-shimmer) blur(0.5px);
-}
-
-/* SVG filter container — no visual output */
-.sky-scene__filters {
+/* Heat shimmer bands */
+.sky-scene__heat-band {
   position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
+  left: -5%;
+  right: -5%;
+  height: 15%;
+  filter: url(#desert-shimmer);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 220, 160, 0.03) 40%,
+    rgba(255, 210, 140, 0.05) 60%,
+    transparent 100%
+  );
 }
 
-/* Oasis mirage — shimmering on far horizon */
-.sky-scene__oasis-mirage {
+.sky-scene__heat-band--1 {
+  bottom: 35%;
+  opacity: 0.5;
+}
+.sky-scene__heat-band--2 {
+  bottom: 50%;
+  opacity: 0.3;
+  height: 12%;
+}
+.sky-scene__heat-band--3 {
+  bottom: 20%;
+  opacity: 0.6;
+  height: 10%;
+}
+
+/* Dust veil */
+.sky-scene__dust-veil {
   position: absolute;
-  bottom: 26%;
-  left: 35%;
-  width: 40px;
-  height: 20px;
-  animation: sky-scene-mirage-flicker 3s ease-in-out infinite;
+  bottom: 0;
+  left: -5%;
+  right: -5%;
+  height: 40%;
+  background: linear-gradient(
+    to top,
+    rgba(220, 190, 140, 0.12) 0%,
+    rgba(210, 180, 130, 0.06) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: sky-scene-dust-sway 15s ease-in-out infinite;
 }
 
-@keyframes sky-scene-mirage-flicker {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  30% { opacity: 0.7; transform: scaleY(1.1); }
-  60% { opacity: 0.3; transform: scaleY(0.9); }
+@keyframes sky-scene-dust-sway {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(-5px); opacity: 0.9; }
 }
 
-/* Distant caravan */
-.sky-scene__caravan {
+/* Sun dogs */
+.sky-scene__sun-dog {
   position: absolute;
-  bottom: 24%;
-  display: flex;
-  gap: 4px;
-  align-items: flex-end;
-  animation: sky-scene-caravan-drift 60s linear infinite;
+  top: 8%;
+  width: 16px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sky-scene-sundog-pulse 5s ease-in-out infinite;
 }
 
-.sky-scene__caravan-figure {
-  width: 3px;
-  height: 5px;
-  background: rgba(140, 110, 60, 0.2);
-  border-radius: 40% 40% 0 0;
+.sky-scene__sun-dog--left {
+  right: 28%;
+  background: radial-gradient(circle, rgba(255,240,200,0.2) 0%, rgba(255,220,160,0.08) 50%, transparent 70%);
 }
-.sky-scene__caravan-figure:nth-child(2) {
-  height: 7px;
-}
-
-@keyframes sky-scene-caravan-drift {
-  0% { left: 105%; }
-  100% { left: -8%; }
+.sky-scene__sun-dog--right {
+  right: 2%;
+  background: radial-gradient(circle, rgba(255,240,200,0.15) 0%, rgba(255,220,160,0.06) 50%, transparent 70%);
+  animation-delay: 2.5s;
 }
 
-/* Blowing sand particles */
+@keyframes sky-scene-sundog-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+/* Horizon mirage band */
+.sky-scene__mirage-band {
+  position: absolute;
+  bottom: 25%;
+  left: 5%;
+  right: 5%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 240, 200, 0.15) 20%,
+    rgba(255, 230, 180, 0.2) 50%,
+    rgba(255, 240, 200, 0.15) 80%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  pointer-events: none;
+  animation: sky-scene-mirage-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes sky-scene-mirage-shimmer {
+  0%, 100% { opacity: 0.3; transform: scaleX(1) scaleY(1); }
+  50% { opacity: 0.7; transform: scaleX(1.05) scaleY(1.5); }
+}
+
+/* Sand particles (repositioned across full sky) */
 .sky-scene__sand-particle {
   position: absolute;
   width: 2px;
@@ -2077,22 +2090,8 @@
   100% { transform: translate(-120px, -15px); opacity: 0; }
 }
 
-/* Desert scene layer adjustments */
-.sky-scene--desert .sky-scene__layer--far {
-  bottom: 18%;
-  height: 20%;
-}
-.sky-scene--desert .sky-scene__layer--mid {
-  bottom: 15%;
-  height: 16%;
-}
-.sky-scene--desert .sky-scene__layer--near {
-  bottom: 12%;
-  height: 13%;
-}
-
 /* ═══════════════════════════════════════════════════════════════════
-   NIGHT — Bioluminescent Wonderland
+   NIGHT — Deep Space Cathedral
    ═══════════════════════════════════════════════════════════════════ */
 
 /* Milky Way band — diagonal gradient stripe */
@@ -2116,6 +2115,7 @@
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
+  animation: sky-scene-nebula-pulse ease-in-out infinite;
 }
 
 .sky-scene__nebula--1 {
@@ -2124,7 +2124,7 @@
   width: 80px;
   height: 50px;
   background: radial-gradient(ellipse, rgba(100, 60, 160, 0.08) 0%, transparent 70%);
-  animation: sky-scene-nebula-pulse 15s ease-in-out infinite;
+  animation-duration: 15s;
 }
 
 .sky-scene__nebula--2 {
@@ -2133,7 +2133,39 @@
   width: 60px;
   height: 40px;
   background: radial-gradient(ellipse, rgba(60, 100, 160, 0.06) 0%, transparent 70%);
-  animation: sky-scene-nebula-pulse 18s ease-in-out infinite 5s;
+  animation-duration: 18s;
+  animation-delay: 5s;
+}
+
+/* Additional nebulae — fill lower sky where cliffs used to be */
+.sky-scene__nebula--3 {
+  bottom: 25%;
+  left: 20%;
+  width: 100px;
+  height: 60px;
+  background: radial-gradient(ellipse, rgba(120, 60, 180, 0.07) 0%, rgba(80, 40, 140, 0.03) 50%, transparent 70%);
+  animation-duration: 20s;
+  animation-delay: 3s;
+}
+
+.sky-scene__nebula--4 {
+  bottom: 35%;
+  right: 10%;
+  width: 90px;
+  height: 50px;
+  background: radial-gradient(ellipse, rgba(60, 140, 160, 0.06) 0%, rgba(40, 100, 140, 0.03) 50%, transparent 70%);
+  animation-duration: 22s;
+  animation-delay: 8s;
+}
+
+.sky-scene__nebula--5 {
+  bottom: 15%;
+  left: 55%;
+  width: 70px;
+  height: 45px;
+  background: radial-gradient(ellipse, rgba(160, 60, 120, 0.05) 0%, rgba(120, 40, 100, 0.02) 50%, transparent 70%);
+  animation-duration: 16s;
+  animation-delay: 12s;
 }
 
 @keyframes sky-scene-nebula-pulse {
@@ -2149,7 +2181,7 @@
   z-index: 2;
 }
 
-/* Moonlight cone — fan of light below moon */
+/* Moonlight cone */
 .sky-scene__moonlight-cone {
   position: absolute;
   top: 12%;
@@ -2167,14 +2199,57 @@
   opacity: 0.7;
 }
 
-/* Bioluminescent dots on cliff edges */
-.sky-scene__bio-dot {
-  animation: sky-scene-bio-pulse 2.5s ease-in-out infinite;
+/* Zodiacal light — faint triangle from horizon */
+.sky-scene__zodiacal-light {
+  position: absolute;
+  bottom: 0;
+  left: 30%;
+  width: 40%;
+  height: 60%;
+  background: linear-gradient(
+    to top,
+    rgba(200, 210, 255, 0.06) 0%,
+    rgba(180, 190, 240, 0.03) 40%,
+    transparent 100%
+  );
+  clip-path: polygon(30% 100%, 70% 100%, 50% 0%);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
-@keyframes sky-scene-bio-pulse {
-  0%, 100% { opacity: 0.2; r: 1; }
-  50% { opacity: 0.7; r: 2; }
+/* Airglow band */
+.sky-scene__airglow {
+  position: absolute;
+  bottom: 20%;
+  left: -5%;
+  right: -5%;
+  height: 8%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(120, 200, 100, 0.04) 30%,
+    rgba(140, 220, 120, 0.06) 50%,
+    rgba(120, 200, 100, 0.04) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: sky-scene-airglow-pulse 10s ease-in-out infinite;
+}
+
+@keyframes sky-scene-airglow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+/* Moon halo */
+.sky-scene__moon-halo {
+  position: absolute;
+  top: 0;
+  right: 4%;
+  width: 140px;
+  height: 140px;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 /* Enhanced firefly field */
@@ -2206,20 +2281,131 @@
   }
 }
 
-/* Night scene layer adjustments */
-.sky-scene--night .sky-scene__layer--far {
-  bottom: 18%;
-  height: 24%;
-  filter: none;
-}
-.sky-scene--night .sky-scene__layer--near {
-  bottom: 13%;
-  height: 18%;
+/* ═══════════════════════════════════════════════════════════════════
+   SAKURA — Ethereal Blossom Sky
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Pink glow bands */
+.sky-scene__pink-glow-band {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  pointer-events: none;
+  filter: blur(3px);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   SAKURA — Eternal Blossom Dream
-   ═══════════════════════════════════════════════════════════════════ */
+.sky-scene__pink-glow-band--1 {
+  bottom: 25%;
+  height: 20%;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,180,200,0.08) 40%, rgba(255,200,180,0.06) 60%, transparent 100%);
+  animation: sky-scene-pink-pulse 10s ease-in-out infinite;
+}
+.sky-scene__pink-glow-band--2 {
+  bottom: 40%;
+  height: 15%;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,200,220,0.06) 40%, rgba(255,220,200,0.04) 60%, transparent 100%);
+  animation: sky-scene-pink-pulse 12s ease-in-out infinite 4s;
+}
+.sky-scene__pink-glow-band--3 {
+  bottom: 55%;
+  height: 12%;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,190,210,0.05) 40%, rgba(255,210,190,0.03) 60%, transparent 100%);
+  animation: sky-scene-pink-pulse 14s ease-in-out infinite 8s;
+}
+
+@keyframes sky-scene-pink-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 0.8; transform: scaleY(1.15); }
+}
+
+/* Lens bokeh orbs */
+.sky-scene__bokeh-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sky-scene-bokeh-drift 15s ease-in-out infinite;
+}
+
+@keyframes sky-scene-bokeh-drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(6px, -4px); }
+  66% { transform: translate(-4px, 5px); }
+}
+
+/* Floating petal vortex */
+.sky-scene__petal-vortex {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  width: 80px;
+  height: 80px;
+  animation: sky-scene-vortex-spin 30s linear infinite;
+  pointer-events: none;
+}
+
+.sky-scene__vortex-petal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 3px;
+  background: rgba(255, 180, 200, 0.4);
+  border-radius: 50% 0;
+  transform-origin: 0 0;
+}
+
+@keyframes sky-scene-vortex-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Prismatic light bands */
+.sky-scene__prismatic-band {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.15;
+  filter: blur(3px);
+}
+
+.sky-scene__prismatic-band--1 {
+  bottom: 20%;
+  left: -10%;
+  width: 120%;
+  height: 6px;
+  transform: rotate(-8deg);
+  background: linear-gradient(90deg, transparent 5%, rgba(255,150,150,0.3) 15%, rgba(255,200,100,0.25) 30%, rgba(200,255,150,0.2) 45%, rgba(150,200,255,0.25) 60%, rgba(180,150,255,0.2) 75%, transparent 90%);
+}
+.sky-scene__prismatic-band--2 {
+  bottom: 35%;
+  left: -5%;
+  width: 110%;
+  height: 4px;
+  transform: rotate(-5deg);
+  background: linear-gradient(90deg, transparent 10%, rgba(180,150,255,0.2) 25%, rgba(150,200,255,0.2) 40%, rgba(200,255,180,0.15) 55%, rgba(255,220,150,0.2) 70%, rgba(255,170,170,0.15) 85%, transparent 95%);
+}
+
+/* Blossom glow lanterns */
+.sky-scene__blossom-lantern {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,180,200,0.6) 0%, rgba(255,160,180,0.2) 50%, transparent 70%);
+  box-shadow: 0 0 10px 4px rgba(255,180,200,0.15);
+  pointer-events: none;
+  animation: sky-scene-lantern-float 6s ease-in-out infinite;
+}
+
+@keyframes sky-scene-lantern-float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+    box-shadow: 0 0 8px 3px rgba(255,180,200,0.12);
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 0.7;
+    box-shadow: 0 0 14px 5px rgba(255,180,200,0.2);
+  }
+}
 
 /* Wisteria vines hanging from top */
 .sky-scene__wisteria {
@@ -2290,54 +2476,6 @@
   75% { transform: rotate(-1deg); }
 }
 
-/* Stone lanterns with warm glow */
-.sky-scene__lantern {
-  position: absolute;
-  width: 4px;
-  height: 8px;
-  background: linear-gradient(
-    180deg,
-    rgba(160, 130, 100, 0.3) 0%,
-    rgba(140, 110, 80, 0.25) 100%
-  );
-  border-radius: 1px 1px 0 0;
-}
-
-.sky-scene__lantern::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 4px;
-  background: rgba(255, 200, 120, 0.3);
-  border-radius: 50%;
-  box-shadow: 0 0 8px 3px rgba(255, 180, 80, 0.15);
-  animation: sky-scene-lantern-glow 4s ease-in-out infinite;
-}
-
-.sky-scene__lantern--1 {
-  bottom: 16%;
-  left: 22%;
-}
-.sky-scene__lantern--2 {
-  bottom: 15%;
-  right: 28%;
-  animation-delay: 2s;
-}
-
-@keyframes sky-scene-lantern-glow {
-  0%, 100% {
-    box-shadow: 0 0 6px 2px rgba(255, 180, 80, 0.12);
-    opacity: 0.7;
-  }
-  50% {
-    box-shadow: 0 0 10px 4px rgba(255, 180, 80, 0.2);
-    opacity: 1;
-  }
-}
-
 /* Cherry blossom branch — framing element top-right */
 .sky-scene__branch {
   position: absolute;
@@ -2349,9 +2487,13 @@
   z-index: 2;
 }
 
-/* Cherry blossom flower dots glow on the branch SVG */
 .sky-scene__branch circle {
-  animation: sky-scene-flower-sway 5s ease-in-out infinite;
+  animation: sky-scene-blossom-sway 5s ease-in-out infinite;
+}
+
+@keyframes sky-scene-blossom-sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2364,43 +2506,45 @@
 }
 
 /* Reduce complexity on perf-med (>60 pets) */
-.pet-land--perf-med .sky-scene__windmill-blades { animation: none; }
-.pet-land--perf-med .sky-scene__sailboat { display: none; }
-.pet-land--perf-med .sky-scene__caravan { display: none; }
-.pet-land--perf-med .sky-scene__firefly-field .sky-scene__firefly:nth-child(n+10) { display: none; }
+.pet-land--perf-med .sky-scene__firefly-field .sky-scene__firefly:nth-child(n+12) { display: none; }
 .pet-land--perf-med .sky-scene__sand-particle:nth-child(n+6) { display: none; }
-.pet-land--perf-med .sky-scene__corona { display: none; }
-.pet-land--perf-med .sky-scene__nebula { display: none; }
+.pet-land--perf-med .sky-scene__diamond-dust:nth-child(n+10) { display: none; }
+.pet-land--perf-med .sky-scene__nebula--3,
+.pet-land--perf-med .sky-scene__nebula--4,
+.pet-land--perf-med .sky-scene__nebula--5 { display: none; }
 .pet-land--perf-med .sky-scene__wisteria { display: none; }
+.pet-land--perf-med .sky-scene__petal-vortex { display: none; }
+.pet-land--perf-med .sky-scene__nacreous-cloud { display: none; }
+.pet-land--perf-med .sky-scene__iridescent-wisp { display: none; }
+.pet-land--perf-med .sky-scene__light-shaft:nth-child(n+3) { display: none; }
 
 /* Reduced motion — disable all sky scene animations */
 @media (prefers-reduced-motion: reduce) {
-  .sky-scene__windmill-blades,
-  .sky-scene__corona,
-  .sky-scene__lens-flare,
-  .sky-scene__wave--deep,
-  .sky-scene__wave--mid,
-  .sky-scene__wave--shore,
-  .sky-scene__foam-line--1,
-  .sky-scene__foam-line--2,
-  .sky-scene__palm-left,
-  .sky-scene__palm-right,
-  .sky-scene__sailboat,
-  .sky-scene__sun-reflection,
+  .sky-scene__light-shaft,
+  .sky-scene__lens-dot,
+  .sky-scene__sun-pillar,
+  .sky-scene__iridescent-wisp,
+  .sky-scene__sparkle-dot,
+  .sky-scene__aurora-path,
+  .sky-scene__diamond-dust,
+  .sky-scene__nacreous-cloud,
   .sky-scene__mist,
   .sky-scene__ice-crystal,
-  .sky-scene__oasis-mirage,
-  .sky-scene__caravan,
+  .sky-scene__heat-band,
+  .sky-scene__dust-veil,
+  .sky-scene__sun-dog,
+  .sky-scene__mirage-band,
   .sky-scene__sand-particle,
   .sky-scene__nebula,
-  .sky-scene__bio-dot,
   .sky-scene__firefly,
+  .sky-scene__airglow,
+  .sky-scene__pink-glow-band,
+  .sky-scene__bokeh-orb,
+  .sky-scene__petal-vortex,
+  .sky-scene__blossom-lantern,
   .sky-scene__vine,
-  .sky-scene__lantern::before {
+  .sky-scene__branch circle {
     animation: none !important;
-  }
-  .sky-scene__shimmer-target {
-    filter: blur(0.5px) !important;
   }
 }
 
