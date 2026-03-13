@@ -7,14 +7,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PixelIcon } from "@/components/ui/PixelIcon";
-import { useLandStore, useArchipelago, useActiveIslandIndex } from "@/stores/landStore";
+import { useLandStore } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
 import { usePrestigeLevel } from "@/stores/xpStore";
 import { getStreakMultiplier } from "@/lib/constants";
-import { getIslandTheme } from "@/data/IslandThemes";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
+import { IslandSwitcher } from "@/components/IslandSwitcher";
 
 // ── Floating reward numbers ──────────────────────────────────────
 interface FloatingReward {
@@ -52,9 +52,6 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const tierCapacity = getAvailableCellCount(gridSize);
   const islandProgressPct = tierCapacity > 0 ? (filledCount / tierCapacity) * 100 : 0;
   const { dailyIncomeRate, accumulatedCoins, justCollected, collect, isPremium } = usePassiveIncome();
-  const archipelago = useArchipelago();
-  const activeIslandIndex = useActiveIslandIndex();
-  const unlockedIslands = archipelago.filter((i) => i.isUnlocked && i.isPurchased);
 
   const handleCollect = useCallback(() => {
     const amount = collect();
@@ -129,7 +126,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
 
   const streakMultiplier = getStreakMultiplier(streakData.currentStreak);
   const isStreakMilestone = [5, 10, 15, 20].includes(streakData.currentStreak);
-  const themeName = getIslandTheme(currentLand.theme || 'day').name;
+
 
   return (
     <div className="status-bar-container" ref={statusBarRef}>
@@ -359,18 +356,11 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
         </div>
         </div>{/* end game-top-bar-chips */}
 
-        {/* Island Progress Row */}
+        {/* Row 2: Island Switcher + Progress + Action Buttons */}
         <div className="island-progress-row">
-          <span className="island-progress-label">
-            {themeName} Island
-            {unlockedIslands.length >= 2 && (
-              <span className="island-progress-dots">
-                {unlockedIslands.map((_, i) => (
-                  <span key={i} className={i === activeIslandIndex ? 'island-dot--active' : 'island-dot'}>{i === activeIslandIndex ? '●' : '○'}</span>
-                ))}
-              </span>
-            )}
-          </span>
+          <IslandSwitcher onLockedTap={(index) => {
+            window.dispatchEvent(new CustomEvent('openIslandUnlock', { detail: index }));
+          }} />
           <div className="island-progress-track">
             <div
               className="island-progress-fill"
@@ -380,6 +370,32 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <span className="island-progress-count tabular-nums">
             {filledCount}/{tierCapacity}
           </span>
+          <div className="top-bar-actions">
+            <button
+              className="top-bar-action-btn"
+              onClick={() => window.dispatchEvent(new CustomEvent('toggleDecorMode'))}
+              aria-label="Decorate island"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </button>
+            {filledCount > 0 && (
+              <button
+                className="top-bar-action-btn"
+                onClick={() => window.dispatchEvent(new CustomEvent('shareIsland'))}
+                aria-label="Share island screenshot"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
+                  <polyline points="16 6 12 2 8 6" />
+                  <line x1="12" y1="2" x2="12" y2="15" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -21,8 +21,6 @@ import { getIslandScale, getAvailableCellCount, getIslandPosition, getAvailableC
 import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
-import { HomeGoalsWidget } from '@/components/HomeGoalsWidget';
-import { NextGoalWidget } from '@/components/NextGoalWidget';
 import { WeatherParticles, getTimePeriod, getWeatherType, getSkyColors } from '@/components/WeatherParticles';
 import { useIslandAmbientEnabled, useIslandAmbientVolume } from '@/stores/soundStore';
 import { useXPStore } from '@/stores/xpStore';
@@ -30,7 +28,6 @@ import { useStreakStore } from '@/stores/streakStore';
 import { toPng } from 'html-to-image';
 import { toast } from 'sonner';
 import { type LandCell, type DecorationCell, isPetCell, isDecorationCell } from '@/stores/landStore';
-import { IslandSwitcher } from '@/components/IslandSwitcher';
 import { IslandUnlockModal } from '@/components/IslandUnlockModal';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useCurrentLevel } from '@/stores/xpStore';
@@ -608,7 +605,6 @@ export const PetLand = () => {
   const currentLevel = useCurrentLevel();
   const archipelago = useArchipelago();
   const activeIslandIndex = useActiveIslandIndex();
-  const switchIsland = useLandStore((s) => s.switchIsland);
   const hasSeenArchipelagoTeaser = useOnboardingStore((s) => s.hasSeenArchipelagoTeaser);
   const hasSeenPassiveIncomeTeaser = useOnboardingStore((s) => s.hasSeenPassiveIncomeTeaser);
   const dismissArchipelagoTeaser = useOnboardingStore((s) => s.dismissArchipelagoTeaser);
@@ -624,7 +620,6 @@ export const PetLand = () => {
   const placeDecoration = useLandStore((s) => s.placeDecoration);
   const removeDecoration = useLandStore((s) => s.removeDecoration);
   const decorationInventory = useLandStore((s) => s.decorationInventory);
-  const hasDecorations = Object.values(decorationInventory).some(q => q > 0);
 
   const handleShareIsland = useCallback(async () => {
     const captureEl = islandCaptureRef.current;
@@ -730,7 +725,6 @@ export const PetLand = () => {
   const gridSize = currentLand.gridSize || 5;
   const tierCapacity = getAvailableCellCount(gridSize);
   const tierScale = getIslandScale(gridSize);
-  const progressPct = (filledCount / tierCapacity) * 100;
 
   const parallaxDisabledRef = useRef(false);
   useEffect(() => {
@@ -771,6 +765,32 @@ export const PetLand = () => {
     window.addEventListener('goToPet', handler);
     return () => window.removeEventListener('goToPet', handler);
   }, [gridSize, setZoom, resetView]);
+
+  // Listen for custom events from TopStatusBar action buttons
+  useEffect(() => {
+    const handleToggleDecor = () => {
+      setIsDecorMode(prev => {
+        const entering = !prev;
+        if (!entering) setSelectedDecorationId(null);
+        if (entering) resetView();
+        haptic('light');
+        return entering;
+      });
+    };
+    const handleShare = () => { handleShareIsland(); };
+    const handleUnlock = (e: Event) => {
+      const index = (e as CustomEvent<number>).detail;
+      if (typeof index === 'number') setUnlockIslandIndex(index);
+    };
+    window.addEventListener('toggleDecorMode', handleToggleDecor);
+    window.addEventListener('shareIsland', handleShare);
+    window.addEventListener('openIslandUnlock', handleUnlock);
+    return () => {
+      window.removeEventListener('toggleDecorMode', handleToggleDecor);
+      window.removeEventListener('shareIsland', handleShare);
+      window.removeEventListener('openIslandUnlock', handleUnlock);
+    };
+  }, [handleShareIsland, resetView, haptic]);
 
   // Auto-dismiss land completion + burst particles
   useEffect(() => {
@@ -1224,53 +1244,6 @@ export const PetLand = () => {
         </div>
       </div>
 
-      {/* Next Goal Widget — compact card below status bar */}
-      <NextGoalWidget />
-
-      {/* Home Goals Widget (replaces old nudge chip) */}
-      {filledCount > 0 && <HomeGoalsWidget />}
-
-      {/* Island progress ring */}
-      {filledCount > 0 && (
-        <div className="pet-land__progress-ring" aria-label={`Island ${Math.round(progressPct)}% full`}>
-          <svg viewBox="0 0 36 36" width="36" height="36">
-            <circle
-              cx="18" cy="18" r="15.5"
-              fill="none"
-              stroke="rgba(255,255,255,0.15)"
-              strokeWidth="3"
-            />
-            <circle
-              cx="18" cy="18" r="15.5"
-              fill="none"
-              stroke="hsl(142 60% 50%)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeDasharray={`${progressPct * 0.974} ${97.4 - progressPct * 0.974}`}
-              transform="rotate(-90 18 18)"
-              style={{ transition: 'stroke-dasharray 0.5s ease' }}
-            />
-          </svg>
-          <span className="pet-land__progress-ring-text">{Math.round(progressPct)}%</span>
-        </div>
-      )}
-
-      {/* Island switcher dots — only when 2+ islands unlocked */}
-      {unlockedIslands.length >= 2 && (
-        <div className="pet-land__island-dots" aria-label="Switch island">
-          {archipelago.map((island, i) => {
-            if (!island.isUnlocked || !island.isPurchased) return null;
-            return (
-              <button
-                key={island.islandId}
-                className={`pet-land__island-dot ${i === activeIslandIndex ? 'pet-land__island-dot--active' : ''}`}
-                onClick={() => switchIsland(i)}
-                aria-label={`Switch to island ${i + 1}`}
-              />
-            );
-          })}
-        </div>
-      )}
 
       {/* Teaser tooltip bubble */}
       {activeTooltip && (
@@ -1317,41 +1290,6 @@ export const PetLand = () => {
         </div>
       )}
 
-      {/* Action buttons — top-right, below status bar */}
-      <div className="pet-land__actions">
-        {hasDecorations && (
-          <button
-            className={`pet-land__action-btn ${isDecorMode ? 'pet-land__action-btn--active' : ''}`}
-            onClick={() => {
-              const entering = !isDecorMode;
-              setIsDecorMode(entering);
-              if (!entering) setSelectedDecorationId(null);
-              if (entering) resetView();
-              haptic('light');
-            }}
-            aria-label={isDecorMode ? 'Exit decoration mode' : 'Decorate island'}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </button>
-        )}
-        {filledCount > 0 && (
-          <button
-            className="pet-land__action-btn"
-            onClick={handleShareIsland}
-            aria-label="Share island screenshot"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
-              <polyline points="16 6 12 2 8 6" />
-              <line x1="12" y1="2" x2="12" y2="15" />
-            </svg>
-          </button>
-        )}
-      </div>
 
       {/* Decoration picker bottom sheet */}
       {isDecorMode && (
@@ -1449,8 +1387,6 @@ export const PetLand = () => {
         <PremiumSubscription isOpen={showPremiumDialog} onClose={() => setShowPremiumDialog(false)} />
       )}
 
-      {/* Archipelago island switcher */}
-      <IslandSwitcher onLockedTap={(index) => setUnlockIslandIndex(index)} />
 
       {/* Island unlock modal */}
       {unlockIslandIndex !== null && (
