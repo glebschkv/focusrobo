@@ -24,9 +24,13 @@ export function HeroSection() {
             <br />
             <span className="text-primary">Get a Pet.</span>
           </h1>
-          <p className="hero-subtitle" style={{ margin: '0 0 32px', maxWidth: 480 }}>
+          <p className="hero-subtitle" style={{ margin: '0 0 20px', maxWidth: 480 }}>
             Focus sessions earn pixel art pets that live on your floating island. No willpower required.
           </p>
+          <div className="hero-reward-badge">
+            <img src="/icons/egg-legendary.png" alt="" className="hero-reward-badge__egg" />
+            <span>Free <strong>Legendary Egg</strong> for early signups</span>
+          </div>
           <div className="hero-form-highlight">
             <WaitlistForm variant="hero" />
           </div>
@@ -48,7 +52,7 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="flex-shrink-0 w-full md:w-auto"
+          className="flex-shrink-0 w-full md:w-auto flex justify-center"
         >
           <IslandScene gridSize={10} />
         </motion.div>
