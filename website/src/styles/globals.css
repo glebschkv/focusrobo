@@ -103,6 +103,10 @@
   0%, 100% { transform: translate(-50%, -60%) translateY(0); }
   50% { transform: translate(-50%, -60%) translateY(-2px); }
 }
+@keyframes card-sprite-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
 
 @keyframes pet-pop {
   0% { transform: translate(-50%, -60%) scale(0); opacity: 0; }
@@ -392,8 +396,8 @@
     width: 100%;
     z-index: 100;
     padding: 14px 24px;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     background: transparent;
     transition: background 0.3s var(--ease-smooth), backdrop-filter 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
@@ -423,6 +427,7 @@
     display: none;
     gap: 32px;
     align-items: center;
+    justify-self: center;
   }
   .nav-links a {
     font-size: 14px;
@@ -434,6 +439,7 @@
   .nav-links a:hover { color: var(--fg-deep); }
 
   .nav-cta {
+    justify-self: end;
     background: var(--primary);
     color: white;
     padding: 10px 24px;
@@ -680,6 +686,30 @@
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.8);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(255,255,255,0.5);
+  }
+
+  /* ═══ Hero Reward Badge ═══ */
+  .hero-reward-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(234,179,8,0.12) 0%, rgba(234,179,8,0.06) 100%);
+    border: 1px solid rgba(234,179,8,0.3);
+    border-radius: var(--radius-pill);
+    padding: 8px 18px 8px 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--fg-deep);
+  }
+  .hero-reward-badge__egg {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+    animation: egg-rock 2.5s ease-in-out infinite;
+  }
+  .hero-reward-badge strong {
+    color: var(--rarity-legendary);
+    font-weight: 700;
   }
 
   /* ═══ Waitlist Form ═══ */
@@ -953,7 +983,7 @@
     object-fit: contain;
   }
   .pet-card:hover .pet-card__sprite {
-    animation: pet-bob 0.4s var(--ease-spring);
+    animation: card-sprite-bob 0.4s var(--ease-spring);
   }
   .pet-card__name {
     font-size: 13px;

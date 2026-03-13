@@ -245,7 +245,7 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
           background: 'var(--primary)',
           flexShrink: 0,
         }} />
-        <strong>{waitlistCount.toLocaleString()}</strong> adventurers already waiting
+        <strong>{waitlistCount.toLocaleString()}</strong> adventurers joined — limited early access spots
       </div>
       {status === 'error' && (
         <p style={{ color: '#e53e3e', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
