@@ -128,10 +128,10 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     return (
       <div className="waitlist-success">
         <div className="legendary-egg-display" />
-        <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6, letterSpacing: '-0.02em' }}>
+        <h3 className="card-title" style={{ fontSize: 22 }}>
           You're in! Your Legendary Egg is reserved.
         </h3>
-        <p style={{ fontSize: 15, color: 'var(--fg-muted)', marginBottom: 24, lineHeight: 1.5 }}>
+        <p className="card-desc" style={{ marginBottom: 24 }}>
           You'll hatch it on launch day. Share with friends to unlock bonus rewards.
         </p>
 

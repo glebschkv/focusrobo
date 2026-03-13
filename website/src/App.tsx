@@ -6,7 +6,6 @@ import { StatsBar } from './components/StatsBar';
 import { LoopSection } from './components/LoopSection';
 import { AppPreview } from './components/AppPreview';
 import { PetShowcase } from './components/PetShowcase';
-import { IslandGrowth } from './components/IslandGrowth';
 import { RewardsSection } from './components/RewardsSection';
 import { SocialProof } from './components/SocialProof';
 import { FinalCTA } from './components/FinalCTA';
@@ -26,14 +25,13 @@ function ScrollToTop() {
 
 function HomePage() {
   return (
-    <div>
+    <div style={{ overflowX: 'hidden' }}>
       <Nav />
       <HeroSection />
       <StatsBar />
       <LoopSection />
       <AppPreview />
       <PetShowcase />
-      <IslandGrowth />
       <RewardsSection />
       <SocialProof />
       <FinalCTA />

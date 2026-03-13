@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function HeroSection() {
   return (
-    <SkyBackground className="min-h-screen flex flex-col items-center justify-center px-5 pt-20 pb-12 relative">
+    <SkyBackground className="min-h-[calc(100dvh-80px)] flex flex-col items-center justify-center px-5 pt-20 md:pt-24 pb-12 relative">
       {/* Hero text */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -13,33 +13,16 @@ export function HeroSection() {
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="text-center mb-8 relative z-10"
       >
-        <div className="section-label" style={{ marginBottom: 16 }}>
+        <div className="section-label">
           THE FOCUS APP THAT REWARDS YOU
         </div>
-        <h1
-          style={{
-            fontSize: 'clamp(40px, 10vw, 72px)',
-            fontWeight: 800,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.05,
-            color: 'var(--fg-deep)',
-            marginBottom: 16,
-          }}
-        >
+        <h1 className="hero-title">
           Put Your Phone Down.
           <br />
-          <span style={{ color: 'var(--primary)' }}>Get a Pet.</span>
+          <span className="text-primary">Get a Pet.</span>
         </h1>
-        <p
-          style={{
-            fontSize: 'clamp(16px, 3.5vw, 19px)',
-            color: 'var(--fg-muted)',
-            maxWidth: 480,
-            margin: '0 auto',
-            lineHeight: 1.6,
-          }}
-        >
-          Complete focus sessions to earn pixel art pets and build your own floating island paradise.
+        <p className="hero-subtitle">
+          Focus sessions earn pixel art pets that live on your floating island. No willpower required.
         </p>
       </motion.div>
 
@@ -50,7 +33,9 @@ export function HeroSection() {
         transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="relative z-10 w-full max-w-lg mb-10"
       >
-        <WaitlistForm variant="hero" />
+        <div className="hero-form-highlight">
+          <WaitlistForm variant="hero" />
+        </div>
       </motion.div>
 
       {/* Island */}

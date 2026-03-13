@@ -18,7 +18,6 @@ export function StickyMobileCTA() {
       <a
         href="#waitlist"
         className="cta-primary"
-        style={{ width: '100%', textAlign: 'center', display: 'flex', justifyContent: 'center' }}
       >
         Join the Waitlist — Free Legendary Egg
       </a>

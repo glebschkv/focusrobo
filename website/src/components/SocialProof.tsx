@@ -41,17 +41,11 @@ export function SocialProof() {
               style={{ padding: '24px' }}
             >
               <div style={{ fontSize: 24, marginBottom: 12, opacity: 0.3 }}>"</div>
-              <p style={{
-                fontSize: 15,
-                lineHeight: 1.6,
-                color: 'var(--fg-dark-secondary)',
-                marginBottom: 16,
-                fontStyle: 'italic',
-              }}>
+              <p className="card-desc card-desc--light" style={{ marginBottom: 16, fontStyle: 'italic' }}>
                 {t.quote}
               </p>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-dark-primary)' }}>
+                <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 0 }}>
                   {t.name}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--fg-dark-muted)' }}>
@@ -68,7 +62,7 @@ export function SocialProof() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex flex-wrap justify-center gap-8 md:gap-16"
+          className="flex flex-wrap justify-center gap-6 md:gap-16"
         >
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center">

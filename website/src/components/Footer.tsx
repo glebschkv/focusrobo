@@ -8,8 +8,8 @@ export function Footer() {
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 mb-12">
           {/* Brand */}
-          <div>
-            <Link to="/" className="flex items-center gap-2 mb-3" style={{ textDecoration: 'none' }}>
+          <div className="text-center md:text-left">
+            <Link to="/" className="flex items-center justify-center md:justify-start gap-2 mb-3" style={{ textDecoration: 'none' }}>
               <img src="/app-icon.png" alt="PhoNo" style={{ width: 28, height: 28, borderRadius: 6 }} />
               <span style={{ fontWeight: 800, color: 'rgba(255,255,255,0.85)', fontSize: 18 }}>PhoNo</span>
             </Link>
@@ -19,7 +19,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="text-center md:text-left">
             <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12, color: 'rgba(255,255,255,0.3)' }}>
               Quick Links
             </div>
@@ -32,7 +32,7 @@ export function Footer() {
           </div>
 
           {/* Legal */}
-          <div>
+          <div className="text-center md:text-left">
             <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12, color: 'rgba(255,255,255,0.3)' }}>
               Legal
             </div>

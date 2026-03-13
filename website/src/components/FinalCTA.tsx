@@ -20,26 +20,10 @@ export function FinalCTA() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
         >
-          <h2
-            style={{
-              fontSize: 'clamp(28px, 6vw, 44px)',
-              fontWeight: 800,
-              letterSpacing: '-0.03em',
-              color: 'var(--fg-deep)',
-              marginBottom: 8,
-              lineHeight: 1.1,
-            }}
-          >
+          <h2 className="section-title" style={{ marginBottom: 8 }}>
             Your Island is Waiting.
           </h2>
-          <p
-            style={{
-              fontSize: 16,
-              color: 'var(--fg-muted)',
-              lineHeight: 1.6,
-              marginBottom: 24,
-            }}
-          >
+          <p className="section-subtitle" style={{ marginBottom: 24 }}>
             Join the adventurers building their floating paradise. Free Legendary Egg included.
           </p>
         </motion.div>
@@ -49,7 +33,7 @@ export function FinalCTA() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          style={{ maxWidth: 260, margin: '0 auto 32px' }}
+          style={{ maxWidth: 220, margin: '0 auto 32px' }}
         >
           <IslandScene gridSize={7} pets={SMALL_ISLAND_PETS} />
         </motion.div>

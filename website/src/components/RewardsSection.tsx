@@ -97,7 +97,8 @@ export function RewardsSection() {
         </motion.div>
 
         {/* Tier cards — horizontal scroll on mobile, grid on desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+        {/* Desktop: 5-column grid */}
+        <div className="hidden md:grid md:grid-cols-5 gap-4 mb-12">
           {TIERS.map((tier, i) => (
             <motion.div
               key={tier.count}
@@ -113,27 +114,50 @@ export function RewardsSection() {
               }}
             >
               <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-dark-primary)', marginBottom: 4 }}>
+              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
                 {tier.reward}
               </div>
               {tier.badge && (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    background: 'rgba(52, 211, 153, 0.2)',
-                    color: 'var(--accent)',
-                    padding: '2px 8px',
-                    borderRadius: 8,
-                    letterSpacing: '0.05em',
-                    marginBottom: 6,
-                  }}
-                >
+                <span className="tier-badge">
                   {tier.badge}
                 </span>
               )}
-              <div style={{ fontSize: 12, color: 'var(--fg-dark-muted)', lineHeight: 1.4, marginBottom: 8 }}>
+              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
+                {tier.desc}
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
+                {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Mobile: horizontal scroll track */}
+        <div className="md:hidden scroll-track mb-12">
+          {TIERS.map((tier, i) => (
+            <motion.div
+              key={tier.count}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+              className="feature-card feature-card--dark text-center min-w-[140px]"
+              style={{
+                padding: '20px 16px',
+                borderTop: `3px solid ${tier.borderColor}`,
+                background: tier.glow,
+              }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
+              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
+                {tier.reward}
+              </div>
+              {tier.badge && (
+                <span className="tier-badge">
+                  {tier.badge}
+                </span>
+              )}
+              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
                 {tier.desc}
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
