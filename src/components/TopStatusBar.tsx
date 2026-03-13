@@ -268,6 +268,31 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
           <span className="coin-plus-badge">+</span>
         </button>
 
+        {/* DEV: Test coins button */}
+        <button
+          onClick={async (e) => {
+            const btn = e.currentTarget;
+            btn.textContent = '...';
+            for (let i = 0; i < 10; i++) {
+              await coinSystem.awardCoins(10000, 'iap_purchase', { reason: 'dev_test' });
+            }
+            btn.textContent = '+100k';
+          }}
+          style={{
+            fontSize: 10,
+            padding: '2px 6px',
+            borderRadius: 6,
+            background: 'rgba(234,179,8,0.25)',
+            border: '1px solid rgba(234,179,8,0.5)',
+            color: '#eab308',
+            fontWeight: 700,
+            marginLeft: 4,
+            lineHeight: 1.2,
+          }}
+        >
+          +100k
+        </button>
+
         {/* Passive income collect button */}
         {accumulatedCoins > 0 && (
           <button
