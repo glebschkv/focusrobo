@@ -15,10 +15,19 @@ export function FinalCTA() {
     <SkyBackground className="py-24 px-5">
       <div className="max-w-lg mx-auto text-center">
         <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <img src="/icons/egg-legendary.png" alt="" className="final-cta-egg" />
+        </motion.div>
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h2 className="section-title" style={{ marginBottom: 8 }}>
             Your Island is Waiting.
@@ -33,7 +42,7 @@ export function FinalCTA() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          style={{ maxWidth: 220, margin: '0 auto 32px' }}
+          style={{ maxWidth: 280, margin: '0 auto 32px' }}
         >
           <IslandScene gridSize={7} pets={SMALL_ISLAND_PETS} />
         </motion.div>

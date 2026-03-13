@@ -52,7 +52,7 @@ const FEATURES: { icon: ReactNode; title: string; desc: string }[] = [
 export function AppPreview() {
   return (
     <section className="section-dark py-24 px-5">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -70,15 +70,23 @@ export function AppPreview() {
         </motion.div>
 
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
-          {/* Phone Mockup */}
+          {/* Phone Mockup — hidden on mobile (island already in hero), shown on desktop */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
-            className="flex-shrink-0 order-2 md:order-none mx-auto"
+            className="hidden md:flex flex-shrink-0 order-2 md:order-none mx-auto relative"
           >
-            <div className="phone-mockup">
+            {/* Glow backdrop */}
+            <div style={{
+              position: 'absolute',
+              inset: -40,
+              background: 'radial-gradient(circle, rgba(59,232,168,0.08) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none',
+            }} />
+            <div className="phone-mockup" style={{ position: 'relative' }}>
               <div className="phone-mockup__notch" />
               <div className="phone-mockup__content">
                 <div style={{ zoom: 0.55, flexShrink: 0 }}>

@@ -1,80 +1,47 @@
 import { motion } from 'framer-motion';
 
-const TESTIMONIALS = [
-  {
-    quote: "Finally, a focus app that doesn't feel like punishment. I actually look forward to my sessions now.",
-    name: 'Sarah K.',
-    role: 'Beta Tester',
-  },
-  {
-    quote: "I've tried Forest, Flora, and every timer app out there. PhoNo is the first one that made me forget my phone existed.",
-    name: 'Marcus T.',
-    role: 'Early Access',
-  },
-  {
-    quote: "My kids are obsessed with collecting the pets. Our whole family does focus sessions together now.",
-    name: 'Jamie L.',
-    role: 'Beta Tester',
-  },
-];
-
 const STATS = [
-  { value: '50,000+', label: 'Focus Minutes' },
-  { value: '10,000+', label: 'Pets Collected' },
-  { value: '500+', label: 'Islands Built' },
+  { value: '50,000+', label: 'Focus minutes\nlogged in beta', pet: '/pets/bunny-adolescent.png' },
+  { value: '10,000+', label: 'Pets collected\nby early users', pet: '/pets/dragon-baby.png' },
+  { value: '500+', label: 'Islands built\nand archived', pet: '/pets/unicorn-baby.png' },
 ];
 
 export function SocialProof() {
   return (
-    <section className="section-dark py-20 px-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section className="section-dark py-24 px-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
       <div className="max-w-4xl mx-auto">
-        {/* Testimonials */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.12, duration: 0.5 }}
-              className="feature-card feature-card--dark"
-              style={{ padding: '24px' }}
-            >
-              <div style={{ fontSize: 24, marginBottom: 12, opacity: 0.3 }}>"</div>
-              <p className="card-desc card-desc--light" style={{ marginBottom: 16, fontStyle: 'italic' }}>
-                {t.quote}
-              </p>
-              <div>
-                <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 0 }}>
-                  {t.name}
-                </div>
-                <div style={{ fontSize: 12, color: 'var(--fg-dark-muted)' }}>
-                  {t.role}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Stats strip */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="flex flex-wrap justify-center gap-6 md:gap-16"
+          className="text-center mb-16"
         >
-          {STATS.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--accent)', letterSpacing: '-0.02em' }}>
-                {stat.value}
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--fg-dark-muted)', marginTop: 2 }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
+          <div className="section-label section-label--light">BUILT FOR REAL FOCUS</div>
+          <h2 className="section-title section-title--light">
+            Every session matters.
+          </h2>
+          <p className="section-subtitle section-subtitle--light">
+            Numbers from our early access community.
+          </p>
         </motion.div>
+
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+          {STATS.map((stat, i) => (
+            <motion.div
+              key={stat.value}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="social-proof-stat"
+            >
+              <img src={stat.pet} alt="" className="social-proof-stat__pet" />
+              <div className="social-proof-stat__number">{stat.value}</div>
+              <div className="social-proof-stat__label">{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

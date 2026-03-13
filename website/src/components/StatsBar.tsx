@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const STATS = [
-  { target: 41, label: 'Pet Species', suffix: '' },
-  { target: 6, label: 'Island Themes', suffix: '' },
-  { target: 5, label: 'Rarity Tiers', suffix: '' },
-  { target: 180, label: 'Min Sessions', suffix: '+' },
+  { target: 41, label: 'Pet Species', suffix: '', icon: '/pets/dragon-baby.png' },
+  { target: 6, label: 'Island Themes', suffix: '', icon: '/pets/owl-baby.png' },
+  { target: 5, label: 'Rarity Tiers', suffix: '', icon: '/pets/unicorn-baby.png' },
+  { target: 180, label: 'Min Sessions', suffix: '+', icon: '/pets/fox-baby.png' },
 ];
 
 function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) {
@@ -62,6 +62,7 @@ export function StatsBar() {
     >
       {STATS.map((stat) => (
         <div key={stat.label} className="stats-bar__item">
+          <img src={stat.icon} alt="" className="stats-bar__icon" aria-hidden="true" />
           <AnimatedNumber target={stat.target} suffix={stat.suffix} />
           <div className="stats-bar__label">{stat.label}</div>
         </div>
