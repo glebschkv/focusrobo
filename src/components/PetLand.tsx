@@ -31,6 +31,7 @@ import { IslandUnlockModal } from '@/components/IslandUnlockModal';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useCurrentLevel } from '@/stores/xpStore';
 import { useArchipelago, useActiveIslandIndex } from '@/stores/landStore';
+import { IslandSkyScene } from '@/components/IslandSkyScene';
 
 function getGrowthStage(count: number): string {
   if (count < 25) return 'pet-land--sparse';
@@ -1082,33 +1083,8 @@ export const PetLand = () => {
           <div className="pet-land__cloud-lobe" />
         </div>
 
-        {/* Landscape silhouettes — biome-specific */}
-        {theme.skyScene.landscape === 'hills' && (
-          <>
-            <div className="pet-land__mountains-far" />
-            <div className="pet-land__mountains-near" />
-          </>
-        )}
-        {theme.skyScene.landscape === 'ocean' && (
-          <div className="pet-land__ocean">
-            <div className="pet-land__palm pet-land__palm--left" />
-            <div className="pet-land__palm pet-land__palm--right" />
-          </div>
-        )}
-        {theme.skyScene.landscape === 'peaks' && (
-          <div className="pet-land__peaks" />
-        )}
-        {theme.skyScene.landscape === 'dunes' && (
-          <div className="pet-land__dunes" />
-        )}
-        {theme.skyScene.landscape === 'cliffs' && (
-          <>
-            <div className="pet-land__mountains-far" />
-            <div className="pet-land__mountains-near" />
-          </>
-        )}
-
-        {theme.skyScene.treeline && <div className="pet-land__treeline" />}
+        {/* Rich SVG landscape — unique per biome */}
+        <IslandSkyScene themeId={effectiveThemeId} theme={theme} />
 
         <div className="pet-land__haze" />
 
@@ -1161,14 +1137,16 @@ export const PetLand = () => {
         )}
         {theme.skyAnimations.type === 'petal-stream' && (
           <div className="pet-land__petal-stream">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: 35 }, (_, i) => (
               <div
                 key={`petal-${i}`}
-                className="pet-land__petal"
+                className={`pet-land__petal ${i % 5 === 0 ? 'pet-land__petal--bright' : ''}`}
                 style={{
-                  left: `${(i * 47 + 11) % 100}%`,
-                  animationDelay: `${(i * 0.6) % 8}s`,
-                  animationDuration: `${6 + (i * 0.4) % 4}s`,
+                  left: `${(i * 29 + 7) % 100}%`,
+                  animationDelay: `${(i * 0.35) % 10}s`,
+                  animationDuration: `${5 + (i * 0.3) % 5}s`,
+                  width: `${4 + (i % 3) * 2}px`,
+                  height: `${4 + (i % 3) * 2}px`,
                 }}
               />
             ))}
