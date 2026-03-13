@@ -69,26 +69,30 @@
 }
 
 /* ═══ Base ═══ */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* Wrap reset in @layer base so Tailwind utility classes (in @layer utilities) take precedence */
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
 
-body {
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--fg-deep);
-  background: var(--bg-cream);
-  overflow-x: hidden;
-  font-size: 16px;
-  line-height: 1.6;
-}
+  body {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--fg-deep);
+    background: var(--bg-cream);
+    overflow-x: hidden;
+    font-size: 16px;
+    line-height: 1.6;
+  }
 
-img {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+  img {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
 }
 
 /* ═══ Typography Utilities ═══ */
