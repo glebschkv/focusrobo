@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function HeroSection() {
   return (
-    <SkyBackground className="md:min-h-[calc(100dvh-80px)] flex items-center justify-center px-5 pt-12 md:pt-0 pb-12 relative">
+    <SkyBackground className="min-h-dvh flex items-center justify-center px-5 pt-20 md:pt-24 pb-12 relative">
       {/* Two-column layout: text+form left, island right on desktop */}
       <div className="w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 relative z-10">
 
