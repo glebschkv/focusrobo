@@ -1949,23 +1949,22 @@
 }
 
 .sky-scene__layer--far {
-  bottom: 20%;
-  height: 22%;
-  filter: blur(1.5px);
-  opacity: 0.9;
+  bottom: 22%;
+  height: 30%;
+  filter: blur(0.5px);
+  opacity: 1;
 }
 
 .sky-scene__layer--mid {
-  bottom: 16%;
-  height: 18%;
-  filter: blur(0.5px);
-  opacity: 0.92;
+  bottom: 17%;
+  height: 25%;
+  opacity: 1;
 }
 
 .sky-scene__layer--near {
   bottom: 13%;
-  height: 15%;
-  opacity: 0.95;
+  height: 20%;
+  opacity: 1;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2069,10 +2068,10 @@
 /* Horizon glow — warm light at the waterline */
 .sky-scene__horizon-glow {
   position: absolute;
-  bottom: 26%;
+  bottom: 30%;
   left: 0;
   right: 0;
-  height: 8%;
+  height: 10%;
   background: radial-gradient(
     ellipse 80% 100% at 70% 100%,
     rgba(255, 220, 150, 0.2) 0%,
@@ -2109,7 +2108,7 @@
   bottom: 0;
   left: -5%;
   right: -5%;
-  height: 30%;
+  height: 36%;
 }
 
 /* Wave animation — horizontal rolling */
@@ -2144,20 +2143,20 @@
 /* Palm tree SVG silhouettes */
 .sky-scene__palm-left {
   position: absolute;
-  bottom: 24%;
+  bottom: 28%;
   left: 2%;
-  width: 50px;
-  height: 85px;
+  width: 65px;
+  height: 110px;
   animation: sky-scene-palm-sway 6s ease-in-out infinite;
   transform-origin: bottom center;
 }
 
 .sky-scene__palm-right {
   position: absolute;
-  bottom: 22%;
+  bottom: 26%;
   right: 3%;
-  width: 40px;
-  height: 65px;
+  width: 52px;
+  height: 85px;
   animation: sky-scene-palm-sway 7s ease-in-out infinite 2s;
   transform-origin: bottom center;
 }
@@ -2171,9 +2170,9 @@
 /* Sailboat — slow drift across horizon */
 .sky-scene__sailboat {
   position: absolute;
-  bottom: 27%;
-  width: 16px;
-  height: 14px;
+  bottom: 31%;
+  width: 22px;
+  height: 18px;
   animation: sky-scene-sailboat-drift 45s linear infinite;
 }
 
@@ -2239,8 +2238,8 @@
 /* Ice crystal sparkles */
 .sky-scene__ice-crystal {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   background: white;
   clip-path: polygon(
     50% 0%, 61% 35%, 98% 35%, 68% 57%,
@@ -2259,15 +2258,15 @@
   top: 8%;
   right: 30%;
   animation-delay: 1s;
-  width: 3px;
-  height: 3px;
+  width: 5px;
+  height: 5px;
 }
 .sky-scene__ice-crystal--3 {
   top: 18%;
   left: 60%;
   animation-delay: 2s;
-  width: 3px;
-  height: 3px;
+  width: 5px;
+  height: 5px;
 }
 
 @keyframes sky-scene-ice-sparkle {
@@ -2295,10 +2294,10 @@
 /* Oasis mirage — shimmering on far horizon */
 .sky-scene__oasis-mirage {
   position: absolute;
-  bottom: 26%;
+  bottom: 28%;
   left: 35%;
-  width: 40px;
-  height: 20px;
+  width: 50px;
+  height: 25px;
   animation: sky-scene-mirage-flicker 3s ease-in-out infinite;
 }
 
@@ -2319,13 +2318,13 @@
 }
 
 .sky-scene__caravan-figure {
-  width: 3px;
-  height: 5px;
-  background: rgba(140, 110, 60, 0.2);
+  width: 4px;
+  height: 7px;
+  background: rgba(140, 110, 60, 0.25);
   border-radius: 40% 40% 0 0;
 }
 .sky-scene__caravan-figure:nth-child(2) {
-  height: 7px;
+  height: 9px;
 }
 
 @keyframes sky-scene-caravan-drift {
@@ -2352,16 +2351,16 @@
 
 /* Desert scene layer adjustments */
 .sky-scene--desert .sky-scene__layer--far {
-  bottom: 18%;
-  height: 20%;
+  bottom: 20%;
+  height: 28%;
 }
 .sky-scene--desert .sky-scene__layer--mid {
-  bottom: 15%;
-  height: 16%;
+  bottom: 16%;
+  height: 22%;
 }
 .sky-scene--desert .sky-scene__layer--near {
   bottom: 12%;
-  height: 13%;
+  height: 18%;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2481,13 +2480,13 @@
 
 /* Night scene layer adjustments */
 .sky-scene--night .sky-scene__layer--far {
-  bottom: 18%;
-  height: 24%;
+  bottom: 20%;
+  height: 30%;
   filter: none;
 }
 .sky-scene--night .sky-scene__layer--near {
   bottom: 13%;
-  height: 18%;
+  height: 22%;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2566,8 +2565,8 @@
 /* Stone lanterns with warm glow */
 .sky-scene__lantern {
   position: absolute;
-  width: 4px;
-  height: 8px;
+  width: 6px;
+  height: 12px;
   background: linear-gradient(
     180deg,
     rgba(160, 130, 100, 0.3) 0%,
@@ -2616,8 +2615,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 80px;
-  height: 60px;
+  width: 100px;
+  height: 75px;
   pointer-events: none;
   z-index: 2;
 }
