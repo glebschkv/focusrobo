@@ -505,7 +505,7 @@ export const useLandStore = create<LandStore>()(
             cellIndex = getNextEmptyCellIndex(currentLand.cells, currentLand.gridSize);
             // Emit expansion event so UI can celebrate
             window.dispatchEvent(new CustomEvent('islandExpanded', {
-              detail: { oldTier, newTier, newCells: getAvailableCellCount(nextTier) - getAvailableCellCount(oldTier) },
+              detail: { oldTier, newTier: nextTier, newCells: getAvailableCellCount(nextTier) - getAvailableCellCount(oldTier) },
             }));
           }
         }
