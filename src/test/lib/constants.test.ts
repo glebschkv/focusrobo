@@ -65,13 +65,13 @@ describe('XP_CONFIG', () => {
 
 describe('FOCUS_BONUS', () => {
   it('should have correct perfect focus multiplier', () => {
-    expect(FOCUS_BONUS.PERFECT_FOCUS.multiplier).toBe(1.25);
-    expect(FOCUS_BONUS.PERFECT_FOCUS.coinBonus).toBe(50);
+    expect(FOCUS_BONUS.PERFECT_FOCUS.multiplier).toBe(1.35);
+    expect(FOCUS_BONUS.PERFECT_FOCUS.coinBonus).toBe(100);
   });
 
   it('should have correct good focus multiplier', () => {
-    expect(FOCUS_BONUS.GOOD_FOCUS.multiplier).toBe(1.10);
-    expect(FOCUS_BONUS.GOOD_FOCUS.coinBonus).toBe(25);
+    expect(FOCUS_BONUS.GOOD_FOCUS.multiplier).toBe(1.20);
+    expect(FOCUS_BONUS.GOOD_FOCUS.coinBonus).toBe(50);
   });
 
   it('should have no bonus for distracted', () => {
@@ -162,13 +162,13 @@ describe('Helper Functions', () => {
   describe('getFocusBonusInfo', () => {
     it('should return perfect focus for 0 attempts with apps configured', () => {
       const result = getFocusBonusInfo(0, true);
-      expect(result.multiplier).toBe(1.25);
+      expect(result.multiplier).toBe(1.35);
       expect(result.label).toBe('PERFECT FOCUS');
     });
 
     it('should return good focus for 1-2 attempts', () => {
-      expect(getFocusBonusInfo(1, true).multiplier).toBe(1.10);
-      expect(getFocusBonusInfo(2, true).multiplier).toBe(1.10);
+      expect(getFocusBonusInfo(1, true).multiplier).toBe(1.20);
+      expect(getFocusBonusInfo(2, true).multiplier).toBe(1.20);
     });
 
     it('should return distracted for 3+ attempts', () => {

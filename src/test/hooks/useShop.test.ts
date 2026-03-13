@@ -10,7 +10,7 @@ const mockCoinSystem = {
   canAfford: vi.fn(),
   spendCoins: vi.fn(),
   addCoins: vi.fn(),
-  syncFromServer: vi.fn().mockResolvedValue(undefined),
+  syncFromServer: vi.fn().mockResolvedValue(false),
 };
 
 const mockBoosterSystem = {
@@ -41,6 +41,7 @@ const setShopState = (inventory: Partial<ShopInventory>) => {
     ownedCharacters: inventory.ownedCharacters ?? [],
     ownedBackgrounds: inventory.ownedBackgrounds ?? [],
     equippedBackground: inventory.equippedBackground ?? null,
+    purchasedStarterBundleIds: inventory.purchasedStarterBundleIds ?? [],
   });
 };
 
@@ -89,8 +90,9 @@ vi.mock('@/lib/logger', () => {
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null } }) },
+    auth: { getSession: vi.fn().mockResolvedValue({ data: { session: null } }), getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
     from: vi.fn(() => ({ select: vi.fn(), insert: vi.fn(), update: vi.fn() })),
+    rpc: vi.fn().mockResolvedValue({ data: [], error: null }),
   },
   isSupabaseConfigured: false,
 }));
@@ -108,26 +110,12 @@ vi.mock('@/lib/errorReporting', () => ({
   initErrorReporting: vi.fn(),
 }));
 
-// Mock robot database
-vi.mock('@/data/RobotDatabase', () => ({
-  getRobotById: vi.fn((id: string) => {
-    if (id === 'dog') {
-      return {
-        id: 'dog',
-        name: 'Dog',
-        coinPrice: 100,
-        isExclusive: true,
-      };
-    }
-    if (id === 'cat') {
-      return {
-        id: 'cat',
-        name: 'Cat',
-        coinPrice: 150,
-        isExclusive: true,
-      };
-    }
-    return null;
+vi.mock('sonner', () => ({
+  toast: Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
   }),
 }));
 
@@ -164,15 +152,6 @@ vi.mock('@/data/ShopData', () => ({
       coinPrice: 400,
     },
   ],
-  PET_BUNDLES: [
-    {
-      id: 'bundle-pets',
-      name: 'Bot Bundle',
-      bundleType: 'bots',
-      itemIds: ['dog', 'cat'],
-      coinPrice: 200,
-    },
-  ],
   ALL_BUNDLES: [
     {
       id: 'bundle-nature',
@@ -180,13 +159,6 @@ vi.mock('@/data/ShopData', () => ({
       bundleType: 'backgrounds',
       itemIds: ['bg-ocean', 'bg-forest'],
       coinPrice: 400,
-    },
-    {
-      id: 'bundle-pets',
-      name: 'Bot Bundle',
-      bundleType: 'bots',
-      itemIds: ['dog', 'cat'],
-      coinPrice: 200,
     },
   ],
   STARTER_BUNDLES: [
@@ -202,6 +174,10 @@ vi.mock('@/data/ShopData', () => ({
   ],
 }));
 
+vi.mock('@/data/EggData', () => ({
+  getEggById: vi.fn(() => null),
+}));
+
 describe('useShop', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -212,11 +188,13 @@ describe('useShop', () => {
       ownedCharacters: [],
       ownedBackgrounds: [],
       equippedBackground: null,
+      purchasedStarterBundleIds: [],
+      dailyDealPurchasedDate: null,
     });
 
     // Default mock implementations
     mockCoinSystem.canAfford.mockReturnValue(true);
-    mockCoinSystem.spendCoins.mockReturnValue(true);
+    mockCoinSystem.spendCoins.mockResolvedValue(true);
     mockBoosterSystem.isBoosterActive.mockReturnValue(false);
     mockBoosterSystem.getBoosterType.mockReturnValue({
       id: 'boost-2x',
@@ -253,15 +231,12 @@ describe('useShop', () => {
     });
 
     it('should handle empty store gracefully', () => {
-      // Store is already reset to empty in beforeEach
       const { result } = renderHook(() => useShop());
 
-      // Should have empty inventory
       expect(result.current.inventory.ownedCharacters).toEqual([]);
     });
 
     it('should handle partial inventory data', () => {
-      // Set only characters, others default to empty
       setShopState({
         ownedCharacters: ['dog'],
       });
@@ -274,17 +249,6 @@ describe('useShop', () => {
   });
 
   describe('isOwned Checks', () => {
-    it('should correctly identify owned characters', () => {
-      setShopState({
-        ownedCharacters: ['dog'],
-      });
-
-      const { result } = renderHook(() => useShop());
-
-      expect(result.current.isOwned('dog', 'pets')).toBe(true);
-      expect(result.current.isOwned('cat', 'pets')).toBe(false);
-    });
-
     it('should correctly identify owned backgrounds', () => {
       setShopState({
         ownedBackgrounds: ['bg-ocean'],
@@ -295,26 +259,21 @@ describe('useShop', () => {
       expect(result.current.isOwned('bg-ocean', 'customize')).toBe(true);
       expect(result.current.isOwned('bg-forest', 'customize')).toBe(false);
     });
+
+    it('should return false for non-customize categories', () => {
+      setShopState({
+        ownedCharacters: ['dog'],
+      });
+
+      const { result } = renderHook(() => useShop());
+
+      // The isOwned function only checks backgrounds for 'customize' category
+      // and returns false for other categories
+      expect(result.current.isOwned('dog', 'pets')).toBe(false);
+    });
   });
 
   describe('Purchase Functions - Success Cases', () => {
-    it('should successfully purchase a character', async () => {
-      const { result } = renderHook(() => useShop());
-
-      let purchaseResult;
-      await act(async () => {
-        purchaseResult = await result.current.purchaseCharacter('dog');
-      });
-
-      expect(purchaseResult).toEqual({
-        success: true,
-        message: 'Dog purchased!',
-        item: expect.objectContaining({ id: 'dog', name: 'Dog' }),
-      });
-      expect(mockCoinSystem.spendCoins).toHaveBeenCalledWith(100, 'pet_unlock', 'dog');
-      expect(result.current.inventory.ownedCharacters).toContain('dog');
-    });
-
     it('should successfully purchase a background', async () => {
       const { result } = renderHook(() => useShop());
 
@@ -326,7 +285,6 @@ describe('useShop', () => {
       expect(purchaseResult).toEqual({
         success: true,
         message: 'Ocean View purchased!',
-        item: expect.objectContaining({ id: 'bg-ocean', name: 'Ocean View' }),
       });
       expect(mockCoinSystem.spendCoins).toHaveBeenCalledWith(200, 'cosmetic', 'bg-ocean');
       expect(result.current.inventory.ownedBackgrounds).toContain('bg-ocean');
@@ -362,54 +320,20 @@ describe('useShop', () => {
       expect(result.current.inventory.ownedBackgrounds).toContain('bg-ocean');
       expect(result.current.inventory.ownedBackgrounds).toContain('bg-forest');
     });
-
-    it('should successfully purchase a bot bundle', async () => {
-      const { result } = renderHook(() => useShop());
-
-      let purchaseResult: { success: boolean; message: string } | undefined;
-      await act(async () => {
-        purchaseResult = await result.current.purchaseBundle('bundle-pets');
-      });
-
-      expect(purchaseResult?.success).toBe(true);
-      expect(purchaseResult?.message).toContain('Bot Bundle purchased!');
-      expect(mockCoinSystem.spendCoins).toHaveBeenCalledWith(200, 'pet_unlock', 'bundle-pets');
-      expect(result.current.inventory.ownedCharacters).toContain('dog');
-      expect(result.current.inventory.ownedCharacters).toContain('cat');
-    });
   });
 
   describe('Purchase Functions - Failure Cases', () => {
-    it('should fail to purchase non-existent character', async () => {
+    it('should fail to purchase non-existent background', async () => {
       const { result } = renderHook(() => useShop());
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseCharacter('non-existent');
+        purchaseResult = await result.current.purchaseBackground('bg-non-existent');
       });
 
       expect(purchaseResult).toEqual({
         success: false,
-        message: 'Character not found',
-      });
-      expect(mockCoinSystem.spendCoins).not.toHaveBeenCalled();
-    });
-
-    it('should fail to purchase already owned character', async () => {
-      setShopState({
-        ownedCharacters: ['dog'],
-      });
-
-      const { result } = renderHook(() => useShop());
-
-      let purchaseResult;
-      await act(async () => {
-        purchaseResult = await result.current.purchaseCharacter('dog');
-      });
-
-      expect(purchaseResult).toEqual({
-        success: false,
-        message: 'You already own this character',
+        message: 'Background not found',
       });
       expect(mockCoinSystem.spendCoins).not.toHaveBeenCalled();
     });
@@ -421,7 +345,7 @@ describe('useShop', () => {
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseCharacter('dog');
+        purchaseResult = await result.current.purchaseBackground('bg-ocean');
       });
 
       expect(purchaseResult).toEqual({
@@ -432,15 +356,16 @@ describe('useShop', () => {
     });
 
     it('should fail when coin spend fails', async () => {
-      mockCoinSystem.spendCoins.mockReturnValue(false);
+      mockCoinSystem.spendCoins.mockResolvedValue(false);
 
       const { result } = renderHook(() => useShop());
 
       let purchaseResult;
       await act(async () => {
-        purchaseResult = await result.current.purchaseCharacter('dog');
+        purchaseResult = await result.current.purchaseBackground('bg-ocean');
       });
 
+      // spendCoinsWithSync tries syncFromServer, which returns false, so message is about connection
       expect(purchaseResult).toEqual({
         success: false,
         message: 'Purchase failed. Please check your connection and try again.',
@@ -479,7 +404,7 @@ describe('useShop', () => {
 
       expect(purchaseResult).toEqual({
         success: false,
-        message: 'You already own all backgrounds in this bundle',
+        message: 'You already own all items in this bundle',
       });
     });
   });
@@ -531,36 +456,6 @@ describe('useShop', () => {
     });
   });
 
-  describe('unlockCharacter', () => {
-    it('should unlock character without payment', () => {
-      const { result } = renderHook(() => useShop());
-
-      let success;
-      act(() => {
-        success = result.current.unlockCharacter('dog');
-      });
-
-      expect(success).toBe(true);
-      expect(result.current.inventory.ownedCharacters).toContain('dog');
-      expect(mockCoinSystem.spendCoins).not.toHaveBeenCalled();
-    });
-
-    it('should return true if character already owned', () => {
-      setShopState({
-        ownedCharacters: ['dog'],
-      });
-
-      const { result } = renderHook(() => useShop());
-
-      let success;
-      act(() => {
-        success = result.current.unlockCharacter('dog');
-      });
-
-      expect(success).toBe(true);
-    });
-  });
-
   describe('Bundle Ownership Checks', () => {
     it('should correctly check if background bundle is owned', () => {
       setShopState({
@@ -582,14 +477,10 @@ describe('useShop', () => {
       expect(result.current.isBundleOwned('bundle-nature')).toBe(false);
     });
 
-    it('should correctly check if bot bundle is owned', () => {
-      setShopState({
-        ownedCharacters: ['dog', 'cat'],
-      });
-
+    it('should return false for non-existent bundle', () => {
       const { result } = renderHook(() => useShop());
 
-      expect(result.current.isBundleOwned('bundle-pets')).toBe(true);
+      expect(result.current.isBundleOwned('non-existent')).toBe(false);
     });
   });
 
@@ -627,6 +518,34 @@ describe('useShop', () => {
       const { result } = renderHook(() => useShop());
 
       expect(typeof result.current.canAfford).toBe('function');
+    });
+  });
+
+  describe('purchaseItem routing', () => {
+    it('should route customize items to purchaseBackground', async () => {
+      const { result } = renderHook(() => useShop());
+
+      let purchaseResult;
+      await act(async () => {
+        purchaseResult = await result.current.purchaseItem('bg-ocean', 'customize');
+      });
+
+      expect(purchaseResult?.success).toBe(true);
+      expect(result.current.inventory.ownedBackgrounds).toContain('bg-ocean');
+    });
+
+    it('should return error for invalid category', async () => {
+      const { result } = renderHook(() => useShop());
+
+      let purchaseResult;
+      await act(async () => {
+        purchaseResult = await result.current.purchaseItem('some-item', 'pets');
+      });
+
+      expect(purchaseResult).toEqual({
+        success: false,
+        message: 'Invalid category',
+      });
     });
   });
 });

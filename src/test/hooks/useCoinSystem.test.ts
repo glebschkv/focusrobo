@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useCoinSystem, _resetRateLimiter } from '@/hooks/useCoinSystem';
 import { useCoinStore } from '@/stores/coinStore';
+import { usePremiumStore } from '@/stores/premiumStore';
 
 // Mock achievement tracking
 vi.mock('@/hooks/useAchievementTracking', () => ({
@@ -470,13 +471,19 @@ describe('useCoinSystem', () => {
     });
 
     it('should return premium multiplier when subscribed', () => {
-      localStorage.setItem('petIsland_premium', JSON.stringify({
-        tier: 'premium',
-      }));
+      // Set premium tier directly via the Zustand store (persisted as nomo_premium)
+      act(() => {
+        usePremiumStore.getState().setTier('premium');
+      });
 
       const { result } = renderHook(() => useCoinSystem());
 
       expect(result.current.getSubscriptionMultiplier()).toBeGreaterThan(1);
+
+      // Clean up
+      act(() => {
+        usePremiumStore.getState().clearPremium();
+      });
     });
   });
 

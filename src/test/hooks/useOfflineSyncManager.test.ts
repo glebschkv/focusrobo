@@ -52,6 +52,8 @@ const mockSupabaseUpdate = vi.fn();
 const mockSupabaseUpsert = vi.fn();
 const mockSupabaseEq = vi.fn();
 
+const mockSupabaseFunctionsInvoke = vi.fn().mockResolvedValue({ data: { success: true }, error: null });
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: (table: string) => {
@@ -75,6 +77,15 @@ vi.mock('@/integrations/supabase/client', () => ({
           return Promise.resolve({ error: null });
         },
       };
+    },
+    auth: {
+      getSession: vi.fn(() => Promise.resolve({ data: { session: { user: { id: 'test-user-123' } } }, error: null })),
+    },
+    functions: {
+      invoke: (...args: unknown[]) => {
+        mockSupabaseFunctionsInvoke(...args);
+        return Promise.resolve({ data: { success: true }, error: null });
+      },
     },
   },
   isSupabaseConfigured: true,
@@ -295,7 +306,7 @@ describe('useOfflineSyncManager', () => {
       expect(mockSupabaseUpdate).toHaveBeenCalled();
     });
 
-    it('should process coin_update operations', async () => {
+    it('should process coin_update operations via validate-coins edge function', async () => {
       const { result } = renderHook(() => useOfflineSyncManager());
 
       act(() => {
@@ -306,7 +317,13 @@ describe('useOfflineSyncManager', () => {
         await result.current.syncNow();
       });
 
-      expect(mockSupabaseFrom).toHaveBeenCalledWith('user_progress');
+      // coin_update routes through the validate-coins edge function, not supabase.from
+      expect(mockSupabaseFunctionsInvoke).toHaveBeenCalledWith('validate-coins', expect.objectContaining({
+        body: expect.objectContaining({
+          operation: 'earn',
+          amount: 1000,
+        }),
+      }));
     });
 
     it('should process streak_update operations', async () => {

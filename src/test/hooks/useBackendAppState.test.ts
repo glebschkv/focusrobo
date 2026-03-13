@@ -72,8 +72,6 @@ const mockXPSystem = {
   currentLevel: 5,
   xpToNextLevel: 100,
   totalXPForCurrentLevel: 400,
-  currentZone: 'Snow',
-  availableZones: ['Snow', 'Forest'],
   isLoading: false,
   awardXP: vi.fn(() => ({
     xpGained: 50,
@@ -134,34 +132,11 @@ vi.mock('@/hooks/useBackendStreaks', () => ({
 const mockSupabaseData = {
   profile: { id: 'profile-1', display_name: 'Test User' },
   progress: { total_xp: 500, current_level: 5 },
-  pets: [
-    { id: 'pet-1', pet_type: 'panda', is_favorite: true },
-    { id: 'pet-2', pet_type: 'cat', is_favorite: false },
-  ],
   loadUserData: vi.fn(),
 };
 
 vi.mock('@/hooks/useSupabaseData', () => ({
   useSupabaseData: vi.fn(() => mockSupabaseData),
-}));
-
-// Mock Bond System
-const mockBondSystem = {
-  getBondLevel: vi.fn(() => 3),
-  interactWithBot: vi.fn(() => Promise.resolve({ bondXp: 10 })),
-};
-
-vi.mock('@/hooks/useBondSystem', () => ({
-  useBondSystem: vi.fn(() => mockBondSystem),
-}));
-
-// Mock Collection
-const mockCollection = {
-  unlockedRobots: ['panda', 'cat'],
-};
-
-vi.mock('@/hooks/useCollection', () => ({
-  useCollection: vi.fn(() => mockCollection),
 }));
 
 // Mock Coin System
@@ -186,15 +161,6 @@ const mockCoinBooster = {
 
 vi.mock('@/hooks/useCoinBooster', () => ({
   useCoinBooster: vi.fn(() => mockCoinBooster),
-}));
-
-// Mock Robot Database
-vi.mock('@/data/RobotDatabase', () => ({
-  getUnlockableRobots: vi.fn(() => [
-    { name: 'panda' },
-    { name: 'cat' },
-    { name: 'dog' },
-  ]),
 }));
 
 describe('useBackendAppState', () => {
@@ -237,8 +203,6 @@ describe('useBackendAppState', () => {
       expect(result.current.achievements).toBeDefined();
       expect(result.current.quests).toBeDefined();
       expect(result.current.streaks).toBeDefined();
-      expect(result.current.bondSystem).toBeDefined();
-      expect(result.current.collection).toBeDefined();
       expect(result.current.supabaseData).toBeDefined();
       expect(result.current.coinSystem).toBeDefined();
       expect(result.current.coinBooster).toBeDefined();
@@ -248,7 +212,6 @@ describe('useBackendAppState', () => {
       const { result } = renderHook(() => useBackendAppState());
 
       expect(typeof result.current.awardXP).toBe('function');
-      expect(typeof result.current.interactWithBot).toBe('function');
       expect(typeof result.current.getLevelProgress).toBe('function');
       expect(typeof result.current.getAppState).toBe('function');
     });
@@ -285,11 +248,7 @@ describe('useBackendAppState', () => {
       expect(state).toHaveProperty('isBoosterActive');
       expect(state).toHaveProperty('activeBooster');
       expect(state).toHaveProperty('boosterMultiplier');
-
-      // Collection properties
-      expect(state).toHaveProperty('unlockedRobots');
-      expect(state).toHaveProperty('currentZone');
-      expect(state).toHaveProperty('availableZones');
+      expect(state).toHaveProperty('boosterTimeRemaining');
 
       // Achievement properties
       expect(state).toHaveProperty('totalAchievements');
@@ -308,7 +267,6 @@ describe('useBackendAppState', () => {
       // Backend data
       expect(state).toHaveProperty('profile');
       expect(state).toHaveProperty('progress');
-      expect(state).toHaveProperty('bots');
 
       // Loading state
       expect(state).toHaveProperty('isLoading');
@@ -349,14 +307,15 @@ describe('useBackendAppState', () => {
       expect(mockCoinSystem.awardCoins).toHaveBeenCalledWith(25, 1);
     });
 
-    it('should record streak progress', async () => {
+    it('should not record streak (handled by useTimerLogic)', async () => {
       const { result } = renderHook(() => useBackendAppState());
 
       await act(async () => {
         await result.current.awardXP(25);
       });
 
-      expect(mockStreaks.recordSession).toHaveBeenCalled();
+      // Streak recording is handled exclusively by useTimerLogic.handleComplete()
+      expect(mockStreaks.recordSession).not.toHaveBeenCalled();
     });
 
     it('should update quest progress', async () => {
@@ -367,17 +326,6 @@ describe('useBackendAppState', () => {
       });
 
       expect(mockQuests.updateQuestProgress).toHaveBeenCalledWith('focus_time', 30);
-    });
-
-    it('should update bond for favorite pets', async () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      await act(async () => {
-        await result.current.awardXP(25);
-      });
-
-      // Only the favorite bot should have interaction
-      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('panda', 'focus_session');
     });
 
     it('should return coin reward in result', async () => {
@@ -401,74 +349,6 @@ describe('useBackendAppState', () => {
 
       expect((xpResult as { unlockedRewards: unknown[] }).unlockedRewards).toBeDefined();
       expect(Array.isArray((xpResult as { unlockedRewards: unknown[] }).unlockedRewards)).toBe(true);
-    });
-  });
-
-  describe('interactWithBot', () => {
-    it('should interact with bot and return result', async () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      let interactionResult: unknown;
-      await act(async () => {
-        interactionResult = await result.current.interactWithBot('panda', 'play');
-      });
-
-      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('panda', 'play');
-      expect(interactionResult).toHaveProperty('bondLevelUp');
-      expect(interactionResult).toHaveProperty('newBondLevel');
-      expect(interactionResult).toHaveProperty('interaction');
-    });
-
-    it('should use default interaction type if not specified', async () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      await act(async () => {
-        await result.current.interactWithBot('cat');
-      });
-
-      expect(mockBondSystem.interactWithBot).toHaveBeenCalledWith('cat', 'play');
-    });
-
-    it('should update quest progress for bot interactions', async () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      await act(async () => {
-        await result.current.interactWithBot('panda', 'feed');
-      });
-
-      expect(mockQuests.updateQuestProgress).toHaveBeenCalledWith('bot_interaction', 1);
-    });
-
-    it('should detect bond level up', async () => {
-      // Mock bond level increasing
-      mockBondSystem.getBondLevel
-        .mockReturnValueOnce(3) // before
-        .mockReturnValueOnce(4); // after
-
-      const { result } = renderHook(() => useBackendAppState());
-
-      let interactionResult: unknown;
-      await act(async () => {
-        interactionResult = await result.current.interactWithBot('panda');
-      });
-
-      expect((interactionResult as { bondLevelUp: boolean }).bondLevelUp).toBe(true);
-      expect((interactionResult as { newBondLevel: number }).newBondLevel).toBe(4);
-    });
-
-    it('should check achievements on bond level up', async () => {
-      // Mock bond level increasing
-      mockBondSystem.getBondLevel
-        .mockReturnValueOnce(3)
-        .mockReturnValueOnce(4);
-
-      const { result } = renderHook(() => useBackendAppState());
-
-      await act(async () => {
-        await result.current.interactWithBot('panda');
-      });
-
-      expect(mockAchievements.checkAndUnlockAchievements).toHaveBeenCalledWith('bond_level', 4);
     });
   });
 
@@ -519,40 +399,6 @@ describe('useBackendAppState', () => {
         total_xp: 500,
         current_level: 5,
       });
-    });
-
-    it('should provide bots data', () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      expect(result.current.bots).toHaveLength(2);
-      expect(result.current.bots[0].pet_type).toBe('panda');
-    });
-  });
-
-  describe('Unlocked Robots', () => {
-    it('should return unlocked robots based on level', () => {
-      const { result } = renderHook(() => useBackendAppState());
-      const state = result.current.getAppState();
-
-      expect(state.unlockedRobots).toContain('panda');
-      expect(state.unlockedRobots).toContain('cat');
-      expect(state.unlockedRobots).toContain('dog');
-    });
-  });
-
-  describe('Zone Data', () => {
-    it('should return current zone', () => {
-      const { result } = renderHook(() => useBackendAppState());
-
-      expect(result.current.currentZone).toBe('Snow');
-    });
-
-    it('should return available zones', () => {
-      const { result } = renderHook(() => useBackendAppState());
-      const state = result.current.getAppState();
-
-      expect(state.availableZones).toContain('Snow');
-      expect(state.availableZones).toContain('Forest');
     });
   });
 

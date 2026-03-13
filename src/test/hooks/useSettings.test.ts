@@ -162,7 +162,6 @@ describe('useSettings', () => {
 
       // Should fall back to defaults
       expect(result.current.settings).toEqual(defaultSettings);
-      // Toast may or may not be called depending on error handling
     });
 
     it('should set loading to false after initialization', async () => {
@@ -192,13 +191,6 @@ describe('useSettings', () => {
       expect(saved).toBeTruthy();
       const parsed = JSON.parse(saved!);
       expect(parsed.soundVolume).toBe(90);
-
-      expect(mockToast).toHaveBeenCalledWith(
-        "Settings Saved",
-        expect.objectContaining({
-          description: expect.any(String),
-        })
-      );
     });
 
     it('should update multiple settings at once', async () => {

@@ -50,7 +50,7 @@ describe('XP System Utilities', () => {
         hasAppsConfigured: true,
       });
 
-      expect(result.appliedMultipliers.focus).toBe(1.25);
+      expect(result.appliedMultipliers.focus).toBe(1.35);
       expect(result.focusBonus).toBeGreaterThan(0);
     });
 
@@ -62,7 +62,7 @@ describe('XP System Utilities', () => {
         hasAppsConfigured: true,
       });
 
-      expect(result.appliedMultipliers.focus).toBe(1.10);
+      expect(result.appliedMultipliers.focus).toBe(1.20);
     });
 
     it('should not apply focus bonus for 3+ shield attempts', () => {

@@ -36,6 +36,15 @@ vi.mock('@/lib/logger', () => {
   };
 });
 
+// Mock supabase client
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+    rpc: vi.fn(),
+  },
+  isSupabaseConfigured: false,
+}));
+
 import {
   useShopStore,
   useOwnedCharacters,
@@ -45,7 +54,7 @@ import {
 } from '@/stores/shopStore';
 
 describe('shopStore', () => {
-  // Storage key: 'petIsland_shopInventory'
+  // Storage key: 'nomo_shop_inventory'
 
   beforeEach(() => {
     localStorage.clear();
@@ -54,6 +63,8 @@ describe('shopStore', () => {
       ownedCharacters: [],
       ownedBackgrounds: [],
       equippedBackground: null,
+      purchasedStarterBundleIds: [],
+      dailyDealPurchasedDate: null,
     });
   });
 
@@ -73,15 +84,28 @@ describe('shopStore', () => {
       expect(state.equippedBackground).toBeNull();
     });
 
+    it('should initialize with empty purchasedStarterBundleIds', () => {
+      const state = useShopStore.getState();
+      expect(state.purchasedStarterBundleIds).toEqual([]);
+    });
+
+    it('should initialize with null dailyDealPurchasedDate', () => {
+      const state = useShopStore.getState();
+      expect(state.dailyDealPurchasedDate).toBeNull();
+    });
+
     it('should have all required actions available', () => {
       const state = useShopStore.getState();
       expect(typeof state.addOwnedCharacter).toBe('function');
       expect(typeof state.addOwnedBackground).toBe('function');
       expect(typeof state.addOwnedCharacters).toBe('function');
       expect(typeof state.addOwnedBackgrounds).toBe('function');
+      expect(typeof state.addPurchasedStarterBundleId).toBe('function');
       expect(typeof state.setEquippedBackground).toBe('function');
       expect(typeof state.setInventory).toBe('function');
       expect(typeof state.resetShop).toBe('function');
+      expect(typeof state.setDailyDealPurchased).toBe('function');
+      expect(typeof state.isDailyDealPurchased).toBe('function');
       expect(typeof state.isCharacterOwned).toBe('function');
       expect(typeof state.isBackgroundOwned).toBe('function');
     });
@@ -235,6 +259,76 @@ describe('shopStore', () => {
     });
   });
 
+  describe('addPurchasedStarterBundleId', () => {
+    it('should add a bundle ID to purchased list', () => {
+      const { addPurchasedStarterBundleId } = useShopStore.getState();
+
+      act(() => {
+        addPurchasedStarterBundleId('co.phonoinc.app.bundle.welcome');
+      });
+
+      const state = useShopStore.getState();
+      expect(state.purchasedStarterBundleIds).toContain('co.phonoinc.app.bundle.welcome');
+    });
+
+    it('should not add duplicate bundle IDs', () => {
+      const { addPurchasedStarterBundleId } = useShopStore.getState();
+
+      act(() => {
+        addPurchasedStarterBundleId('co.phonoinc.app.bundle.welcome');
+        addPurchasedStarterBundleId('co.phonoinc.app.bundle.welcome');
+      });
+
+      const state = useShopStore.getState();
+      expect(state.purchasedStarterBundleIds.filter(id => id === 'co.phonoinc.app.bundle.welcome')).toHaveLength(1);
+    });
+
+    it('should track multiple bundle IDs', () => {
+      const { addPurchasedStarterBundleId } = useShopStore.getState();
+
+      act(() => {
+        addPurchasedStarterBundleId('co.phonoinc.app.bundle.welcome');
+        addPurchasedStarterBundleId('co.phonoinc.app.bundle.egghunter');
+      });
+
+      const state = useShopStore.getState();
+      expect(state.purchasedStarterBundleIds).toHaveLength(2);
+    });
+  });
+
+  describe('setDailyDealPurchased / isDailyDealPurchased', () => {
+    it('should mark daily deal as purchased for today', () => {
+      const { setDailyDealPurchased } = useShopStore.getState();
+
+      act(() => {
+        setDailyDealPurchased();
+      });
+
+      const state = useShopStore.getState();
+      const today = new Date().toISOString().split('T')[0];
+      expect(state.dailyDealPurchasedDate).toBe(today);
+    });
+
+    it('should return true for isDailyDealPurchased when purchased today', () => {
+      const { setDailyDealPurchased } = useShopStore.getState();
+
+      act(() => {
+        setDailyDealPurchased();
+      });
+
+      expect(useShopStore.getState().isDailyDealPurchased()).toBe(true);
+    });
+
+    it('should return false for isDailyDealPurchased when not purchased', () => {
+      expect(useShopStore.getState().isDailyDealPurchased()).toBe(false);
+    });
+
+    it('should return false for isDailyDealPurchased when purchased on a different day', () => {
+      useShopStore.setState({ dailyDealPurchasedDate: '2020-01-01' });
+      expect(useShopStore.getState().isDailyDealPurchased()).toBe(false);
+    });
+  });
+
   describe('setEquippedBackground', () => {
     it('should set the equipped background', () => {
       const { setEquippedBackground } = useShopStore.getState();
@@ -283,6 +377,8 @@ describe('shopStore', () => {
         ownedCharacters: ['char-1'],
         ownedBackgrounds: ['bg-1'],
         equippedBackground: 'bg-1',
+        purchasedStarterBundleIds: ['bundle-1'],
+        dailyDealPurchasedDate: '2024-01-01',
       };
 
       act(() => {
@@ -293,21 +389,26 @@ describe('shopStore', () => {
       expect(state.ownedCharacters).toEqual(['char-1']);
       expect(state.ownedBackgrounds).toEqual(['bg-1']);
       expect(state.equippedBackground).toBe('bg-1');
+      expect(state.purchasedStarterBundleIds).toEqual(['bundle-1']);
+      expect(state.dailyDealPurchasedDate).toBe('2024-01-01');
     });
   });
 
   describe('resetShop', () => {
     it('should reset all shop state to initial values', () => {
-      const { addOwnedCharacter, addOwnedBackground, setEquippedBackground, resetShop } = useShopStore.getState();
+      const { addOwnedCharacter, addOwnedBackground, setEquippedBackground, addPurchasedStarterBundleId, setDailyDealPurchased, resetShop } = useShopStore.getState();
 
       act(() => {
         addOwnedCharacter('char-1');
         addOwnedBackground('bg-1');
         setEquippedBackground('bg-1');
+        addPurchasedStarterBundleId('bundle-1');
+        setDailyDealPurchased();
       });
 
       // Verify items were added
       expect(useShopStore.getState().ownedCharacters).toHaveLength(1);
+      expect(useShopStore.getState().purchasedStarterBundleIds).toHaveLength(1);
 
       act(() => {
         resetShop();
@@ -317,6 +418,8 @@ describe('shopStore', () => {
       expect(state.ownedCharacters).toEqual([]);
       expect(state.ownedBackgrounds).toEqual([]);
       expect(state.equippedBackground).toBeNull();
+      expect(state.purchasedStarterBundleIds).toEqual([]);
+      expect(state.dailyDealPurchasedDate).toBeNull();
     });
   });
 
@@ -419,7 +522,7 @@ describe('shopStore', () => {
       // Wait for persistence
       await new Promise(resolve => setTimeout(resolve, 50));
 
-      const saved = localStorage.getItem('petIsland_shopInventory');
+      const saved = localStorage.getItem('nomo_shop_inventory');
       expect(saved).not.toBeNull();
 
       const parsed = JSON.parse(saved!);

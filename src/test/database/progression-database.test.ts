@@ -53,9 +53,7 @@ import {
   MAX_LEVEL,
   useCurrentXP,
   useCurrentLevel,
-  useUnlockedRobots,
-  useCurrentZone,
-  useAvailableZones,
+  useUnlockedPets,
 } from '@/stores/xpStore';
 
 import {
@@ -75,9 +73,10 @@ describe('Progression Database – XP Store', () => {
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedRobots: [],
+      unlockedPets: [],
       currentZone: 'Assembly Line',
       availableZones: ['Assembly Line'],
+      prestigeLevel: 0,
     });
   });
 
@@ -98,7 +97,7 @@ describe('Progression Database – XP Store', () => {
       expect(state.availableZones).toContain('Assembly Line');
     });
 
-    it('should require 15 XP to reach next level', () => {
+    it('should have xpToNextLevel set in initial state', () => {
       const state = useXPStore.getState();
       expect(state.xpToNextLevel).toBe(15);
     });
@@ -148,17 +147,27 @@ describe('Progression Database – XP Store', () => {
       expect(calculateLevelFromXP(0)).toBe(0);
     });
 
-    it('should calculate level 1 for 15+ XP', () => {
-      expect(calculateLevelFromXP(15)).toBe(1);
-      expect(calculateLevelFromXP(16)).toBe(1);
+    it('should remain level 0 for XP below level 1 threshold', () => {
+      // LEVEL_REQUIREMENTS[1] = 30, so 15 XP is not enough for level 1
+      expect(calculateLevelFromXP(15)).toBe(0);
+      expect(calculateLevelFromXP(29)).toBe(0);
+    });
+
+    it('should reach level 1 at 30 XP', () => {
+      // LEVEL_REQUIREMENTS[1] = 30
+      expect(calculateLevelFromXP(30)).toBe(1);
+      expect(calculateLevelFromXP(31)).toBe(1);
     });
 
     it('should calculate level requirement correctly', () => {
       expect(calculateLevelRequirement(0)).toBe(0);
-      expect(calculateLevelRequirement(1)).toBe(15);
+      expect(calculateLevelRequirement(1)).toBe(30);
+      expect(calculateLevelRequirement(2)).toBe(70);
+      expect(calculateLevelRequirement(5)).toBe(260);
+      expect(calculateLevelRequirement(10)).toBe(920);
     });
 
-    it('should have exponential growth in level requirements', () => {
+    it('should have increasing growth in level requirements', () => {
       const level5 = calculateLevelRequirement(5);
       const level10 = calculateLevelRequirement(10);
       const level20 = calculateLevelRequirement(20);
@@ -175,42 +184,52 @@ describe('Progression Database – XP Store', () => {
       const level = calculateLevelFromXP(Number.MAX_SAFE_INTEGER);
       expect(level).toBeLessThanOrEqual(MAX_LEVEL);
     });
+
+    it('should update level correctly when adding XP via addXP', () => {
+      // LEVEL_REQUIREMENTS[1] = 30, [2] = 70
+      act(() => {
+        useXPStore.getState().addXP(70);
+      });
+      const state = useXPStore.getState();
+      expect(state.currentXP).toBe(70);
+      expect(state.currentLevel).toBe(2);
+    });
   });
 
-  describe('Robot Unlocks', () => {
-    it('should add a single robot', () => {
+  describe('Pet Unlocks', () => {
+    it('should add a single pet', () => {
       act(() => {
-        useXPStore.getState().addRobot('Fox');
+        useXPStore.getState().addPet('Fox');
       });
-      expect(useXPStore.getState().unlockedRobots).toContain('Fox');
+      expect(useXPStore.getState().unlockedPets).toContain('Fox');
     });
 
-    it('should not add duplicate robots', () => {
+    it('should not add duplicate pets', () => {
       act(() => {
-        useXPStore.getState().addRobot('Fox');
-        useXPStore.getState().addRobot('Fox');
+        useXPStore.getState().addPet('Fox');
+        useXPStore.getState().addPet('Fox');
       });
-      expect(useXPStore.getState().unlockedRobots.filter(a => a === 'Fox')).toHaveLength(1);
+      expect(useXPStore.getState().unlockedPets.filter(a => a === 'Fox')).toHaveLength(1);
     });
 
-    it('should add multiple robots at once', () => {
+    it('should add multiple pets at once', () => {
       act(() => {
-        useXPStore.getState().addRobots(['Fox', 'Bear', 'Owl']);
+        useXPStore.getState().addPets(['Fox', 'Bear', 'Owl']);
       });
-      const robots = useXPStore.getState().unlockedRobots;
-      expect(robots).toContain('Fox');
-      expect(robots).toContain('Bear');
-      expect(robots).toContain('Owl');
+      const pets = useXPStore.getState().unlockedPets;
+      expect(pets).toContain('Fox');
+      expect(pets).toContain('Bear');
+      expect(pets).toContain('Owl');
     });
 
     it('should filter duplicates in batch add', () => {
       act(() => {
-        useXPStore.getState().addRobot('Fox');
-        useXPStore.getState().addRobots(['Fox', 'Bear']);
+        useXPStore.getState().addPet('Fox');
+        useXPStore.getState().addPets(['Fox', 'Bear']);
       });
-      const robots = useXPStore.getState().unlockedRobots;
-      expect(robots.filter(a => a === 'Fox')).toHaveLength(1);
-      expect(robots).toContain('Bear');
+      const pets = useXPStore.getState().unlockedPets;
+      expect(pets.filter(a => a === 'Fox')).toHaveLength(1);
+      expect(pets).toContain('Bear');
     });
   });
 
@@ -249,12 +268,51 @@ describe('Progression Database – XP Store', () => {
     });
   });
 
+  describe('Prestige', () => {
+    it('should not prestige below MAX_LEVEL', () => {
+      act(() => {
+        useXPStore.getState().updateState({ currentLevel: MAX_LEVEL - 1 });
+      });
+      let result: boolean;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+      expect(result!).toBe(false);
+    });
+
+    it('should prestige at MAX_LEVEL', () => {
+      act(() => {
+        useXPStore.getState().updateState({ currentLevel: MAX_LEVEL, prestigeLevel: 0 });
+      });
+      let result: boolean;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+      expect(result!).toBe(true);
+      const state = useXPStore.getState();
+      expect(state.currentLevel).toBe(0);
+      expect(state.currentXP).toBe(0);
+      expect(state.prestigeLevel).toBe(1);
+    });
+
+    it('should not prestige beyond prestige level 10', () => {
+      act(() => {
+        useXPStore.getState().updateState({ currentLevel: MAX_LEVEL, prestigeLevel: 10 });
+      });
+      let result: boolean;
+      act(() => {
+        result = useXPStore.getState().prestige();
+      });
+      expect(result!).toBe(false);
+    });
+  });
+
   describe('Reset', () => {
     it('should reset all XP state to initial values', () => {
       act(() => {
         useXPStore.getState().setXP(5000);
         useXPStore.getState().setLevel(10);
-        useXPStore.getState().addRobot('Dragon');
+        useXPStore.getState().addPet('Dragon');
         useXPStore.getState().addZone('Volcano');
       });
 
@@ -265,9 +323,10 @@ describe('Progression Database – XP Store', () => {
       const state = useXPStore.getState();
       expect(state.currentXP).toBe(0);
       expect(state.currentLevel).toBe(0);
-      expect(state.unlockedRobots).toEqual([]);
+      expect(state.unlockedPets).toEqual([]);
       expect(state.currentZone).toBe('Assembly Line');
       expect(state.availableZones).toEqual(['Assembly Line']);
+      expect(state.prestigeLevel).toBe(0);
     });
   });
 
@@ -288,26 +347,26 @@ describe('Progression Database – XP Store', () => {
       expect(result.current).toBe(7);
     });
 
-    it('should return unlocked robots via selector hook', () => {
+    it('should return unlocked pets via selector hook', () => {
       act(() => {
-        useXPStore.getState().addRobots(['Fox', 'Bear']);
+        useXPStore.getState().addPets(['Fox', 'Bear']);
       });
-      const { result } = renderHook(() => useUnlockedRobots());
+      const { result } = renderHook(() => useUnlockedPets());
       expect(result.current).toEqual(['Fox', 'Bear']);
     });
 
-    it('should return current zone via selector hook', () => {
-      const { result } = renderHook(() => useCurrentZone());
-      expect(result.current).toBe('Assembly Line');
+    it('should return current zone via store state', () => {
+      const state = useXPStore.getState();
+      expect(state.currentZone).toBe('Assembly Line');
     });
 
-    it('should return available zones via selector hook', () => {
+    it('should return available zones via store state', () => {
       act(() => {
         useXPStore.getState().addZone('Forest');
       });
-      const { result } = renderHook(() => useAvailableZones());
-      expect(result.current).toContain('Assembly Line');
-      expect(result.current).toContain('Forest');
+      const state = useXPStore.getState();
+      expect(state.availableZones).toContain('Assembly Line');
+      expect(state.availableZones).toContain('Forest');
     });
   });
 
@@ -317,7 +376,7 @@ describe('Progression Database – XP Store', () => {
         useXPStore.getState().updateState({
           currentXP: 1000,
           currentLevel: 5,
-          unlockedRobots: ['Fox'],
+          unlockedPets: ['Fox'],
         });
       });
 
@@ -328,7 +387,7 @@ describe('Progression Database – XP Store', () => {
       const parsed = JSON.parse(saved!);
       expect(parsed.state.currentXP).toBe(1000);
       expect(parsed.state.currentLevel).toBe(5);
-      expect(parsed.state.unlockedRobots).toContain('Fox');
+      expect(parsed.state.unlockedPets).toContain('Fox');
     });
   });
 });
@@ -624,9 +683,10 @@ describe('Progression Database – End-to-End Flows', () => {
       currentLevel: 0,
       xpToNextLevel: 15,
       totalXPForCurrentLevel: 0,
-      unlockedRobots: [],
+      unlockedPets: [],
       currentZone: 'Assembly Line',
       availableZones: ['Assembly Line'],
+      prestigeLevel: 0,
     });
     useCoinStore.setState({
       balance: 0,
@@ -675,19 +735,19 @@ describe('Progression Database – End-to-End Flows', () => {
   });
 
   it('should simulate XP progression through multiple levels', () => {
-    // Level 0 → 1 needs 15 XP
+    // Level 0 → 1 needs 30 XP (LEVEL_REQUIREMENTS[1] = 30)
     act(() => {
-      useXPStore.getState().addXP(15);
+      useXPStore.getState().addXP(30);
     });
-    expect(calculateLevelFromXP(useXPStore.getState().currentXP)).toBeGreaterThanOrEqual(1);
+    expect(useXPStore.getState().currentLevel).toBe(1);
 
-    // Add more XP to progress further
+    // Add more XP to progress further (LEVEL_REQUIREMENTS[2] = 70)
     act(() => {
-      useXPStore.getState().addXP(50);
+      useXPStore.getState().addXP(40);
     });
-    const totalXP = useXPStore.getState().currentXP;
-    expect(totalXP).toBe(65);
-    expect(calculateLevelFromXP(totalXP)).toBeGreaterThanOrEqual(2);
+    const state = useXPStore.getState();
+    expect(state.currentXP).toBe(70);
+    expect(state.currentLevel).toBe(2);
   });
 
   it('should simulate server sync correcting optimistic balance', () => {
@@ -759,6 +819,8 @@ describe('Progression Database – End-to-End Flows', () => {
     // The store's onRehydrateStorage should fix the level
     // We manually verify the expected behavior
     const expectedLevel = calculateLevelFromXP(500);
+    // 500 XP: LEVEL_REQUIREMENTS[7] = 460, [8] = 590, so level = 7
+    expect(expectedLevel).toBe(7);
     expect(expectedLevel).toBeGreaterThan(2);
   });
 

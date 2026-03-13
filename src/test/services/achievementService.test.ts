@@ -963,7 +963,7 @@ describe('achievementService', () => {
     });
 
     it('should update biome_unlock achievements', () => {
-      const achievement = createTestAchievement('biome-explorer', 8);
+      const achievement = createTestAchievement('zone-explorer', 8);
       const result = checkAchievementProgress(achievement, 'biome_unlock', 4);
 
       expect(result.shouldUpdate).toBe(true);

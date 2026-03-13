@@ -9,6 +9,7 @@ vi.mock('@/integrations/supabase/client', () => {
       getSession: vi.fn(),
       onAuthStateChange: vi.fn(),
       signOut: vi.fn(),
+      signInAnonymously: vi.fn(),
     },
   };
 
@@ -23,6 +24,13 @@ vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
+  },
+}));
+
+// Mock @capacitor/app
+vi.mock('@capacitor/app', () => ({
+  App: {
+    addListener: vi.fn(),
   },
 }));
 
@@ -66,16 +74,15 @@ import { supabase } from '@/integrations/supabase/client';
 const mockSupabase = supabase as unknown as {
   auth: {
     getSession: ReturnType<typeof vi.fn>;
-    signInWithPassword: ReturnType<typeof vi.fn>;
-    signUp: ReturnType<typeof vi.fn>;
     signOut: ReturnType<typeof vi.fn>;
     onAuthStateChange: ReturnType<typeof vi.fn>;
+    signInAnonymously: ReturnType<typeof vi.fn>;
   };
 };
 
 describe('useAuth', () => {
-  const GUEST_ID_KEY = 'pet_paradise_guest_id';
-  const GUEST_CHOSEN_KEY = 'pet_paradise_guest_chosen';
+  const GUEST_ID_KEY = 'nomo_guest_id';
+  const GUEST_CHOSEN_KEY = 'nomo_guest_chosen';
 
   // Mock subscription object
   const mockSubscription = {
@@ -97,6 +104,12 @@ describe('useAuth', () => {
     // Mock auth state change listener
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
       data: { subscription: mockSubscription },
+    });
+
+    // Default mock: anonymous sign-in fails (forces local guest fallback)
+    mockSupabase.auth.signInAnonymously.mockResolvedValue({
+      data: { user: null, session: null },
+      error: { message: 'Anonymous auth not enabled' },
     });
   });
 
@@ -276,8 +289,8 @@ describe('useAuth', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      act(() => {
-        result.current.continueAsGuest();
+      await act(async () => {
+        await result.current.continueAsGuest();
       });
 
       expect(result.current.isGuestMode).toBe(true);
@@ -310,13 +323,6 @@ describe('useAuth', () => {
         error: null,
       });
 
-      // Mock window.location.href
-      Object.defineProperty(window, 'location', {
-        value: { href: '' },
-        writable: true,
-        configurable: true,
-      });
-
       const { result } = renderHook(() => useAuth());
 
       await waitFor(() => {
@@ -337,13 +343,6 @@ describe('useAuth', () => {
 
     it('should sign out from guest mode successfully', async () => {
       localStorage.setItem(GUEST_CHOSEN_KEY, 'true');
-
-      // Mock window.location.href
-      Object.defineProperty(window, 'location', {
-        value: { href: '' },
-        writable: true,
-        configurable: true,
-      });
 
       const { result } = renderHook(() => useAuth());
 

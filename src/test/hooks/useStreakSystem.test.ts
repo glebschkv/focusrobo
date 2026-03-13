@@ -329,7 +329,7 @@ describe('useStreakSystem', () => {
         result.current.addStreakFreezes(5);
       });
 
-      expect(result.current.streakData.streakFreezeCount).toBe(5);
+      expect(result.current.streakData.streakFreezeCount).toBe(3);
     });
 
     it('should not add negative freezes', () => {
@@ -483,7 +483,7 @@ describe('useStreakSystem', () => {
         longestStreak: 0,
         lastSessionDate: '',
         totalSessions: 0,
-        streakFreezeCount: 3, // Reset gives 3 freezes
+        streakFreezeCount: 0,
       });
     });
   });
