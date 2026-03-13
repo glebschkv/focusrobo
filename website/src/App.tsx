@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Nav } from './components/Nav';
 import { HeroSection } from './components/HeroSection';
-import { SocialProofBar } from './components/SocialProof';
+import { StatsBar } from './components/StatsBar';
 import { LoopSection } from './components/LoopSection';
+import { AppPreview } from './components/AppPreview';
 import { PetShowcase } from './components/PetShowcase';
 import { IslandGrowth } from './components/IslandGrowth';
 import { RewardsSection } from './components/RewardsSection';
+import { SocialProof } from './components/SocialProof';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { StickyMobileCTA } from './components/StickyMobileCTA';
@@ -23,41 +25,20 @@ function ScrollToTop() {
 }
 
 function HomePage() {
-  const heroRef = useRef<HTMLElement>(null);
-  const footerCtaRef = useRef<HTMLElement>(null);
-
   return (
     <div>
       <Nav />
-      <HeroSection ref={heroRef} />
-      <div className="section-transition-sky-to-cream" />
-      <SocialProofBar />
+      <HeroSection />
+      <StatsBar />
       <LoopSection />
-      <div className="divider-warm" />
+      <AppPreview />
       <PetShowcase />
-      <div className="divider-warm" />
       <IslandGrowth />
-      <div className="divider-warm" />
       <RewardsSection />
-      <FinalCTA ref={footerCtaRef} />
+      <SocialProof />
+      <FinalCTA />
       <Footer />
-      <StickyMobileCTA heroRef={heroRef} footerCtaRef={footerCtaRef}>
-        <button
-          className="warm-form-button"
-          style={{ padding: '10px 24px', fontSize: 14, display: 'block', textAlign: 'center', width: '100%' }}
-          onClick={() => {
-            // Scroll to whichever waitlist form is closer
-            const hero = document.getElementById('waitlist');
-            const bottom = document.getElementById('waitlist-bottom');
-            const heroY = hero?.getBoundingClientRect().top ?? Infinity;
-            const bottomY = bottom?.getBoundingClientRect().top ?? Infinity;
-            const target = Math.abs(heroY) < Math.abs(bottomY) ? hero : bottom;
-            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }}
-        >
-          Join the Waitlist
-        </button>
-      </StickyMobileCTA>
+      <StickyMobileCTA />
     </div>
   );
 }
@@ -79,10 +60,9 @@ function NotFound() {
       <img
         src="/pets/frog-baby.png"
         alt="Lost frog"
-        className="pixel-art"
-        style={{ width: 80, height: 80, marginBottom: 16, animation: 'pet-bounce 3.5s ease-in-out infinite' }}
+        style={{ width: 80, height: 80, marginBottom: 16, animation: 'pet-bob 3s ease-in-out infinite' }}
       />
-      <h1 className="display-font" style={{ fontSize: 48, fontWeight: 700, marginBottom: 8, color: 'var(--fg-deep)' }}>
+      <h1 style={{ fontSize: 48, fontWeight: 700, marginBottom: 8, color: 'var(--fg-deep)' }}>
         404
       </h1>
       <p style={{ fontSize: 16, color: 'var(--fg-muted)', marginBottom: 24 }}>
@@ -90,8 +70,8 @@ function NotFound() {
       </p>
       <Link
         to="/"
-        className="warm-form-button"
-        style={{ display: 'inline-block', padding: '12px 28px', fontSize: 15, textDecoration: 'none' }}
+        className="cta-primary"
+        style={{ display: 'inline-flex', padding: '12px 28px', fontSize: 15, textDecoration: 'none' }}
       >
         Return Home
       </Link>

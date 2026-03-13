@@ -1,128 +1,93 @@
-import { IslandScene } from './IslandScene';
-import { AnimatedSection, AnimatedItem } from './AnimatedSection';
-import type { PetRarity } from '../data/PetDatabase';
+import { motion } from 'framer-motion';
+import { IslandSVG } from './IslandSVG';
 
-interface StagePet {
-  speciesId: string;
-  rarity: PetRarity;
-  cellIndex: number;
-}
-
-const GROWTH_STAGES: {
-  gridSize: number;
-  label: string;
-  tagline: string;
-  pets: StagePet[];
-}[] = [
-  {
-    gridSize: 5,
-    label: 'First Steps',
-    tagline: 'A cozy 5×5 patch and your very first pet.',
-    pets: [
-      { speciesId: 'bunny', rarity: 'common', cellIndex: 0 },
-    ],
-  },
-  {
-    gridSize: 7,
-    label: 'Growing',
-    tagline: 'More sessions, more pets, more room.',
-    pets: [
-      { speciesId: 'bunny', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'chick', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'fox', rarity: 'uncommon', cellIndex: 0 },
-    ],
-  },
-  {
-    gridSize: 10,
-    label: 'Thriving',
-    tagline: 'Your island expands as your focus deepens.',
-    pets: [
-      { speciesId: 'bunny', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'capybara', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'fox', rarity: 'uncommon', cellIndex: 0 },
-      { speciesId: 'owl', rarity: 'rare', cellIndex: 0 },
-      { speciesId: 'corgi', rarity: 'uncommon', cellIndex: 0 },
-      { speciesId: 'hedgehog', rarity: 'common', cellIndex: 0 },
-    ],
-  },
-  {
-    gridSize: 12,
-    label: 'Complete',
-    tagline: 'A full island. Archive it. Start fresh.',
-    pets: [
-      { speciesId: 'bunny', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'chick', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'fox', rarity: 'uncommon', cellIndex: 0 },
-      { speciesId: 'cat', rarity: 'uncommon', cellIndex: 0 },
-      { speciesId: 'owl', rarity: 'rare', cellIndex: 0 },
-      { speciesId: 'panda', rarity: 'rare', cellIndex: 0 },
-      { speciesId: 'dragon', rarity: 'epic', cellIndex: 0 },
-      { speciesId: 'capybara', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'hedgehog', rarity: 'common', cellIndex: 0 },
-      { speciesId: 'penguin', rarity: 'uncommon', cellIndex: 0 },
-    ],
-  },
+const GROWTH_STAGES = [
+  { gridSize: 5, label: 'First Steps', petCount: '25 pets', scale: 0.7 },
+  { gridSize: 7, label: 'Growing Strong', petCount: '49 pets', scale: 0.8 },
+  { gridSize: 10, label: 'Thriving', petCount: '100 pets', scale: 0.9 },
+  { gridSize: 12, label: 'Paradise', petCount: '144 pets', scale: 1.0 },
 ];
 
 export function IslandGrowth() {
   return (
-    <section className="section-textured section-standard">
+    <section className="section-green py-24 px-5">
       <div className="max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-14">
-          <AnimatedItem>
-            <h2 className="section-heading display-font">
-              Watch your island come alive
-            </h2>
-          </AnimatedItem>
-          <AnimatedItem>
-            <p className="section-desc">
-              Every pet you earn finds a home. Fill it up, archive your masterpiece, start fresh.
-            </p>
-          </AnimatedItem>
-        </AnimatedSection>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-14"
+        >
+          <div className="section-label">WATCH IT GROW</div>
+          <h2 className="section-title">From Tiny Plot to Massive Paradise</h2>
+          <p className="section-subtitle">
+            Your island expands as you collect more pets. Fill it up, archive it, and start a brand new one.
+          </p>
+        </motion.div>
 
-        {/* Desktop: grid */}
-        <AnimatedSection className="hidden md:grid md:grid-cols-4 gap-6" stagger={0.12}>
-          {GROWTH_STAGES.map((stage) => (
-            <AnimatedItem key={stage.gridSize}>
-              <div className="glass-warm p-4 mb-3">
-                <div style={{ animation: 'island-bob 5s ease-in-out infinite' }}>
-                  <IslandScene gridSize={stage.gridSize} pets={stage.pets} />
+        {/* Desktop: grid with arrows. Mobile: scroll */}
+        <div className="hidden md:grid md:grid-cols-4 gap-4 items-end">
+          {GROWTH_STAGES.map((stage, i) => (
+            <motion.div
+              key={stage.gridSize}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12, duration: 0.5, ease: [0.175, 0.885, 0.32, 1.1] }}
+              className="text-center relative"
+            >
+              {/* Arrow between stages */}
+              {i > 0 && (
+                <div
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-10"
+                  style={{ color: 'var(--primary)', opacity: 0.3 }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M3 8h10M9 4l4 4-4 4" />
+                  </svg>
+                </div>
+              )}
+              <div
+                className="feature-card p-4 mb-4"
+                style={{
+                  aspectRatio: '1',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: `scale(${stage.scale})`,
+                  transformOrigin: 'bottom center',
+                }}
+              >
+                <div style={{ width: '100%', animation: 'island-bob 4s ease-in-out infinite', animationDelay: `${i * 0.5}s` }}>
+                  <IslandSVG gridSize={stage.gridSize} />
                 </div>
               </div>
-              <div className="text-center" style={{ marginTop: 8 }}>
-                <div className="display-font" style={{ fontSize: 15, fontWeight: 700, color: 'var(--fg-deep)' }}>
-                  {stage.label}
-                </div>
-                <div className="card-desc" style={{ fontSize: 12, marginTop: 4 }}>
-                  {stage.tagline}
-                </div>
+              <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em' }}>{stage.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginTop: 2 }}>{stage.petCount}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-muted)', marginTop: 2 }}>
+                {stage.gridSize}×{stage.gridSize} grid
               </div>
-            </AnimatedItem>
+            </motion.div>
           ))}
-        </AnimatedSection>
+        </div>
 
-        {/* Mobile: horizontal scroll */}
-        <div className="md:hidden scroll-container">
-          <div className="scroll-track">
-            {GROWTH_STAGES.map((stage) => (
-              <div key={stage.gridSize} style={{ width: 240, flexShrink: 0 }}>
-                <div className="glass-warm p-4 mb-3">
-                  <div style={{ animation: 'island-bob 5s ease-in-out infinite' }}>
-                    <IslandScene gridSize={stage.gridSize} pets={stage.pets} />
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="display-font" style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-deep)' }}>
-                    {stage.label}
-                  </div>
-                  <div className="card-desc" style={{ fontSize: 12, marginTop: 4 }}>
-                    {stage.tagline}
-                  </div>
+        <div className="md:hidden scroll-track">
+          {GROWTH_STAGES.map((stage) => (
+            <div key={stage.gridSize} className="text-center" style={{ width: 200, flexShrink: 0 }}>
+              <div
+                className="feature-card p-3 mb-3"
+                style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <div style={{ width: '100%', animation: 'island-bob 4s ease-in-out infinite' }}>
+                  <IslandSVG gridSize={stage.gridSize} />
                 </div>
               </div>
-            ))}
-          </div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>{stage.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600 }}>{stage.petCount}</div>
+              <div style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{stage.gridSize}×{stage.gridSize} grid</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

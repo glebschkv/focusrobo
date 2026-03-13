@@ -1,45 +1,27 @@
-import { useState, useEffect, type ReactNode } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
-interface StickyMobileCTAProps {
-  heroRef: React.RefObject<HTMLElement | null>;
-  footerCtaRef: React.RefObject<HTMLElement | null>;
-  children: ReactNode;
-}
-
-export function StickyMobileCTA({ heroRef, footerCtaRef, children }: StickyMobileCTAProps) {
+export function StickyMobileCTA() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const checkVisibility = () => {
-      const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? 0;
-      const footerTop = footerCtaRef.current?.getBoundingClientRect().top ?? Infinity;
-      const viewportHeight = window.innerHeight;
-
-      const pastHero = heroBottom < -100;
-      const footerVisible = footerTop < viewportHeight + 100;
-
-      setVisible(pastHero && !footerVisible);
+    const onScroll = () => {
+      setVisible(window.scrollY > window.innerHeight * 0.8);
     };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    checkVisibility();
-    window.addEventListener('scroll', checkVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', checkVisibility);
-  }, [heroRef, footerCtaRef]);
+  if (!visible) return null;
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="sticky-cta-bar"
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="sticky-mobile-cta">
+      <a
+        href="#waitlist"
+        className="cta-primary"
+        style={{ width: '100%', textAlign: 'center', display: 'flex', justifyContent: 'center' }}
+      >
+        Join the Waitlist — Free Legendary Egg
+      </a>
+    </div>
   );
 }
