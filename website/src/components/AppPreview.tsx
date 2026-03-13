@@ -1,19 +1,49 @@
 import { motion } from 'framer-motion';
 import { IslandScene } from './IslandScene';
+import type { ReactNode } from 'react';
 
-const FEATURES = [
+function ShieldIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function IslandIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 20h20" />
+      <path d="M12 4 L5 14 h14 Z" />
+      <circle cx="12" cy="4" r="1" fill="var(--accent)" />
+    </svg>
+  );
+}
+
+function EggIcon() {
+  return (
+    <img
+      src="/icons/egg.png"
+      alt="Egg"
+      style={{ width: 28, height: 28, imageRendering: 'pixelated' }}
+    />
+  );
+}
+
+const FEATURES: { icon: ReactNode; title: string; desc: string }[] = [
   {
-    icon: '🎯',
+    icon: <ShieldIcon />,
     title: 'Block Distracting Apps',
     desc: 'iOS Screen Time integration keeps you focused.',
   },
   {
-    icon: '🥚',
+    icon: <EggIcon />,
     title: 'Hatch Eggs from 5 Rarity Tiers',
     desc: 'Common to Legendary — every session is a surprise.',
   },
   {
-    icon: '🏝️',
+    icon: <IslandIcon />,
     title: 'Explore 6 Themed Islands',
     desc: 'Coral Reef, Snow Peak, Desert Oasis, and more.',
   },
@@ -51,7 +81,7 @@ export function AppPreview() {
             <div className="phone-mockup">
               <div className="phone-mockup__notch" />
               <div className="phone-mockup__content">
-                <div style={{ width: '100%', transform: 'scale(0.55)', transformOrigin: 'center center' }}>
+                <div style={{ zoom: 0.55, flexShrink: 0 }}>
                   <IslandScene gridSize={8} />
                 </div>
               </div>
@@ -72,7 +102,6 @@ export function AppPreview() {
               >
                 <div
                   style={{
-                    fontSize: 28,
                     flexShrink: 0,
                     width: 48,
                     height: 48,
