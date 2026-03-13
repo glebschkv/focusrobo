@@ -5,6 +5,7 @@ import { useXPStore } from '@/stores/xpStore';
 import { useCoinStore } from '@/stores/coinStore';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
 import { QUEST_CONFIG } from '@/lib/constants';
+import { useQuestStore } from '@/stores/questStore';
 import type {
   Quest,
   QuestObjective,
@@ -148,6 +149,7 @@ const STORY_QUESTS = [
 
 export const useQuestSystem = (): QuestSystemReturn => {
   const [quests, setQuests] = useState<Quest[]>([]);
+  const [dailySweepJustCompleted, setDailySweepJustCompleted] = useState(false);
   const { addXP, addPet } = useXPStore();
   const { addCoins } = useCoinStore();
 
@@ -270,7 +272,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
         });
 
         const allCompleted = updatedObjectives.every(obj => obj.current >= obj.target);
-        
+
         return {
           ...quest,
           objectives: updatedObjectives,
@@ -279,6 +281,18 @@ export const useQuestSystem = (): QuestSystemReturn => {
       });
 
       saveQuestData(updated);
+
+      // Check for daily sweep: all 3 daily quests complete
+      const dailies = updated.filter(q => q.type === 'daily' && (!q.expiresAt || q.expiresAt > Date.now()));
+      if (dailies.length >= 3 && dailies.every(q => q.isCompleted)) {
+        const store = useQuestStore.getState();
+        const today = new Date().toDateString();
+        if (!store.dailySweepClaimed || store.dailySweepClaimedDate !== today) {
+          store.claimDailySweep();
+          setDailySweepJustCompleted(true);
+        }
+      }
+
       return updated;
     });
   }, [saveQuestData]);
@@ -396,6 +410,7 @@ export const useQuestSystem = (): QuestSystemReturn => {
     getQuestById,
     generateDailyQuests,
     generateWeeklyQuests,
-    getNextStoryQuest
+    getNextStoryQuest,
+    dailySweepJustCompleted,
   };
 };

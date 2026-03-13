@@ -466,3 +466,113 @@ export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[]
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },
 ];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Daily Deal System
+// ═══════════════════════════════════════════════════════════════════════════
+
+import { EGG_TYPES } from '@/data/EggData';
+import { DECORATIONS } from '@/data/DecorationData';
+
+export interface DailyDeal {
+  id: string;
+  itemType: 'egg' | 'decoration' | 'background';
+  itemId: string;
+  itemName: string;
+  itemDescription: string;
+  itemIcon: string;
+  itemRarity: string;
+  originalPrice: number;
+  dealPrice: number;
+  discountPercent: number;
+  expiresAt: number;
+}
+
+/** Simple deterministic hash from a string to a positive integer */
+function hashString(str: string): number {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+/**
+ * Returns today's daily deal, deterministic based on the date string.
+ * Deal types: 40% egg (30% off), 30% decoration (40% off), 30% background (25% off).
+ * Lower-level players get cheaper items.
+ */
+export function getDailyDeal(playerLevel: number): DailyDeal {
+  const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const seed = hashString(dateStr);
+
+  // Midnight tonight (local time)
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+  const expiresAt = midnight.getTime();
+
+  // Pick deal type: 0-39 = egg, 40-69 = decoration, 70-99 = background
+  const typeRoll = seed % 100;
+
+  if (typeRoll < 40) {
+    // Egg deal — 30% discount
+    let pool = EGG_TYPES.filter((e) => e.coinPrice > 0);
+    if (playerLevel < 10) pool = pool.filter((e) => e.coinPrice <= 600);
+    const egg = pool[seed % pool.length];
+    const discountPercent = 30;
+    return {
+      id: `deal-${dateStr}`,
+      itemType: 'egg',
+      itemId: egg.id,
+      itemName: egg.name,
+      itemDescription: egg.description,
+      itemIcon: egg.icon,
+      itemRarity: egg.rarity,
+      originalPrice: egg.coinPrice,
+      dealPrice: Math.ceil(egg.coinPrice * (1 - discountPercent / 100)),
+      discountPercent,
+      expiresAt,
+    };
+  }
+
+  if (typeRoll < 70) {
+    // Decoration deal — 40% discount
+    let pool = DECORATIONS.filter((d) => d.coinPrice > 0);
+    if (playerLevel < 10) pool = pool.filter((d) => d.rarity === 'common' || d.rarity === 'uncommon');
+    const deco = pool[seed % pool.length];
+    const discountPercent = 40;
+    return {
+      id: `deal-${dateStr}`,
+      itemType: 'decoration',
+      itemId: deco.id,
+      itemName: deco.name,
+      itemDescription: deco.description,
+      itemIcon: 'tree',
+      itemRarity: deco.rarity,
+      originalPrice: deco.coinPrice,
+      dealPrice: Math.ceil(deco.coinPrice * (1 - discountPercent / 100)),
+      discountPercent,
+      expiresAt,
+    };
+  }
+
+  // Background deal — 25% discount
+  let pool = PREMIUM_BACKGROUNDS.filter((b) => b.coinPrice > 0);
+  if (playerLevel < 10) pool = pool.filter((b) => b.coinPrice <= 1500);
+  if (pool.length === 0) pool = PREMIUM_BACKGROUNDS;
+  const bg = pool[seed % pool.length];
+  const discountPercent = 25;
+  return {
+    id: `deal-${dateStr}`,
+    itemType: 'background',
+    itemId: bg.id,
+    itemName: bg.name,
+    itemDescription: bg.description,
+    itemIcon: bg.icon,
+    itemRarity: bg.rarity,
+    originalPrice: bg.coinPrice,
+    dealPrice: Math.ceil(bg.coinPrice * (1 - discountPercent / 100)),
+    discountPercent,
+    expiresAt,
+  };
+}

@@ -4,18 +4,21 @@
  * Premium, bundles, and special offerings framed as discoveries.
  */
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Crown, ChevronRight, Check } from "lucide-react";
 import { PixelIcon } from "@/components/ui/PixelIcon";
 import { cn } from "@/lib/utils";
 import { ShopItem, COIN_PACKS, StarterBundle, CoinPack, Bundle } from "@/data/ShopData";
 import { BACKGROUND_BUNDLES, STARTER_BUNDLES } from "@/data/ShopData";
+import { getDailyDeal } from "@/data/ShopData";
 import type { ShopInventory } from "@/hooks/useShop";
 import { toast } from "sonner";
 import { BundlePreviewCarousel } from "../ShopPreviewComponents";
 import { BundleConfirmDialog } from "../BundleConfirmDialog";
 import type { ShopCategory } from "@/data/ShopData";
 import { useStoreKit } from "@/hooks/useStoreKit";
+import { useShopStore } from "@/stores/shopStore";
+import { useCurrentLevel } from "@/stores/xpStore";
 
 interface FeaturedTabProps {
   inventory: ShopInventory;
@@ -44,10 +47,49 @@ export const FeaturedTab = ({
 }: FeaturedTabProps) => {
   const storeKit = useStoreKit();
   const bestValuePack = COIN_PACKS.find(pack => pack.isBestValue) || COIN_PACKS[COIN_PACKS.length - 1];
+  const playerLevel = useCurrentLevel();
+  const isDailyDealPurchased = useShopStore((s) => s.isDailyDealPurchased);
+  const setDailyDealPurchased = useShopStore((s) => s.setDailyDealPurchased);
 
   const [selectedBundle, setSelectedBundle] = useState<StarterBundle | CoinPack | null>(null);
   const [showBundleConfirm, setShowBundleConfirm] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
+
+  // Daily Deal
+  const deal = useMemo(() => getDailyDeal(playerLevel), [playerLevel]);
+  const dealSold = isDailyDealPurchased();
+
+  // Countdown to midnight
+  const [countdown, setCountdown] = useState('');
+  useEffect(() => {
+    function tick() {
+      const now = Date.now();
+      const diff = Math.max(0, deal.expiresAt - now);
+      const h = Math.floor(diff / 3_600_000);
+      const m = Math.floor((diff % 3_600_000) / 60_000);
+      setCountdown(`${h}h ${m}m`);
+    }
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, [deal.expiresAt]);
+
+  const handleDealPurchase = () => {
+    if (dealSold) return;
+    // Create a ShopItem-compatible object for the purchase confirm flow
+    const dealItem: ShopItem = {
+      id: deal.itemId,
+      name: deal.itemName,
+      description: deal.itemDescription,
+      category: deal.itemType === 'egg' ? 'eggs' : deal.itemType === 'decoration' ? 'decor' : 'customize',
+      icon: deal.itemIcon,
+      rarity: deal.itemRarity as ShopItem['rarity'],
+      coinPrice: deal.dealPrice,
+    };
+    setSelectedItem(dealItem);
+    setShowPurchaseConfirm(true);
+    setDailyDealPurchased();
+  };
 
   const handleIAPPurchase = async () => {
     if (!selectedBundle?.iapProductId) {
@@ -108,6 +150,58 @@ export const FeaturedTab = ({
         onPurchase={handleIAPPurchase}
         isPurchasing={isPurchasing}
       />
+
+      {/* Daily Deal */}
+      <button
+        onClick={handleDealPurchase}
+        className={cn("shop-daily-deal", dealSold && "shop-daily-deal--sold")}
+        disabled={dealSold}
+      >
+        <div className="shop-daily-deal__badge">
+          <PixelIcon name="lightning" size={10} />
+          <span>Daily Deal</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="shop-daily-deal__icon-frame">
+            <PixelIcon name={deal.itemIcon} size={22} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm" style={{ color: dealSold ? '#4A6B30' : '#5C3D1A' }}>
+                {deal.itemName}
+              </span>
+              {dealSold && (
+                <span className="px-2 py-0.5 text-white text-[10px] font-bold rounded-full flex items-center gap-1" style={{ background: '#6B9E58' }}>
+                  <Check className="w-2.5 h-2.5" /> Claimed
+                </span>
+              )}
+            </div>
+            <p className="text-[10px] mt-0.5 line-clamp-1" style={{ color: '#8B6F47' }}>
+              {deal.itemDescription}
+            </p>
+          </div>
+          {!dealSold && (
+            <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+              <span className="text-[10px] line-through" style={{ color: '#A0937E' }}>
+                {deal.originalPrice.toLocaleString()}
+              </span>
+              <div className={cn(
+                "flex items-center gap-1 text-xs font-bold",
+                canAfford(deal.dealPrice) ? "text-[#4A6B30]" : "text-[#8B4040]"
+              )}>
+                <PixelIcon name="coin" size={12} />
+                {deal.dealPrice.toLocaleString()}
+              </div>
+            </div>
+          )}
+        </div>
+        {!dealSold && (
+          <div className="shop-daily-deal__footer">
+            <span className="shop-daily-deal__discount">-{deal.discountPercent}%</span>
+            <span className="shop-daily-deal__countdown">Ends in {countdown}</span>
+          </div>
+        )}
+      </button>
 
       {/* Section intro */}
       <p className="text-xs font-medium px-1" style={{ color: '#8B6F47' }}>

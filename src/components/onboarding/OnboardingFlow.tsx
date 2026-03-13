@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, ChevronLeft, Shield, Lock, Settings, Sparkles } from 'lucide-react';
 import { useOnboardingStore } from '@/stores/onboardingStore';
+import { useLandStore } from '@/stores/landStore';
 import { useDeviceActivity } from '@/hooks/useDeviceActivity';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { Capacitor } from '@capacitor/core';
@@ -14,11 +15,13 @@ interface OnboardingFlowProps {
 // ─── Preload critical images so sprites don't flash blank ────────────────────
 
 const PRELOAD_SRCS = [
-  '/assets/sprites/humanoid/star-wizard-walk.png',
+  '/assets/pets/bunny.png',
+  '/assets/pets/chick.png',
+  '/assets/pets/frog.png',
+  '/assets/pets/hamster.png',
+  '/assets/pets/duckling.png',
   '/assets/icons/clock.png',
-  '/assets/icons/star.png',
   '/assets/icons/paw.png',
-  '/assets/icons/wizard.png',
 ];
 
 function usePreloadImages(srcs: string[]) {
@@ -96,7 +99,7 @@ const FloatingParticles = memo(() => {
 });
 FloatingParticles.displayName = 'FloatingParticles';
 
-// ─── Sparkle burst around wizard — CSS-driven ───────────────────────────────
+// ─── Sparkle burst around pet — CSS-driven ──────────────────────────────────
 
 interface SparkleConfig {
   id: number;
@@ -187,7 +190,7 @@ const StepDots = ({ current, total }: { current: number; total: number }) => (
   </div>
 );
 
-// ─── Walking bot sprite ─────────────────────────────────────────────────────
+// ─── Pixel art image rendering helper ────────────────────────────────────────
 
 const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Standard
@@ -195,44 +198,6 @@ const SPRITE_IMAGE_RENDERING: React.CSSProperties = {
   // Safari fallback — typed as `any` because React CSSProperties
   // doesn't include the -webkit- vendor prefix
   ...(({ '-webkit-image-rendering': 'pixelated' } as unknown) as React.CSSProperties),
-};
-
-const WalkingPetSprite = ({
-  spritePath,
-  frameCount,
-  frameWidth,
-  frameHeight,
-  scale = 2,
-}: {
-  spritePath: string;
-  frameCount: number;
-  frameWidth: number;
-  frameHeight: number;
-  scale?: number;
-}) => {
-  const [frame, setFrame] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrame((f) => (f + 1) % frameCount);
-    }, 150);
-    return () => clearInterval(interval);
-  }, [frameCount]);
-
-  return (
-    <div className="flex items-center justify-center">
-      <div
-        style={{
-          width: frameWidth * scale,
-          height: frameHeight * scale,
-          backgroundImage: `url(${spritePath})`,
-          backgroundPosition: `-${frame * frameWidth * scale}px 0px`,
-          backgroundSize: `${frameCount * frameWidth * scale}px ${frameHeight * scale}px`,
-          ...SPRITE_IMAGE_RENDERING,
-        }}
-      />
-    </div>
-  );
 };
 
 // ─── Pixel icon with fallback ───────────────────────────────────────────────
@@ -272,21 +237,32 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [selectedPet, setSelectedPet] = useState<string | null>(null);
 
   const skipOnboarding = useOnboardingStore((s) => s.skipOnboarding);
+  const setChosenStarterPet = useOnboardingStore((s) => s.setChosenStarterPet);
 
   const isNativePlatform = Capacitor.isNativePlatform();
   // Show Focus Shield step only on native iOS/Android
   const totalSteps = isNativePlatform ? 4 : 3;
+
+  const placeStarterPet = useCallback((petId: string) => {
+    setChosenStarterPet(petId);
+    useLandStore.getState().choosePet(petId, 25);
+    useLandStore.getState().placePendingPet();
+  }, [setChosenStarterPet]);
 
   const nextStep = useCallback(() => {
     if (currentStep < totalSteps - 1) {
       setDirection(1);
       setCurrentStep(currentStep + 1);
     } else {
+      // Final step — place chosen pet on island before completing
+      const petId = selectedPet || 'bunny';
+      placeStarterPet(petId);
       onComplete();
     }
-  }, [currentStep, totalSteps, onComplete]);
+  }, [currentStep, totalSteps, onComplete, selectedPet, placeStarterPet]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 0) {
@@ -333,9 +309,11 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       case 1:
         return <StepHowItWorks />;
       case 2:
-        return isNativePlatform ? <StepFocusShield /> : <StepMeetCompanion />;
+        return isNativePlatform
+          ? <StepFocusShield />
+          : <StepChoosePet selectedPet={selectedPet} onSelectPet={setSelectedPet} />;
       case 3:
-        return <StepMeetCompanion />;
+        return <StepChoosePet selectedPet={selectedPet} onSelectPet={setSelectedPet} />;
       default:
         return null;
     }
@@ -440,35 +418,47 @@ export const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             </button>
 
             {/* Primary CTA — 48px tall, prominent active state */}
-            <Button
-              onClick={nextStep}
-              size="lg"
-              className="font-semibold tracking-wide border-0 min-w-[160px] active:scale-[0.97] transition-transform duration-150"
-              style={{
-                background:
-                  'linear-gradient(180deg, #5DA888 0%, #367256 100%)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(64,133,106,0.3), 0 2px 4px rgba(0,0,0,0.1)',
-                color: 'white',
-                minHeight: 48,
-                WebkitTapHighlightColor: 'transparent',
-                touchAction: 'manipulation',
-              }}
-            >
-              <span className="flex items-center gap-2">
-                {currentStep === totalSteps - 1
-                  ? "Let's Go!"
-                  : 'Next'}
-                <ChevronRight className="w-4 h-4" />
-              </span>
-            </Button>
+            {(() => {
+              const isLastStep = currentStep === totalSteps - 1;
+              const needsPetSelection = isLastStep && !selectedPet;
+              return (
+                <Button
+                  onClick={nextStep}
+                  size="lg"
+                  disabled={needsPetSelection}
+                  className="font-semibold tracking-wide border-0 min-w-[160px] active:scale-[0.97] transition-all duration-150"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #5DA888 0%, #367256 100%)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: needsPetSelection
+                      ? 'none'
+                      : 'inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 16px rgba(64,133,106,0.3), 0 2px 4px rgba(0,0,0,0.1)',
+                    color: 'white',
+                    minHeight: 48,
+                    opacity: needsPetSelection ? 0.4 : 1,
+                    WebkitTapHighlightColor: 'transparent',
+                    touchAction: 'manipulation',
+                  }}
+                >
+                  <span className="flex items-center gap-2">
+                    {needsPetSelection
+                      ? 'Pick a pet first'
+                      : isLastStep
+                        ? "Let's Go!"
+                        : 'Next'}
+                    {!needsPetSelection && <ChevronRight className="w-4 h-4" />}
+                  </span>
+                </Button>
+              );
+            })()}
           </div>
 
           {/* Skip — 44px minimum tap target */}
           {currentStep === 0 && (
             <button
               onClick={() => {
+                placeStarterPet('bunny');
                 skipOnboarding();
                 onComplete();
               }}
@@ -506,6 +496,14 @@ const OnboardingKeyframes = memo(() => (
       40%  { transform: translate3d(var(--sparkle-tx), var(--sparkle-ty), 0) scale(1.2); opacity: 1; }
       100% { transform: translate3d(0, 0, 0) scale(0); opacity: 0; }
     }
+    @keyframes onboarding-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    @keyframes onboarding-select-glow {
+      0%, 100% { box-shadow: 0 0 8px rgba(64,133,106,0.15); }
+      50%      { box-shadow: 0 0 16px rgba(64,133,106,0.3); }
+    }
   `}</style>
 ));
 OnboardingKeyframes.displayName = 'OnboardingKeyframes';
@@ -529,13 +527,13 @@ const StepWelcome = () => (
           textShadow: '0 1px 2px rgba(0,0,0,0.06)',
         }}
       >
-        Your Focus, Protected
+        Welcome to PhoNo
       </h1>
       <p
         className="text-lg px-2 leading-relaxed font-medium"
         style={{ color: '#535D57' }}
       >
-        PhoNo helps you put your phone down{'\n'}and stay present. Every focused minute{'\n'}brings your island to life.
+        Put your phone down.{'\n'}Watch your island come to life.
       </p>
     </motion.div>
 
@@ -558,13 +556,18 @@ const StepWelcome = () => (
       />
       <div className="relative">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={2.5}
-        />
+        <div className="flex items-center justify-center">
+          <img
+            src="/assets/pets/bunny.png"
+            alt="Bunny pet"
+            style={{
+              width: 120,
+              height: 120,
+              ...SPRITE_IMAGE_RENDERING,
+              animation: 'onboarding-bob 3s ease-in-out infinite',
+            }}
+          />
+        </div>
       </div>
       {/* Ground shadow — simple gradient, no filter:blur */}
       <div
@@ -585,7 +588,7 @@ const StepWelcome = () => (
       animate={{ opacity: 1 }}
       transition={{ delay: 0.5 }}
     >
-      Every minute you stay focused earns you cute pets, XP, and coins. Build your own floating island!
+      Focus to earn adorable pets, XP, and coins. Build your own floating island!
     </motion.p>
   </div>
 );
@@ -598,24 +601,24 @@ const howItWorksSteps = [
   {
     icon: '/assets/icons/clock.png',
     fallback: '\u23F1',
-    label: 'Set Your Timer',
-    sub: 'Choose how long you want to focus. Start with 25 minutes — you\u2019ve got this.',
+    lucideIcon: null as React.ComponentType<{ className?: string; style?: React.CSSProperties }> | null,
+    label: 'Set a timer and start focusing',
     color: 'rgba(64,133,106,0.10)',
     borderColor: 'rgba(64,133,106,0.18)',
   },
   {
-    icon: '/assets/icons/star.png',
-    fallback: '\u2B50',
-    label: 'Stay Present',
-    sub: 'PhoNo blocks distracting apps so you can focus on what matters.',
-    color: 'rgba(196,160,51,0.08)',
-    borderColor: 'rgba(196,160,51,0.15)',
+    icon: null,
+    fallback: '\uD83D\uDEE1\uFE0F',
+    lucideIcon: Shield,
+    label: 'Distracting apps stay locked',
+    color: 'rgba(64,133,106,0.08)',
+    borderColor: 'rgba(64,133,106,0.15)',
   },
   {
     icon: '/assets/icons/paw.png',
     fallback: '\uD83D\uDC3E',
-    label: 'Earn Rewards',
-    sub: 'Complete sessions to earn XP, coins, and discover new pets for your island.',
+    lucideIcon: null as React.ComponentType<{ className?: string; style?: React.CSSProperties }> | null,
+    label: 'Earn pets for your island',
     color: 'rgba(55,162,112,0.08)',
     borderColor: 'rgba(55,162,112,0.15)',
   },
@@ -624,7 +627,6 @@ const howItWorksSteps = [
 const StepHowItWorks = () => (
   <div className="text-center space-y-6">
     <motion.div
-      className="space-y-2"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1, duration: 0.5 }}
@@ -638,76 +640,75 @@ const StepHowItWorks = () => (
       >
         How It Works
       </h1>
-      <p className="text-base" style={{ color: '#535D57' }}>
-        Three simple steps to get started
-      </p>
     </motion.div>
 
     <div className="space-y-3 px-1">
-      {howItWorksSteps.map((step, i) => (
-        <motion.div
-          key={step.label}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 0.2 + i * 0.12,
-            type: 'spring',
-            stiffness: 200,
-            damping: 20,
-          }}
-        >
-          <div
-            className="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl"
-            style={{
-              background: step.color,
-              border: `1px solid ${step.borderColor}`,
-              boxShadow:
-                '0 2px 12px rgba(64,133,106,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
+      {howItWorksSteps.map((step, i) => {
+        const LucideIcon = step.lucideIcon;
+        return (
+          <motion.div
+            key={step.label}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.2 + i * 0.12,
+              type: 'spring',
+              stiffness: 200,
+              damping: 20,
             }}
           >
-            {/* Step number */}
             <div
-              className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+              className="flex items-center gap-3.5 px-4 py-4 rounded-2xl"
               style={{
-                background: step.borderColor,
-                color: 'white',
+                background: step.color,
+                border: `1px solid ${step.borderColor}`,
+                boxShadow:
+                  '0 2px 12px rgba(64,133,106,0.06), inset 0 1px 0 rgba(255,255,255,0.4)',
               }}
             >
-              {i + 1}
-            </div>
+              {/* Icon */}
+              <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
+                {LucideIcon ? (
+                  <LucideIcon className="w-7 h-7" style={{ color: '#40856A' }} />
+                ) : (
+                  <PixelIcon src={step.icon!} fallback={step.fallback} size={32} />
+                )}
+              </div>
 
-            {/* Icon */}
-            <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
-              <PixelIcon src={step.icon} fallback={step.fallback} size={32} />
-            </div>
-
-            {/* Text */}
-            <div className="text-left min-w-0 flex-1">
+              {/* Label — single line, no sub-text */}
               <p
-                className="text-[15px] font-semibold leading-snug"
+                className="text-[15px] font-semibold leading-snug text-left"
                 style={{ color: '#1C211E' }}
               >
                 {step.label}
               </p>
-              <p
-                className="text-[14px] leading-snug mt-0.5"
-                style={{ color: '#535D57' }}
-              >
-                {step.sub}
-              </p>
             </div>
-          </div>
-        </motion.div>
-      ))}
+          </motion.div>
+        );
+      })}
     </div>
   </div>
 );
 
 // ═════════════════════════════════════════════════════════════════════════════
-// Step 3: Meet Your Companion
+// Step 3: Choose Your First Pet — interactive starter pet selection
 // ═════════════════════════════════════════════════════════════════════════════
 
-const StepMeetCompanion = () => (
+const STARTER_PETS = [
+  { id: 'bunny', name: 'Bunny', src: '/assets/pets/bunny.png' },
+  { id: 'chick', name: 'Chick', src: '/assets/pets/chick.png' },
+  { id: 'frog', name: 'Frog', src: '/assets/pets/frog.png' },
+  { id: 'hamster', name: 'Hamster', src: '/assets/pets/hamster.png' },
+  { id: 'duckling', name: 'Duckling', src: '/assets/pets/duckling.png' },
+];
+
+const StepChoosePet = ({
+  selectedPet,
+  onSelectPet,
+}: {
+  selectedPet: string | null;
+  onSelectPet: (id: string) => void;
+}) => (
   <div className="text-center space-y-5">
     <motion.div
       className="space-y-2"
@@ -722,69 +723,110 @@ const StepMeetCompanion = () => (
           textShadow: '0 1px 2px rgba(0,0,0,0.06)',
         }}
       >
-        Your First Friend
+        Choose Your First Pet
       </h1>
       <p
         className="text-base px-4 leading-relaxed"
         style={{ color: '#535D57' }}
       >
-        Every focus session brings a new companion to your island. This one's been waiting for you.
+        This one will be waiting on your island.
       </p>
     </motion.div>
 
-    {/* Character reveal */}
+    {/* Pet selection row */}
     <motion.div
       className="py-4 relative"
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        delay: 0.25,
-        duration: 0.7,
-        type: 'spring',
-        stiffness: 150,
-      }}
+      transition={{ delay: 0.2, duration: 0.6, type: 'spring' }}
     >
-      {/* Glow burst behind sprite — no filter:blur, pure gradient */}
-      <motion.div
+      {/* Glow behind pet row */}
+      <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
         style={{
-          width: 220,
-          height: 220,
+          width: 280,
+          height: 180,
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(64,133,106,0.18) 0%, rgba(64,133,106,0.06) 40%, transparent 70%)',
+            'radial-gradient(circle, rgba(64,133,106,0.12) 0%, transparent 65%)',
         }}
       />
 
       <div className="relative">
         <SparkleRing />
-        <WalkingPetSprite
-          spritePath="/assets/sprites/humanoid/star-wizard-walk.png"
-          frameCount={6}
-          frameWidth={64}
-          frameHeight={64}
-          scale={3}
-        />
+        <div className="flex items-center justify-center gap-2">
+          {STARTER_PETS.map((pet, i) => {
+            const isSelected = selectedPet === pet.id;
+            return (
+              <motion.button
+                key={pet.id}
+                onClick={() => onSelectPet(pet.id)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.15 + i * 0.08,
+                  type: 'spring',
+                  stiffness: 200,
+                  damping: 20,
+                }}
+                className="flex flex-col items-center gap-1 rounded-xl py-2 px-1.5"
+                style={{
+                  border: `2px solid ${isSelected ? '#40856A' : 'transparent'}`,
+                  background: isSelected ? 'rgba(64,133,106,0.08)' : 'transparent',
+                  transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                  boxShadow: isSelected
+                    ? '0 0 12px rgba(64,133,106,0.2)'
+                    : 'none',
+                  transition: 'border 200ms ease, background 200ms ease, transform 200ms ease, box-shadow 200ms ease',
+                  minWidth: 60,
+                  minHeight: 80,
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
+                  ...(isSelected ? {
+                    animationName: 'onboarding-select-glow',
+                    animationDuration: '2s',
+                    animationTimingFunction: 'ease-in-out',
+                    animationIterationCount: 'infinite',
+                  } : {}),
+                } as React.CSSProperties}
+              >
+                <img
+                  src={pet.src}
+                  alt={pet.name}
+                  style={{
+                    width: 64,
+                    height: 64,
+                    ...SPRITE_IMAGE_RENDERING,
+                    animation: `onboarding-bob 3s ease-in-out ${i * 0.3}s infinite`,
+                  }}
+                />
+                <span
+                  className="text-[12px] font-semibold leading-none"
+                  style={{ color: isSelected ? '#40856A' : '#535D57' }}
+                >
+                  {pet.name}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Ground shadow */}
       <div
         className="mx-auto mt-1 rounded-full"
         style={{
-          width: 100,
+          width: 180,
           height: 12,
           background:
-            'radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)',
+            'radial-gradient(ellipse, rgba(0,0,0,0.2) 0%, transparent 70%)',
         }}
       />
     </motion.div>
 
-    {/* Character card */}
+    {/* Info card */}
     <motion.div
-      className="mx-auto max-w-[260px] rounded-2xl px-5 py-4"
+      className="mx-auto max-w-[280px] rounded-2xl px-5 py-4"
       style={{
         background: 'rgba(255,255,255,0.88)',
         border: '1px solid rgba(64,133,106,0.15)',
@@ -795,45 +837,32 @@ const StepMeetCompanion = () => (
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.5 }}
     >
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <PixelIcon src="/assets/icons/wizard.png" fallback="" size={20} />
-        <p
-          className="text-lg font-bold"
-          style={{ color: '#1C211E' }}
-        >
-          Star Wizard
-        </p>
-        <span
-          className="text-[12px] font-semibold px-2 py-0.5 rounded-full"
-          style={{
-            background: 'rgba(59,130,246,0.12)',
-            color: 'rgba(59,130,246,0.9)',
-            border: '1px solid rgba(59,130,246,0.2)',
-          }}
-        >
-          RARE
-        </span>
-      </div>
       <p
         className="text-sm leading-relaxed"
         style={{ color: '#535D57' }}
       >
-        A young wizard in training who casts spells of concentration.
+        41 species to discover — from common bunnies to legendary unicorns.
       </p>
 
-      {/* Abilities */}
+      {/* Rarity preview — includes Uncommon */}
       <div className="flex gap-1.5 justify-center mt-3 flex-wrap">
-        {['Magic Focus', 'Star Spell', 'Wizard Wisdom'].map((ability) => (
+        {[
+          { label: 'Common', bg: 'rgba(64,133,106,0.08)', color: '#535D57', border: 'rgba(64,133,106,0.15)' },
+          { label: 'Uncommon', bg: 'rgba(34,197,94,0.08)', color: 'rgba(34,197,94,0.9)', border: 'rgba(34,197,94,0.2)' },
+          { label: 'Rare', bg: 'rgba(59,130,246,0.08)', color: 'rgba(59,130,246,0.9)', border: 'rgba(59,130,246,0.2)' },
+          { label: 'Epic', bg: 'rgba(168,85,247,0.08)', color: 'rgba(168,85,247,0.9)', border: 'rgba(168,85,247,0.2)' },
+          { label: 'Legendary', bg: 'rgba(234,179,8,0.08)', color: 'rgba(180,130,0,0.9)', border: 'rgba(234,179,8,0.25)' },
+        ].map((rarity) => (
           <span
-            key={ability}
-            className="text-[12px] px-2 py-0.5 rounded-full"
+            key={rarity.label}
+            className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
             style={{
-              background: 'rgba(64,133,106,0.06)',
-              color: '#535D57',
-              border: '1px solid rgba(64,133,106,0.1)',
+              background: rarity.bg,
+              color: rarity.color,
+              border: `1px solid ${rarity.border}`,
             }}
           >
-            {ability}
+            {rarity.label}
           </span>
         ))}
       </div>

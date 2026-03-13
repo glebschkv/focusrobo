@@ -19,6 +19,15 @@ export interface EggType {
 
 export const EGG_TYPES: EggType[] = [
   {
+    id: 'egg-starter',
+    name: 'Starter Egg',
+    description: 'A simple egg for beginners.',
+    coinPrice: 50,
+    rarityWeights: { common: 95, uncommon: 5, rare: 0, epic: 0, legendary: 0 },
+    icon: 'egg',
+    rarity: 'common',
+  },
+  {
     id: 'egg-common',
     name: 'Common Egg',
     description: 'A simple egg. Mostly common pets, but surprises happen!',
@@ -40,7 +49,7 @@ export const EGG_TYPES: EggType[] = [
     id: 'egg-epic',
     name: 'Epic Egg',
     description: 'A glowing egg. High chance of rare and epic pets!',
-    coinPrice: 1800,
+    coinPrice: 1200,
     rarityWeights: { common: 0, uncommon: 15, rare: 40, epic: 35, legendary: 10 },
     icon: 'egg-epic',
     rarity: 'epic',

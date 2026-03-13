@@ -13,7 +13,7 @@ export function Nav() {
   }, []);
 
   return (
-    <nav className={`site-nav ${scrolled || !isHome ? 'site-nav--scrolled' : ''}`}>
+    <nav className={`site-nav ${scrolled ? 'site-nav--scrolled' : ''}`}>
       <Link to="/" className="nav-logo">
         <img src="/app-icon.png" alt="PhoNo" />
         PhoNo
@@ -28,7 +28,7 @@ export function Nav() {
       )}
 
       {isHome ? (
-        <a href="#waitlist" className="nav-cta">Join Waitlist</a>
+        <a href="#waitlist" className="nav-cta">Get Early Access</a>
       ) : (
         <Link to="/" className="nav-cta">Home</Link>
       )}

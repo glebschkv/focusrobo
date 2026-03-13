@@ -35,6 +35,8 @@ import { DeviceActivity } from "@/plugins/device-activity";
 import { markBlockingStopped } from "@/hooks/useTimerExpiryGuard";
 import { useLandStore, type PendingPet, type PendingEgg } from "@/stores/landStore";
 import { useNavigationStore } from "@/stores/navigationStore";
+import { useMilestoneCelebrations } from "@/hooks/useMilestoneCelebrations";
+import type { Milestone } from "@/data/GamificationData";
 import { usePremiumStore } from "@/stores/premiumStore";
 import { useQuestStore } from "@/stores/questStore";
 import { useStreakStore } from "@/stores/streakStore";
@@ -50,6 +52,7 @@ export const useTimerLogic = () => {
 
   // Composed hooks
   const { awardSessionRewards, showFocusBonusToast } = useTimerRewards();
+  const { checkMilestone } = useMilestoneCelebrations();
   const { saveSessionNote } = useSessionNotes();
   const {
     showBreakModal: showBreakTransitionModal,
@@ -94,7 +97,11 @@ export const useTimerLogic = () => {
   const [lastSessionTaskLabel, setLastSessionTaskLabel] = useState<string | undefined>();
   const [lastSessionDuration, setLastSessionDuration] = useState(0);
   const [lastQuestDeltas, setLastQuestDeltas] = useState<QuestDelta[]>([]);
+  const [lastDailySweepCompleted, setLastDailySweepCompleted] = useState(false);
   const [lastStreakDay, setLastStreakDay] = useState(0);
+  const [lastLevelUpInfo, setLastLevelUpInfo] = useState<{ newLevel: number; oldLevel: number; unlockedRewards: Array<{ name: string; description: string }> } | null>(null);
+  const [lastMilestoneInfo, setLastMilestoneInfo] = useState<Milestone | null>(null);
+  const [lastFocusBonusType, setLastFocusBonusType] = useState('');
   // Preserve category/taskLabel/sessionId for session notes — handleComplete clears
   // them from timerState before the notes modal opens, so we snapshot here.
   const lastSessionMetaRef = useRef<{ category?: string; taskLabel?: string; sessionDuration: number; sessionId?: string }>({
@@ -280,6 +287,7 @@ export const useTimerLogic = () => {
 
       let xpEarned = 0;
       let coinsEarned = 0;
+      let capturedMilestone: Milestone | null = null;
       if (state.timerState.sessionType !== 'break') {
         const rewardResult = await awardSessionRewards(
           completedMinutes,
@@ -296,6 +304,27 @@ export const useTimerLogic = () => {
 
         xpEarned = rewardResult.xpEarned;
         coinsEarned = rewardResult.coinsEarned;
+
+        // Capture level-up info for inline display in SessionCompleteView
+        if (rewardResult.leveledUp) {
+          setLastLevelUpInfo({
+            newLevel: rewardResult.newLevel,
+            oldLevel: rewardResult.oldLevel,
+            unlockedRewards: rewardResult.unlockedRewards,
+          });
+
+          // Check for level milestones (shown inline instead of separate modal)
+          capturedMilestone = checkMilestone('level', rewardResult.newLevel);
+          if (capturedMilestone) {
+            setLastMilestoneInfo(capturedMilestone);
+          }
+        } else {
+          setLastLevelUpInfo(null);
+          setLastMilestoneInfo(null);
+        }
+
+        // Capture focus bonus type for inline card
+        setLastFocusBonusType(rewardResult.focusBonusType);
 
         if (rewardResult.focusBonusType === 'PERFECT FOCUS') {
           triggerHaptic('success');
@@ -348,6 +377,16 @@ export const useTimerLogic = () => {
           }
           if (streakReward.coinBonus && coinSystem) {
             coinSystem.addCoins(streakReward.coinBonus);
+          }
+
+          // Check for streak milestone (show inline if no level milestone already captured)
+          if (!capturedMilestone) {
+            const currentStreak = useStreakStore.getState().currentStreak;
+            const streakMilestone = checkMilestone('streak', currentStreak);
+            if (streakMilestone) {
+              capturedMilestone = streakMilestone;
+              setLastMilestoneInfo(streakMilestone);
+            }
           }
         }
         if (xpEarned > 0) {
@@ -458,18 +497,29 @@ export const useTimerLogic = () => {
             ? current.objectives.reduce((sum, o) => sum + Math.min(o.current / o.target, 1), 0) / current.objectives.length * 100
             : 0;
           if (newPct > snap.pct || current.isCompleted) {
+            const coinReward = current.isCompleted
+              ? current.rewards.filter(r => r.type === 'coins').reduce((sum, r) => sum + (r.amount || 0), 0)
+              : undefined;
             deltas.push({
               name: snap.title,
               oldPct: snap.pct,
               newPct,
               completed: current.isCompleted,
+              coinReward,
             });
           }
         }
         setLastQuestDeltas(deltas);
+
+        // Check if daily sweep was just completed
+        const questState = useQuestStore.getState();
+        const today = new Date().toDateString();
+        setLastDailySweepCompleted(questState.dailySweepClaimed && questState.dailySweepClaimedDate === today);
+
         setLastStreakDay(useStreakStore.getState().currentStreak);
 
         setShowSessionComplete(true);
+        useNavigationStore.getState().setSessionRewardsActive(true);
       } else {
         toast.info('Break Complete!', {
           description: 'Time to get back to work!',
@@ -495,6 +545,7 @@ export const useTimerLogic = () => {
     triggerHaptic,
     coinSystem,
     xpSystem,
+    checkMilestone,
   ]);
 
   // ============================================================================
@@ -599,11 +650,15 @@ export const useTimerLogic = () => {
       }
     }
 
-    // Clean up pet/egg state
+    // Clean up pet/egg state and session reward data
     setLastPlacedPet(null);
     setLastPlacedCellIndex(-1);
     setPendingSessionEgg(null);
+    setLastLevelUpInfo(null);
+    setLastMilestoneInfo(null);
+    setLastFocusBonusType('');
     setShowSessionComplete(false);
+    useNavigationStore.getState().setSessionRewardsActive(false);
   }, [saveSessionNote, lastSessionXP, updateSessionMeta, pendingSessionEgg]);
 
   const handleSessionCompleteTakeBreak = useCallback(() => {
@@ -701,7 +756,11 @@ export const useTimerLogic = () => {
     lastSessionTaskLabel,
     lastSessionDuration,
     lastQuestDeltas,
+    lastDailySweepCompleted,
     lastStreakDay,
+    lastLevelUpInfo,
+    lastMilestoneInfo,
+    lastFocusBonusType,
     autoBreakEnabled,
 
     // Actions

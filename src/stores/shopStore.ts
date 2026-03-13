@@ -32,6 +32,8 @@ export interface ShopInventory {
   ownedBackgrounds: string[];
   equippedBackground: string | null;
   purchasedStarterBundleIds: string[];
+  /** Date string (YYYY-MM-DD) when today's daily deal was purchased, or null */
+  dailyDealPurchasedDate: string | null;
 }
 
 interface ShopState extends ShopInventory {
@@ -44,6 +46,8 @@ interface ShopState extends ShopInventory {
   setEquippedBackground: (backgroundId: string | null) => void;
   setInventory: (inventory: Partial<ShopInventory>) => void;
   resetShop: () => void;
+  setDailyDealPurchased: () => void;
+  isDailyDealPurchased: () => boolean;
 
   // Selectors
   isCharacterOwned: (characterId: string) => boolean;
@@ -55,6 +59,7 @@ const initialState: ShopInventory = {
   ownedBackgrounds: [],
   equippedBackground: null,
   purchasedStarterBundleIds: [],
+  dailyDealPurchasedDate: null,
 };
 
 export const useShopStore = create<ShopState>()(
@@ -117,6 +122,17 @@ export const useShopStore = create<ShopState>()(
       resetShop: () => {
         set(initialState);
         shopLogger.debug('Shop reset');
+      },
+
+      setDailyDealPurchased: () => {
+        const today = new Date().toISOString().split('T')[0];
+        set({ dailyDealPurchasedDate: today });
+        shopLogger.debug('Daily deal purchased:', today);
+      },
+
+      isDailyDealPurchased: () => {
+        const today = new Date().toISOString().split('T')[0];
+        return get().dailyDealPurchasedDate === today;
       },
 
       // Selectors

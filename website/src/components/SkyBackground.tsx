@@ -20,12 +20,16 @@ export function SkyBackground({ children, className = '' }: SkyBackgroundProps) 
         <div className="sky-ray sky-ray--5" />
       </div>
 
-      {/* Clouds */}
+      {/* Clouds — reduced to 3 */}
       <div className="sky-cloud sky-cloud--1" />
       <div className="sky-cloud sky-cloud--2" />
       <div className="sky-cloud sky-cloud--3" />
-      <div className="sky-cloud sky-cloud--4" />
-      <div className="sky-cloud sky-cloud--5" />
+
+      {/* Sparkles */}
+      <div className="sky-sparkle" style={{ top: '20%', left: '25%', animationDelay: '0s' }} />
+      <div className="sky-sparkle" style={{ top: '35%', left: '65%', animationDelay: '-1.5s' }} />
+      <div className="sky-sparkle" style={{ top: '15%', left: '80%', animationDelay: '-3s' }} />
+      <div className="sky-sparkle" style={{ top: '45%', left: '15%', animationDelay: '-2s' }} />
 
       {children}
     </div>

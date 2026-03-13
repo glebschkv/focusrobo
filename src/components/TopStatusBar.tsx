@@ -7,11 +7,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PixelIcon } from "@/components/ui/PixelIcon";
-import { useLandStore } from "@/stores/landStore";
+import { useLandStore, useArchipelago, useActiveIslandIndex } from "@/stores/landStore";
 import { useSpeciesCatalog } from "@/stores/landStore";
 import { getAvailableCellCount } from "@/data/islandPositions";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
 import { usePrestigeLevel } from "@/stores/xpStore";
+import { getStreakMultiplier } from "@/lib/constants";
+import { getIslandTheme } from "@/data/IslandThemes";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 
 // ── Floating reward numbers ──────────────────────────────────────
@@ -50,6 +52,9 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
   const tierCapacity = getAvailableCellCount(gridSize);
   const islandProgressPct = tierCapacity > 0 ? (filledCount / tierCapacity) * 100 : 0;
   const { dailyIncomeRate, accumulatedCoins, justCollected, collect, isPremium } = usePassiveIncome();
+  const archipelago = useArchipelago();
+  const activeIslandIndex = useActiveIslandIndex();
+  const unlockedIslands = archipelago.filter((i) => i.isUnlocked && i.isPurchased);
 
   const handleCollect = useCallback(() => {
     const amount = collect();
@@ -121,6 +126,10 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
     if (hour >= 18) return 'streak-at-risk'; // After 6 PM
     return '';
   })();
+
+  const streakMultiplier = getStreakMultiplier(streakData.currentStreak);
+  const isStreakMilestone = [5, 10, 15, 20].includes(streakData.currentStreak);
+  const themeName = getIslandTheme(currentLand.theme || 'day').name;
 
   return (
     <div className="status-bar-container" ref={statusBarRef}>
@@ -265,7 +274,7 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
         {/* Passive income collect button */}
         {accumulatedCoins > 0 && (
           <button
-            className="income-collect-btn"
+            className="income-collect-btn income-collect-btn--bounce"
             onClick={handleCollect}
             aria-label={`Collect ${accumulatedCoins} coins from pets`}
           >
@@ -296,9 +305,12 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
         <div className="top-bar-right">
           <Popover open={streakOpen} onOpenChange={setStreakOpen}>
             <PopoverTrigger asChild>
-              <button className={`stat-chip streak-chip ${hasActiveStreak ? 'active' : ''} ${streakRiskClass}`} aria-label="View daily streak">
+              <button className={`stat-chip streak-chip ${hasActiveStreak ? 'active' : ''} ${streakRiskClass} ${isStreakMilestone ? 'streak-chip--milestone' : ''}`} aria-label="View daily streak">
                 <PixelIcon name="flame-streak" size={18} className="chip-icon streak-icon" />
                 <span className="chip-value">{streakData.currentStreak}</span>
+                {streakMultiplier > 1 && (
+                  <span className="streak-multiplier">{streakMultiplier.toFixed(2)}x</span>
+                )}
               </button>
             </PopoverTrigger>
             <PopoverContent className="stats-popover w-auto min-w-[180px]" align="end" sideOffset={8}>
@@ -316,6 +328,12 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
                     <span className="stat-label">Best</span>
                     <span className="stat-val">{streakData.longestStreak} {streakData.longestStreak === 1 ? 'day' : 'days'}</span>
                   </div>
+                  {streakMultiplier > 1 && (
+                    <div className="stat-row">
+                      <span className="stat-label">XP Boost</span>
+                      <span className="stat-val" style={{ color: 'hsl(152 50% 40%)' }}>{streakMultiplier.toFixed(2)}x</span>
+                    </div>
+                  )}
                 </div>
                 {hasActiveStreak && (
                   <p className="text-[11px] text-center mt-2 text-primary">
@@ -343,7 +361,16 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
 
         {/* Island Progress Row */}
         <div className="island-progress-row">
-          <span className="island-progress-label">Land {currentLand.number}</span>
+          <span className="island-progress-label">
+            {themeName} Island
+            {unlockedIslands.length >= 2 && (
+              <span className="island-progress-dots">
+                {unlockedIslands.map((_, i) => (
+                  <span key={i} className={i === activeIslandIndex ? 'island-dot--active' : 'island-dot'}>{i === activeIslandIndex ? '●' : '○'}</span>
+                ))}
+              </span>
+            )}
+          </span>
           <div className="island-progress-track">
             <div
               className="island-progress-fill"
