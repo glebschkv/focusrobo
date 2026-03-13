@@ -47,7 +47,7 @@ Unlock themed islands (Coral Reef, Snow Peak, etc.) with coins + level
 - **Visual style**: Pixel art pets (PNG sprites, 56–84px responsive), front-facing, transparent background
 - **Home screen**: `PetLand` component — floating island with panoramic sky (clouds, sun, god rays, mountains, dust motes, weather particles)
 - **Island**: Isometric diamond grass surface (inline SVG) with checkerboard tiles, textured cliff walls (dirt + stone bands), grass overhang bumps
-- **Island themes**: 11 themes with full color configs — Meadow (default), Beach, Winter, Sakura, Night Garden, Desert, Sky Islands, Calm Seas, Twilight Clouds, Aurora Horizon, Sunset Clouds
+- **Island themes**: 6 biome-specific themes (auto-derived from active archipelago island) — Meadow (day), Beach, Winter, Desert, Night Garden, Sakura. Each with unique sky, landscape, cliffs, animated elements
 - **Pets**: 41 species across 5 rarities (see Pet Species below)
 - **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
@@ -134,7 +134,7 @@ src/
 │   ├── TopStatusBar.tsx       # XP bar, coins, level, streak at top
 │   ├── UnifiedFocusTimer.tsx  # Focus timer tab (orchestrates timer sub-components)
 │   ├── PetCollectionBook.tsx  # Pet collection catalog with wish-list support
-│   ├── Shop.tsx               # Shop tab (eggs, backgrounds, power-ups, bundles, decor)
+│   ├── Shop.tsx               # Shop tab (eggs, power-ups, bundles, decor, featured)
 │   ├── Settings.tsx           # Settings tab
 │   ├── RewardModals.tsx       # Reward modal coordinator
 │   ├── RewardModal.tsx        # Generic reward popup
@@ -248,7 +248,7 @@ src/
 │   ├── questStore.ts          # Daily/weekly quests, challenges
 │   ├── onboardingStore.ts     # Onboarding completion state
 │   ├── authStore.ts           # Guest ID, guest mode flag
-│   ├── themeStore.ts          # Home background theme
+│   ├── themeStore.ts          # Home background theme (deprecated — theme now derived from active island biome)
 │   └── offlineSyncStore.ts    # Offline action queue for sync
 ├── hooks/                     # Custom React hooks (40 files)
 │   ├── useAuth.ts, useXPSystem.ts, useCoinSystem.ts, useStreakSystem.ts
@@ -383,7 +383,7 @@ All stores use `zustand/persist` (except navigationStore) with validated localSt
 | `questStore` | `nomo_quest_system` | No | Daily/weekly quests, daily/weekly challenges |
 | `onboardingStore` | `nomo_onboarding` | No | Onboarding completion, chosen starter pet, island name |
 | `authStore` | `nomo_auth` | No | Guest ID, guest mode flag |
-| `themeStore` | `petIsland_homeBackground` | No | Home background theme (legacy key) |
+| `themeStore` | `petIsland_homeBackground` | No | Home background theme — **deprecated**, theme now auto-derived from active island biome |
 | `offlineSyncStore` | `nomo_offline_sync` | No | Offline action queue, sync status |
 
 ### landStore Key State
@@ -535,23 +535,18 @@ EXPANSION_TIERS = [5, 6, 7, 8, 9, 10, 11, 12]
 
 Players can switch between unlocked islands. Each island has its own grid and completion state.
 
-### Island Themes (11)
+### Island Themes (6 biome-specific)
 
-Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), grass tile colors, cliff colors, cloud/sun tint, particle type and colors.
+Defined in `IslandThemes.ts`. Each theme is auto-derived from the active archipelago island's biome — not user-selectable. Themes specify: sky gradient, grass/cliff/stone colors, unique landscape (hills/ocean/peaks/dunes/cliffs), animated sky elements, weather particle overrides, depth shading, and tier decoration palettes.
 
-| Theme | Name | Free | Particles |
-|-------|------|------|-----------|
-| day | Meadow | Yes | Dust |
-| beach | Beach | Yes | Sparkles |
-| winter | Winter | No | Snow |
-| sakura | Sakura | No | Leaves |
-| night | Night Garden | No | Fireflies |
-| desert | Desert | No | Dust |
-| sky-islands | Sky Islands | Yes | Dust |
-| calm-seas | Calm Seas | Yes | Sparkles |
-| twilight-clouds | Twilight Clouds | Yes | Dust |
-| aurora-horizon | Aurora Horizon | Yes | Sparkles |
-| sunset-clouds | Sunset Clouds | Yes | Dust |
+| Theme | Island | Landscape | Sky Animation | Unique Features |
+|-------|--------|-----------|---------------|-----------------|
+| day | Home Island | Rolling hills + treeline | Butterflies | Golden sun, god rays, green moss cliffs |
+| beach | Coral Reef | Ocean with waves + palms | Seagulls | Warm sun, coral accents, sandy limestone |
+| winter | Snow Peak | Jagged peaks with snow caps | Aurora borealis | Pale sun, icy stone, frost crystals |
+| desert | Desert Oasis | Sand dunes | Heat shimmer | Warm sun, sandstone, fossil marks |
+| night | Moonlit Garden | Dark cliff outlines | Shooting stars | Moon (no sun), star field, bioluminescent moss |
+| sakura | Sakura Valley | Pink hills + cherry trees | Petal stream | Rose-tinted sun, cherry petal accents |
 
 ### Decoration System
 
@@ -841,7 +836,7 @@ cd website && npm run build                 # Production build
 - [x] Marketing website — waitlist landing page with referral system
 - [x] Legal pages — Privacy Policy, Terms of Service, Support (website)
 - [x] Archipelago system — 6 themed islands with unlock requirements and bonuses
-- [x] Island themes — 11 visual themes with full color configs
+- [x] Island themes — 6 biome-specific themes with unique visuals per archipelago island
 - [x] Passive income system — pets generate coins based on rarity/size
 - [x] Pity system — bad luck protection for pet rolls
 - [x] Daily/weekly challenges — 13 daily + 10 weekly challenge templates

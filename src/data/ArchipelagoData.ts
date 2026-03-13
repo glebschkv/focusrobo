@@ -66,7 +66,7 @@ export const ARCHIPELAGO_ISLANDS: ArchipelagoIslandDef[] = [
   {
     id: 'snow-peak',
     name: 'Snow Peak',
-    biome: 'snow',
+    biome: 'winter',
     unlockLevel: 18,
     coinCost: 5000,
     unlockedByPrevious: false,

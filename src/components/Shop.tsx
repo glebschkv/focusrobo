@@ -15,7 +15,6 @@ import { PremiumSubscription } from "@/components/PremiumSubscription";
 import { toast } from "sonner";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
 import { FeaturedTab } from "@/components/shop/tabs/FeaturedTab";
-import { BackgroundsTab } from "@/components/shop/tabs/BackgroundsTab";
 import { PowerUpsTab } from "@/components/shop/tabs/PowerUpsTab";
 import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { EggsTab } from "@/components/shop/tabs/EggsTab";
@@ -26,7 +25,6 @@ const CATEGORY_ICONS: Record<string, string> = {
   eggs: 'egg',
   decor: 'tree',
   featured: 'crown',
-  customize: 'island',
   powerups: 'lightning',
 };
 
@@ -126,18 +124,6 @@ export const Shop = () => {
             isPremium={isPremium}
             currentPlan={currentPlan}
             coinBalance={coinBalance}
-            canAfford={canAfford}
-          />
-        );
-      case 'customize':
-        return (
-          <BackgroundsTab
-            inventory={inventory}
-            isOwned={isOwned}
-            isBundleOwned={isBundleOwned}
-            equipBackground={equipBackground}
-            setSelectedItem={setSelectedItem}
-            setShowPurchaseConfirm={setShowPurchaseConfirm}
             canAfford={canAfford}
           />
         );

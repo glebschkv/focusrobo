@@ -8,8 +8,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLandStore } from '@/stores/landStore';
-import { useThemeStore } from '@/stores/themeStore';
-import { useShopStore } from '@/stores/shopStore';
 import { IslandPet } from '@/components/IslandPet';
 import { IslandDecoration } from '@/components/IslandDecoration';
 import { PixelIcon } from '@/components/ui/PixelIcon';
@@ -18,7 +16,8 @@ import { PetTooltip } from '@/components/PetTooltip';
 import { IslandSVG } from '@/components/IslandSVG';
 import { useHaptics } from '@/hooks/useHaptics';
 import { getIslandScale, getAvailableCellCount, getIslandPosition, getAvailableCellIndices, findNearestEmptyCell } from '@/data/islandPositions';
-import { getIslandTheme, ISLAND_THEMES } from '@/data/IslandThemes';
+import { getIslandTheme } from '@/data/IslandThemes';
+import { getIslandDef } from '@/data/ArchipelagoData';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { PremiumSubscription } from '@/components/PremiumSubscription';
 import { WeatherParticles, getTimePeriod, getWeatherType, getSkyColors } from '@/components/WeatherParticles';
@@ -589,12 +588,14 @@ export const PetLand = () => {
   const milestoneReached = useLandStore((s) => s.milestoneReached);
   const clearMilestone = useLandStore((s) => s.clearMilestone);
   const { haptic } = useHaptics();
-  const themeId = useThemeStore((s) => s.homeBackground);
-  const ownedBackgrounds = useShopStore((s) => s.ownedBackgrounds);
   const isPremium = usePremiumStore((s) => s.isPremium());
+  const archipelago = useArchipelago();
+  const activeIslandIndex = useActiveIslandIndex();
 
-  // Fall back to default theme if user has a premium theme but lost premium
-  const effectiveThemeId = (!isPremium && ISLAND_THEMES[themeId]?.premiumOnly) ? 'day' : themeId;
+  // Theme is determined by the active archipelago island's biome
+  const activeIsland = archipelago[activeIslandIndex];
+  const islandDef = activeIsland ? getIslandDef(activeIsland.islandId) : undefined;
+  const effectiveThemeId = islandDef?.biome || 'day';
   const theme = getIslandTheme(effectiveThemeId);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
@@ -603,8 +604,6 @@ export const PetLand = () => {
 
   // Teaser tooltips state
   const currentLevel = useCurrentLevel();
-  const archipelago = useArchipelago();
-  const activeIslandIndex = useActiveIslandIndex();
   const hasSeenArchipelagoTeaser = useOnboardingStore((s) => s.hasSeenArchipelagoTeaser);
   const hasSeenPassiveIncomeTeaser = useOnboardingStore((s) => s.hasSeenPassiveIncomeTeaser);
   const dismissArchipelagoTeaser = useOnboardingStore((s) => s.dismissArchipelagoTeaser);
@@ -996,8 +995,7 @@ export const PetLand = () => {
   const skyGradient = `linear-gradient(180deg, ${skyColors[0]} 0%, ${skyColors[1]} 35%, ${skyColors[2]} 65%, ${skyColors[3]} 100%)`;
 
   return (
-    <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass} ${moodClass}`} style={{ background: skyGradient }}>
-      {/* Sky — parallax layer (slowest), theme-responsive cloud/sun colors */}
+    <div className={`pet-land ${growthClass} ${perfClass} ${timeOfDayClass} ${moodClass} ${theme.skyAnimations.cssClass}`} style={{ background: skyGradient }}>
       {/* Sky — parallax layer (slowest), all decorative */}
       <div
         className="pet-land__sky"
@@ -1006,17 +1004,32 @@ export const PetLand = () => {
         style={{
           '--cloud-color': theme.cloudColor,
           '--sun-color': theme.sunColor,
+          '--ray-tint': theme.skyScene.rayColor,
+          '--ray-alpha': theme.skyScene.rayOpacity,
+          '--haze-color': theme.skyScene.hazeColor,
+          '--mt-far-color': theme.skyScene.landscapeColors[0],
+          '--mt-near-color': theme.skyScene.landscapeColors[1],
+          '--mt-accent-color': theme.skyScene.landscapeColors[2],
+          '--tree-color': theme.skyScene.treelineColor,
         } as React.CSSProperties}
       >
-        <div className="pet-land__sun" />
+        {/* Sun or Moon — biome-driven celestial body */}
+        {theme.skyScene.sunStyle === 'moon' ? (
+          <div className="pet-land__moon" />
+        ) : theme.skyScene.sunStyle !== 'hidden' && (
+          <div className={`pet-land__sun pet-land__sun--${theme.skyScene.sunStyle}`} />
+        )}
 
-        <div className="pet-land__rays">
-          <div className="pet-land__ray pet-land__ray--1" />
-          <div className="pet-land__ray pet-land__ray--2" />
-          <div className="pet-land__ray pet-land__ray--3" />
-          <div className="pet-land__ray pet-land__ray--4" />
-          <div className="pet-land__ray pet-land__ray--5" />
-        </div>
+        {/* God rays — only when sun is visible */}
+        {theme.skyScene.sunStyle !== 'moon' && theme.skyScene.sunStyle !== 'hidden' && (
+          <div className="pet-land__rays">
+            <div className="pet-land__ray pet-land__ray--1" />
+            <div className="pet-land__ray pet-land__ray--2" />
+            <div className="pet-land__ray pet-land__ray--3" />
+            <div className="pet-land__ray pet-land__ray--4" />
+            <div className="pet-land__ray pet-land__ray--5" />
+          </div>
+        )}
 
         {/* Clouds — 8 volumetric clouds in 3 depth layers */}
         {/* Back layer — distant, blurred, slow */}
@@ -1069,14 +1082,104 @@ export const PetLand = () => {
           <div className="pet-land__cloud-lobe" />
         </div>
 
-        <div className="pet-land__mountains-far" />
-        <div className="pet-land__mountains-near" />
-        <div className="pet-land__treeline" />
+        {/* Landscape silhouettes — biome-specific */}
+        {theme.skyScene.landscape === 'hills' && (
+          <>
+            <div className="pet-land__mountains-far" />
+            <div className="pet-land__mountains-near" />
+          </>
+        )}
+        {theme.skyScene.landscape === 'ocean' && (
+          <div className="pet-land__ocean">
+            <div className="pet-land__palm pet-land__palm--left" />
+            <div className="pet-land__palm pet-land__palm--right" />
+          </div>
+        )}
+        {theme.skyScene.landscape === 'peaks' && (
+          <div className="pet-land__peaks" />
+        )}
+        {theme.skyScene.landscape === 'dunes' && (
+          <div className="pet-land__dunes" />
+        )}
+        {theme.skyScene.landscape === 'cliffs' && (
+          <>
+            <div className="pet-land__mountains-far" />
+            <div className="pet-land__mountains-near" />
+          </>
+        )}
+
+        {theme.skyScene.treeline && <div className="pet-land__treeline" />}
 
         <div className="pet-land__haze" />
 
+        {/* Night biome: star field (always on, not just real-world night) */}
+        {effectiveThemeId === 'night' && (
+          <div className="pet-land__starfield">
+            {Array.from({ length: 30 }, (_, i) => (
+              <div
+                key={`star-${i}`}
+                className="pet-land__star"
+                style={{
+                  left: `${(i * 37 + 13) % 97}%`,
+                  top: `${(i * 23 + 7) % 55}%`,
+                  animationDelay: `${(i * 1.3) % 5}s`,
+                  animationDuration: `${2 + (i * 0.7) % 3}s`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Biome-specific animated sky elements */}
+        {theme.skyAnimations.type === 'butterflies' && (
+          <div className="pet-land__butterflies">
+            <div className="pet-land__butterfly pet-land__butterfly--1" />
+            <div className="pet-land__butterfly pet-land__butterfly--2" />
+            <div className="pet-land__butterfly pet-land__butterfly--3" />
+          </div>
+        )}
+        {theme.skyAnimations.type === 'seagulls' && (
+          <div className="pet-land__seagulls">
+            <div className="pet-land__seagull pet-land__seagull--1" />
+            <div className="pet-land__seagull pet-land__seagull--2" />
+            <div className="pet-land__seagull pet-land__seagull--3" />
+          </div>
+        )}
+        {theme.skyAnimations.type === 'aurora' && (
+          <div className="pet-land__aurora">
+            <div className="pet-land__aurora-band pet-land__aurora-band--1" />
+            <div className="pet-land__aurora-band pet-land__aurora-band--2" />
+            <div className="pet-land__aurora-band pet-land__aurora-band--3" />
+          </div>
+        )}
+        {theme.skyAnimations.type === 'shooting-stars' && (
+          <div className="pet-land__shooting-stars">
+            <div className="pet-land__shooting-star pet-land__shooting-star--1" />
+            <div className="pet-land__shooting-star pet-land__shooting-star--2" />
+            <div className="pet-land__shooting-star pet-land__shooting-star--3" />
+          </div>
+        )}
+        {theme.skyAnimations.type === 'petal-stream' && (
+          <div className="pet-land__petal-stream">
+            {Array.from({ length: 20 }, (_, i) => (
+              <div
+                key={`petal-${i}`}
+                className="pet-land__petal"
+                style={{
+                  left: `${(i * 47 + 11) % 100}%`,
+                  animationDelay: `${(i * 0.6) % 8}s`,
+                  animationDuration: `${6 + (i * 0.4) % 4}s`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+        {theme.skyAnimations.type === 'heat-shimmer' && (
+          <div className="pet-land__heat-shimmer" />
+        )}
+
         {/* Weather particles (rain/petals/fireflies/stars) */}
-        <WeatherParticles timePeriod={timePeriod} weather={weather} />
+        <WeatherParticles timePeriod={timePeriod} weather={weather} biomeId={effectiveThemeId} />
       </div>
 
       {/* Share flash overlay */}
