@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { questLogger } from '@/lib/logger';
-import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, type ChallengeTemplate, type ChallengeDifficulty, type WeeklyChallengeTemplate } from '@/data/GamificationData';
+import { DAILY_CHALLENGES, WEEKLY_CHALLENGES, DAILY_SWEEP_BONUS, type ChallengeTemplate, type ChallengeDifficulty, type WeeklyChallengeTemplate } from '@/data/GamificationData';
+import { useCoinStore } from '@/stores/coinStore';
 
 export interface QuestObjective {
   id: string;
@@ -55,6 +56,8 @@ interface QuestState {
   lastWeeklyReset: string | null;
   dailyChallenge: DailyChallenge | null;
   weeklyChallenge: WeeklyChallenge | null;
+  dailySweepClaimed: boolean;
+  dailySweepClaimedDate: string | null;
 }
 
 interface QuestStore extends QuestState {
@@ -75,9 +78,11 @@ interface QuestStore extends QuestState {
   getWeeklyChallenge: () => WeeklyChallenge | null;
   refreshWeeklyChallenge: () => void;
   updateWeeklyChallengeProgress: (type: string, amount: number) => void;
+  claimDailySweep: () => void;
+  isDailySweepAvailable: () => boolean;
 }
 
-const initialState: QuestState = { quests: [], lastDailyReset: null, lastWeeklyReset: null, dailyChallenge: null, weeklyChallenge: null };
+const initialState: QuestState = { quests: [], lastDailyReset: null, lastWeeklyReset: null, dailyChallenge: null, weeklyChallenge: null, dailySweepClaimed: false, dailySweepClaimedDate: null };
 
 /** Deterministic daily challenge selection seeded by date string */
 function hashDate(dateStr: string): number {
@@ -233,6 +238,23 @@ export const useQuestStore = create<QuestStore>()(
             completed: newProgress >= wc.target,
           },
         });
+      },
+      claimDailySweep: () => {
+        const state = get();
+        const today = new Date().toDateString();
+        if (state.dailySweepClaimed && state.dailySweepClaimedDate === today) return;
+        useCoinStore.getState().addCoins(DAILY_SWEEP_BONUS);
+        set({ dailySweepClaimed: true, dailySweepClaimedDate: today });
+        questLogger.debug('Daily sweep bonus claimed: +' + DAILY_SWEEP_BONUS + ' coins');
+      },
+      isDailySweepAvailable: () => {
+        const state = get();
+        const today = new Date().toDateString();
+        // Already claimed today
+        if (state.dailySweepClaimed && state.dailySweepClaimedDate === today) return false;
+        // Check if all daily quests are complete
+        const dailyQuests = state.quests.filter(q => q.type === 'daily' && (!q.expiresAt || q.expiresAt > Date.now()));
+        return dailyQuests.length >= 3 && dailyQuests.every(q => q.isCompleted);
       },
     }),
     {

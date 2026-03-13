@@ -97,6 +97,7 @@ export const useTimerLogic = () => {
   const [lastSessionTaskLabel, setLastSessionTaskLabel] = useState<string | undefined>();
   const [lastSessionDuration, setLastSessionDuration] = useState(0);
   const [lastQuestDeltas, setLastQuestDeltas] = useState<QuestDelta[]>([]);
+  const [lastDailySweepCompleted, setLastDailySweepCompleted] = useState(false);
   const [lastStreakDay, setLastStreakDay] = useState(0);
   const [lastLevelUpInfo, setLastLevelUpInfo] = useState<{ newLevel: number; oldLevel: number; unlockedRewards: Array<{ name: string; description: string }> } | null>(null);
   const [lastMilestoneInfo, setLastMilestoneInfo] = useState<Milestone | null>(null);
@@ -496,15 +497,25 @@ export const useTimerLogic = () => {
             ? current.objectives.reduce((sum, o) => sum + Math.min(o.current / o.target, 1), 0) / current.objectives.length * 100
             : 0;
           if (newPct > snap.pct || current.isCompleted) {
+            const coinReward = current.isCompleted
+              ? current.rewards.filter(r => r.type === 'coins').reduce((sum, r) => sum + (r.amount || 0), 0)
+              : undefined;
             deltas.push({
               name: snap.title,
               oldPct: snap.pct,
               newPct,
               completed: current.isCompleted,
+              coinReward,
             });
           }
         }
         setLastQuestDeltas(deltas);
+
+        // Check if daily sweep was just completed
+        const questState = useQuestStore.getState();
+        const today = new Date().toDateString();
+        setLastDailySweepCompleted(questState.dailySweepClaimed && questState.dailySweepClaimedDate === today);
+
         setLastStreakDay(useStreakStore.getState().currentStreak);
 
         setShowSessionComplete(true);
@@ -745,6 +756,7 @@ export const useTimerLogic = () => {
     lastSessionTaskLabel,
     lastSessionDuration,
     lastQuestDeltas,
+    lastDailySweepCompleted,
     lastStreakDay,
     lastLevelUpInfo,
     lastMilestoneInfo,
