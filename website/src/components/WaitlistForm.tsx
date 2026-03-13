@@ -124,6 +124,16 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
     ? (referralCount / nextTier.count) * 100
     : 100;
 
+  const resetForm = () => {
+    localStorage.removeItem('phono_referral_code');
+    localStorage.removeItem('phono_email');
+    localStorage.removeItem('phono_referral_count');
+    setReferralCode(null);
+    setReferralCount(0);
+    setEmail('');
+    setStatus('idle');
+  };
+
   if (status === 'success' && referralCode) {
     return (
       <div className="waitlist-success">
@@ -178,6 +188,22 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
               );
             })}
           </div>
+
+          <button
+            onClick={resetForm}
+            style={{
+              marginTop: 16,
+              background: 'none',
+              border: 'none',
+              color: 'var(--fg-muted)',
+              fontSize: 13,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontFamily: 'inherit',
+            }}
+          >
+            Use a different email
+          </button>
         </div>
       </div>
     );
