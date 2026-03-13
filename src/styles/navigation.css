@@ -37,22 +37,14 @@
     width: 100%;
   }
 
-  /* Island progress row beneath chips */
+  /* Row 2: Island switcher + progress + action buttons */
   .island-progress-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 0 4px;
+    padding: 6px 0 2px;
     border-top: 1px solid hsl(var(--border) / 0.5);
     margin-top: 4px;
-  }
-
-  .island-progress-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: hsl(var(--muted-foreground));
-    white-space: nowrap;
-    letter-spacing: 0.02em;
   }
 
   .island-progress-track {
@@ -77,6 +69,35 @@
     color: hsl(var(--muted-foreground));
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Action buttons in Row 2 */
+  .top-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .top-bar-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .top-bar-action-btn:active {
+    transform: scale(0.9);
+    background: hsl(var(--muted));
   }
 
   /* Status bar scroll fade (2.3) */
@@ -942,25 +963,6 @@
     100% { transform: scale(1); }
   }
 
-  /* ── Island Progress Dots ────────────────── */
-
-  .island-progress-dots {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    margin-left: 4px;
-    vertical-align: middle;
-  }
-
-  .island-dot, .island-dot--active {
-    font-size: 6px;
-    line-height: 1;
-    color: hsl(var(--muted-foreground) / 0.4);
-  }
-
-  .island-dot--active {
-    color: hsl(var(--primary));
-  }
 
   /* ── Income Collect Bounce ────────────────── */
 
