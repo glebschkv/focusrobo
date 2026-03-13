@@ -114,27 +114,15 @@ export function RewardsSection() {
               }}
             >
               <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-dark-primary)', marginBottom: 4 }}>
+              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
                 {tier.reward}
               </div>
               {tier.badge && (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    background: 'rgba(52, 211, 153, 0.2)',
-                    color: 'var(--accent)',
-                    padding: '2px 8px',
-                    borderRadius: 8,
-                    letterSpacing: '0.05em',
-                    marginBottom: 6,
-                  }}
-                >
+                <span className="tier-badge">
                   {tier.badge}
                 </span>
               )}
-              <div style={{ fontSize: 12, color: 'var(--fg-dark-muted)', lineHeight: 1.4, marginBottom: 8 }}>
+              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
                 {tier.desc}
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
@@ -161,27 +149,15 @@ export function RewardsSection() {
               }}
             >
               <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-dark-primary)', marginBottom: 4 }}>
+              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
                 {tier.reward}
               </div>
               {tier.badge && (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    background: 'rgba(52, 211, 153, 0.2)',
-                    color: 'var(--accent)',
-                    padding: '2px 8px',
-                    borderRadius: 8,
-                    letterSpacing: '0.05em',
-                    marginBottom: 6,
-                  }}
-                >
+                <span className="tier-badge">
                   {tier.badge}
                 </span>
               )}
-              <div style={{ fontSize: 12, color: 'var(--fg-dark-muted)', lineHeight: 1.4, marginBottom: 8 }}>
+              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
                 {tier.desc}
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>

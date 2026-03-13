@@ -86,17 +86,10 @@ export function AppPreview() {
                   {feature.icon}
                 </div>
                 <div>
-                  <h3
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 700,
-                      color: 'var(--fg-dark-primary)',
-                      marginBottom: 4,
-                    }}
-                  >
+                  <h3 className="card-title card-title--light" style={{ fontSize: 16, marginBottom: 4 }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: 14, color: 'var(--fg-dark-secondary)', lineHeight: 1.5 }}>
+                  <p className="card-desc card-desc--light" style={{ fontSize: 14 }}>
                     {feature.desc}
                   </p>
                 </div>

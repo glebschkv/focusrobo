@@ -13,32 +13,15 @@ export function HeroSection() {
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="text-center mb-8 relative z-10"
       >
-        <div className="section-label" style={{ marginBottom: 16 }}>
+        <div className="section-label">
           THE FOCUS APP THAT REWARDS YOU
         </div>
-        <h1
-          style={{
-            fontSize: 'clamp(40px, 10vw, 72px)',
-            fontWeight: 800,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.05,
-            color: 'var(--fg-deep)',
-            marginBottom: 16,
-          }}
-        >
+        <h1 className="hero-title">
           Put Your Phone Down.
           <br />
-          <span style={{ color: 'var(--primary)' }}>Get a Pet.</span>
+          <span className="text-primary">Get a Pet.</span>
         </h1>
-        <p
-          style={{
-            fontSize: 'clamp(16px, 3.5vw, 19px)',
-            color: 'var(--fg-muted)',
-            maxWidth: 480,
-            margin: '0 auto',
-            lineHeight: 1.6,
-          }}
-        >
+        <p className="hero-subtitle">
           Complete focus sessions to earn pixel art pets and build your own floating island paradise.
         </p>
       </motion.div>

@@ -90,10 +90,10 @@ export function LoopSection() {
               >
                 {step.number}
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, letterSpacing: '-0.01em' }}>
+              <h3 className="card-title">
                 {step.title}
               </h3>
-              <p style={{ fontSize: 15, color: 'var(--fg-muted)', lineHeight: 1.6, marginBottom: 12 }}>
+              <p className="card-desc" style={{ marginBottom: 12 }}>
                 {step.description}
               </p>
               <div

@@ -3,35 +3,35 @@
 
 /* ═══ Design Tokens ═══ */
 :root {
-  /* Core palette */
-  --bg-cream: #F8F8F4;
-  --bg-card: #FCFCFA;
-  --fg-deep: #1C211E;
-  --fg-muted: hsl(150, 6%, 42%);
-  --primary: #40856A;
-  --primary-hover: hsl(152, 44%, 38%);
-  --primary-light: #37A270;
-  --border: #DEE4E0;
-  --muted: #E2E7E4;
+  /* Core palette — warmer, bolder */
+  --bg-cream: #F5F3EE;
+  --bg-card: #FAFAF7;
+  --fg-deep: #1A1D1B;
+  --fg-muted: hsl(150, 8%, 38%);
+  --primary: #2D7A5A;
+  --primary-hover: #236B4C;
+  --primary-light: #34A06E;
+  --border: #D4DCD7;
+  --muted: #DDE3DF;
 
-  /* Dark section palette */
-  --bg-dark: #111827;
-  --bg-dark-card: rgba(255, 255, 255, 0.06);
-  --bg-dark-card-border: rgba(255, 255, 255, 0.1);
-  --fg-dark-primary: #F9FAFB;
-  --fg-dark-secondary: rgba(255, 255, 255, 0.7);
-  --fg-dark-muted: rgba(255, 255, 255, 0.4);
-  --accent: #34D399;
+  /* Dark section palette — richer, higher contrast */
+  --bg-dark: #0F1419;
+  --bg-dark-card: rgba(255, 255, 255, 0.07);
+  --bg-dark-card-border: rgba(255, 255, 255, 0.12);
+  --fg-dark-primary: #F4F5F7;
+  --fg-dark-secondary: rgba(255, 255, 255, 0.78);
+  --fg-dark-muted: rgba(255, 255, 255, 0.45);
+  --accent: #3BE8A8;
 
   /* Green tint section */
-  --bg-green-tint: #F0F7F4;
-  --bg-green-tint-end: #E8F4EC;
+  --bg-green-tint: #ECF5F0;
+  --bg-green-tint-end: #E3F0E8;
 
-  /* Sky gradient */
-  --sky-top: #6BB8E0;
-  --sky-mid1: #A5D8EF;
-  --sky-mid2: #D0EAF5;
-  --sky-bottom: #EEF4F0;
+  /* Sky gradient — richer blues */
+  --sky-top: #5AADE0;
+  --sky-mid1: #92CFF0;
+  --sky-mid2: #C4E5F5;
+  --sky-bottom: #E8F0EC;
 
   /* Rarity colors */
   --rarity-common: hsl(140, 6%, 60%);
@@ -51,8 +51,8 @@
   --shadow-md: 0 4px 16px hsla(150,10%,12%,0.07), 0 2px 4px hsla(150,10%,12%,0.04);
   --shadow-lg: 0 12px 32px hsla(150,10%,12%,0.09), 0 4px 8px hsla(150,10%,12%,0.04);
   --shadow-float: 0 8px 32px hsla(150,10%,12%,0.08), 0 2px 8px hsla(150,10%,12%,0.03);
-  --shadow-glow: 0 4px 14px hsla(152, 44%, 45%, 0.35);
-  --shadow-glow-hover: 0 6px 20px hsla(152, 44%, 45%, 0.45);
+  --shadow-glow: 0 4px 14px hsla(152, 48%, 32%, 0.4);
+  --shadow-glow-hover: 0 6px 20px hsla(152, 48%, 32%, 0.55);
 
   /* Radii */
   --radius-sm: 8px;
@@ -94,22 +94,22 @@ img {
 
 /* ═══ Typography Utilities ═══ */
 .section-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--primary);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .section-label--light {
   color: var(--accent);
 }
 
 .section-title {
-  font-size: clamp(28px, 6vw, 44px);
+  font-size: clamp(30px, 6vw, 48px);
   font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
   margin-bottom: 16px;
 }
 .section-title--light {
@@ -117,14 +117,66 @@ img {
 }
 
 .section-subtitle {
-  font-size: clamp(16px, 3.5vw, 18px);
+  font-size: clamp(16px, 3.5vw, 19px);
   color: var(--fg-muted);
-  line-height: 1.6;
-  max-width: 520px;
+  line-height: 1.65;
+  max-width: 540px;
   margin: 0 auto;
 }
 .section-subtitle--light {
   color: var(--fg-dark-secondary);
+}
+
+/* Hero-level heading */
+.hero-title {
+  font-size: clamp(42px, 10vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--fg-deep);
+  margin-bottom: 16px;
+}
+.hero-title .text-primary { color: var(--primary); }
+
+.hero-subtitle {
+  font-size: clamp(16px, 3.5vw, 20px);
+  color: var(--fg-muted);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Card content typography */
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: var(--fg-deep);
+}
+.card-title--light {
+  color: var(--fg-dark-primary);
+}
+.card-desc {
+  font-size: 15px;
+  color: var(--fg-muted);
+  line-height: 1.6;
+}
+.card-desc--light {
+  color: var(--fg-dark-secondary);
+}
+
+/* Tier badge (rewards section) */
+.tier-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(52, 211, 153, 0.2);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 8px;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
 }
 
 /* ═══ Animations ═══ */
@@ -312,10 +364,10 @@ img {
   transition: background 0.3s var(--ease-smooth), backdrop-filter 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
 }
 .site-nav--scrolled {
-  background: hsla(60, 20%, 97%, 0.88);
-  backdrop-filter: blur(16px) saturate(1.3);
-  border-bottom: 1px solid hsla(140, 8%, 88%, 0.4);
-  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  background: hsla(40, 20%, 96%, 0.92);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid hsla(140, 8%, 84%, 0.5);
+  box-shadow: 0 1px 12px rgba(0,0,0,0.06);
 }
 .nav-logo {
   display: flex;
@@ -484,14 +536,16 @@ img {
 /* ═══ Feature Cards ═══ */
 .feature-card {
   background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   padding: 32px 24px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-smooth);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.03);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-smooth), border-color 0.3s;
 }
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  border-color: rgba(0,0,0,0.08);
 }
 
 .feature-card--dark {
@@ -500,9 +554,9 @@ img {
   box-shadow: none;
 }
 .feature-card--dark:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
 }
 
 /* Legacy game-card for backward compat */
@@ -576,17 +630,18 @@ img {
 }
 .waitlist-input {
   flex: 1;
-  padding: 16px 20px;
+  padding: 16px 22px;
   border-radius: var(--radius-pill);
   border: 2px solid var(--border);
-  background: hsla(0, 0%, 100%, 0.95);
+  background: white;
   font-size: 16px;
   color: var(--fg-deep);
   transition: border-color 0.2s, box-shadow 0.2s;
   font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
-.waitlist-input::placeholder { color: var(--fg-muted); font-size: 15px; }
-.waitlist-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px hsla(152, 44%, 45%, 0.15); }
+.waitlist-input::placeholder { color: hsl(150, 6%, 55%); font-size: 15px; }
+.waitlist-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px hsla(152, 48%, 32%, 0.12), 0 2px 8px rgba(0,0,0,0.04); }
 
 .waitlist-submit {
   flex-shrink: 0;
@@ -929,8 +984,8 @@ img {
   z-index: 90;
   padding: 12px 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
-  background: hsla(60, 20%, 97%, 0.92);
-  backdrop-filter: blur(16px) saturate(1.3);
+  background: hsla(40, 20%, 96%, 0.94);
+  backdrop-filter: blur(20px) saturate(1.4);
   border-top: 1px solid var(--border);
   animation: slide-up 0.3s var(--ease-spring);
 }
@@ -940,17 +995,17 @@ img {
 
 /* ═══ Footer ═══ */
 .site-footer {
-  background: #111820;
-  color: rgba(255,255,255,0.5);
+  background: var(--bg-dark);
+  color: rgba(255,255,255,0.55);
   position: relative;
   overflow: hidden;
 }
 .site-footer a {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.55);
   text-decoration: none;
   transition: color 0.2s;
 }
-.site-footer a:hover { color: rgba(255,255,255,0.85); }
+.site-footer a:hover { color: rgba(255,255,255,0.9); }
 
 .pet-parade {
   position: absolute;
