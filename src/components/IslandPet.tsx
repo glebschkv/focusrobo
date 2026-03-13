@@ -47,7 +47,8 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const wrapper = (e.currentTarget as HTMLElement).parentElement;
+    const rect = (wrapper || e.currentTarget as HTMLElement).getBoundingClientRect();
 
     // Tap reaction: bounce + hearts
     if (!reducedAnimations) {
@@ -126,10 +127,13 @@ export const IslandPet = memo(({ cell, index, gridSize, isNew, onToggleTooltip, 
         '--bob-delay': `${bobDelay}s`,
         contain: 'layout style paint',
       } as React.CSSProperties}
-      onClick={handleClick}
-      role="button"
-      aria-label={`${species.name}`}
     >
+      <div
+        className="island-pet__hotspot"
+        onClick={handleClick}
+        role="button"
+        aria-label={`${species.name}`}
+      />
       <img
         src={spriteSrc}
         alt={species.name}
