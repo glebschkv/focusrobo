@@ -1,6 +1,5 @@
 import { useAppState } from "@/contexts/AppStateContext";
 import { useCoinSystem } from "@/hooks/useCoinSystem";
-import { useCoinStore } from "@/stores/coinStore";
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import {
   Popover,
@@ -271,7 +270,14 @@ export const TopStatusBar = ({ currentTab }: TopStatusBarProps) => {
 
         {/* DEV: Test coins button */}
         <button
-          onClick={() => useCoinStore.getState().addCoins(100000)}
+          onClick={async (e) => {
+            const btn = e.currentTarget;
+            btn.textContent = '...';
+            for (let i = 0; i < 10; i++) {
+              await coinSystem.awardCoins(10000, 'iap_purchase', { reason: 'dev_test' });
+            }
+            btn.textContent = '+100k';
+          }}
           style={{
             fontSize: 10,
             padding: '2px 6px',
