@@ -1,19 +1,49 @@
 import { motion } from 'framer-motion';
 import { IslandScene } from './IslandScene';
+import type { ReactNode } from 'react';
 
-const FEATURES = [
+function ShieldIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function IslandIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 20h20" />
+      <path d="M12 4 L5 14 h14 Z" />
+      <circle cx="12" cy="4" r="1" fill="var(--accent)" />
+    </svg>
+  );
+}
+
+function EggIcon() {
+  return (
+    <img
+      src="/icons/egg.png"
+      alt="Egg"
+      style={{ width: 28, height: 28, imageRendering: 'pixelated' }}
+    />
+  );
+}
+
+const FEATURES: { icon: ReactNode; title: string; desc: string }[] = [
   {
-    icon: '🎯',
+    icon: <ShieldIcon />,
     title: 'Block Distracting Apps',
     desc: 'iOS Screen Time integration keeps you focused.',
   },
   {
-    icon: '🥚',
+    icon: <EggIcon />,
     title: 'Hatch Eggs from 5 Rarity Tiers',
     desc: 'Common to Legendary — every session is a surprise.',
   },
   {
-    icon: '🏝️',
+    icon: <IslandIcon />,
     title: 'Explore 6 Themed Islands',
     desc: 'Coral Reef, Snow Peak, Desert Oasis, and more.',
   },
@@ -22,7 +52,7 @@ const FEATURES = [
 export function AppPreview() {
   return (
     <section className="section-dark py-24 px-5">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -40,18 +70,26 @@ export function AppPreview() {
         </motion.div>
 
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
-          {/* Phone Mockup */}
+          {/* Phone Mockup — hidden on mobile (island already in hero), shown on desktop */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
-            className="flex-shrink-0 order-2 md:order-none mx-auto"
+            className="hidden md:flex flex-shrink-0 order-2 md:order-none mx-auto relative"
           >
-            <div className="phone-mockup">
+            {/* Glow backdrop */}
+            <div style={{
+              position: 'absolute',
+              inset: -40,
+              background: 'radial-gradient(circle, rgba(59,232,168,0.08) 0%, transparent 70%)',
+              borderRadius: '50%',
+              pointerEvents: 'none',
+            }} />
+            <div className="phone-mockup" style={{ position: 'relative' }}>
               <div className="phone-mockup__notch" />
               <div className="phone-mockup__content">
-                <div style={{ width: '100%', transform: 'scale(0.55)', transformOrigin: 'center center' }}>
+                <div style={{ zoom: 0.55, flexShrink: 0 }}>
                   <IslandScene gridSize={8} />
                 </div>
               </div>
@@ -72,7 +110,6 @@ export function AppPreview() {
               >
                 <div
                   style={{
-                    fontSize: 28,
                     flexShrink: 0,
                     width: 48,
                     height: 48,

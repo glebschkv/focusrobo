@@ -5,7 +5,7 @@ const TIERS = [
     count: 0,
     reward: 'Legendary Egg',
     desc: 'Guaranteed. Worth 3,000 coins.',
-    emoji: '🥚',
+    image: '/icons/egg-legendary.png',
     borderColor: 'var(--rarity-legendary)',
     glow: 'rgba(234, 179, 8, 0.15)',
     badge: 'FREE',
@@ -14,7 +14,7 @@ const TIERS = [
     count: 3,
     reward: 'Rare Egg',
     desc: 'Worth 400 coins.',
-    emoji: '🔵',
+    image: '/icons/egg-rare.png',
     borderColor: 'var(--rarity-rare)',
     glow: 'rgba(59, 130, 246, 0.1)',
   },
@@ -22,7 +22,7 @@ const TIERS = [
     count: 5,
     reward: 'Epic Egg',
     desc: 'Worth 1,200 coins.',
-    emoji: '🟣',
+    image: '/icons/egg-epic.png',
     borderColor: 'var(--rarity-epic)',
     glow: 'rgba(168, 85, 247, 0.1)',
   },
@@ -30,7 +30,7 @@ const TIERS = [
     count: 10,
     reward: 'Founder Fox',
     desc: 'Exclusive pet. Never available again.',
-    emoji: '🦊',
+    image: '/pets/fox-adult.png',
     borderColor: 'var(--rarity-legendary)',
     glow: 'rgba(234, 179, 8, 0.1)',
   },
@@ -38,11 +38,49 @@ const TIERS = [
     count: 25,
     reward: 'Pioneer Island',
     desc: 'Exclusive island theme.',
-    emoji: '🏝️',
+    image: '/pets/koi-fish-adult.png',
     borderColor: 'var(--accent)',
     glow: 'rgba(52, 211, 153, 0.1)',
   },
 ];
+
+function TierCard({ tier, i }: { tier: typeof TIERS[0]; i: number }) {
+  return (
+    <motion.div
+      key={tier.count}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: i * 0.08, duration: 0.4 }}
+      className="feature-card feature-card--dark text-center"
+      style={{
+        padding: '20px 16px',
+        borderTop: `3px solid ${tier.borderColor}`,
+        background: tier.glow,
+      }}
+    >
+      <img
+        src={tier.image}
+        alt={tier.reward}
+        style={{ width: 44, height: 44, imageRendering: 'pixelated', marginBottom: 8, display: 'block', margin: '0 auto 8px' }}
+      />
+      <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
+        {tier.reward}
+      </div>
+      {tier.badge && (
+        <span className="tier-badge">
+          {tier.badge}
+        </span>
+      )}
+      <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
+        {tier.desc}
+      </div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
+        {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
+      </div>
+    </motion.div>
+  );
+}
 
 export function RewardsSection() {
   return (
@@ -64,7 +102,7 @@ export function RewardsSection() {
           </p>
         </motion.div>
 
-        {/* Big golden egg */}
+        {/* Big legendary egg */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -72,98 +110,30 @@ export function RewardsSection() {
           transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
           className="flex justify-center mb-14"
         >
-          <div
+          <img
+            src="/icons/egg-legendary.png"
+            alt="Legendary Egg"
             style={{
               width: 90,
-              height: 108,
-              borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-              background: 'linear-gradient(135deg, #FFF3C4 0%, #FFE082 40%, #FFD54F 100%)',
-              border: '3px solid var(--rarity-legendary)',
-              animation: 'egg-rock 2.5s ease-in-out infinite, golden-pulse 3s ease-in-out infinite',
-              position: 'relative',
+              height: 'auto',
+              imageRendering: 'pixelated',
+              animation: 'egg-rock 2.5s ease-in-out infinite',
+              filter: 'drop-shadow(0 0 16px rgba(234,179,8,0.7)) drop-shadow(0 0 32px rgba(234,179,8,0.3))',
             }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: -6,
-                borderRadius: 'inherit',
-                background: 'linear-gradient(105deg, transparent 0%, rgba(234,179,8,0.25) 45%, rgba(234,179,8,0.1) 55%, transparent 70%)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer-slide 2s ease-in-out infinite',
-              }}
-            />
-          </div>
+          />
         </motion.div>
 
-        {/* Tier cards — horizontal scroll on mobile, grid on desktop */}
         {/* Desktop: 5-column grid */}
         <div className="hidden md:grid md:grid-cols-5 gap-4 mb-12">
-          {TIERS.map((tier, i) => (
-            <motion.div
-              key={tier.count}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-              className="feature-card feature-card--dark text-center"
-              style={{
-                padding: '20px 16px',
-                borderTop: `3px solid ${tier.borderColor}`,
-                background: tier.glow,
-              }}
-            >
-              <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
-              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
-                {tier.reward}
-              </div>
-              {tier.badge && (
-                <span className="tier-badge">
-                  {tier.badge}
-                </span>
-              )}
-              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
-                {tier.desc}
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
-                {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
-              </div>
-            </motion.div>
-          ))}
+          {TIERS.map((tier, i) => <TierCard key={tier.count} tier={tier} i={i} />)}
         </div>
 
         {/* Mobile: horizontal scroll track */}
         <div className="md:hidden scroll-track mb-12">
           {TIERS.map((tier, i) => (
-            <motion.div
-              key={tier.count}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-              className="feature-card feature-card--dark text-center min-w-[140px]"
-              style={{
-                padding: '20px 16px',
-                borderTop: `3px solid ${tier.borderColor}`,
-                background: tier.glow,
-              }}
-            >
-              <div style={{ fontSize: 32, marginBottom: 8 }}>{tier.emoji}</div>
-              <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
-                {tier.reward}
-              </div>
-              {tier.badge && (
-                <span className="tier-badge">
-                  {tier.badge}
-                </span>
-              )}
-              <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
-                {tier.desc}
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
-                {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
-              </div>
-            </motion.div>
+            <div key={tier.count} className="min-w-[140px]">
+              <TierCard tier={tier} i={i} />
+            </div>
           ))}
         </div>
 

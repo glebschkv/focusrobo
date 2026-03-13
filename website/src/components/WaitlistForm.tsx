@@ -6,11 +6,11 @@ interface WaitlistFormProps {
 }
 
 const REFERRAL_TIERS = [
-  { count: 0, label: 'Legendary Egg', emoji: '🥚' },
-  { count: 3, label: 'Rare Egg', emoji: '🔵' },
-  { count: 5, label: 'Epic Egg', emoji: '🟣' },
-  { count: 10, label: 'Founder Fox', emoji: '🦊' },
-  { count: 25, label: 'Pioneer Island', emoji: '🏝️' },
+  { count: 0, label: 'Legendary Egg', image: '/icons/egg-legendary.png' },
+  { count: 3, label: 'Rare Egg', image: '/icons/egg-rare.png' },
+  { count: 5, label: 'Epic Egg', image: '/icons/egg-epic.png' },
+  { count: 10, label: 'Founder Fox', image: '/pets/fox-adult.png' },
+  { count: 25, label: 'Pioneer Island', image: '/pets/koi-fish-adult.png' },
 ];
 
 function getReferredBy(): string | null {
@@ -127,7 +127,11 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
   if (status === 'success' && referralCode) {
     return (
       <div className="waitlist-success">
-        <div className="legendary-egg-display" />
+        <img
+          src="/icons/egg-legendary.png"
+          alt="Legendary Egg"
+          className="legendary-egg-display"
+        />
         <h3 className="card-title" style={{ fontSize: 22 }}>
           You're in! Your Legendary Egg is reserved.
         </h3>
@@ -161,7 +165,13 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
                   key={tier.count}
                   className={`referral-tier ${!unlocked && !active ? 'referral-tier--locked' : ''} ${active ? 'referral-tier--active' : ''}`}
                 >
-                  <div className="referral-tier__icon">{tier.emoji}</div>
+                  <div className="referral-tier__icon">
+                    <img
+                      src={tier.image}
+                      alt={tier.label}
+                      style={{ width: 28, height: 28, imageRendering: 'pixelated' }}
+                    />
+                  </div>
                   <div className="referral-tier__count">{tier.count}</div>
                   <div className="referral-tier__label">{tier.label}</div>
                 </div>
@@ -201,7 +211,14 @@ export function WaitlistForm({ variant = 'hero' }: WaitlistFormProps) {
         </button>
       </form>
       <div className="waitlist-counter">
-        <span style={{ fontSize: 16 }}>🔥</span>
+        <span style={{
+          display: 'inline-block',
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          background: 'var(--primary)',
+          flexShrink: 0,
+        }} />
         <strong>{waitlistCount.toLocaleString()}</strong> adventurers already waiting
       </div>
       {status === 'error' && (

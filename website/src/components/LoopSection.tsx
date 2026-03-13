@@ -5,7 +5,7 @@ const STEPS = [
     number: '01',
     title: 'Set Your Focus',
     description: 'Choose your duration. Put your phone down. That\'s it.',
-    image: '/pets/hedgehog-baby.png',
+    image: '/pets/hedgehog-adolescent.png',
     detail: '25-180 min sessions',
     bg: 'hsla(152, 44%, 45%, 0.08)',
   },
@@ -13,7 +13,7 @@ const STEPS = [
     number: '02',
     title: 'Earn a Pet',
     description: 'Complete your session. A random pet hatches — commons, rares, even legendaries.',
-    image: '/pets/fox-baby.png',
+    image: '/pets/fox-adolescent.png',
     detail: '41 species across 5 rarities',
     bg: 'hsla(42, 75%, 52%, 0.08)',
   },
@@ -21,7 +21,7 @@ const STEPS = [
     number: '03',
     title: 'Build Your Island',
     description: 'Your pets live on a floating island. Fill it up, watch it grow, start a new one.',
-    image: '/pets/dragon-baby.png',
+    image: '/pets/dragon-adolescent.png',
     detail: 'Expands from 5×5 to 12×12',
     bg: 'hsla(200, 60%, 55%, 0.08)',
   },
@@ -37,7 +37,7 @@ const cardVariants = {
 
 export function LoopSection() {
   return (
-    <section id="how-it-works" className="section-cream pixel-texture py-24 px-5">
+    <section id="how-it-works" className="section-cream py-24 px-5">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -70,14 +70,11 @@ export function LoopSection() {
               className="feature-card text-center relative z-10"
             >
               <div className="step-number">{step.number}</div>
-              <div
-                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-                style={{ background: step.bg }}
-              >
+              <div className="loop-step-icon" style={{ background: step.bg }}>
                 <img
                   src={step.image}
                   alt={step.title}
-                  style={{ width: 40, height: 40, imageRendering: 'pixelated' }}
+                  style={{ width: 72, height: 72, imageRendering: 'pixelated' }}
                 />
               </div>
               <h3 className="card-title">
