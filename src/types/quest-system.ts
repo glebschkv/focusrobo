@@ -98,5 +98,6 @@ export interface QuestSystemReturn {
   generateDailyQuests: () => void | Promise<void>;
   generateWeeklyQuests: () => void | Promise<void>;
   getNextStoryQuest: (currentLevel: number) => Quest | undefined;
+  dailySweepJustCompleted: boolean;
   isLoading?: boolean;
 }

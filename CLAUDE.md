@@ -612,6 +612,9 @@ Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), gras
 - **41 milestones** across level, streak, sessions, hours, and collection categories
 - **13 daily challenge templates** (easy/medium/hard), 3 active per day
 - **10 weekly challenge templates**
+- **Daily Sweep bonus**: 200 coins for completing all 3 daily quests in one day (stored in `questStore.dailySweepClaimed`)
+- **Quest completion celebration**: Animated green checkmarks (scale-in 300ms) + coin reward display in SessionCompleteView
+- **`DAILY_SWEEP_BONUS`** constant: 200 (in `GamificationData.ts`)
 - **60+ achievements** with rarity-based point values
 
 ## Key Hooks

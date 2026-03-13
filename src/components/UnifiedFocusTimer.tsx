@@ -55,6 +55,7 @@ export const UnifiedFocusTimer = () => {
     lastSessionTaskLabel,
     lastSessionDuration,
     lastQuestDeltas,
+    lastDailySweepCompleted,
     lastStreakDay,
     lastLevelUpInfo,
     lastMilestoneInfo,
@@ -174,6 +175,7 @@ export const UnifiedFocusTimer = () => {
               taskLabel={lastSessionTaskLabel}
               showBreakOption={autoBreakEnabled}
               questDeltas={lastQuestDeltas}
+              dailySweepCompleted={lastDailySweepCompleted}
               streakDay={lastStreakDay}
               levelUpInfo={lastLevelUpInfo}
               milestoneInfo={lastMilestoneInfo}

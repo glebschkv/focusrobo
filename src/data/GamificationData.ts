@@ -145,6 +145,9 @@ export const WEEKLY_CHALLENGES: WeeklyChallengeTemplate[] = [
   { id: 'wc-10', title: 'Full Streak Week', description: 'Maintain a 7-day streak', objectiveType: 'streak', target: 7, rewards: { coins: 550, xp: 280 } },
 ];
 
+/** Bonus coins awarded for completing all 3 daily quests in one day */
+export const DAILY_SWEEP_BONUS = 200;
+
 export const getMilestoneForValue = (type: Milestone['type'], value: number): Milestone | null => {
   const typeMilestones = MILESTONES.filter(m => m.type === type);
   for (let i = typeMilestones.length - 1; i >= 0; i--) {

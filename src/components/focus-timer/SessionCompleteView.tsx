@@ -15,6 +15,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useHaptics } from "@/hooks/useHaptics";
 import { getPetById, GROWTH_SCALES, RARITY_GLOW, RARITY_STYLES, type GrowthSize, type PetRarity, type EggTier } from "@/data/PetDatabase";
 import { FOCUS_BONUS } from "@/lib/constants";
+import { DAILY_SWEEP_BONUS } from "@/data/GamificationData";
 import type { Milestone } from "@/types/gamification";
 import type { PendingPet, PendingEgg } from "@/stores/landStore";
 
@@ -23,6 +24,7 @@ export interface QuestDelta {
   oldPct: number;
   newPct: number;
   completed: boolean;
+  coinReward?: number;
 }
 
 interface SessionCompleteViewProps {
@@ -49,6 +51,8 @@ interface SessionCompleteViewProps {
   showBreakOption: boolean;
   /** Quest progress deltas for impact summary */
   questDeltas?: QuestDelta[];
+  /** Whether the daily sweep bonus was just completed */
+  dailySweepCompleted?: boolean;
   /** Current streak day count */
   streakDay?: number;
   /** Level-up info if user leveled up during this session */
@@ -132,6 +136,7 @@ export const SessionCompleteView = ({
   taskLabel,
   showBreakOption,
   questDeltas = [],
+  dailySweepCompleted = false,
   streakDay = 0,
   levelUpInfo,
   milestoneInfo,
@@ -694,16 +699,26 @@ export const SessionCompleteView = ({
                         {delta.completed ? (
                           <span className="flex items-center gap-1">
                             <span
-                              className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
+                              className="inline-flex items-center justify-center w-6 h-6 rounded-full"
                               style={{
                                 background: 'hsl(152 44% 45% / 0.15)',
-                                color: 'hsl(152 44% 35%)',
                                 border: '1px solid hsl(152 44% 45% / 0.3)',
+                                animation: prefersReducedMotion ? 'none' : 'quest-check-scale 0.3s ease-out forwards',
+                                animationDelay: prefersReducedMotion ? '0s' : `${0.3 + i * 0.15}s`,
+                                animationFillMode: 'both',
                               }}
                             >
-                              <PixelIcon name="check" size={10} className="inline-block mr-0.5" />
-                              Done
+                              <PixelIcon name="check" size={14} />
                             </span>
+                            {delta.coinReward && delta.coinReward > 0 && (
+                              <span
+                                className="flex items-center gap-0.5 text-[10px] font-bold tabular-nums"
+                                style={{ color: 'hsl(42 80% 45%)' }}
+                              >
+                                <PixelIcon name="coin" size={12} />
+                                +{delta.coinReward}
+                              </span>
+                            )}
                           </span>
                         ) : (
                           <span className="text-[10px] text-muted-foreground tabular-nums">
@@ -716,7 +731,7 @@ export const SessionCompleteView = ({
                           className="h-full rounded-full"
                           style={{
                             background: delta.completed
-                              ? RARITY_STYLES.legendary.color
+                              ? 'hsl(152 44% 45%)'
                               : 'hsl(var(--primary))',
                           }}
                           initial={{ width: `${delta.oldPct}%` }}
@@ -730,6 +745,35 @@ export const SessionCompleteView = ({
                       </div>
                     </div>
                   ))}
+
+                  {/* Daily Sweep Banner */}
+                  {dailySweepCompleted && (
+                    <div
+                      className="relative overflow-hidden rounded-lg flex items-center justify-center gap-2"
+                      style={{
+                        height: '48px',
+                        background: 'linear-gradient(90deg, hsl(42 80% 50%), hsl(42 70% 55%))',
+                      }}
+                    >
+                      {/* Coin burst particles */}
+                      {!prefersReducedMotion && [0, 1, 2, 3].map((j) => (
+                        <span
+                          key={j}
+                          className="absolute w-2 h-2 rounded-full"
+                          style={{
+                            background: 'hsl(42 90% 70%)',
+                            left: `${22 + j * 18}%`,
+                            bottom: '6px',
+                            animation: `coin-burst-float 0.8s ease-out ${0.1 * j}s forwards`,
+                          }}
+                        />
+                      ))}
+                      <span className="text-sm font-black text-white tracking-tight relative z-[1]">
+                        Daily Sweep! +{DAILY_SWEEP_BONUS} bonus coins
+                      </span>
+                      <PixelIcon name="coin" size={16} />
+                    </div>
+                  )}
 
                   {/* Streak day */}
                   {streakDay > 0 && (
