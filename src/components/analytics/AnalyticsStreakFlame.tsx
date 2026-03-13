@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { PixelIcon } from "@/components/ui/PixelIcon";
 
 interface StreakFlameProps {
   currentStreak: number;
@@ -33,14 +34,14 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
   const flameSize = currentStreak >= 30 ? 'large' : currentStreak >= 7 ? 'medium' : 'small';
 
   if (compact) {
+    const iconSize = flameSize === 'large' ? 22 : flameSize === 'medium' ? 18 : 16;
     return (
       <div className="flex items-center gap-1">
         <span className={cn(
           "inline-block",
-          flameSize === 'large' ? 'text-lg' : flameSize === 'medium' ? 'text-base' : 'text-sm',
           currentStreak > 0 ? 'motion-safe:animate-pulse' : 'opacity-50'
         )}>
-          🔥
+          <PixelIcon name="flame-streak" size={iconSize} />
         </span>
         <span className="text-base font-extrabold tabular-nums">{currentStreak}</span>
       </div>
@@ -65,7 +66,6 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
         )}>
           <span className={cn(
             "absolute",
-            flameSize === 'large' ? 'text-4xl' : flameSize === 'medium' ? 'text-3xl' : 'text-2xl',
             currentStreak > 0 && "motion-safe:animate-bounce",
           )}
             style={{
@@ -74,7 +74,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
                       flameSize === 'medium' ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.3))' : undefined,
             }}
           >
-            🔥
+            <PixelIcon name="flame-streak" size={flameSize === 'large' ? 36 : flameSize === 'medium' ? 30 : 24} />
           </span>
         </div>
 
@@ -104,7 +104,7 @@ export const AnalyticsStreakFlame = ({ currentStreak, lastSessionDate, compact =
                     isCurrentDay && "ring-1 ring-orange-400/50"
                   )}
                 >
-                  {isActive ? '🔥' : <span className="text-muted-foreground/30">·</span>}
+                  {isActive ? <PixelIcon name="flame-streak" size={12} /> : <span className="text-muted-foreground/30">·</span>}
                 </div>
               );
             })}

@@ -8,6 +8,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { ChevronRight } from 'lucide-react';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 
 interface ExpansionData {
@@ -83,7 +84,7 @@ export const IslandExpansionModal = () => {
                 {displayData.oldTier * displayData.oldTier} cells
               </p>
             </div>
-            <PixelIcon name="arrow-right" size={20} className="text-emerald-500" />
+            <ChevronRight className="w-6 h-6 text-emerald-500" />
             <div className="text-center">
               <p className="text-2xl font-black text-emerald-600">
                 {displayData.newTier}×{displayData.newTier}
