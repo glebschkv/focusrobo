@@ -166,6 +166,32 @@ img {
   color: var(--fg-dark-secondary);
 }
 
+/* Step number badge */
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+/* Step detail pill */
+.step-detail-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: hsla(152, 44%, 45%, 0.08);
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+}
+
 /* Tier badge (rewards section) */
 .tier-badge {
   display: inline-block;
@@ -404,7 +430,7 @@ img {
 .nav-cta {
   background: var(--primary);
   color: white;
-  padding: 10px 22px;
+  padding: 10px 24px;
   border-radius: var(--radius-pill);
   font-size: 14px;
   font-weight: 700;
@@ -412,12 +438,13 @@ img {
   cursor: pointer;
   transition: all 0.2s var(--ease-spring);
   text-decoration: none;
-  box-shadow: 0 2px 8px hsla(152, 44%, 45%, 0.2);
+  box-shadow: var(--shadow-glow);
+  letter-spacing: -0.01em;
 }
 .nav-cta:hover {
   background: var(--primary-hover);
   transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 4px 12px hsla(152, 44%, 45%, 0.35);
+  box-shadow: var(--shadow-glow-hover);
 }
 
 /* ═══ CTA Buttons ═══ */
@@ -428,7 +455,7 @@ img {
   gap: 8px;
   background: var(--primary);
   color: white;
-  padding: 14px 28px;
+  padding: 16px 32px;
   border-radius: var(--radius-pill);
   font-size: 16px;
   font-weight: 700;
@@ -438,10 +465,11 @@ img {
   transition: all 0.25s var(--ease-spring);
   box-shadow: var(--shadow-glow);
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 .cta-primary:hover {
   background: var(--primary-hover);
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px) scale(1.03);
   box-shadow: var(--shadow-glow-hover);
 }
 .cta-primary:active {
@@ -460,7 +488,7 @@ img {
   gap: 8px;
   background: var(--accent);
   color: var(--bg-dark);
-  padding: 14px 28px;
+  padding: 16px 32px;
   border-radius: var(--radius-pill);
   font-size: 16px;
   font-weight: 700;
@@ -468,12 +496,14 @@ img {
   border: none;
   cursor: pointer;
   transition: all 0.25s var(--ease-spring);
-  box-shadow: 0 4px 14px rgba(52, 211, 153, 0.3);
+  box-shadow: 0 4px 14px rgba(59, 232, 168, 0.35);
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 .cta-accent:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(59, 232, 168, 0.5);
+  background: #2FD89A;
 }
 .cta-accent:active {
   transform: translateY(0) scale(0.98);
@@ -526,6 +556,15 @@ img {
   background: var(--bg-dark);
   color: var(--fg-dark-primary);
   position: relative;
+}
+.section-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
 }
 
 .section-green {
@@ -608,17 +647,27 @@ img {
   will-change: transform;
 }
 .island-pet img {
-  width: 56px;
+  width: 48px;
   height: auto;
 }
-@media (min-width: 375px) { .island-pet img { width: 62px; } }
-@media (min-width: 420px) { .island-pet img { width: 68px; } }
-@media (min-width: 768px) { .island-pet img { width: 80px; } }
+@media (min-width: 375px) { .island-pet img { width: 54px; } }
+@media (min-width: 420px) { .island-pet img { width: 60px; } }
+@media (min-width: 768px) { .island-pet img { width: 68px; } }
 
 .island-pet--uncommon img { filter: drop-shadow(0 0 3px var(--glow-uncommon)); }
 .island-pet--rare img { filter: drop-shadow(0 0 4px var(--glow-rare)); }
 .island-pet--epic img { filter: drop-shadow(0 0 5px var(--glow-epic)); animation: epic-pulse 2s ease-in-out infinite; }
 .island-pet--legendary img { filter: drop-shadow(0 0 6px var(--glow-legendary)); animation: legendary-shimmer 3s ease-in-out infinite; }
+
+/* ═══ Hero Form Highlight ═══ */
+.hero-form-highlight {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-2xl);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(255,255,255,0.5);
+}
 
 /* ═══ Waitlist Form ═══ */
 .waitlist-form {
@@ -1094,6 +1143,9 @@ details[open] > summary span {
   }
   .waitlist-submit {
     width: 100%;
+  }
+  .hero-form-highlight {
+    padding: 16px;
   }
 }
 

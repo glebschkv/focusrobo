@@ -22,7 +22,7 @@ export function HeroSection() {
           <span className="text-primary">Get a Pet.</span>
         </h1>
         <p className="hero-subtitle">
-          Complete focus sessions to earn pixel art pets and build your own floating island paradise.
+          Focus sessions earn pixel art pets that live on your floating island. No willpower required.
         </p>
       </motion.div>
 
@@ -33,7 +33,9 @@ export function HeroSection() {
         transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="relative z-10 w-full max-w-lg mb-10"
       >
-        <WaitlistForm variant="hero" />
+        <div className="hero-form-highlight">
+          <WaitlistForm variant="hero" />
+        </div>
       </motion.div>
 
       {/* Island */}

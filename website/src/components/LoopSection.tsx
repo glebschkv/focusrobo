@@ -69,8 +69,9 @@ export function LoopSection() {
               viewport={{ once: true, margin: '-60px' }}
               className="feature-card text-center relative z-10"
             >
+              <div className="step-number">{step.number}</div>
               <div
-                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
+                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
                 style={{ background: step.bg }}
               >
                 <img
@@ -79,34 +80,13 @@ export function LoopSection() {
                   style={{ width: 40, height: 40, imageRendering: 'pixelated' }}
                 />
               </div>
-              <div
-                className="inline-flex items-center justify-center w-7 h-7 rounded-full mb-3"
-                style={{
-                  background: 'var(--primary)',
-                  color: 'white',
-                  fontSize: 12,
-                  fontWeight: 800,
-                }}
-              >
-                {step.number}
-              </div>
               <h3 className="card-title">
                 {step.title}
               </h3>
               <p className="card-desc" style={{ marginBottom: 12 }}>
                 {step.description}
               </p>
-              <div
-                className="inline-block"
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: 'var(--primary)',
-                  background: 'hsla(152, 44%, 45%, 0.08)',
-                  padding: '5px 14px',
-                  borderRadius: 'var(--radius-pill)',
-                }}
-              >
+              <div className="step-detail-badge">
                 {step.detail}
               </div>
             </motion.div>
