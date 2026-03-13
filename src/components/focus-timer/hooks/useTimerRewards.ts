@@ -12,11 +12,15 @@ import { toast } from 'sonner';
 import { dispatchAchievementEvent, ACHIEVEMENT_EVENTS } from '@/hooks/useAchievementTracking';
 import { FOCUS_BONUS } from '@/lib/constants';
 
-interface RewardResult {
+export interface RewardResult {
   xpEarned: number;
   coinsEarned: number;
   baseCoins: number;
   focusBonusType: string;
+  leveledUp: boolean;
+  newLevel: number;
+  oldLevel: number;
+  unlockedRewards: Array<{ name: string; description: string }>;
 }
 
 interface SessionInfo {
@@ -44,6 +48,10 @@ export function useTimerRewards() {
       coinsEarned: 0,
       baseCoins: 0,
       focusBonusType: '',
+      leveledUp: false,
+      newLevel: 0,
+      oldLevel: 0,
+      unlockedRewards: [],
     };
 
     // Calculate focus bonus based on shield attempts
@@ -64,6 +72,14 @@ export function useTimerRewards() {
         const reward = await awardXP(completedMinutes);
         result.xpEarned = reward?.xpGained || 0;
         result.baseCoins = reward?.coinReward || 0;
+
+        // Capture level-up info for inline display in SessionCompleteView
+        if (reward?.leveledUp) {
+          result.leveledUp = true;
+          result.newLevel = reward.newLevel;
+          result.oldLevel = reward.oldLevel;
+          result.unlockedRewards = reward.unlockedRewards || [];
+        }
 
         // Apply focus bonus to XP
         if (focusMultiplier > 1.0 && result.xpEarned > 0 && xpSystem && 'addDirectXP' in xpSystem) {

@@ -42,12 +42,16 @@ interface NavigationState {
   // Navigation history for back button support
   history: MainTab[];
 
+  // Whether SessionCompleteView is currently showing (suppresses other reward modals)
+  sessionRewardsActive: boolean;
+
   // Actions
   setActiveTab: (tab: MainTab) => void;
   openModal: (modal: ModalType, data?: Record<string, unknown>) => void;
   closeModal: () => void;
   goBack: () => void;
   reset: () => void;
+  setSessionRewardsActive: (active: boolean) => void;
 }
 
 // Initial state
@@ -56,6 +60,7 @@ const initialState = {
   activeModal: 'none' as ModalType,
   modalData: null,
   history: ['home'] as MainTab[],
+  sessionRewardsActive: false,
 };
 
 export const useNavigationStore = create<NavigationState>()(
@@ -104,6 +109,10 @@ export const useNavigationStore = create<NavigationState>()(
 
     reset: () => {
       set(initialState);
+    },
+
+    setSessionRewardsActive: (active: boolean) => {
+      set({ sessionRewardsActive: active });
     },
   }))
 );

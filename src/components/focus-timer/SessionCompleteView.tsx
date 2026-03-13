@@ -14,6 +14,8 @@ import { useAnimatedCounter } from "@/hooks/useAnimatedCounter";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useHaptics } from "@/hooks/useHaptics";
 import { getPetById, GROWTH_SCALES, RARITY_GLOW, RARITY_STYLES, type GrowthSize, type PetRarity, type EggTier } from "@/data/PetDatabase";
+import { FOCUS_BONUS } from "@/lib/constants";
+import type { Milestone } from "@/types/gamification";
 import type { PendingPet, PendingEgg } from "@/stores/landStore";
 
 export interface QuestDelta {
@@ -49,6 +51,12 @@ interface SessionCompleteViewProps {
   questDeltas?: QuestDelta[];
   /** Current streak day count */
   streakDay?: number;
+  /** Level-up info if user leveled up during this session */
+  levelUpInfo?: { newLevel: number; oldLevel: number; unlockedRewards: Array<{ name: string; description: string }> } | null;
+  /** Milestone achieved during this session */
+  milestoneInfo?: Milestone | null;
+  /** Focus bonus type ('PERFECT FOCUS' | 'GOOD FOCUS' | '') */
+  focusBonusType?: string;
 }
 
 const MOOD_OPTIONS = [
@@ -125,6 +133,9 @@ export const SessionCompleteView = ({
   showBreakOption,
   questDeltas = [],
   streakDay = 0,
+  levelUpInfo,
+  milestoneInfo,
+  focusBonusType = '',
 }: SessionCompleteViewProps) => {
   const [rating, setRating] = useState(3);
   const [notes, setNotes] = useState("");
@@ -357,6 +368,90 @@ export const SessionCompleteView = ({
                 </motion.div>
               )}
 
+              {/* Level-Up Banner */}
+              {levelUpInfo && (
+                <motion.div
+                  className="rounded-xl overflow-hidden relative"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(42 80% 55%), hsl(42 60% 45%))',
+                    border: '1px solid hsl(42 60% 40%)',
+                  }}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={cardIndex++}
+                >
+                  {/* Mini confetti particles */}
+                  {!prefersReducedMotion && Array.from({ length: 12 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="absolute w-1 h-1 rounded-full pointer-events-none"
+                      style={{
+                        left: `${8 + Math.random() * 84}%`,
+                        top: `-4px`,
+                        background: ['#ef4444', '#8b5cf6', '#3b82f6', '#22c55e', '#f97316', '#eab308'][i % 6],
+                        animation: `celebration-particle 2s ease-out ${i * 0.08}s forwards`,
+                        opacity: 0.8,
+                      }}
+                    />
+                  ))}
+                  <div className="p-3 flex items-center gap-3 relative z-[1]">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{
+                        background: 'hsl(42 90% 65% / 0.3)',
+                        border: '1px solid hsl(42 80% 70% / 0.4)',
+                      }}
+                    >
+                      <PixelIcon name="trophy" size={22} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-black text-white tracking-tight">
+                        Level {levelUpInfo.newLevel} Reached!
+                      </p>
+                      {levelUpInfo.unlockedRewards.length > 0 && (
+                        <p className="text-[10px] font-medium text-white/80 truncate mt-0.5">
+                          Unlocked: {levelUpInfo.unlockedRewards.map(r => r.name).join(', ')}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Focus Bonus Card */}
+              {focusBonusType && (
+                <motion.div
+                  className="rounded-xl border p-3 flex items-center gap-2.5"
+                  style={{
+                    borderColor: focusBonusType === FOCUS_BONUS.PERFECT_FOCUS.label
+                      ? 'hsl(152 44% 45% / 0.4)'
+                      : 'hsl(210 70% 55% / 0.4)',
+                    background: focusBonusType === FOCUS_BONUS.PERFECT_FOCUS.label
+                      ? 'hsl(152 44% 45% / 0.08)'
+                      : 'hsl(210 70% 55% / 0.08)',
+                  }}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={cardIndex++}
+                >
+                  <PixelIcon name="shield" size={18} />
+                  <span
+                    className="text-xs font-bold"
+                    style={{
+                      color: focusBonusType === FOCUS_BONUS.PERFECT_FOCUS.label
+                        ? 'hsl(152 44% 40%)'
+                        : 'hsl(210 70% 50%)',
+                    }}
+                  >
+                    {focusBonusType === FOCUS_BONUS.PERFECT_FOCUS.label
+                      ? `Perfect Focus! +25% XP +${FOCUS_BONUS.PERFECT_FOCUS.coinBonus} coins`
+                      : `Good Focus! +10% XP +${FOCUS_BONUS.GOOD_FOCUS.coinBonus} coins`}
+                  </span>
+                </motion.div>
+              )}
+
               {/* Egg Card — idle + hatching phases */}
               {showEggCard && (
                 <motion.div
@@ -527,6 +622,57 @@ export const SessionCompleteView = ({
                 </motion.div>
               )}
 
+              {/* Milestone Card */}
+              {milestoneInfo && (
+                <motion.div
+                  className="rounded-xl border overflow-hidden"
+                  style={{
+                    borderColor: milestoneInfo.celebrationType === 'stars'
+                      ? 'hsl(42 80% 55% / 0.5)'
+                      : milestoneInfo.celebrationType === 'fireworks'
+                        ? 'hsl(25 100% 50% / 0.4)'
+                        : 'hsl(280 60% 55% / 0.4)',
+                    background: milestoneInfo.celebrationType === 'stars'
+                      ? 'hsl(42 80% 55% / 0.06)'
+                      : milestoneInfo.celebrationType === 'fireworks'
+                        ? 'hsl(25 100% 50% / 0.06)'
+                        : 'hsl(280 60% 55% / 0.06)',
+                  }}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={cardIndex++}
+                >
+                  <div className="p-3 flex items-center gap-3" style={{ maxHeight: '72px' }}>
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{
+                        background: 'hsl(var(--card) / 0.6)',
+                      }}
+                    >
+                      <PixelIcon name={milestoneInfo.icon || 'star'} size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-foreground truncate">
+                        {milestoneInfo.title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {milestoneInfo.rewards?.xp && (
+                          <span className="text-[10px] font-bold text-primary">
+                            +{milestoneInfo.rewards.xp} XP
+                          </span>
+                        )}
+                        {milestoneInfo.rewards?.coins && (
+                          <span className="text-[10px] font-bold text-amber-600">
+                            +{milestoneInfo.rewards.coins} Coins
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Session Impact — quest progress + streak */}
               {(questDeltas.length > 0 || streakDay > 0) && (
                 <motion.div
@@ -546,15 +692,18 @@ export const SessionCompleteView = ({
                           {delta.name}
                         </span>
                         {delta.completed ? (
-                          <span
-                            className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
-                            style={{
-                              background: RARITY_STYLES.legendary.bg,
-                              color: RARITY_STYLES.legendary.text,
-                              border: `1px solid ${RARITY_STYLES.legendary.border}`,
-                            }}
-                          >
-                            Completed!
+                          <span className="flex items-center gap-1">
+                            <span
+                              className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full"
+                              style={{
+                                background: 'hsl(152 44% 45% / 0.15)',
+                                color: 'hsl(152 44% 35%)',
+                                border: '1px solid hsl(152 44% 45% / 0.3)',
+                              }}
+                            >
+                              <PixelIcon name="check" size={10} className="inline-block mr-0.5" />
+                              Done
+                            </span>
                           </span>
                         ) : (
                           <span className="text-[10px] text-muted-foreground tabular-nums">
