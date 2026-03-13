@@ -416,9 +416,7 @@ export const getBackgroundsInBundle = (bundleId: string): PremiumBackground[] =>
 export const getShopItemsByCategory = (category: ShopCategory): ShopItem[] => {
   switch (category) {
     case 'featured':
-      return [...STARTER_BUNDLES, ...BACKGROUND_BUNDLES, ...getLimitedTimeItems()];
-    case 'customize':
-      return [...PREMIUM_BACKGROUNDS];
+      return [...STARTER_BUNDLES, ...getLimitedTimeItems()];
     case 'powerups': {
       const boosters = BOOSTER_TYPES.map(booster => ({
         id: booster.id,
@@ -462,7 +460,6 @@ export const getItemsByRarity = (rarity: 'common' | 'rare' | 'epic' | 'legendary
 export const SHOP_CATEGORIES: { id: ShopCategory; name: string; icon: string }[] = [
   { id: 'eggs', name: 'Hatchery', icon: 'egg' },
   { id: 'decor', name: 'Decor', icon: 'tree' },
-  { id: 'customize', name: 'Worlds', icon: 'island' },
   { id: 'powerups', name: 'Potions', icon: 'lightning' },
   { id: 'featured', name: "Finds", icon: 'crown' },
 ];
@@ -556,23 +553,23 @@ export function getDailyDeal(playerLevel: number): DailyDeal {
     };
   }
 
-  // Background deal — 25% discount
-  let pool = PREMIUM_BACKGROUNDS.filter((b) => b.coinPrice > 0);
-  if (playerLevel < 10) pool = pool.filter((b) => b.coinPrice <= 1500);
-  if (pool.length === 0) pool = PREMIUM_BACKGROUNDS;
-  const bg = pool[seed % pool.length];
-  const discountPercent = 25;
-  return {
-    id: `deal-${dateStr}`,
-    itemType: 'background',
-    itemId: bg.id,
-    itemName: bg.name,
-    itemDescription: bg.description,
-    itemIcon: bg.icon,
-    itemRarity: bg.rarity,
-    originalPrice: bg.coinPrice,
-    dealPrice: Math.ceil(bg.coinPrice * (1 - discountPercent / 100)),
-    discountPercent,
-    expiresAt,
-  };
+  // Decoration deal (fallback) — 35% discount
+  {
+    let pool = DECORATIONS.filter((d) => d.coinPrice > 0);
+    const deco = pool[(seed + 7) % pool.length];
+    const discountPercent = 35;
+    return {
+      id: `deal-${dateStr}`,
+      itemType: 'decoration',
+      itemId: deco.id,
+      itemName: deco.name,
+      itemDescription: deco.description,
+      itemIcon: 'tree',
+      itemRarity: deco.rarity,
+      originalPrice: deco.coinPrice,
+      dealPrice: Math.ceil(deco.coinPrice * (1 - discountPercent / 100)),
+      discountPercent,
+      expiresAt,
+    };
+  }
 }

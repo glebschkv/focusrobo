@@ -1,6 +1,7 @@
 /**
  * WeatherParticles — Lightweight weather effects for the island sky.
  * Rain, cherry blossoms, fireflies, or stars depending on time + seed.
+ * Biome-aware: each biome can override default weather behavior.
  */
 
 import { useMemo } from 'react';
@@ -41,42 +42,48 @@ export function getWeatherType(timePeriod: TimePeriod): WeatherType {
   return 'clear';
 }
 
-/** Returns null to always use the theme's own sky colors.
- *  Time-of-day atmosphere is handled via very subtle CSS overlays instead. */
+/** Returns null to always use the theme's own sky colors. */
 export function getSkyColors(_timePeriod: TimePeriod) {
-  // Always return null — let the theme sky colors shine through.
-  // Time-of-day mood is conveyed through subtle CSS ::after overlays
-  // and weather particles (stars at night, etc.) rather than sky replacement.
   return null;
 }
 
 interface WeatherParticlesProps {
   timePeriod: TimePeriod;
   weather: WeatherType;
+  biomeId?: string;
 }
 
-export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps) => {
-  const particles = useMemo(() => {
-    const seed = hashDate(new Date().toDateString());
+export const WeatherParticles = ({ timePeriod, weather, biomeId }: WeatherParticlesProps) => {
+  // Biome overrides for weather type
+  const effectiveWeather = useMemo(() => {
+    if (biomeId === 'night') return 'fireflies';
+    if (biomeId === 'sakura') return 'petals';
+    if (biomeId === 'winter' && weather === 'clear') return 'clear'; // snow handled by CSS petal-stream
+    if (biomeId === 'beach' && weather === 'clear') return 'clear'; // sparkles via sky animations
+    return weather;
+  }, [weather, biomeId]);
 
-    // Stars for night
-    if (timePeriod === 'night') {
-      return Array.from({ length: 20 }, (_, i) => ({
-        type: 'star' as const,
-        key: `star-${i}`,
-        left: `${seededRandom(seed, i * 3) * 95}%`,
-        top: `${seededRandom(seed, i * 3 + 1) * 60}%`,
-        delay: `${seededRandom(seed, i * 3 + 2) * 4}s`,
-        duration: `${2 + seededRandom(seed, i * 5) * 3}s`,
-      }));
-    }
-    return [];
-  }, [timePeriod]);
+  // Night biome always shows stars; other biomes only at real night
+  const showStars = timePeriod === 'night' || biomeId === 'night';
+
+  const particles = useMemo(() => {
+    if (!showStars) return [];
+    const seed = hashDate(new Date().toDateString());
+    const count = biomeId === 'night' ? 30 : 20;
+    return Array.from({ length: count }, (_, i) => ({
+      type: 'star' as const,
+      key: `star-${i}`,
+      left: `${seededRandom(seed, i * 3) * 95}%`,
+      top: `${seededRandom(seed, i * 3 + 1) * 60}%`,
+      delay: `${seededRandom(seed, i * 3 + 2) * 4}s`,
+      duration: `${2 + seededRandom(seed, i * 5) * 3}s`,
+    }));
+  }, [showStars, biomeId]);
 
   const weatherParticles = useMemo(() => {
     const seed = hashDate(new Date().toDateString());
 
-    switch (weather) {
+    switch (effectiveWeather) {
       case 'rain':
         return Array.from({ length: 15 }, (_, i) => ({
           type: 'rain' as const,
@@ -85,16 +92,21 @@ export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps)
           delay: `${seededRandom(seed, i * 7 + 1) * 2}s`,
           duration: `${1 + seededRandom(seed, i * 7 + 2)}s`,
         }));
-      case 'petals':
-        return Array.from({ length: 10 }, (_, i) => ({
+      case 'petals': {
+        // Sakura biome gets denser, slower petals
+        const count = biomeId === 'sakura' ? 18 : 10;
+        return Array.from({ length: count }, (_, i) => ({
           type: 'petal' as const,
           key: `petal-${i}`,
           left: `${seededRandom(seed, i * 11) * 100}%`,
           delay: `${seededRandom(seed, i * 11 + 1) * 5}s`,
-          duration: `${3 + seededRandom(seed, i * 11 + 2) * 3}s`,
+          duration: `${(biomeId === 'sakura' ? 5 : 3) + seededRandom(seed, i * 11 + 2) * 3}s`,
         }));
-      case 'fireflies':
-        return Array.from({ length: 8 }, (_, i) => ({
+      }
+      case 'fireflies': {
+        // Night biome gets denser fireflies
+        const count = biomeId === 'night' ? 14 : 8;
+        return Array.from({ length: count }, (_, i) => ({
           type: 'firefly' as const,
           key: `fly-${i}`,
           left: `${10 + seededRandom(seed, i * 13) * 80}%`,
@@ -102,10 +114,11 @@ export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps)
           delay: `${seededRandom(seed, i * 13 + 2) * 4}s`,
           duration: `${3 + seededRandom(seed, i * 13 + 3) * 3}s`,
         }));
+      }
       default:
         return [];
     }
-  }, [weather]);
+  }, [effectiveWeather, biomeId]);
 
   return (
     <>
@@ -142,7 +155,7 @@ export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps)
           return (
             <div
               key={p.key}
-              className="weather-petal"
+              className={`weather-petal${biomeId === 'sakura' ? ' weather-petal--sakura' : ''}`}
               style={{
                 left: p.left,
                 animationDelay: p.delay,
@@ -155,7 +168,7 @@ export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps)
           return (
             <div
               key={p.key}
-              className="weather-firefly"
+              className={`weather-firefly${biomeId === 'night' ? ' weather-firefly--bioluminescent' : ''}`}
               style={{
                 left: p.left,
                 top: (p as any).top,
@@ -167,24 +180,6 @@ export const WeatherParticles = ({ timePeriod, weather }: WeatherParticlesProps)
         }
         return null;
       })}
-
-      {/* Moon for night */}
-      {timePeriod === 'night' && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '8%',
-            right: '12%',
-            width: 24,
-            height: 24,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle at 40% 40%, #fffde7, #ffd54f)',
-            boxShadow: '0 0 12px rgba(255, 213, 79, 0.4)',
-            zIndex: 3,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
     </>
   );
 };

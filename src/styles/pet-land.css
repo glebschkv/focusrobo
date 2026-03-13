@@ -64,7 +64,7 @@
   /* No vignette — keep the sky bright and clean */
 }
 
-/* Sun — bright core with layered atmospheric glow */
+/* Sun — bright core with layered atmospheric glow (golden default) */
 .pet-land__sun {
   position: absolute;
   top: 6%;
@@ -108,6 +108,71 @@
   pointer-events: none;
 }
 
+/* Pale sun — icy/cold (Winter before it sets) */
+.pet-land__sun--pale {
+  background: radial-gradient(
+    circle,
+    #FFFFFF 0%,
+    #F0F4FF 18%,
+    #D8E4F8 35%,
+    #B8CCE8 55%,
+    rgba(180, 200, 230, 0.3) 72%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px 8px rgba(220, 235, 255, 0.7),
+    0 0 50px 20px rgba(180, 210, 255, 0.25),
+    0 0 100px 40px rgba(160, 190, 240, 0.1),
+    0 0 160px 60px rgba(140, 170, 220, 0.04);
+  top: 14%;
+}
+.pet-land__sun--pale::before {
+  background: radial-gradient(
+    circle,
+    rgba(200, 220, 255, 0.15) 0%,
+    rgba(180, 200, 240, 0.06) 40%,
+    transparent 70%
+  );
+}
+
+/* Warm sun — tropical/golden-orange (Beach) */
+.pet-land__sun--warm {
+  background: radial-gradient(
+    circle,
+    #FFFFFF 0%,
+    #FFF8E1 18%,
+    #FFE8A0 35%,
+    #FFCC4D 55%,
+    rgba(255, 180, 50, 0.4) 72%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px 8px rgba(255, 245, 210, 0.85),
+    0 0 50px 20px rgba(255, 200, 80, 0.4),
+    0 0 100px 40px rgba(255, 180, 60, 0.18),
+    0 0 180px 70px rgba(255, 160, 40, 0.08);
+}
+
+/* Setting sun — low horizon, amber/orange (Sakura sunset tint) */
+.pet-land__sun--setting {
+  background: radial-gradient(
+    circle,
+    #FFFFFF 0%,
+    #FFEDD0 18%,
+    #FFCC88 35%,
+    #FF9944 55%,
+    rgba(255, 120, 40, 0.35) 72%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px 8px rgba(255, 230, 200, 0.8),
+    0 0 50px 20px rgba(255, 180, 100, 0.35),
+    0 0 100px 40px rgba(255, 140, 60, 0.15),
+    0 0 160px 60px rgba(255, 100, 40, 0.06);
+  top: 10%;
+  right: 20%;
+}
+
 @keyframes pet-land-sun-breathe {
   0%, 100% {
     box-shadow:
@@ -125,8 +190,62 @@
   }
 }
 
-/* God rays — angled light beams from the sun */
-/* God rays — warm golden volumetric light beams */
+/* ── Moon — glowing lunar body for Night biome ─────────────────── */
+
+.pet-land__moon {
+  position: absolute;
+  top: 8%;
+  right: 16%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, #F5F0DC, #E8DFC0 60%, #D4CCB0);
+  box-shadow:
+    0 0 20px 6px rgba(200, 210, 255, 0.4),
+    0 0 60px 20px rgba(180, 200, 255, 0.15),
+    0 0 120px 40px rgba(160, 180, 240, 0.06);
+  animation: pet-land-moon-glow 8s ease-in-out infinite;
+  z-index: 3;
+}
+
+/* Crater details */
+.pet-land__moon::before {
+  content: '';
+  position: absolute;
+  top: 28%;
+  left: 22%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(190, 180, 160, 0.4), transparent 70%);
+}
+.pet-land__moon::after {
+  content: '';
+  position: absolute;
+  top: 55%;
+  right: 25%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(190, 180, 160, 0.3), transparent 70%);
+}
+
+@keyframes pet-land-moon-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 20px 6px rgba(200, 210, 255, 0.4),
+      0 0 60px 20px rgba(180, 200, 255, 0.15),
+      0 0 120px 40px rgba(160, 180, 240, 0.06);
+  }
+  50% {
+    box-shadow:
+      0 0 25px 8px rgba(200, 210, 255, 0.5),
+      0 0 70px 25px rgba(180, 200, 255, 0.2),
+      0 0 140px 50px rgba(160, 180, 240, 0.08);
+  }
+}
+
+/* God rays — theme-driven color via CSS vars */
 .pet-land__rays {
   position: absolute;
   top: 0;
@@ -135,7 +254,7 @@
   height: 100%;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.35;
+  opacity: var(--ray-alpha, 0.35);
   animation: pet-land-rays-shimmer 8s ease-in-out infinite;
 }
 
@@ -147,9 +266,9 @@
   width: 3px;
   background: linear-gradient(
     180deg,
-    rgba(255, 235, 170, 0.7) 0%,
-    rgba(255, 215, 110, 0.2) 45%,
-    rgba(255, 200, 80, 0.05) 75%,
+    var(--ray-tint, rgba(255, 235, 170, 0.3)) 0%,
+    color-mix(in srgb, var(--ray-tint, rgba(255, 235, 170, 0.3)) 40%, transparent) 45%,
+    color-mix(in srgb, var(--ray-tint, rgba(255, 235, 170, 0.3)) 10%, transparent) 75%,
     transparent 100%
   );
   border-radius: 2px;
@@ -191,7 +310,7 @@
   50% { opacity: 0.45; }
 }
 
-/* Soft atmospheric haze near the horizon — warm golden glow */
+/* Soft atmospheric haze near the horizon — theme-driven color */
 .pet-land__haze {
   position: absolute;
   bottom: 0;
@@ -201,9 +320,9 @@
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(255, 248, 230, 0.06) 30%,
-    rgba(255, 240, 210, 0.12) 60%,
-    rgba(245, 235, 215, 0.18) 100%
+    color-mix(in srgb, var(--haze-color, rgba(255, 248, 220, 0.35)) 30%, transparent) 30%,
+    color-mix(in srgb, var(--haze-color, rgba(255, 248, 220, 0.35)) 60%, transparent) 60%,
+    var(--haze-color, rgba(255, 248, 220, 0.35)) 100%
   );
   pointer-events: none;
 }
@@ -530,8 +649,7 @@
 
 /* ── Distant landscape — layered mountain silhouettes ──────────── */
 
-/* Far mountains — faded blue, barely visible */
-/* Far mountains — more visible silhouettes for grounding */
+/* Far mountains — theme-driven color via --mt-far-color */
 .pet-land__mountains-far {
   position: absolute;
   bottom: 22%;
@@ -540,15 +658,12 @@
   height: 18%;
   pointer-events: none;
   background:
-    /* Peak left */
-    radial-gradient(ellipse 35% 100% at 18% 100%, rgba(130, 165, 145, 0.3) 0%, transparent 70%),
-    /* Peak center-right */
-    radial-gradient(ellipse 45% 100% at 65% 100%, rgba(125, 160, 140, 0.26) 0%, transparent 70%),
-    /* Peak far right */
-    radial-gradient(ellipse 30% 90% at 90% 100%, rgba(130, 165, 145, 0.22) 0%, transparent 70%);
+    radial-gradient(ellipse 35% 100% at 18% 100%, color-mix(in srgb, var(--mt-far-color, #8898AA) 30%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 100% at 65% 100%, color-mix(in srgb, var(--mt-far-color, #8898AA) 26%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 90% at 90% 100%, color-mix(in srgb, var(--mt-far-color, #8898AA) 22%, transparent) 0%, transparent 70%);
 }
 
-/* Near hills — warmer, more visible rolling landscape */
+/* Near hills — theme-driven color via --mt-near-color */
 .pet-land__mountains-near {
   position: absolute;
   bottom: 18%;
@@ -557,15 +672,12 @@
   height: 14%;
   pointer-events: none;
   background:
-    /* Rolling hill left */
-    radial-gradient(ellipse 50% 100% at 10% 100%, rgba(130, 160, 130, 0.26) 0%, transparent 65%),
-    /* Rolling hill center */
-    radial-gradient(ellipse 60% 100% at 45% 100%, rgba(125, 155, 125, 0.2) 0%, transparent 60%),
-    /* Rolling hill right */
-    radial-gradient(ellipse 45% 100% at 82% 100%, rgba(130, 160, 130, 0.24) 0%, transparent 65%);
+    radial-gradient(ellipse 50% 100% at 10% 100%, color-mix(in srgb, var(--mt-near-color, #7A9A88) 26%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 100% at 45% 100%, color-mix(in srgb, var(--mt-near-color, #7A9A88) 20%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 100% at 82% 100%, color-mix(in srgb, var(--mt-near-color, #7A9A88) 24%, transparent) 0%, transparent 65%);
 }
 
-/* Treeline hint at the base of the hills */
+/* Treeline hint at the base of the hills — theme-driven */
 .pet-land__treeline {
   position: absolute;
   bottom: 16%;
@@ -574,7 +686,7 @@
   height: 4%;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 100% 100% at 50% 100%, rgba(90, 130, 90, 0.15) 0%, transparent 80%);
+    radial-gradient(ellipse 100% 100% at 50% 100%, var(--tree-color, rgba(45, 80, 35, 0.04)) 0%, transparent 80%);
 }
 
 /* ── Island wrapper — float animation ───────────────────────── */
@@ -1328,6 +1440,519 @@
   animation: none;
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   BIOME-SPECIFIC SKY ELEMENTS
+   Ocean, Dunes, Peaks, Moon, Aurora, Butterflies, Seagulls,
+   Shooting Stars, Petal Stream, Heat Shimmer, Star Field
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Ocean landscape (Beach biome) ─────────────────────────────── */
+
+.pet-land__ocean {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28%;
+  background: linear-gradient(
+    180deg,
+    rgba(26, 122, 204, 0.35) 0%,
+    rgba(62, 168, 216, 0.4) 40%,
+    rgba(135, 206, 235, 0.45) 100%
+  );
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Wave line animation */
+.pet-land__ocean::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  right: -10%;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.35) 20px,
+    transparent 40px,
+    rgba(255, 255, 255, 0.25) 60px,
+    transparent 80px
+  );
+  animation: pet-land-wave 6s linear infinite;
+  filter: blur(1px);
+}
+
+/* Foam sparkles */
+.pet-land__ocean::after {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.2) 30px,
+    transparent 50px,
+    rgba(255, 255, 255, 0.15) 80px,
+    transparent 100px
+  );
+  animation: pet-land-wave 8s linear infinite reverse;
+  filter: blur(0.5px);
+}
+
+/* Palm tree silhouettes */
+.pet-land__palm {
+  position: absolute;
+  bottom: 60%;
+  width: 30px;
+  height: 50px;
+  pointer-events: none;
+}
+.pet-land__palm--left {
+  left: 4%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(40, 70, 30, 0.2) 100%);
+  clip-path: polygon(50% 0%, 20% 35%, 0% 45%, 15% 55%, 30% 50%, 45% 80%, 50% 100%, 55% 80%, 70% 50%, 85% 55%, 100% 45%, 80% 35%);
+}
+.pet-land__palm--right {
+  right: 6%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(40, 70, 30, 0.18) 100%);
+  clip-path: polygon(50% 0%, 20% 35%, 0% 45%, 15% 55%, 30% 50%, 45% 80%, 50% 100%, 55% 80%, 70% 50%, 85% 55%, 100% 45%, 80% 35%);
+  transform: scaleX(-1);
+  height: 40px;
+}
+
+@keyframes pet-land-wave {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(80px); }
+}
+
+/* ── Peaks landscape (Winter biome) ────────────────────────────── */
+
+.pet-land__peaks {
+  position: absolute;
+  bottom: 16%;
+  left: -5%;
+  right: -5%;
+  height: 22%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(90, 110, 140, 0.35) 0%, rgba(70, 90, 120, 0.25) 100%);
+  clip-path: polygon(
+    0% 100%,
+    0% 65%,
+    5% 70%,
+    12% 30%,
+    18% 55%,
+    25% 15%,
+    30% 40%,
+    38% 20%,
+    45% 50%,
+    52% 8%,
+    58% 35%,
+    65% 25%,
+    72% 45%,
+    78% 10%,
+    85% 40%,
+    90% 30%,
+    95% 55%,
+    100% 45%,
+    100% 100%
+  );
+}
+
+/* Snow caps on peaks */
+.pet-land__peaks::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+  clip-path: inherit;
+  pointer-events: none;
+}
+
+/* ── Dunes landscape (Desert biome) ────────────────────────────── */
+
+.pet-land__dunes {
+  position: absolute;
+  bottom: 16%;
+  left: -5%;
+  right: -5%;
+  height: 18%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 100% at 15% 100%, rgba(210, 170, 90, 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 100% at 50% 100%, rgba(200, 160, 80, 0.25) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 100% at 80% 100%, rgba(215, 175, 95, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 35% 80% at 35% 100%, rgba(195, 155, 75, 0.2) 0%, transparent 60%);
+}
+
+/* ── Star field (Night biome) ──────────────────────────────────── */
+
+.pet-land__starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pet-land__star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: white;
+  animation: pet-land-star-twinkle ease-in-out infinite;
+}
+
+@keyframes pet-land-star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+/* ── Aurora borealis (Winter biome) ────────────────────────────── */
+
+.pet-land__aurora {
+  position: absolute;
+  top: 5%;
+  left: 0;
+  right: 0;
+  height: 30%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.pet-land__aurora-band {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 35%;
+  filter: blur(18px);
+  opacity: 0.35;
+  will-change: transform, opacity;
+}
+
+.pet-land__aurora-band--1 {
+  top: 10%;
+  background: linear-gradient(90deg, transparent, rgba(100, 220, 140, 0.5), rgba(80, 200, 120, 0.3), transparent);
+  animation: pet-land-aurora-wave 12s ease-in-out infinite;
+}
+.pet-land__aurora-band--2 {
+  top: 35%;
+  background: linear-gradient(90deg, transparent, rgba(80, 200, 200, 0.4), rgba(60, 180, 180, 0.25), transparent);
+  animation: pet-land-aurora-wave 15s ease-in-out infinite 2s;
+}
+.pet-land__aurora-band--3 {
+  top: 55%;
+  background: linear-gradient(90deg, transparent, rgba(140, 100, 200, 0.35), rgba(120, 80, 180, 0.2), transparent);
+  animation: pet-land-aurora-wave 18s ease-in-out infinite 4s;
+}
+
+@keyframes pet-land-aurora-wave {
+  0%, 100% { transform: translateX(-5%) scaleY(0.7); opacity: 0.25; }
+  33% { transform: translateX(3%) scaleY(1.1); opacity: 0.45; }
+  66% { transform: translateX(-2%) scaleY(0.9); opacity: 0.35; }
+}
+
+/* ── Butterflies (Meadow biome) ────────────────────────────────── */
+
+.pet-land__butterflies {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pet-land__butterfly {
+  position: absolute;
+  width: 8px;
+  height: 6px;
+  will-change: transform;
+}
+
+/* Wing shapes via box-shadow pseudo-elements */
+.pet-land__butterfly::before,
+.pet-land__butterfly::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 5px;
+  border-radius: 50% 50% 20% 50%;
+  animation: pet-land-wing-flap 0.4s ease-in-out infinite;
+}
+.pet-land__butterfly::before {
+  left: 0;
+  background: rgba(255, 180, 120, 0.6);
+  transform-origin: right center;
+}
+.pet-land__butterfly::after {
+  right: 0;
+  background: rgba(255, 160, 100, 0.5);
+  transform-origin: left center;
+  animation-delay: 0.05s;
+}
+
+.pet-land__butterfly--1 {
+  top: 20%;
+  left: 15%;
+  animation: pet-land-butterfly-drift-1 18s ease-in-out infinite;
+}
+.pet-land__butterfly--2 {
+  top: 35%;
+  left: 60%;
+  animation: pet-land-butterfly-drift-2 22s ease-in-out infinite 3s;
+}
+.pet-land__butterfly--2::before,
+.pet-land__butterfly--2::after {
+  background: rgba(180, 160, 255, 0.5);
+}
+.pet-land__butterfly--3 {
+  top: 15%;
+  left: 40%;
+  animation: pet-land-butterfly-drift-3 25s ease-in-out infinite 7s;
+}
+.pet-land__butterfly--3::before,
+.pet-land__butterfly--3::after {
+  background: rgba(160, 220, 200, 0.5);
+}
+
+@keyframes pet-land-wing-flap {
+  0%, 100% { transform: scaleX(1) rotateY(0deg); }
+  50% { transform: scaleX(0.3) rotateY(60deg); }
+}
+
+@keyframes pet-land-butterfly-drift-1 {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(40px, -15px); }
+  50% { transform: translate(80px, 5px); }
+  75% { transform: translate(30px, 20px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pet-land-butterfly-drift-2 {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-30px, 10px); }
+  50% { transform: translate(-60px, -8px); }
+  75% { transform: translate(-20px, -18px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pet-land-butterfly-drift-3 {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(20px, 12px); }
+  50% { transform: translate(-15px, 25px); }
+  75% { transform: translate(-35px, 8px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Seagulls (Beach biome) ────────────────────────────────────── */
+
+.pet-land__seagulls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pet-land__seagull {
+  position: absolute;
+  width: 14px;
+  height: 4px;
+  will-change: transform;
+}
+
+/* V-shape via pseudo-elements */
+.pet-land__seagull::before,
+.pet-land__seagull::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 2px;
+  background: rgba(50, 50, 50, 0.45);
+  border-radius: 1px;
+}
+.pet-land__seagull::before {
+  left: 0;
+  transform: rotate(-25deg);
+  transform-origin: right center;
+  animation: pet-land-gull-flap 1.8s ease-in-out infinite;
+}
+.pet-land__seagull::after {
+  right: 0;
+  transform: rotate(25deg);
+  transform-origin: left center;
+  animation: pet-land-gull-flap 1.8s ease-in-out infinite 0.1s;
+}
+
+.pet-land__seagull--1 {
+  top: 18%;
+  animation: pet-land-gull-drift 28s linear infinite;
+}
+.pet-land__seagull--2 {
+  top: 12%;
+  animation: pet-land-gull-drift 35s linear infinite 5s;
+}
+.pet-land__seagull--3 {
+  top: 25%;
+  animation: pet-land-gull-drift 30s linear infinite 12s;
+}
+
+@keyframes pet-land-gull-flap {
+  0%, 100% { transform: rotate(-25deg); }
+  50% { transform: rotate(-40deg); }
+}
+
+@keyframes pet-land-gull-drift {
+  0% { left: -5%; }
+  100% { left: 105%; }
+}
+
+/* ── Shooting stars (Night biome) ──────────────────────────────── */
+
+.pet-land__shooting-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.pet-land__shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 35px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 30%, transparent 100%);
+  border-radius: 1px;
+  transform: rotate(-35deg);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.pet-land__shooting-star--1 {
+  top: 8%;
+  left: 20%;
+  animation: pet-land-shoot 6s ease-in infinite;
+}
+.pet-land__shooting-star--2 {
+  top: 15%;
+  left: 55%;
+  animation: pet-land-shoot 6s ease-in infinite 2.5s;
+}
+.pet-land__shooting-star--3 {
+  top: 5%;
+  left: 75%;
+  animation: pet-land-shoot 6s ease-in infinite 4.5s;
+}
+
+@keyframes pet-land-shoot {
+  0% { opacity: 0; transform: rotate(-35deg) translate(0, 0); }
+  5% { opacity: 1; }
+  15% { opacity: 0.8; transform: rotate(-35deg) translate(60px, 60px); }
+  20% { opacity: 0; transform: rotate(-35deg) translate(100px, 100px); }
+  100% { opacity: 0; }
+}
+
+/* ── Petal stream (Sakura biome) ───────────────────────────────── */
+
+.pet-land__petal-stream {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.pet-land__petal {
+  position: absolute;
+  top: -8px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(255, 180, 200, 0.7), rgba(255, 160, 190, 0.3));
+  border-radius: 50% 0 50% 0;
+  will-change: transform, opacity;
+  animation: pet-land-petal-fall ease-in-out infinite;
+}
+
+@keyframes pet-land-petal-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% { opacity: 0.8; }
+  50% {
+    transform: translateY(45vh) translateX(25px) rotate(180deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(95vh) translateX(-15px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ── Heat shimmer (Desert biome) ───────────────────────────────── */
+
+.pet-land__heat-shimmer {
+  position: absolute;
+  bottom: 18%;
+  left: 0;
+  right: 0;
+  height: 12%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 220, 140, 0.06) 50%,
+    transparent 100%
+  );
+  animation: pet-land-shimmer 3s ease-in-out infinite;
+  filter: blur(1px);
+  will-change: transform;
+}
+
+@keyframes pet-land-shimmer {
+  0%, 100% { transform: scaleY(1) translateY(0); opacity: 0.4; }
+  25% { transform: scaleY(1.05) translateY(-1px); opacity: 0.6; }
+  50% { transform: scaleY(0.95) translateY(1px); opacity: 0.3; }
+  75% { transform: scaleY(1.03) translateY(-0.5px); opacity: 0.55; }
+}
+
+/* ── Biome-specific weather particle styles ────────────────────── */
+
+.weather-petal--sakura {
+  background: radial-gradient(circle, rgba(255, 170, 190, 0.7), rgba(255, 140, 170, 0.3));
+  width: 5px;
+  height: 5px;
+}
+
+.weather-firefly--bioluminescent {
+  background: radial-gradient(circle, rgba(100, 255, 200, 0.9), rgba(80, 220, 180, 0.4));
+  box-shadow: 0 0 6px 2px rgba(100, 255, 200, 0.4);
+}
+
+/* ── Performance: hide heavy sky animations at high pet counts ── */
+
+.pet-land--perf-low .pet-land__aurora,
+.pet-land--perf-low .pet-land__shooting-stars,
+.pet-land--perf-low .pet-land__petal-stream,
+.pet-land--perf-low .pet-land__butterflies,
+.pet-land--perf-low .pet-land__seagulls,
+.pet-land--perf-low .pet-land__heat-shimmer,
+.pet-land--perf-low .pet-land__starfield {
+  display: none;
+}
+
+.pet-land--perf-med .pet-land__petal-stream .pet-land__petal:nth-child(n+10),
+.pet-land--perf-med .pet-land__starfield .pet-land__star:nth-child(n+15) {
+  display: none;
+}
+
 /* ── Reduced motion ──────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1335,6 +1960,7 @@
   .pet-land__island-shadow,
   .pet-land__cloud,
   .pet-land__sun,
+  .pet-land__moon,
   .pet-land__rays {
     animation: none;
   }
@@ -1356,6 +1982,19 @@
   .pet-land--dawn::after,
   .pet-land--dusk::after,
   .pet-land--nighttime::after { display: none; }
+
+  /* Biome sky animations */
+  .pet-land__aurora-band,
+  .pet-land__butterfly,
+  .pet-land__seagull,
+  .pet-land__shooting-star,
+  .pet-land__petal,
+  .pet-land__heat-shimmer,
+  .pet-land__star,
+  .pet-land__ocean::before,
+  .pet-land__ocean::after {
+    animation: none !important;
+  }
 }
 
 /* ── Compact Pet Tooltip ───────────────────────────────────────── */
