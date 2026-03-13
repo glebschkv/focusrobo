@@ -51,7 +51,7 @@ export function IslandUnlockModal({ islandIndex, onClose }: IslandUnlockModalPro
     onClose();
   }, [canUnlock, def, spendCoins, unlockIsland, islandIndex, haptic, onClose]);
 
-  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[2]} 50%, ${theme.grassLight[0]} 80%, ${theme.grassDark[0]} 100%)`;
+  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[Math.floor(theme.sky.length / 2)] || theme.sky[1]} 50%, ${theme.grassLight[0]} 80%, ${theme.grassDark[0]} 100%)`;
 
   return (
     <div className="island-unlock-overlay" onClick={onClose}>

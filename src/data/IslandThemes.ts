@@ -9,8 +9,8 @@
 export interface IslandTheme {
   id: string;
   name: string;
-  /** 4-stop sky gradient (top → bottom) */
-  sky: [string, string, string, string];
+  /** Sky gradient stops (top → bottom), variable length for richer gradients */
+  sky: string[];
   /** Checkerboard tile colors */
   grassLight: [string, string];
   grassDark: [string, string];
@@ -90,6 +90,18 @@ export interface IslandTheme {
     type: 'none' | 'butterflies' | 'seagulls' | 'aurora' | 'shooting-stars' | 'petal-stream' | 'heat-shimmer';
     cssClass: string;
   };
+
+  /** Atmospheric fog/mist layer */
+  fog: {
+    color: string;
+    opacity: number;
+  };
+
+  /** Edge vignette darkening */
+  vignette: {
+    color: string;
+    opacity: number;
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -102,7 +114,7 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
   day: {
     id: 'day',
     name: 'Meadow',
-    sky: ['#58B8E8', '#8CD4F4', '#C0E8F8', '#E8F6F2'],
+    sky: ['#4A9ED6', '#5AADE0', '#72C0E8', '#8ED2F0', '#AAE0F4', '#C4EAF6', '#D8F0F4', '#EAF6F0', '#F4FAF2'],
     grassLight: ['#D4F488', '#C0E870'],
     grassDark: ['#9CCE4C', '#8CC040'],
     grassBase: ['#C4E87A', '#B0D85A', '#9CC84E', '#88B842'],
@@ -164,13 +176,15 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'butterflies',
       cssClass: 'pet-land--biome-meadow',
     },
+    fog: { color: 'rgba(255, 252, 240, 0.6)', opacity: 0.18 },
+    vignette: { color: 'rgba(40, 60, 20, 0.4)', opacity: 0.12 },
   },
 
   // ─── CORAL REEF — Tropical Paradise ──────────────────────────────
   beach: {
     id: 'beach',
     name: 'Beach',
-    sky: ['#5BB8E8', '#82D0F0', '#B0E4F8', '#E8F4FA'],
+    sky: ['#3A8CC8', '#4EA0D8', '#68B4E4', '#88CBF0', '#A8DDF6', '#C8EAF8', '#E0F0F6', '#F0E8E0', '#F8E4D0'],
     grassLight: ['#F5E6A8', '#ECD898'],
     grassDark: ['#E0CA78', '#D4BC68'],
     grassBase: ['#F0E0A0', '#E4D490', '#D8C880', '#CCB870'],
@@ -232,13 +246,15 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'seagulls',
       cssClass: 'pet-land--biome-beach',
     },
+    fog: { color: 'rgba(200, 230, 255, 0.5)', opacity: 0.15 },
+    vignette: { color: 'rgba(20, 50, 80, 0.35)', opacity: 0.10 },
   },
 
   // ─── SNOW PEAK — Crystalline Summit ──────────────────────────────
   winter: {
     id: 'winter',
     name: 'Winter',
-    sky: ['#1A3050', '#3A5878', '#6888A8', '#98B8D0'],
+    sky: ['#0E1E38', '#1A3050', '#2A4868', '#3E6088', '#5878A0', '#7898B8', '#98B4CC', '#B4CCE0', '#D0E0EC'],
     grassLight: ['#E8F0F8', '#D8E8F0'],
     grassDark: ['#C4D8E8', '#B0CCE0'],
     grassBase: ['#D8E8F2', '#C8DCE8', '#B8D0E0', '#A8C4D8'],
@@ -300,13 +316,15 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'aurora',
       cssClass: 'pet-land--biome-winter',
     },
+    fog: { color: 'rgba(180, 210, 240, 0.6)', opacity: 0.22 },
+    vignette: { color: 'rgba(10, 20, 40, 0.5)', opacity: 0.18 },
   },
 
   // ─── DESERT OASIS — Golden Mirage ────────────────────────────────
   desert: {
     id: 'desert',
     name: 'Desert',
-    sky: ['#D4A050', '#E0B868', '#E8D098', '#F4E8D0'],
+    sky: ['#B87830', '#C89040', '#D8A850', '#E4BC68', '#ECD088', '#F2DCA0', '#F6E4B8', '#FAF0D4', '#FDF6E8'],
     grassLight: ['#F0D898', '#E8CC88'],
     grassDark: ['#D4B870', '#C8AC60'],
     grassBase: ['#E8D090', '#DCC480', '#D0B870', '#C4AC60'],
@@ -368,13 +386,15 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'heat-shimmer',
       cssClass: 'pet-land--biome-desert',
     },
+    fog: { color: 'rgba(255, 230, 170, 0.5)', opacity: 0.20 },
+    vignette: { color: 'rgba(80, 40, 10, 0.4)', opacity: 0.14 },
   },
 
   // ─── MOONLIT GARDEN — Bioluminescent Wonderland ──────────────────
   night: {
     id: 'night',
     name: 'Night Garden',
-    sky: ['#0A1020', '#0F1B2E', '#1A2840', '#253550'],
+    sky: ['#060810', '#0A1020', '#0E1830', '#142040', '#1A2850', '#1E3058', '#243860', '#2A4068', '#2E4570'],
     grassLight: ['#2A5A3A', '#246048'],
     grassDark: ['#1E4030', '#183828'],
     grassBase: ['#285840', '#225038', '#1C4830', '#164028'],
@@ -436,13 +456,15 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'shooting-stars',
       cssClass: 'pet-land--biome-night',
     },
+    fog: { color: 'rgba(30, 20, 60, 0.5)', opacity: 0.15 },
+    vignette: { color: 'rgba(5, 5, 15, 0.6)', opacity: 0.25 },
   },
 
   // ─── SAKURA VALLEY — Eternal Blossom Dream ───────────────────────
   sakura: {
     id: 'sakura',
     name: 'Sakura',
-    sky: ['#E8A0B8', '#F0B8C8', '#F8D0DC', '#FFF0F4'],
+    sky: ['#D888A8', '#E098B8', '#E8AAC4', '#F0BCD2', '#F4CCDC', '#F8D8E4', '#FCE4EC', '#FFF0F4', '#FFF8FA'],
     grassLight: ['#FFD4E0', '#F8C4D0'],
     grassDark: ['#F0A0B8', '#E890A8'],
     grassBase: ['#F8C8D8', '#F0B8C8', '#E8A8B8', '#E098A8'],
@@ -504,6 +526,8 @@ export const ISLAND_THEMES: Record<string, IslandTheme> = {
       type: 'petal-stream',
       cssClass: 'pet-land--biome-sakura',
     },
+    fog: { color: 'rgba(255, 210, 230, 0.5)', opacity: 0.16 },
+    vignette: { color: 'rgba(80, 30, 50, 0.35)', opacity: 0.12 },
   },
 };
 

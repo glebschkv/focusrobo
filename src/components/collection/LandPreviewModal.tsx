@@ -23,7 +23,7 @@ export function LandPreviewModal({ land, isOpen, onClose }: LandPreviewModalProp
   const totalCells = getAvailableCellCount(land.gridSize);
   const focusHours = Math.round(land.totalFocusMinutes / 60 * 10) / 10;
   const theme = getIslandTheme(land.theme || 'day');
-  const skyGradient = `linear-gradient(180deg, ${theme.sky[0]} 0%, ${theme.sky[1]} 35%, ${theme.sky[2]} 65%, ${theme.sky[3]} 100%)`;
+  const skyGradient = `linear-gradient(180deg, ${theme.sky.map((c, i) => `${c} ${Math.round((i / (theme.sky.length - 1)) * 100)}%`).join(', ')})`;
 
   // Count rarities
   const rarities = { common: 0, uncommon: 0, rare: 0, epic: 0, legendary: 0 };
