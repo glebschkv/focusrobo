@@ -127,6 +127,7 @@ src/
 │   ├── DecorationPicker.tsx   # Bottom sheet for placing decorations from inventory
 │   ├── WeatherParticles.tsx   # Ambient weather particles (dust, snow, leaves, sparkles, fireflies)
 │   ├── HomeGoalsWidget.tsx    # Goals widget on home screen
+│   ├── NextGoalWidget.tsx     # Compact "next goal" card below status bar (auto-rotates closest goals)
 │   ├── GameUI.tsx             # Tab navigation + status bar + reward modals overlay
 │   ├── TabContent.tsx         # Lazy-loaded tab renderer with skeleton fallbacks
 │   ├── IOSTabBar.tsx          # Bottom tab bar (iOS-native style)
@@ -376,7 +377,7 @@ All stores use `zustand/persist` (except navigationStore) with validated localSt
 | `streakStore` | `nomo_streak_data` | No | Current streak, longest streak, streak freezes (max 3), total sessions |
 | `focusStore` | `nomo_focus_mode` | No | Focus mode settings, blocked apps, strict mode |
 | `navigationStore` | *(not persisted)* | — | Active tab, modal state, navigation history |
-| `shopStore` | `nomo_shop_inventory` | No | Owned characters/backgrounds, equipped background, purchased bundles |
+| `shopStore` | `nomo_shop_inventory` | No | Owned characters/backgrounds, equipped background, purchased bundles, daily deal purchase date |
 | `collectionStore` | `botblock-collection` | No | Legacy collection state (activeHomeBots, favorites) |
 | `soundStore` | `nomo_sound` | No | Sound mixer layers, ambient sounds, island ambient, volume |
 | `questStore` | `nomo_quest_system` | No | Daily/weekly quests, daily/weekly challenges |
@@ -616,6 +617,25 @@ Defined in `IslandThemes.ts`. Each theme specifies: sky gradient (4 stops), gras
 - **Quest completion celebration**: Animated green checkmarks (scale-in 300ms) + coin reward display in SessionCompleteView
 - **`DAILY_SWEEP_BONUS`** constant: 200 (in `GamificationData.ts`)
 - **60+ achievements** with rarity-based point values
+
+### Next Goal Widget
+- Compact 44px card shown on home screen below the status bar
+- Calculates % completion for: next level (xpStore), next island unlock (coinStore + ArchipelagoData), next species milestone (landStore + GamificationData)
+- Shows the goal closest to completion (highest %)
+- Auto-rotates every 8s between goals within 20% of each other
+- Tappable popover shows top 3 upcoming goals
+- Glass/blur effect matching the home screen aesthetic
+- Component: `src/components/NextGoalWidget.tsx`, styles in `src/styles/pet-land.css`
+
+### Daily Deal
+- Deterministic daily rotating deal in the shop's Featured tab
+- Deal types (weighted): 40% egg (30% off), 30% decoration (40% off), 30% background (25% off)
+- Seed: hash of date string for consistent daily selection
+- Players below level 10 get cheaper items weighted
+- Gold/amber bordered card with shimmer, countdown timer to midnight
+- "Claimed" state when purchased (tracked in `shopStore.dailyDealPurchasedDate`)
+- Function: `getDailyDeal(playerLevel)` in `src/data/ShopData.ts`
+- UI: `src/components/shop/tabs/FeaturedTab.tsx`, styles in `src/styles/shop.css`
 
 ## Key Hooks
 

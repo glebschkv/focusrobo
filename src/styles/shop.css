@@ -1292,3 +1292,120 @@
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Daily Deal Card
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.shop-daily-deal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 14px 10px;
+  border: 2px solid #D4A040;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #FFFBF2 0%, #FFF6E8 100%);
+  box-shadow:
+    0 2px 8px rgba(212, 160, 64, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.shop-daily-deal::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 215, 0, 0.06) 50%,
+    transparent 60%
+  );
+  animation: deal-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes deal-shimmer {
+  0% { transform: translateX(-30%) translateY(-30%) rotate(45deg); }
+  100% { transform: translateX(30%) translateY(30%) rotate(45deg); }
+}
+
+.shop-daily-deal:active {
+  transform: scale(0.97);
+}
+
+.shop-daily-deal:disabled {
+  cursor: default;
+}
+
+.shop-daily-deal:disabled:active {
+  transform: none;
+}
+
+.shop-daily-deal--sold {
+  border-color: #A8C078;
+  background: linear-gradient(180deg, #F8FAF0 0%, #F0F5E0 100%);
+}
+
+.shop-daily-deal--sold::before {
+  display: none;
+}
+
+.shop-daily-deal__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #F5D060 0%, #E8B84B 100%);
+  font-size: 10px;
+  font-weight: 800;
+  color: #5C3D1A;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.shop-daily-deal__icon-frame {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid #D4C4A0;
+  background: linear-gradient(180deg, #FFF8EE 0%, #F5EFE0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.shop-daily-deal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid rgba(212, 160, 64, 0.15);
+  z-index: 1;
+}
+
+.shop-daily-deal__discount {
+  font-size: 11px;
+  font-weight: 800;
+  color: #6B9E58;
+  letter-spacing: 0.02em;
+}
+
+.shop-daily-deal__countdown {
+  font-size: 10px;
+  font-weight: 600;
+  color: #A0937E;
+}
