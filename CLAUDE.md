@@ -52,7 +52,7 @@ Unlock themed islands (Coral Reef, Snow Peak, etc.) with coins + level
 - **Pet sizes**: Baby (25-45 min), Adolescent (60-90 min), Adult (120+ min) — depth-scaled on island
 - **Rarity**: common, uncommon, rare, epic, legendary — with CSS glow/shimmer effects
 - **Assets**: `public/assets/pets/*.png` (41 species × 4 variants = 164 PNGs)
-- **Decorations**: 20 placeable items across 6 categories — `public/assets/decorations/*.png` (48×48 pixel art PNGs)
+- **Decorations**: 56 placeable items (20 universal + 36 biome-specific) across 6 categories — `public/assets/decorations/*.png` (48×48 pixel art PNGs)
 
 ## Quick Facts
 
@@ -273,7 +273,7 @@ src/
 │   ├── ArchipelagoData.ts     # 6 archipelago island definitions with unlock/cost/bonuses
 │   ├── IslandThemes.ts        # 11 island themes with full color configs (sky, grass, cliff, particles)
 │   ├── islandPositions.ts     # Island slot positions, isometric projection, depth scaling, expansion tiers
-│   ├── DecorationData.ts      # 20 decoration definitions (6 categories), rarity, prices, sprites
+│   ├── DecorationData.ts      # 56 decoration definitions (20 universal + 36 biome-specific), rarity, prices, sprites
 │   ├── ShopData.ts            # Shop items, backgrounds, bundles, coin packs, utility items
 │   ├── GamificationData.ts    # 41 milestones, 20 daily + 10 weekly challenge templates
 │   ├── AmbientSoundsData.ts   # 31 ambient sounds (8 free + 23 premium), 5 categories
@@ -551,7 +551,7 @@ Defined in `IslandThemes.ts`. Each theme is auto-derived from the active archipe
 
 ### Decoration System
 
-20 decorations across 6 categories (trees, flowers, rocks, water, structures, fun). Prices range 80–500 coins. Decorations occupy tiles but don't count toward island completion. Edit mode toggle on PetLand enables place/pick-up UX via `DecorationPicker` bottom sheet.
+56 decorations across 6 categories (trees, flowers, rocks, water, structures, fun). 20 are universal (available on all islands), 36 are biome-specific (6 per biome: Meadow, Beach, Winter, Desert, Night Garden, Sakura). Biome decorations use matching color palettes and themes. Prices range 80–500 coins. Decorations occupy tiles but don't count toward island completion. Edit mode toggle on PetLand enables place/pick-up UX via `DecorationPicker` bottom sheet. Shop DecorTab shows biome-aware filtering. DecorationPicker filters inventory by current island biome. landStore validates biome restrictions on placement.
 
 ## Game Systems
 
@@ -823,9 +823,9 @@ cd website && npm run build                 # Production build
 | Asset | Location | Count | Format | Status |
 |-------|----------|-------|--------|--------|
 | Pet sprites | `public/assets/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
-| Decoration sprites | `public/assets/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (Pillow-generated) |
+| Decoration sprites | `public/assets/decorations/` | 56 | 48×48 RGBA PNG | 20 universal (placeholder) + 36 biome-specific (PixelLab AI-generated) |
 | Website pet copies | `website/public/pets/` | 164 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
-| Website decoration copies | `website/public/decorations/` | 20 | 48×48 RGBA PNG | **Placeholder** (copies of above) |
+| Website decoration copies | `website/public/decorations/` | 56 | 48×48 RGBA PNG | Copies of above |
 | Icons | `public/assets/icons/` | 177 | PNG | Done |
 | Robots (legacy) | `public/assets/robots/` | 25 | SVG | Legacy (unused) |
 | Worlds | `public/assets/worlds/` | 11 | PNG | Done |

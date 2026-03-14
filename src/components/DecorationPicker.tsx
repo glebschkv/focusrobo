@@ -8,6 +8,7 @@
 import { useMemo } from 'react';
 import { useLandStore } from '@/stores/landStore';
 import { getDecorationById, type DecorationDef } from '@/data/DecorationData';
+import { ARCHIPELAGO_ISLANDS } from '@/data/ArchipelagoData';
 
 interface DecorationPickerProps {
   selectedDecorationId: string | null;
@@ -17,16 +18,27 @@ interface DecorationPickerProps {
 
 export const DecorationPicker = ({ selectedDecorationId, onSelect, onDone }: DecorationPickerProps) => {
   const decorationInventory = useLandStore((s) => s.decorationInventory);
+  const archipelago = useLandStore((s) => s.archipelago);
+  const activeIslandIndex = useLandStore((s) => s.activeIslandIndex);
+
+  const currentBiome = useMemo(() => {
+    const activeIsland = archipelago[activeIslandIndex];
+    if (!activeIsland) return 'day';
+    return ARCHIPELAGO_ISLANDS.find(i => i.id === activeIsland.islandId)?.biome || 'day';
+  }, [archipelago, activeIslandIndex]);
 
   const items = useMemo(() => {
     const result: { def: DecorationDef; qty: number }[] = [];
     for (const [id, qty] of Object.entries(decorationInventory)) {
       if (qty <= 0) continue;
       const def = getDecorationById(id);
-      if (def) result.push({ def, qty });
+      if (!def) continue;
+      // Only show universal decorations or those matching the current biome
+      if (def.biome && def.biome !== currentBiome) continue;
+      result.push({ def, qty });
     }
     return result;
-  }, [decorationInventory]);
+  }, [decorationInventory, currentBiome]);
 
   const isEmpty = items.length === 0;
 

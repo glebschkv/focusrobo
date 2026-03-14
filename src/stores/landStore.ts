@@ -28,6 +28,8 @@ import {
   MIN_GRID_TIER,
   MAX_GRID_TIER,
 } from '@/data/islandPositions';
+import { getDecorationById } from '@/data/DecorationData';
+import { ARCHIPELAGO_ISLANDS } from '@/data/ArchipelagoData';
 
 // ============================================================================
 // Types
@@ -791,7 +793,17 @@ export const useLandStore = create<LandStore>()(
       },
 
       placeDecoration: (decorationId: string, cellIndex: number) => {
-        const { currentLand, decorationInventory } = get();
+        const { currentLand, decorationInventory, archipelago, activeIslandIndex } = get();
+        // Validate biome restriction
+        const decoration = getDecorationById(decorationId);
+        if (decoration?.biome) {
+          const activeIsland = archipelago[activeIslandIndex];
+          const islandDef = activeIsland
+            ? ARCHIPELAGO_ISLANDS.find(i => i.id === activeIsland.islandId)
+            : undefined;
+          const currentBiome = islandDef?.biome || 'day';
+          if (decoration.biome !== currentBiome) return false;
+        }
         // Validate: cell must be empty and within available range
         if (currentLand.cells[cellIndex] !== null) return false;
         const available = getAvailableCellIndices(currentLand.gridSize);
