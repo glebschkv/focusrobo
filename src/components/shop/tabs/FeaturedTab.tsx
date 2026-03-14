@@ -49,7 +49,6 @@ export const FeaturedTab = ({
   const bestValuePack = COIN_PACKS.find(pack => pack.isBestValue) || COIN_PACKS[COIN_PACKS.length - 1];
   const playerLevel = useCurrentLevel();
   const isDailyDealPurchased = useShopStore((s) => s.isDailyDealPurchased);
-  const setDailyDealPurchased = useShopStore((s) => s.setDailyDealPurchased);
 
   const [selectedBundle, setSelectedBundle] = useState<StarterBundle | CoinPack | null>(null);
   const [showBundleConfirm, setShowBundleConfirm] = useState(false);
@@ -88,7 +87,6 @@ export const FeaturedTab = ({
     };
     setSelectedItem(dealItem);
     setShowPurchaseConfirm(true);
-    setDailyDealPurchased();
   };
 
   const handleIAPPurchase = async () => {

@@ -378,7 +378,7 @@ All stores use `zustand/persist` (except navigationStore) with validated localSt
 | `streakStore` | `nomo_streak_data` | No | Current streak, longest streak, streak freezes (max 3), total sessions |
 | `focusStore` | `nomo_focus_mode` | No | Focus mode settings, blocked apps, strict mode |
 | `navigationStore` | *(not persisted)* | — | Active tab, modal state, navigation history |
-| `shopStore` | `nomo_shop_inventory` | No | Owned characters/backgrounds, equipped background, purchased bundles, daily deal purchase date |
+| `shopStore` | `nomo_shop_inventory` | No | Owned characters/backgrounds, equipped background, purchased bundles, daily deal purchase date, starter egg purchased flag |
 | `collectionStore` | `botblock-collection` | No | Legacy collection state (activeHomeBots, favorites) |
 | `soundStore` | `nomo_sound` | No | Sound mixer layers, ambient sounds, island ambient, volume |
 | `questStore` | `nomo_quest_system` | No | Daily/weekly quests, daily/weekly challenges |
@@ -466,7 +466,7 @@ Premium rarity boost shifts weights: common -8, uncommon +2, rare +3, epic +2, l
 
 | Egg | Price | Common | Uncommon | Rare | Epic | Legendary |
 |-----|-------|--------|----------|------|------|-----------|
-| Starter Egg | 50 coins | 95% | 5% | 0% | 0% | 0% |
+| Starter Egg | 50 coins (one-time) | 95% | 5% | 0% | 0% | 0% |
 | Common Egg | 150 coins | 80% | 15% | 5% | 0% | 0% |
 | Rare Egg | 600 coins | 40% | 35% | 20% | 5% | 0% |
 | Epic Egg | 1,200 coins | 0% | 15% | 40% | 35% | 10% |

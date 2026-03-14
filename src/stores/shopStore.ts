@@ -34,6 +34,8 @@ export interface ShopInventory {
   purchasedStarterBundleIds: string[];
   /** Date string (YYYY-MM-DD) when today's daily deal was purchased, or null */
   dailyDealPurchasedDate: string | null;
+  /** Whether the one-time Starter Egg has been purchased */
+  starterEggPurchased: boolean;
 }
 
 interface ShopState extends ShopInventory {
@@ -48,6 +50,7 @@ interface ShopState extends ShopInventory {
   resetShop: () => void;
   setDailyDealPurchased: () => void;
   isDailyDealPurchased: () => boolean;
+  setStarterEggPurchased: () => void;
 
   // Selectors
   isCharacterOwned: (characterId: string) => boolean;
@@ -60,6 +63,7 @@ const initialState: ShopInventory = {
   equippedBackground: null,
   purchasedStarterBundleIds: [],
   dailyDealPurchasedDate: null,
+  starterEggPurchased: false,
 };
 
 export const useShopStore = create<ShopState>()(
@@ -133,6 +137,11 @@ export const useShopStore = create<ShopState>()(
       isDailyDealPurchased: () => {
         const today = new Date().toISOString().split('T')[0];
         return get().dailyDealPurchasedDate === today;
+      },
+
+      setStarterEggPurchased: () => {
+        set({ starterEggPurchased: true });
+        shopLogger.debug('Starter egg marked as purchased');
       },
 
       // Selectors
