@@ -11,6 +11,7 @@ import {
   ShopItem,
   Bundle,
 } from "@/data/ShopData";
+import { getEggById } from "@/data/EggData";
 import { PremiumSubscription } from "@/components/PremiumSubscription";
 import { toast } from "sonner";
 import { playSoundEffect } from "@/hooks/useSoundEffects";
@@ -20,6 +21,10 @@ import { InventoryTab } from "@/components/shop/tabs/InventoryTab";
 import { EggsTab } from "@/components/shop/tabs/EggsTab";
 import { DecorTab } from "@/components/shop/tabs/DecorTab";
 import { PurchaseConfirmDialog } from "@/components/shop/PurchaseConfirmDialog";
+import { useLandStore } from "@/stores/landStore";
+import { useShopStore } from "@/stores/shopStore";
+import { useCurrentLevel, useCurrentXP, calculateLevelFromXP } from "@/stores/xpStore";
+import { useCoinSystem } from "@/hooks/useCoinSystem";
 
 const CATEGORY_ICONS: Record<string, string> = {
   eggs: 'egg',
@@ -56,6 +61,17 @@ export const Shop = () => {
 
   const { isPremium, currentPlan } = usePremiumStatus();
 
+  const hatchEgg = useLandStore((s) => s.hatchEgg);
+  const placePendingPet = useLandStore((s) => s.placePendingPet);
+  const addDecorationToInventory = useLandStore((s) => s.addDecorationToInventory);
+  const setDailyDealPurchased = useShopStore((s) => s.setDailyDealPurchased);
+  const coinSystem = useCoinSystem();
+  const storedLevel = useCurrentLevel();
+  const currentXP = useCurrentXP();
+  const currentLevel = storedLevel === 0 && currentXP > 0
+    ? calculateLevelFromXP(currentXP)
+    : storedLevel;
+
   // Listen for external navigation requests
   useEffect(() => {
     const handleNavigate = (event: CustomEvent<ShopCategory>) => {
@@ -79,7 +95,39 @@ export const Shop = () => {
       if ('itemIds' in selectedItem) {
         result = await purchaseBundle(selectedItem.id);
       } else {
-        result = await purchaseItem(selectedItem.id, activeCategory);
+        const itemCategory = selectedItem.category || activeCategory;
+
+        // Daily deal egg/decor items need dedicated handling since
+        // purchaseItem only supports customize/powerups categories.
+        if (itemCategory === 'eggs') {
+          const egg = getEggById(selectedItem.id);
+          if (!egg) {
+            result = { success: false, message: 'Egg not found' };
+          } else {
+            const price = selectedItem.coinPrice ?? egg.coinPrice;
+            const spent = await coinSystem.spendCoins(price, 'shop_purchase');
+            if (!spent) {
+              result = { success: false, message: 'Not enough coins!' };
+            } else {
+              hatchEgg(egg, currentLevel);
+              placePendingPet();
+              setDailyDealPurchased();
+              result = { success: true, message: `Hatched a new pet from ${egg.name}!` };
+            }
+          }
+        } else if (itemCategory === 'decor') {
+          const price = selectedItem.coinPrice ?? 0;
+          const spent = await coinSystem.spendCoins(price, 'shop_purchase');
+          if (!spent) {
+            result = { success: false, message: 'Not enough coins!' };
+          } else {
+            addDecorationToInventory(selectedItem.id);
+            setDailyDealPurchased();
+            result = { success: true, message: `${selectedItem.name} added to your inventory!` };
+          }
+        } else {
+          result = await purchaseItem(selectedItem.id, itemCategory);
+        }
       }
 
       if (result.success) {

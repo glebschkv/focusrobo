@@ -18,6 +18,7 @@ import { usePremiumStatus } from '@/hooks/usePremiumStatus';
 import { getEggDiscountedPrice } from '@/hooks/useShop';
 import { toast } from 'sonner';
 import { playSoundEffect } from '@/hooks/useSoundEffects';
+import { useShopStore } from '@/stores/shopStore';
 import { SpeciesSelectorModal } from '../SpeciesSelectorModal';
 import { EggHatchAnimation } from '../EggHatchAnimation';
 
@@ -55,6 +56,8 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
     : storedLevel;
   const { getEggDiscountPercent, isPremium } = usePremiumStatus();
   const discountPercent = getEggDiscountPercent();
+  const starterEggPurchased = useShopStore((s) => s.starterEggPurchased);
+  const setStarterEggPurchased = useShopStore((s) => s.setStarterEggPurchased);
 
   const handleSelectSpecies = async (speciesId: string, isDiscovered: boolean) => {
     const price = isDiscovered ? SPECIES_SELECTOR_DISCOVERED_PRICE : SPECIES_SELECTOR_UNDISCOVERED_PRICE;
@@ -99,6 +102,9 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       const pet = hatchEgg(egg, currentLevel);
       placePendingPet();
       playSoundEffect('purchase');
+      if (egg.id === 'egg-starter') {
+        setStarterEggPurchased();
+      }
       // Show hatch animation instead of toast
       setHatchResult({ eggRarity: egg.rarity, pet });
     } catch {
@@ -127,17 +133,21 @@ export const EggsTab = ({ coinBalance, canAfford }: EggsTabProps) => {
       {/* Nest cards */}
       <div className="grid grid-cols-2 gap-2.5">
         {EGG_TYPES.map((egg, index) => {
+          const isStarter = egg.id === 'egg-starter';
+          const isClaimed = isStarter && starterEggPurchased;
           const effectivePrice = getEggDiscountedPrice(egg.coinPrice, discountPercent);
           return (
             <NestCard
               key={egg.id}
               egg={egg}
               index={index}
-              canAfford={canAfford(effectivePrice)}
+              canAfford={canAfford(effectivePrice) && !isClaimed}
               onHatch={() => handleHatch(egg)}
               hatching={hatching}
               discountPercent={discountPercent}
               effectivePrice={effectivePrice}
+              isStarter={isStarter}
+              isClaimed={isClaimed}
             />
           );
         })}
@@ -207,6 +217,8 @@ function NestCard({
   hatching,
   discountPercent,
   effectivePrice,
+  isStarter = false,
+  isClaimed = false,
 }: {
   egg: EggType;
   index: number;
@@ -215,14 +227,32 @@ function NestCard({
   hatching: boolean;
   discountPercent: number;
   effectivePrice: number;
+  isStarter?: boolean;
+  isClaimed?: boolean;
 }) {
   return (
     <div className={cn(
       'egg-nest-card flex flex-col',
       RARITY_CARD_CLASS[egg.rarity],
+      isClaimed && 'opacity-60',
     )}>
       {/* Rarity accent strip */}
       <div className={cn('egg-rarity-strip', RARITY_STRIP_COLORS[egg.rarity])} />
+
+      {/* Starter / Claimed badge */}
+      {isStarter && (
+        <div className="absolute top-1.5 right-1.5 z-10">
+          {isClaimed ? (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: '#6B9E58' }}>
+              Hatched
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold text-white" style={{ background: 'linear-gradient(135deg, #D4A84E, #C87941)' }}>
+              First Egg!
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Egg display area */}
       <div className="egg-icon-area">
@@ -306,13 +336,13 @@ function NestCard({
           </div>
           <button
             onClick={onHatch}
-            disabled={!canAfford || hatching}
+            disabled={!canAfford || hatching || isClaimed}
             className={cn(
               'hatch-button text-[11px]',
-              canAfford && !hatching ? 'affordable' : 'disabled',
+              canAfford && !hatching && !isClaimed ? 'affordable' : 'disabled',
             )}
           >
-            {hatching ? '...' : 'Hatch'}
+            {isClaimed ? 'Claimed' : hatching ? '...' : 'Hatch'}
           </button>
         </div>
       </div>

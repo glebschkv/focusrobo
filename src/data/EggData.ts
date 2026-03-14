@@ -21,7 +21,7 @@ export const EGG_TYPES: EggType[] = [
   {
     id: 'egg-starter',
     name: 'Starter Egg',
-    description: 'A simple egg for beginners.',
+    description: 'Your first companion! Hatches a common pet to start your island.',
     coinPrice: 50,
     rarityWeights: { common: 95, uncommon: 5, rare: 0, epic: 0, legendary: 0 },
     icon: 'egg',
