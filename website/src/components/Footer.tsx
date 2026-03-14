@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
-const PARADE_PETS = ['bunny', 'chick', 'frog', 'capybara', 'cat', 'hedgehog', 'fox', 'corgi'];
+const PARADE_PETS_ROW1 = ['bunny', 'chick', 'frog', 'capybara', 'cat', 'hedgehog', 'fox', 'corgi'];
+const PARADE_PETS_ROW2 = ['owl', 'penguin', 'turtle', 'deer', 'shiba-inu', 'dragon', 'panda', 'koala'];
 
 export function Footer() {
   return (
@@ -56,15 +57,27 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Pet parade */}
+      {/* Pet parade — two rows going opposite directions */}
       <div className="pet-parade">
-        {PARADE_PETS.map((pet, i) => (
+        {PARADE_PETS_ROW1.map((pet, i) => (
           <img
             key={pet}
             src={`/pets/${pet}-baby.png`}
             alt=""
             className="pet-parade__pet"
             style={{ animationDelay: `${i * 2.5}s`, left: `${i * -50}px` }}
+            loading="lazy"
+          />
+        ))}
+      </div>
+      <div className="pet-parade pet-parade--reverse">
+        {PARADE_PETS_ROW2.map((pet, i) => (
+          <img
+            key={pet}
+            src={`/pets/${pet}-baby.png`}
+            alt=""
+            className="pet-parade__pet"
+            style={{ animationDelay: `${i * 2.5}s`, right: `${i * -50}px` }}
             loading="lazy"
           />
         ))}

@@ -2,6 +2,7 @@
  * IslandSVG — Ported from main app with 'day' theme inlined.
  * Isometric floating island as inline SVG.
  */
+import { memo } from 'react';
 
 // ─── Geometry Constants ────────────────────────────────────────────
 const VB_W = 420;
@@ -347,7 +348,7 @@ interface IslandSVGProps {
   gridSize?: number;
 }
 
-export const IslandSVG = ({ gridSize = 10 }: IslandSVGProps) => {
+export const IslandSVG = memo(({ gridSize = 10 }: IslandSVGProps) => {
   const tiles = getTiles(gridSize);
   return (
   <svg
@@ -479,4 +480,6 @@ export const IslandSVG = ({ gridSize = 10 }: IslandSVGProps) => {
     <line x1={BOTTOM.x} y1={BOTTOM.y + 1} x2={RIGHT.x} y2={RIGHT.y + 1} stroke="rgba(20,40,5,0.08)" strokeWidth={2.5} />
   </svg>
   );
-};
+});
+
+IslandSVG.displayName = 'IslandSVG';

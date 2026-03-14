@@ -20,12 +20,12 @@ export function HeroSection() {
             THE FOCUS APP THAT REWARDS YOU
           </div>
           <h1 className="hero-title">
-            Put Your Phone Down.
+            Every Minute of Focus
             <br />
-            <span className="text-primary">Get a Pet.</span>
+            <span className="text-primary">Grows Something Beautiful.</span>
           </h1>
           <p className="hero-subtitle" style={{ margin: '0 0 20px', maxWidth: 480 }}>
-            Focus sessions earn pixel art pets that live on your floating island. No willpower required.
+            Put your phone down. Earn adorable pixel art pets. Watch your floating island come to life — no willpower required.
           </p>
           <div className="hero-reward-badge">
             <img src="/icons/egg-legendary.png" alt="" className="hero-reward-badge__egg" />
@@ -47,16 +47,28 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Right col: island */}
+        {/* Right col: full island (desktop) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="flex-shrink-0 w-full md:w-auto flex justify-center"
+          className="hidden md:flex flex-shrink-0 justify-center"
         >
-          <IslandScene gridSize={10} />
+          <IslandScene gridSize={10} showParticles />
         </motion.div>
       </div>
+
+      {/* Compact island for mobile — shown below form */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="md:hidden flex justify-center mt-4 relative z-10"
+      >
+        <div className="hero-island-mobile">
+          <IslandScene gridSize={8} compact showParticles />
+        </div>
+      </motion.div>
 
       {/* Scroll indicator — desktop only */}
       <div

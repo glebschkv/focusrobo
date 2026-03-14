@@ -3,15 +3,16 @@ import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-do
 import { Nav } from './components/Nav';
 import { HeroSection } from './components/HeroSection';
 import { StatsBar } from './components/StatsBar';
+import { WhySection } from './components/WhySection';
 import { LoopSection } from './components/LoopSection';
-import { AppPreview } from './components/AppPreview';
+import { InteractiveDemo } from './components/InteractiveDemo';
 import { PetShowcase } from './components/PetShowcase';
 import { RewardsSection } from './components/RewardsSection';
-import { SocialProof } from './components/SocialProof';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { StickyMobileCTA } from './components/StickyMobileCTA';
+import { SectionDivider } from './components/SectionDivider';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { TermsOfService } from './components/TermsOfService';
 import { Support } from './components/Support';
@@ -30,11 +31,14 @@ function HomePage() {
       <Nav />
       <HeroSection />
       <StatsBar />
+      <SectionDivider variant="grass" />
+      <WhySection />
       <LoopSection />
-      <AppPreview />
+      <SectionDivider variant="clouds" peekingPet="bunny" />
+      <InteractiveDemo />
       <PetShowcase />
+      <SectionDivider variant="dots" />
       <RewardsSection />
-      <SocialProof />
       <FAQSection />
       <FinalCTA />
       <Footer />

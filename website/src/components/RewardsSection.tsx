@@ -1,152 +1,104 @@
 import { motion } from 'framer-motion';
 
-const TIERS = [
-  {
-    count: 0,
-    reward: 'Legendary Egg',
-    desc: 'Guaranteed. Worth 3,000 coins.',
-    image: '/icons/egg-legendary.png',
-    borderColor: 'var(--rarity-legendary)',
-    glow: 'rgba(234, 179, 8, 0.15)',
-    badge: 'FREE',
-  },
-  {
-    count: 3,
-    reward: 'Rare Egg',
-    desc: 'Worth 400 coins.',
-    image: '/icons/egg-rare.png',
-    borderColor: 'var(--rarity-rare)',
-    glow: 'rgba(59, 130, 246, 0.1)',
-  },
-  {
-    count: 5,
-    reward: 'Epic Egg',
-    desc: 'Worth 1,200 coins.',
-    image: '/icons/egg-epic.png',
-    borderColor: 'var(--rarity-epic)',
-    glow: 'rgba(168, 85, 247, 0.1)',
-  },
-  {
-    count: 10,
-    reward: 'Founder Fox',
-    desc: 'Exclusive pet. Never available again.',
-    image: '/pets/fox-adult.png',
-    borderColor: 'var(--rarity-legendary)',
-    glow: 'rgba(234, 179, 8, 0.1)',
-  },
-  {
-    count: 25,
-    reward: 'Pioneer Island',
-    desc: 'Exclusive island theme.',
-    image: '/pets/koi-fish-adult.png',
-    borderColor: 'var(--accent)',
-    glow: 'rgba(52, 211, 153, 0.1)',
-  },
+const REFERRAL_TIERS = [
+  { count: 3, reward: 'Rare Egg', image: '/icons/egg-rare.png', color: 'var(--rarity-rare)' },
+  { count: 5, reward: 'Epic Egg', image: '/icons/egg-epic.png', color: 'var(--rarity-epic)' },
+  { count: 10, reward: 'Founder Fox', image: '/pets/fox-adult.png', color: 'var(--rarity-legendary)' },
+  { count: 25, reward: 'Pioneer Island', image: '/pets/koi-fish-adult.png', color: 'var(--accent)' },
 ];
-
-function TierCard({ tier, i }: { tier: typeof TIERS[0]; i: number }) {
-  return (
-    <motion.div
-      key={tier.count}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: i * 0.08, duration: 0.4 }}
-      className="feature-card feature-card--dark text-center"
-      style={{
-        padding: '20px 16px',
-        borderTop: `3px solid ${tier.borderColor}`,
-        background: tier.glow,
-      }}
-    >
-      <img
-        src={tier.image}
-        alt={tier.reward}
-        style={{ width: 44, height: 44, imageRendering: 'pixelated', marginBottom: 8, display: 'block', margin: '0 auto 8px' }}
-      />
-      <div className="card-title card-title--light" style={{ fontSize: 14, marginBottom: 4 }}>
-        {tier.reward}
-      </div>
-      {tier.badge && (
-        <span className="tier-badge">
-          {tier.badge}
-        </span>
-      )}
-      <div className="card-desc card-desc--light" style={{ fontSize: 12, lineHeight: 1.4, marginBottom: 8 }}>
-        {tier.desc}
-      </div>
-      <div style={{ fontSize: 12, fontWeight: 700, color: tier.borderColor }}>
-        {tier.count === 0 ? 'Sign up' : `${tier.count} friends`}
-      </div>
-    </motion.div>
-  );
-}
 
 export function RewardsSection() {
   return (
-    <section id="rewards" className="section-dark py-24 px-5">
-      <div className="max-w-4xl mx-auto">
+    <section id="rewards" className="section-dark" style={{ padding: '80px 20px' }}>
+      <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
         >
-          <div className="section-label section-label--light">EARLY BIRD REWARDS</div>
-          <h2 className="section-title section-title--light">
-            Join the Waitlist. Hatch Something Legendary.
+          <div className="section-label" style={{ color: 'var(--accent)' }}>EARLY BIRD REWARDS</div>
+          <h2 className="section-title" style={{ color: '#fff' }}>
+            Sign Up Free. Get a Legendary Egg.
           </h2>
-          <p className="section-subtitle section-subtitle--light">
-            Every member gets a free Legendary Egg on launch day. Refer friends to unlock exclusive rewards.
+          <p className="section-subtitle" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Every waitlist member receives one on launch day — worth 3,000 coins.
           </p>
         </motion.div>
 
-        {/* Big legendary egg */}
+        {/* Big legendary egg — the hero moment */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.175, 0.885, 0.32, 1.1] }}
-          className="flex justify-center mb-14"
+          style={{ margin: '36px 0 12px' }}
         >
           <img
             src="/icons/egg-legendary.png"
             alt="Legendary Egg"
             style={{
-              width: 90,
+              width: 96,
               height: 'auto',
               imageRendering: 'pixelated',
               animation: 'egg-rock 2.5s ease-in-out infinite',
               filter: 'drop-shadow(0 0 16px rgba(234,179,8,0.7)) drop-shadow(0 0 32px rgba(234,179,8,0.3))',
             }}
           />
+          <div style={{
+            marginTop: 12,
+            display: 'inline-block',
+            padding: '4px 14px',
+            borderRadius: 20,
+            background: 'rgba(234,179,8,0.12)',
+            color: 'var(--rarity-legendary)',
+            fontSize: 13,
+            fontWeight: 700,
+            letterSpacing: '0.02em',
+          }}>
+            FREE for early signups
+          </div>
         </motion.div>
 
-        {/* Desktop: 5-column grid */}
-        <div className="hidden md:grid md:grid-cols-5 gap-4 mb-12">
-          {TIERS.map((tier, i) => <TierCard key={tier.count} tier={tier} i={i} />)}
-        </div>
+        {/* Compact referral tiers */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="rewards-tier-strip"
+        >
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', margin: '0 0 16px', fontWeight: 500 }}>
+            Refer friends for bonus rewards
+          </p>
+          <div className="rewards-tier-grid">
+            {REFERRAL_TIERS.map(tier => (
+              <div key={tier.count} className="rewards-tier-item">
+                <img
+                  src={tier.image}
+                  alt={tier.reward}
+                  style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
+                />
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: tier.color }}>{tier.reward}</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{tier.count} friends</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
 
-        {/* Mobile: horizontal scroll track */}
-        <div className="md:hidden scroll-track mb-12">
-          {TIERS.map((tier, i) => (
-            <div key={tier.count} className="min-w-[140px]">
-              <TierCard tier={tier} i={i} />
-            </div>
-          ))}
-        </div>
-
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center"
+          style={{ marginTop: 32 }}
         >
           <a
             href="#waitlist"
             className="cta-accent"
-            style={{ textDecoration: 'none', padding: '14px 36px' }}
+            style={{ textDecoration: 'none', padding: '14px 36px', display: 'inline-flex', alignItems: 'center', gap: 8 }}
           >
             Claim Your Egg
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

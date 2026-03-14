@@ -18,8 +18,10 @@ export function StickyMobileCTA() {
       <a
         href="#waitlist"
         className="cta-primary"
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
       >
-        Join the Waitlist — Free Legendary Egg
+        <img src="/icons/egg-legendary.png" alt="" width="20" height="20" style={{ imageRendering: 'pixelated' }} />
+        Join Waitlist — Free Legendary Egg
       </a>
     </div>
   );
