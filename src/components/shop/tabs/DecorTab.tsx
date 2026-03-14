@@ -8,7 +8,8 @@
 import { useState } from 'react';
 import { PixelIcon } from '@/components/ui/PixelIcon';
 import { cn } from '@/lib/utils';
-import { DECORATIONS, getDecorationsByCategory, type DecorationCategory, type DecorationDef } from '@/data/DecorationData';
+import { DECORATIONS, getDecorationsByCategory, getDecorationsForBiome, BIOME_LABELS, type DecorationCategory, type DecorationDef } from '@/data/DecorationData';
+import { ARCHIPELAGO_ISLANDS } from '@/data/ArchipelagoData';
 import { useLandStore } from '@/stores/landStore';
 import { useCoinStore } from '@/stores/coinStore';
 import { useXPStore } from '@/stores/xpStore';
@@ -38,16 +39,31 @@ interface DecorTabProps {
 
 export const DecorTab = ({ coinBalance, canAfford }: DecorTabProps) => {
   const [activeCategory, setActiveCategory] = useState<DecorationCategory | 'all'>('all');
+  const [biomeFilter, setBiomeFilter] = useState<string | 'all'>('all');
   const addDecoration = useLandStore((s) => s.addDecorationToInventory);
   const decorationInventory = useLandStore((s) => s.decorationInventory);
+  const archipelago = useLandStore((s) => s.archipelago);
+  const activeIslandIndex = useLandStore((s) => s.activeIslandIndex);
   const playerLevel = useXPStore((s) => s.currentLevel);
+
+  const activeIsland = archipelago[activeIslandIndex];
+  const currentBiome = activeIsland
+    ? ARCHIPELAGO_ISLANDS.find(i => i.id === activeIsland.islandId)?.biome || 'day'
+    : 'day';
 
   const grouped = getDecorationsByCategory();
   const categories = Object.keys(grouped) as DecorationCategory[];
 
+  // Filter by biome first, then by category
+  const biomeFiltered = biomeFilter === 'all'
+    ? getDecorationsForBiome(currentBiome)
+    : biomeFilter === 'universal'
+    ? DECORATIONS.filter(d => !d.biome)
+    : DECORATIONS.filter(d => d.biome === biomeFilter);
+
   const filteredDecorations = activeCategory === 'all'
-    ? DECORATIONS
-    : grouped[activeCategory] || [];
+    ? biomeFiltered
+    : biomeFiltered.filter(d => d.category === activeCategory);
 
   const handleBuy = (decoration: DecorationDef) => {
     if (!canAfford(decoration.coinPrice)) {
@@ -73,6 +89,28 @@ export const DecorTab = ({ coinBalance, canAfford }: DecorTabProps) => {
 
   return (
     <div className="decor-tab">
+      {/* Biome filter pills */}
+      <div className="decor-tab__filters">
+        <button
+          className={cn('decor-tab__filter-pill', biomeFilter === 'all' && 'active')}
+          onClick={() => setBiomeFilter('all')}
+        >
+          This Island
+        </button>
+        <button
+          className={cn('decor-tab__filter-pill', biomeFilter === 'universal' && 'active')}
+          onClick={() => setBiomeFilter('universal')}
+        >
+          Universal
+        </button>
+        <button
+          className={cn('decor-tab__filter-pill', biomeFilter === currentBiome && 'active')}
+          onClick={() => setBiomeFilter(currentBiome)}
+        >
+          {BIOME_LABELS[currentBiome] || 'Island'}
+        </button>
+      </div>
+
       {/* Category filter pills */}
       <div className="decor-tab__filters">
         <button
@@ -142,6 +180,11 @@ export const DecorTab = ({ coinBalance, canAfford }: DecorTabProps) => {
                   >
                     {deco.rarity}
                   </span>
+                  {deco.biome && (
+                    <span className="decor-tab__card-biome">
+                      {BIOME_LABELS[deco.biome]}
+                    </span>
+                  )}
                 </div>
               </div>
 
